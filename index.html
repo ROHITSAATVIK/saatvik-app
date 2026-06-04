@@ -196,8 +196,7 @@ tr:hover td{background:#fafaf9;}
   <div class="nav-section" id="nav-trd" style="display:none;">
     <div class="nav-label">Trading (Scrap)</div>
     <div class="ni" onclick="goTo('trd-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
-    <div class="ni" onclick="goTo('trd-purchases')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Purchases</div>
-    <div class="ni" onclick="goTo('trd-sales')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Sales</div>
+    <div class="ni" onclick="goTo('trd-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Trade Register</div>
     <div class="ni" onclick="goTo('trd-materials')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Materials</div>
   </div>
   <div class="sidebar-foot">
@@ -459,45 +458,31 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
-<!-- ========== TRADING PURCHASES ========== -->
-<div id="page-trd-purchases" class="page">
+<!-- ========== TRADING REGISTER ========== -->
+<div id="page-trd-register" class="page">
   <div class="topbar">
-    <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Scrap Purchases</div>
+    <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Trade Register</div>
     <div class="tb-right">
-      <select class="month-selector" id="trd-pur-month" onchange="renderTrdPurchases()"></select>
-      <button class="btn btn-blue" onclick="openModal('trd-pur-modal',null)">+ Add purchase</button>
+      <select class="month-selector" id="trd-reg-month" onchange="renderTrdRegister()"></select>
+      <button class="btn btn-blue" onclick="openTrdRegModal(null)">+ Add trade</button>
     </div>
   </div>
   <div class="content">
-    <div class="metrics g3" id="trd-pur-metrics"></div>
+    <div class="metrics g5" id="trd-reg-metrics"></div>
     <div class="card">
-      <div class="card-head"><div class="card-title">Purchase register</div></div>
-      <div class="tw"><table><thead><tr><th>Date</th><th>Bill no</th><th>Supplier</th><th>Material</th><th>Qty (Kg)</th><th>Rate/Kg</th><th>Amount</th><th>Due date</th><th>Paid on</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="trd-pur-tbody"><tr><td colspan="11"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
+      <div class="card-head">
+        <div class="card-title">Trade register — buy &amp; sell in one line</div>
+        <div style="font-size:11px;color:var(--txt2);">Avg payment cycle: <strong id="trd-avg-cycle-display">—</strong></div>
+      </div>
+      <div class="tw"><table>
+        <thead><tr><th>Sl</th><th>Date</th><th>Bill no</th><th>Material</th><th>Qty (Kg)</th><th>Rate/Kg</th><th>Supplier</th><th>Customer</th><th>Amount</th><th>Payment due</th><th>I Paid supplier</th><th>Recd from customer</th><th>Actions</th></tr></thead>
+        <tbody id="trd-reg-tbody"><tr><td colspan="13"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+      </table></div>
     </div>
   </div>
 </div>
 
-<!-- ========== TRADING SALES ========== -->
-<div id="page-trd-sales" class="page">
-  <div class="topbar">
-    <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Scrap Sales</div>
-    <div class="tb-right">
-      <select class="month-selector" id="trd-sal-month" onchange="renderTrdSales()"></select>
-      <button class="btn btn-blue" onclick="openModal('trd-sal-modal',null)">+ Add sale</button>
-    </div>
-  </div>
-  <div class="content">
-    <div class="metrics g3" id="trd-sal-metrics"></div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">Sales register</div></div>
-      <div class="tw"><table><thead><tr><th>Date</th><th>Invoice</th><th>Customer</th><th>Material</th><th>Qty (Kg)</th><th>Rate/Kg</th><th>Amount</th><th>Due date</th><th>Received on</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="trd-sal-tbody"><tr><td colspan="11"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
-    </div>
-  </div>
-</div>
-
-<!-- ========== TRADING MATERIALS ========== -->
+<!-- ========== TRADING MATERIALS ========== --><!-- ========== TRADING MATERIALS ========== -->
 <div id="page-trd-materials" class="page">
   <div class="topbar">
     <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Materials</div>
@@ -640,39 +625,26 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
-<!-- Trading Purchase Modal -->
-<div class="modal-bg" id="trd-pur-modal">
+<!-- Trading Register Modal -->
+<div class="modal-bg" id="trd-reg-modal">
   <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="trd-pur-modal-t">Add Purchase</span><button class="btn btn-sm" onclick="closeModal('trd-pur-modal')">✕</button></div>
+    <div class="modal-head"><span class="modal-title" id="trd-reg-modal-t">Add Trade</span><button class="btn btn-sm" onclick="closeModal('trd-reg-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow"><div class="fg"><label>Purchase date</label><input type="date" id="tp-date"></div><div class="fg"><label>Bill no</label><input type="text" id="tp-bill" placeholder="Bill/Challan no"></div></div>
-      <div class="frow"><div class="fg"><label>Supplier</label><input type="text" id="tp-supplier" placeholder="Supplier name"></div><div class="fg"><label>Material</label><select id="tp-material"></select></div></div>
-      <div class="frow"><div class="fg"><label>Qty (Kg)</label><input type="number" id="tp-qty" placeholder="0" oninput="calcTrdPurAmt()"></div><div class="fg"><label>Rate per Kg (₹)</label><input type="number" id="tp-rate" placeholder="0" oninput="calcTrdPurAmt()"></div></div>
-      <div class="frow"><div class="fg"><label>Amount (₹) — auto</label><input type="number" id="tp-amt" readonly style="background:var(--bg3)"></div><div class="fg"><label>Payment terms (days)</label><input type="number" id="tp-terms" value="15"></div></div>
-      <div class="frow"><div class="fg"><label>Payment date (if paid)</label><input type="date" id="tp-paid"></div><div class="fg"><label>Amount paid (₹)</label><input type="number" id="tp-pamt" placeholder="0"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="tp-notes" placeholder="Optional"></div></div>
+      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="tr-date"></div><div class="fg"><label>Bill no</label><input type="text" id="tr-bill" placeholder="Bill / Challan no"></div></div>
+      <div class="frow"><div class="fg"><label>Material</label><select id="tr-material"></select></div><div class="fg"><label>Qty (Kg)</label><input type="number" id="tr-qty" placeholder="0" oninput="calcTradeAmt()"></div></div>
+      <div class="frow"><div class="fg"><label>Rate per Kg (₹)</label><input type="number" id="tr-rate" placeholder="0" oninput="calcTradeAmt()"></div><div class="fg"><label>Amount (₹) — auto</label><input type="number" id="tr-amt" readonly style="background:var(--bg3);font-weight:700;"></div></div>
+      <div class="frow"><div class="fg"><label>Supplier (bought from)</label><input type="text" id="tr-supplier" placeholder="Supplier name"></div><div class="fg"><label>Customer (sold to)</label><input type="text" id="tr-customer" placeholder="Customer name"></div></div>
+      <div class="frow"><div class="fg"><label>Payment due date</label><input type="date" id="tr-due"></div><div class="fg"><label>Payment terms (days)</label><input type="number" id="tr-terms" value="15"></div></div>
+      <div class="sec-label">Payment Status</div>
+      <div class="frow"><div class="fg"><label>I paid supplier on</label><input type="date" id="tr-paid"></div><div class="fg"><label>Amount paid (₹)</label><input type="number" id="tr-pamt" placeholder="0"></div></div>
+      <div class="frow"><div class="fg"><label>Received from customer on</label><input type="date" id="tr-recvd"></div><div class="fg"><label>Amount received (₹)</label><input type="number" id="tr-ramt" placeholder="0"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="tr-notes" placeholder="Optional"></div></div>
     </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('trd-pur-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdPurchase()">Save</button></div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('trd-reg-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdTrade()">Save</button></div>
   </div>
 </div>
 
-<!-- Trading Sales Modal -->
-<div class="modal-bg" id="trd-sal-modal">
-  <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="trd-sal-modal-t">Add Sale</span><button class="btn btn-sm" onclick="closeModal('trd-sal-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="frow"><div class="fg"><label>Sale date</label><input type="date" id="ts-date"></div><div class="fg"><label>Invoice no</label><input type="text" id="ts-inv" placeholder="Invoice number"></div></div>
-      <div class="frow"><div class="fg"><label>Customer</label><input type="text" id="ts-customer" placeholder="Customer name"></div><div class="fg"><label>Material</label><select id="ts-material"></select></div></div>
-      <div class="frow"><div class="fg"><label>Qty (Kg)</label><input type="number" id="ts-qty" placeholder="0" oninput="calcTrdSalAmt()"></div><div class="fg"><label>Rate per Kg (₹)</label><input type="number" id="ts-rate" placeholder="0" oninput="calcTrdSalAmt()"></div></div>
-      <div class="frow"><div class="fg"><label>Amount (₹) — auto</label><input type="number" id="ts-amt" readonly style="background:var(--bg3)"></div><div class="fg"><label>Payment terms (days)</label><input type="number" id="ts-terms" value="30"></div></div>
-      <div class="frow"><div class="fg"><label>Payment received date</label><input type="date" id="ts-recvd"></div><div class="fg"><label>Amount received (₹)</label><input type="number" id="ts-ramt" placeholder="0"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="ts-notes" placeholder="Optional"></div></div>
-    </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('trd-sal-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdSale()">Save</button></div>
-  </div>
-</div>
-
-<!-- Trading Material Modal -->
+<!-- Trading Material Modal --><!-- Trading Material Modal -->
 <div class="modal-bg" id="trd-mat-modal">
   <div class="modal">
     <div class="modal-head"><span class="modal-title">Add Material Type</span><button class="btn btn-sm" onclick="closeModal('trd-mat-modal')">✕</button></div>
@@ -770,7 +742,7 @@ const BO=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{displa
 // ===== MONTH SELECTORS =====
 const MONTHS=['Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026'];
 function populateMonthSelectors(){
-  ['mfg-dash-month','mis-month','stock-month','dispatch-month','bd-month','trd-dash-month','trd-pur-month','trd-sal-month'].forEach(id=>{
+  ['mfg-dash-month','mis-month','stock-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
     el.innerHTML=MONTHS.map(m=>`<option value="${m}"${m==='Jun 2026'?'selected':''}>${m}</option>`).join('');
@@ -809,7 +781,7 @@ function renderPage(id){
   const m={
     'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
     'stock':renderStock,'dispatch':renderDispatch,'breakdown':renderBreakdown,'tasks':renderTasks,
-    'trd-dashboard':renderTrdDashboard,'trd-purchases':renderTrdPurchases,'trd-sales':renderTrdSales,
+    'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,
     'trd-materials':renderTrdMaterials
   };
   if(m[id])m[id]();
@@ -1389,23 +1361,180 @@ function renderTasks(){
 }
 
 // ===== TRADING RENDERS =====
+
+function calcTradeAmt(){
+  const q=parseFloat(document.getElementById('tr-qty')?.value||0);
+  const r=parseFloat(document.getElementById('tr-rate')?.value||0);
+  const el=document.getElementById('tr-amt');
+  if(el)el.value=(q*r).toFixed(0);
+}
+
+async function saveTrdTrade(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={
+    purchase_date:g('tr-date'),
+    month_year:fmtMonthYear(g('tr-date')),
+    bill_no:g('tr-bill')||'—',
+    supplier:g('tr-supplier')||'—',
+    material:g('tr-material')||'—',
+    qty_kg:parseFloat(g('tr-qty'))||0,
+    rate_per_kg:parseFloat(g('tr-rate'))||0,
+    amount:parseFloat(g('tr-amt'))||0,
+    payment_terms_days:parseInt(g('tr-terms'))||15,
+    payment_date:g('tr-paid')||null,
+    payment_amount:parseFloat(g('tr-pamt'))||0,
+    notes:(g('tr-customer')?'Customer: '+g('tr-customer')+' | ':'')+(g('tr-recvd')?'Recd: '+g('tr-recvd')+' amt: '+(g('tr-ramt')||0)+' | ':'')+(g('tr-notes')||''),
+    updated_at:new Date().toISOString()
+  };
+  if(!row.purchase_date){toast('Date required','err');return;}
+  const{error}=editId
+    ?await sb.from('trading_purchases').update(row).eq('id',editId)
+    :await sb.from('trading_purchases').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast(editId?'Trade updated ✓':'Trade saved ✓');
+  closeModal('trd-reg-modal');
+  await loadAll();
+}
+
+function openTrdRegModal(rowId){
+  editId=rowId;
+  document.getElementById('trd-reg-modal-t').textContent=rowId?'Edit Trade':'Add Trade';
+  populateMaterialSelect('tr-material');
+  if(rowId){
+    const r=DATA.trdPur.find(x=>x.id===rowId);
+    if(r){
+      document.getElementById('tr-date').value=r.purchase_date;
+      document.getElementById('tr-bill').value=r.bill_no;
+      document.getElementById('tr-material').value=r.material;
+      document.getElementById('tr-qty').value=r.qty_kg;
+      document.getElementById('tr-rate').value=r.rate_per_kg;
+      document.getElementById('tr-amt').value=r.amount;
+      document.getElementById('tr-supplier').value=r.supplier;
+      document.getElementById('tr-terms').value=r.payment_terms_days;
+      document.getElementById('tr-paid').value=r.payment_date||'';
+      document.getElementById('tr-pamt').value=r.payment_amount||0;
+      // Parse customer/received from notes
+      const notes=r.notes||'';
+      const custMatch=notes.match(/Customer: ([^|]+)/);
+      const recvdMatch=notes.match(/Recd: ([^ ]+)/);
+      const ramtMatch=notes.match(/amt: ([0-9.]+)/);
+      document.getElementById('tr-customer').value=custMatch?custMatch[1].trim():'';
+      document.getElementById('tr-recvd').value=recvdMatch?recvdMatch[1].trim():'';
+      document.getElementById('tr-ramt').value=ramtMatch?ramtMatch[1].trim():'0';
+      document.getElementById('tr-notes').value=notes.replace(/Customer:[^|]+\|?\s*/,'').replace(/Recd:[^|]+\|?\s*/,'').replace(/amt:[^|]+\|?\s*/,'').trim();
+    }
+  } else {
+    ['tr-date','tr-bill','tr-qty','tr-rate','tr-paid','tr-recvd','tr-notes','tr-supplier','tr-customer'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+    document.getElementById('tr-terms').value=15;
+    document.getElementById('tr-pamt').value=0;
+    document.getElementById('tr-ramt').value=0;
+    document.getElementById('tr-amt').value='';
+  }
+  document.getElementById('trd-reg-modal').classList.add('open');
+}
+
+function renderTrdRegister(){
+  const m=getMonth('trd-reg-month');
+  const trades=filterByMonth(DATA.trdPur,'month_year',m);
+  const totalAmt=trades.reduce((a,r)=>a+Number(r.amount||0),0);
+  const unpaidSupplier=trades.filter(r=>!r.payment_date);
+  const unpaidAmt=unpaidSupplier.reduce((a,r)=>a+Number(r.amount||0),0);
+
+  // Avg payment cycle
+  const paid=DATA.trdPur.filter(r=>r.payment_date);
+  const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>a+Math.abs(new Date(r.payment_date)-new Date(r.purchase_date))/86400000,0)/paid.length):0;
+  const el=document.getElementById('trd-avg-cycle-display');
+  if(el)el.textContent=avgCycle+' days';
+
+  document.getElementById('trd-reg-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total trades</div><div class="vl">${trades.length}</div><div class="sb">${m}</div></div>
+    <div class="mc"><div class="lb">Total value</div><div class="vl blue">${fmtMoney(totalAmt)}</div></div>
+    <div class="mc"><div class="lb">Supplier outstanding</div><div class="vl red">${fmtMoney(unpaidAmt)}</div><div class="sb">${unpaidSupplier.length} unpaid</div></div>
+    <div class="mc"><div class="lb">Avg payment cycle</div><div class="vl amber">${avgCycle} days</div></div>
+    <div class="mc"><div class="lb">Materials traded</div><div class="vl">${[...new Set(trades.map(r=>r.material))].length}</div></div>`;
+
+  const sorted=[...DATA.trdPur].sort((a,b)=>new Date(b.purchase_date)-new Date(a.purchase_date));
+  let sl=1;
+  document.getElementById('trd-reg-tbody').innerHTML=sorted.map(r=>{
+    const dd=r.notes?.match(/Customer: ([^|]+)/)?.[1]?.trim()||'—';
+    const recvdDate=r.notes?.match(/Recd: ([^ ]+)/)?.[1]?.trim()||null;
+    const ramt=r.notes?.match(/amt: ([0-9.]+)/)?.[1]||'0';
+    const due=dueDate(r.purchase_date,r.payment_terms_days);
+    const isOverdue=!r.payment_date&&due<TODAY;
+
+    const paidBtn=!r.payment_date
+      ?`<button class="btn btn-sm btn-green" style="white-space:nowrap" onclick="quickMarkPaid('${r.id}')">✓ I Paid</button>`
+      :`<span class="badge b-green">Paid ${fmtDate(r.payment_date)}</span>`;
+
+    const recvdBtn=!recvdDate
+      ?`<button class="btn btn-sm btn-amber" style="white-space:nowrap" onclick="quickMarkRecvd('${r.id}')">₹ Recd</button>`
+      :`<span class="badge b-green">Recd ${fmtDate(recvdDate)}</span>`;
+
+    return`<tr>
+      <td>${sl++}</td>
+      <td>${fmtDate(r.purchase_date)}</td>
+      <td>${r.bill_no}</td>
+      <td>${r.material}</td>
+      <td>${Number(r.qty_kg).toLocaleString('en-IN')}</td>
+      <td>${fmtMoney(r.rate_per_kg)}</td>
+      <td>${r.supplier}</td>
+      <td>${dd}</td>
+      <td>${fmtMoney(r.amount)}</td>
+      <td class="${isOverdue?'red':''}">${fmtDate(due.toISOString().split('T')[0])}</td>
+      <td>${paidBtn}</td>
+      <td>${recvdBtn}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm" onclick="openTrdRegModal('${r.id}')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('trading_purchases','${r.id}','trade')">🗑</button>
+      </td>
+    </tr>`;
+  }).join('')||`<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--txt2);">No trades yet — click "+ Add trade" to start</td></tr>`;
+}
+
+async function quickMarkPaid(id){
+  const d=prompt('Date I paid supplier (YYYY-MM-DD):',TODAY.toISOString().split('T')[0]);
+  if(!d)return;
+  const amt=prompt('Amount paid (₹):','0');
+  const{error}=await sb.from('trading_purchases').update({payment_date:d,payment_amount:parseFloat(amt)||0,updated_at:new Date().toISOString()}).eq('id',id);
+  if(error){toast('Error','err');return;}
+  toast('Supplier payment recorded ✓');await loadAll();
+}
+
+async function quickMarkRecvd(id){
+  const r=DATA.trdPur.find(x=>x.id===id);
+  if(!r)return;
+  const d=prompt('Date received from customer (YYYY-MM-DD):',TODAY.toISOString().split('T')[0]);
+  if(!d)return;
+  const amt=prompt('Amount received (₹):','0');
+  const notes=r.notes||'';
+  const newNotes=notes.replace(/Recd:[^|]+\|?\s*/,'').replace(/amt:[^|]+\|?\s*/,'').trim()+` | Recd: ${d} amt: ${amt}`;
+  const{error}=await sb.from('trading_purchases').update({notes:newNotes,updated_at:new Date().toISOString()}).eq('id',id);
+  if(error){toast('Error','err');return;}
+  toast('Customer payment recorded ✓');await loadAll();
+}
+
 function renderTrdDashboard(){
   const m=getMonth('trd-dash-month');
-  const pur=filterByMonth(DATA.trdPur,'month_year',m);
-  const sal=filterByMonth(DATA.trdSal,'month_year',m);
-  const totalBuy=pur.reduce((a,r)=>a+Number(r.amount||0),0);
-  const totalSell=sal.reduce((a,r)=>a+Number(r.amount||0),0);
-  const margin=totalSell-totalBuy;
+  const trades=filterByMonth(DATA.trdPur,'month_year',m);
+  const totalVal=trades.reduce((a,r)=>a+Number(r.amount||0),0);
   const supplierOut=DATA.trdPur.filter(r=>!r.payment_date).reduce((a,r)=>a+Number(r.amount||0),0);
-  const customerOut=DATA.trdSal.filter(r=>!r.payment_received_date).reduce((a,r)=>a+Number(r.amount||0),0);
-  document.getElementById('trd-dash-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Total purchases</div><div class="vl red">${fmtMoney(totalBuy)}</div><div class="sb">${pur.length} bills</div></div>
-    <div class="mc"><div class="lb">Total sales</div><div class="vl green">${fmtMoney(totalSell)}</div><div class="sb">${sal.length} invoices</div></div>
-    <div class="mc"><div class="lb">Gross margin</div><div class="vl ${margin>=0?'green':'red'}">${fmtMoney(margin)}</div></div>
-    <div class="mc"><div class="lb">I owe suppliers</div><div class="vl red">${fmtMoney(supplierOut)}</div></div>
-    <div class="mc"><div class="lb">Customers owe me</div><div class="vl amber">${fmtMoney(customerOut)}</div></div>`;
+  const paid=DATA.trdPur.filter(r=>r.payment_date);
+  const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>a+Math.abs(new Date(r.payment_date)-new Date(r.purchase_date))/86400000,0)/paid.length):0;
 
-  // Supplier outstanding
+  // Customer outstanding from notes
+  const custOut=DATA.trdPur.filter(r=>{
+    const notes=r.notes||'';
+    return!notes.match(/Recd:/);
+  }).reduce((a,r)=>a+Number(r.amount||0),0);
+
+  document.getElementById('trd-dash-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Trades this month</div><div class="vl">${trades.length}</div><div class="sb">${m}</div></div>
+    <div class="mc"><div class="lb">Total value</div><div class="vl blue">${fmtMoney(totalVal)}</div></div>
+    <div class="mc"><div class="lb">I owe suppliers</div><div class="vl red">${fmtMoney(supplierOut)}</div></div>
+    <div class="mc"><div class="lb">Customers owe me</div><div class="vl amber">${fmtMoney(custOut)}</div></div>
+    <div class="mc"><div class="lb">Avg payment cycle</div><div class="vl">${avgCycle} days</div></div>`;
+
+  // Supplier outstanding table
   const supGroups={};
   DATA.trdPur.filter(r=>!r.payment_date).forEach(r=>{supGroups[r.supplier]=(supGroups[r.supplier]||0)+Number(r.amount||0);});
   document.getElementById('trd-supplier-out').innerHTML=Object.entries(supGroups).map(([s,a])=>{
@@ -1413,96 +1542,50 @@ function renderTrdDashboard(){
     const earliest=bills.sort((a,b)=>new Date(a.purchase_date)-new Date(b.purchase_date))[0];
     const dd=earliest?dueDate(earliest.purchase_date,earliest.payment_terms_days):null;
     const isOD=dd&&dd<TODAY;
-    return`<tr><td>${s}</td><td>${fmtMoney(a)}</td><td>${dd?fmtDate(dd.toISOString().split('T')[0]):'—'}</td><td>${badge(isOD?'Overdue':'Upcoming',isOD?'red':'blue')}</td></tr>`;
+    return`<tr><td>${s}</td><td>${fmtMoney(a)}</td><td>${dd?fmtDate(dd.toISOString().split('T')[0]):'—'}</td><td>${isOD?'<span class="badge b-red">Overdue</span>':'<span class="badge b-blue">Upcoming</span>'}</td></tr>`;
   }).join('')||'<tr><td colspan="4" style="text-align:center;padding:12px;color:var(--txt2);">All paid ✓</td></tr>';
 
   // Customer outstanding
   const custGroups={};
-  DATA.trdSal.filter(r=>!r.payment_received_date).forEach(r=>{custGroups[r.customer]=(custGroups[r.customer]||0)+Number(r.amount||0);});
-  document.getElementById('trd-customer-out').innerHTML=Object.entries(custGroups).map(([c,a])=>{
-    const invs=DATA.trdSal.filter(r=>r.customer===c&&!r.payment_received_date);
-    const earliest=invs.sort((a,b)=>new Date(a.sale_date)-new Date(b.sale_date))[0];
-    const dd=earliest?dueDate(earliest.sale_date,earliest.payment_terms_days):null;
-    const isOD=dd&&dd<TODAY;
-    return`<tr><td>${c}</td><td>${fmtMoney(a)}</td><td>${dd?fmtDate(dd.toISOString().split('T')[0]):'—'}</td><td>${badge(isOD?'Overdue':'Pending',isOD?'red':'amber')}</td></tr>`;
-  }).join('')||'<tr><td colspan="4" style="text-align:center;padding:12px;color:var(--txt2);">All received ✓</td></tr>';
+  DATA.trdPur.filter(r=>!(r.notes||'').match(/Recd:/)).forEach(r=>{
+    const cust=(r.notes||'').match(/Customer: ([^|]+)/)?.[1]?.trim()||'Unknown';
+    custGroups[cust]=(custGroups[cust]||0)+Number(r.amount||0);
+  });
+  document.getElementById('trd-customer-out').innerHTML=Object.entries(custGroups).filter(([k])=>k!=='Unknown').map(([c,a])=>
+    `<tr><td>${c}</td><td>${fmtMoney(a)}</td><td>—</td><td><span class="badge b-amber">Pending</span></td></tr>`
+  ).join('')||'<tr><td colspan="4" style="text-align:center;padding:12px;color:var(--txt2);">All received ✓</td></tr>';
 
-  // Avg payment cycles
-  const paidPur=DATA.trdPur.filter(r=>r.payment_date);
-  const paidSal=DATA.trdSal.filter(r=>r.payment_received_date);
-  const avgSupCycle=paidPur.length>0?Math.round(paidPur.reduce((a,r)=>a+daysSince(r.purchase_date),0)/paidPur.length):0;
-  const avgCustCycle=paidSal.length>0?Math.round(paidSal.reduce((a,r)=>a+Math.abs(new Date(r.payment_received_date)-new Date(r.sale_date))/86400000,0)/paidSal.length):0;
   document.getElementById('trd-avg-cycles').innerHTML=`
     <div style="display:flex;gap:12px;">
-      <div class="mc" style="flex:1;"><div class="lb">Avg days to pay supplier</div><div class="vl amber">${avgSupCycle} days</div></div>
-      <div class="mc" style="flex:1;"><div class="lb">Avg days to receive from customer</div><div class="vl blue">${avgCustCycle} days</div></div>
+      <div class="mc" style="flex:1;"><div class="lb">Avg days to pay supplier</div><div class="vl amber">${avgCycle} days</div></div>
+      <div class="mc" style="flex:1;"><div class="lb">Total trades all time</div><div class="vl blue">${DATA.trdPur.length}</div></div>
     </div>`;
 
-  destroyChart('trdBS');destroyChart('trdMat');
-  const allMonths=[...new Set([...DATA.trdPur.map(r=>r.month_year),...DATA.trdSal.map(r=>r.month_year)])].sort();
-  charts.trdBS=new Chart(document.getElementById('trdBuySell'),{type:'bar',data:{labels:allMonths,datasets:[{label:'Purchases',data:allMonths.map(mo=>DATA.trdPur.filter(r=>r.month_year===mo).reduce((a,r)=>a+Number(r.amount||0),0)),backgroundColor:'#dc2626',borderRadius:4},{label:'Sales',data:allMonths.map(mo=>DATA.trdSal.filter(r=>r.month_year===mo).reduce((a,r)=>a+Number(r.amount||0),0)),backgroundColor:'#1D9E75',borderRadius:4}]},options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:10},color:TC(),boxWidth:10}}}}});
-  const mats=[...new Set([...DATA.trdPur.map(r=>r.material),...DATA.trdSal.map(r=>r.material)])].filter(Boolean);
-  charts.trdMat=new Chart(document.getElementById('trdMaterial'),{type:'bar',data:{labels:mats,datasets:[{label:'Buy Kg',data:mats.map(mt=>filterByMonth(DATA.trdPur,'month_year',m).filter(r=>r.material===mt).reduce((a,r)=>a+Number(r.qty_kg||0),0)),backgroundColor:'#dc2626',borderRadius:3},{label:'Sell Kg',data:mats.map(mt=>filterByMonth(DATA.trdSal,'month_year',m).filter(r=>r.material===mt).reduce((a,r)=>a+Number(r.qty_kg||0),0)),backgroundColor:'#1D9E75',borderRadius:3}]},options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:10},color:TC(),boxWidth:10}}}}});
-}
-
-function renderTrdPurchases(){
-  const m=getMonth('trd-pur-month');
-  const pur=filterByMonth(DATA.trdPur,'month_year',m);
-  const totalAmt=pur.reduce((a,r)=>a+Number(r.amount||0),0);
-  const unpaid=pur.filter(r=>!r.payment_date);
-  document.getElementById('trd-pur-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Total purchases</div><div class="vl">${fmtMoney(totalAmt)}</div><div class="sb">${pur.length} bills</div></div>
-    <div class="mc"><div class="lb">Outstanding (I owe)</div><div class="vl red">${fmtMoney(unpaid.reduce((a,r)=>a+Number(r.amount||0),0))}</div><div class="sb">${unpaid.length} unpaid</div></div>
-    <div class="mc"><div class="lb">Paid</div><div class="vl green">${fmtMoney(pur.filter(r=>r.payment_date).reduce((a,r)=>a+Number(r.amount||0),0))}</div></div>`;
-
-  document.getElementById('trd-pur-tbody').innerHTML=[...DATA.trdPur].sort((a,b)=>new Date(b.purchase_date)-new Date(a.purchase_date)).map(r=>{
-    const dd=dueDate(r.purchase_date,r.payment_terms_days);
-    let st,sc;
-    if(r.payment_date){st='Paid';sc='green';}
-    else if(dd<TODAY){st='Overdue';sc='red';}
-    else{st='Pending';sc='amber';}
-    const paidBtn=!r.payment_date?`<button class="btn btn-sm btn-green" onclick="markPaid('trading_purchases','${r.id}','payment_date','payment_amount')">✓ I Paid</button> `:'';
-    return`<tr>
-      <td>${fmtDate(r.purchase_date)}</td><td>${r.bill_no}</td><td>${r.supplier}</td><td>${r.material}</td>
-      <td>${Number(r.qty_kg).toLocaleString('en-IN')}</td><td>${fmtMoney(r.rate_per_kg)}</td><td>${fmtMoney(r.amount)}</td>
-      <td>${fmtDate(dd.toISOString().split('T')[0])}</td><td>${r.payment_date?fmtDate(r.payment_date):'—'}</td>
-      <td>${badge(st,sc)}</td>
-      <td style="white-space:nowrap">${paidBtn}<button class="btn btn-sm" onclick="openModal('trd-pur-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-red" onclick="deleteRow('trading_purchases','${r.id}','purchase')">🗑</button></td>
-    </tr>`;
-  }).join('')||'<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No purchases yet</td></tr>';
-}
-
-function renderTrdSales(){
-  const m=getMonth('trd-sal-month');
-  const sal=filterByMonth(DATA.trdSal,'month_year',m);
-  const totalAmt=sal.reduce((a,r)=>a+Number(r.amount||0),0);
-  const unreceived=sal.filter(r=>!r.payment_received_date);
-  document.getElementById('trd-sal-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Total sales</div><div class="vl green">${fmtMoney(totalAmt)}</div><div class="sb">${sal.length} invoices</div></div>
-    <div class="mc"><div class="lb">Outstanding (they owe)</div><div class="vl amber">${fmtMoney(unreceived.reduce((a,r)=>a+Number(r.amount||0),0))}</div><div class="sb">${unreceived.length} pending</div></div>
-    <div class="mc"><div class="lb">Received</div><div class="vl green">${fmtMoney(sal.filter(r=>r.payment_received_date).reduce((a,r)=>a+Number(r.amount||0),0))}</div></div>`;
-
-  document.getElementById('trd-sal-tbody').innerHTML=[...DATA.trdSal].sort((a,b)=>new Date(b.sale_date)-new Date(a.sale_date)).map(r=>{
-    const dd=dueDate(r.sale_date,r.payment_terms_days);
-    let st,sc;
-    if(r.payment_received_date){st='Received';sc='green';}
-    else if(dd<TODAY){st='Overdue';sc='red';}
-    else{st='Pending';sc='amber';}
-    const recvBtn=!r.payment_received_date?`<button class="btn btn-sm btn-amber" onclick="markRecvd('${r.id}')">₹ Received</button> `:'';
-    return`<tr>
-      <td>${fmtDate(r.sale_date)}</td><td>${r.invoice_no}</td><td>${r.customer}</td><td>${r.material}</td>
-      <td>${Number(r.qty_kg).toLocaleString('en-IN')}</td><td>${fmtMoney(r.rate_per_kg)}</td><td>${fmtMoney(r.amount)}</td>
-      <td>${fmtDate(dd.toISOString().split('T')[0])}</td><td>${r.payment_received_date?fmtDate(r.payment_received_date):'—'}</td>
-      <td>${badge(st,sc)}</td>
-      <td style="white-space:nowrap">${recvBtn}<button class="btn btn-sm" onclick="openModal('trd-sal-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-red" onclick="deleteRow('trading_sales','${r.id}','sale')">🗑</button></td>
-    </tr>`;
-  }).join('')||'<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No sales yet</td></tr>';
+  // Monthly chart
+  destroyChart('trdBS');
+  const allMonths=[...new Set(DATA.trdPur.map(r=>r.month_year))].filter(Boolean).sort();
+  if(document.getElementById('trdBuySell')){
+    charts.trdBS=new Chart(document.getElementById('trdBuySell'),{
+      type:'bar',
+      data:{labels:allMonths,datasets:[{label:'Trade value',data:allMonths.map(mo=>DATA.trdPur.filter(r=>r.month_year===mo).reduce((a,r)=>a+Number(r.amount||0),0)),backgroundColor:'#2563eb',borderRadius:4}]},
+      options:{...BO(),plugins:{legend:{display:false}}}
+    });
+  }
+  destroyChart('trdMat');
+  const mats=[...new Set(DATA.trdPur.map(r=>r.material))].filter(Boolean);
+  if(document.getElementById('trdMaterial')){
+    charts.trdMat=new Chart(document.getElementById('trdMaterial'),{
+      type:'bar',
+      data:{labels:mats,datasets:[{label:'Qty Kg',data:mats.map(mt=>filterByMonth(DATA.trdPur,'month_year',m).filter(r=>r.material===mt).reduce((a,r)=>a+Number(r.qty_kg||0),0)),backgroundColor:'#1D9E75',borderRadius:4}]},
+      options:{...BO(),plugins:{legend:{display:false}}}
+    });
+  }
 }
 
 function renderTrdMaterials(){
   document.getElementById('trd-mat-tbody').innerHTML=DATA.trdMat.map(r=>`<tr><td>${r.material_name}</td><td>${r.unit}</td><td>${r.description||'—'}</td>
     <td><button class="btn btn-sm btn-red" onclick="deleteRow('trading_materials','${r.id}','material')">🗑</button></td></tr>`).join('')
-    ||'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--txt2);">No materials defined yet. Add your scrap types.</td></tr>';
+    ||'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--txt2);">No materials. Add your scrap types.</td></tr>';
 }
 
 // ===== INIT — handled by checkSession() above =====
