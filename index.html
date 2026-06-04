@@ -745,6 +745,12 @@ let DATA={mis:[],inv:[],stock:[],dispatches:[],bd:[],tasks:[],trdPur:[],trdSal:[
 let editId=null, charts={};
 
 // ===== UTILS =====
+const MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmtMonthYear(dateStr){
+  if(!dateStr)return'';
+  const d=new Date(dateStr);
+  return MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear();
+}
 const fmtDate=d=>{if(!d)return'—';return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'});};
 const fmtKg=n=>Number(n||0).toLocaleString('en-IN')+' Kg';
 const fmtMoney=n=>'₹'+Number(n||0).toLocaleString('en-IN');
@@ -762,7 +768,7 @@ const GC=()=>DK()?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
 const BO=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC(),font:{size:10}},grid:{color:GC()}},y:{ticks:{color:TC(),font:{size:10}},grid:{color:GC()}}}});
 
 // ===== MONTH SELECTORS =====
-const MONTHS=['Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026'];
+const MONTHS=['Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026'];
 function populateMonthSelectors(){
   ['mfg-dash-month','mis-month','stock-month','dispatch-month','bd-month','trd-dash-month','trd-pur-month','trd-sal-month'].forEach(id=>{
     const el=document.getElementById(id);
@@ -988,7 +994,7 @@ async function loadAll(){
 async function saveMIS(){
   const g=id=>document.getElementById(id)?.value;
   const row={
-    entry_date:g('m-date'),target_kg:parseFloat(g('m-target'))||5000,
+    entry_date:g('m-date'),month_year:g('m-date')?fmtMonthYear(g('m-date')):'',target_kg:parseFloat(g('m-target'))||5000,
     manpower_day:parseInt(g('m-mpd'))||0,manpower_night:parseInt(g('m-mpn'))||0,
     washing_run_day:parseFloat(g('m-wrd'))||0,agglo_run_day:parseFloat(g('m-ard'))||0,extruder_run_day:parseFloat(g('m-erd'))||0,
     washing_run_night:parseFloat(g('m-wrn'))||0,agglo_run_night:parseFloat(g('m-arn'))||0,extruder_run_night:parseFloat(g('m-ern'))||0,
@@ -1025,7 +1031,7 @@ async function saveStock(){
 
 async function saveDispatch(){
   const g=id=>document.getElementById(id)?.value;
-  const row={dispatch_date:g('d-date'),customer:g('d-cust'),material_type:g('d-mat'),qty_kg:parseFloat(g('d-qty'))||0,rate_per_kg:parseFloat(g('d-rate'))||0,amount:parseFloat(g('d-amt'))||0,vehicle_no:g('d-veh'),lr_no:g('d-lr'),invoice_no:g('d-inv'),destination:g('d-dest'),status:g('d-status'),notes:g('d-notes'),updated_at:new Date().toISOString()};
+  const row={dispatch_date:g('d-date'),month_year:g('d-date')?fmtMonthYear(g('d-date')):'',customer:g('d-cust'),material_type:g('d-mat'),qty_kg:parseFloat(g('d-qty'))||0,rate_per_kg:parseFloat(g('d-rate'))||0,amount:parseFloat(g('d-amt'))||0,vehicle_no:g('d-veh'),lr_no:g('d-lr'),invoice_no:g('d-inv'),destination:g('d-dest'),status:g('d-status'),notes:g('d-notes'),updated_at:new Date().toISOString()};
   if(!row.dispatch_date||!row.customer){toast('Date and customer required','err');return;}
   const{error}=editId?await sb.from('dispatches').update(row).eq('id',editId):await sb.from('dispatches').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
@@ -1052,7 +1058,7 @@ async function saveTask(){
 
 async function saveTrdPurchase(){
   const g=id=>document.getElementById(id)?.value;
-  const row={purchase_date:g('tp-date'),bill_no:g('tp-bill'),supplier:g('tp-supplier'),material:g('tp-material'),qty_kg:parseFloat(g('tp-qty'))||0,rate_per_kg:parseFloat(g('tp-rate'))||0,amount:parseFloat(g('tp-amt'))||0,payment_terms_days:parseInt(g('tp-terms'))||15,payment_date:g('tp-paid')||null,payment_amount:parseFloat(g('tp-pamt'))||0,notes:g('tp-notes'),updated_at:new Date().toISOString()};
+  const row={purchase_date:g('tp-date'),month_year:g('tp-date')?fmtMonthYear(g('tp-date')):'',bill_no:g('tp-bill'),supplier:g('tp-supplier'),material:g('tp-material'),qty_kg:parseFloat(g('tp-qty'))||0,rate_per_kg:parseFloat(g('tp-rate'))||0,amount:parseFloat(g('tp-amt'))||0,payment_terms_days:parseInt(g('tp-terms'))||15,payment_date:g('tp-paid')||null,payment_amount:parseFloat(g('tp-pamt'))||0,notes:g('tp-notes'),updated_at:new Date().toISOString()};
   if(!row.purchase_date||!row.bill_no){toast('Date and bill no required','err');return;}
   const{error}=editId?await sb.from('trading_purchases').update(row).eq('id',editId):await sb.from('trading_purchases').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
@@ -1061,7 +1067,7 @@ async function saveTrdPurchase(){
 
 async function saveTrdSale(){
   const g=id=>document.getElementById(id)?.value;
-  const row={sale_date:g('ts-date'),invoice_no:g('ts-inv'),customer:g('ts-customer'),material:g('ts-material'),qty_kg:parseFloat(g('ts-qty'))||0,rate_per_kg:parseFloat(g('ts-rate'))||0,amount:parseFloat(g('ts-amt'))||0,payment_terms_days:parseInt(g('ts-terms'))||30,payment_received_date:g('ts-recvd')||null,payment_received_amount:parseFloat(g('ts-ramt'))||0,notes:g('ts-notes'),updated_at:new Date().toISOString()};
+  const row={sale_date:g('ts-date'),month_year:g('ts-date')?fmtMonthYear(g('ts-date')):'',invoice_no:g('ts-inv'),customer:g('ts-customer'),material:g('ts-material'),qty_kg:parseFloat(g('ts-qty'))||0,rate_per_kg:parseFloat(g('ts-rate'))||0,amount:parseFloat(g('ts-amt'))||0,payment_terms_days:parseInt(g('ts-terms'))||30,payment_received_date:g('ts-recvd')||null,payment_received_amount:parseFloat(g('ts-ramt'))||0,notes:g('ts-notes'),updated_at:new Date().toISOString()};
   if(!row.sale_date||!row.invoice_no){toast('Date and invoice required','err');return;}
   const{error}=editId?await sb.from('trading_sales').update(row).eq('id',editId):await sb.from('trading_sales').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
