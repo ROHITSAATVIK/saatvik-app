@@ -1,1234 +1,1506 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saatvik Enterprise — Management System</title>
+<title>Saatvik Enterprise</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root {
-  --acc: #1D9E75; --acc-d: #0F6E56; --acc-l: #E1F5EE;
-  --bg: #f5f5f3; --bg2: #ffffff; --bg3: #f0efe8;
-  --txt: #1a1a18; --txt2: #6b6b64; --txt3: #9a9a92;
-  --bdr: rgba(0,0,0,0.1); --bdr2: rgba(0,0,0,0.18);
-  --rad: 8px; --rad2: 12px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--txt); font-size: 13px; }
-.app { display: flex; min-height: 100vh; }
+:root{--acc:#1D9E75;--acc2:#2563eb;--bg:#f4f4f2;--bg2:#fff;--bg3:#f0efe8;--txt:#18181b;--txt2:#71717a;--txt3:#a1a1aa;--bdr:rgba(0,0,0,0.09);--bdr2:rgba(0,0,0,0.15);--rad:8px;--rad2:12px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);font-size:13px;}
+.app{display:flex;min-height:100vh;}
 
+/* LOGIN PAGE */
+.login-page{display:flex;min-height:100vh;align-items:center;justify-content:center;background:var(--bg);}
+.login-box{background:var(--bg2);border:1px solid var(--bdr2);border-radius:16px;padding:40px 36px;width:380px;max-width:95vw;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.1);}
+.login-logo{width:52px;height:52px;border-radius:14px;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;}
+.login-title{font-size:20px;font-weight:700;color:var(--txt);margin-bottom:4px;}
+.login-sub{font-size:12px;color:var(--txt2);margin-bottom:28px;}
+.login-divider{display:flex;align-items:center;gap:10px;margin:20px 0;color:var(--txt3);font-size:11px;}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--bdr2);}
+.login-input{width:100%;padding:10px 12px;border:1px solid var(--bdr2);border-radius:var(--rad);font-size:13px;font-family:inherit;background:var(--bg2);color:var(--txt);margin-bottom:10px;}
+.login-input:focus{outline:none;border-color:var(--acc);}
+.login-btn{width:100%;padding:11px;border:none;border-radius:var(--rad);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;}
+.login-btn-google{background:#fff;border:1px solid var(--bdr2);color:var(--txt);display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;}
+.login-btn-google:hover{background:var(--bg3);}
+.login-btn-primary{background:var(--acc);color:#fff;}
+.login-btn-primary:hover{background:#0F6E56;}
+.login-error{background:#fee2e2;color:#b91c1c;padding:8px 12px;border-radius:var(--rad);font-size:12px;margin-bottom:10px;display:none;}
+.login-footer{font-size:10px;color:var(--txt3);margin-top:20px;}
+.logout-btn{padding:4px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);background:transparent;font-size:11px;cursor:pointer;color:var(--txt2);}
+.logout-btn:hover{background:#fee2e2;color:#b91c1c;border-color:#fecaca;}
 /* SIDEBAR */
-.sidebar { width: 200px; min-width: 200px; background: var(--bg2); border-right: 1px solid var(--bdr); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
-.logo { padding: 16px; border-bottom: 1px solid var(--bdr); }
-.logo-name { font-size: 13px; font-weight: 600; color: var(--txt); }
-.logo-sub { font-size: 10px; color: var(--txt2); margin-top: 1px; }
-.logo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--acc); display: inline-block; margin-right: 5px; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
-nav { flex: 1; padding: 6px 0; overflow-y: auto; }
-.ni { display: flex; align-items: center; gap: 8px; padding: 9px 14px; cursor: pointer; color: var(--txt2); border-left: 2px solid transparent; font-size: 12px; transition: all 0.12s; }
-.ni:hover { background: var(--bg3); color: var(--txt); }
-.ni.active { background: var(--acc-l); color: var(--acc-d); border-left: 2px solid var(--acc); font-weight: 500; }
-.ni svg { width: 15px; height: 15px; flex-shrink: 0; }
-.sidebar-foot { padding: 12px 14px; border-top: 1px solid var(--bdr); font-size: 10px; color: var(--txt3); }
-.sync-status { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--txt3); margin-top: 3px; }
-.sync-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--acc); }
-
+.sidebar{width:210px;min-width:210px;background:var(--bg2);border-right:1px solid var(--bdr);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.logo{padding:14px 16px;border-bottom:1px solid var(--bdr);}
+.logo-name{font-size:13px;font-weight:700;color:var(--txt);}
+.logo-sub{font-size:10px;color:var(--txt2);margin-top:1px;}
+.biz-switcher{display:flex;margin:8px 10px;border-radius:var(--rad);overflow:hidden;border:1px solid var(--bdr2);}
+.biz-btn{flex:1;padding:6px 4px;font-size:10px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--txt2);transition:all .15s;text-align:center;}
+.biz-btn.active-mfg{background:#dcfce7;color:#15803d;}
+.biz-btn.active-trd{background:#dbeafe;color:#1d4ed8;}
+.nav-section{padding:4px 0;}
+.nav-label{font-size:9px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:6px 16px 3px;}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;color:var(--txt2);border-left:2px solid transparent;font-size:12px;transition:all .12s;}
+.ni:hover{background:var(--bg3);color:var(--txt);}
+.ni.active{color:var(--txt);border-left:2px solid var(--acc);background:#f0fdf4;font-weight:600;}
+.ni.active.trading{border-left-color:var(--acc2);background:#eff6ff;}
+.ni svg{width:14px;height:14px;flex-shrink:0;}
+.sidebar-foot{padding:10px 14px;border-top:1px solid var(--bdr);margin-top:auto;}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);display:inline-block;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 /* MAIN */
-.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-.topbar { background: var(--bg2); border-bottom: 1px solid var(--bdr); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 30; }
-.topbar-title { font-size: 14px; font-weight: 600; color: var(--txt); }
-.tb-right { display: flex; align-items: center; gap: 8px; }
-.content { padding: 18px 20px; flex: 1; }
-
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0;}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:30;}
+.topbar-title{font-size:14px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:8px;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.month-selector{padding:5px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);background:var(--bg2);color:var(--txt);font-size:12px;font-family:inherit;cursor:pointer;}
+.content{padding:18px 20px;flex:1;}
 /* BUTTONS */
-.btn { padding: 6px 13px; border: 1px solid var(--bdr2); background: var(--bg2); border-radius: var(--rad); font-size: 12px; cursor: pointer; color: var(--txt); display: inline-flex; align-items: center; gap: 5px; font-family: inherit; transition: all 0.1s; }
-.btn:hover { background: var(--bg3); }
-.btn:active { transform: scale(0.98); }
-.btn-primary { background: var(--acc); border-color: var(--acc); color: #fff; }
-.btn-primary:hover { background: var(--acc-d); }
-.btn-danger { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
-.btn-danger:hover { background: #fee2e2; }
-.btn-success { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
-.btn-sm { padding: 3px 8px; font-size: 11px; }
-.btn-icon { padding: 4px 7px; }
-
-/* CARDS */
-.card { background: var(--bg2); border: 1px solid var(--bdr); border-radius: var(--rad2); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 14px; }
-.card-head { padding: 11px 15px; border-bottom: 1px solid var(--bdr); display: flex; align-items: center; justify-content: space-between; }
-.card-title { font-size: 12px; font-weight: 600; color: var(--txt); display: flex; align-items: center; gap: 6px; }
-.card-body { padding: 15px; }
-
+.btn{padding:6px 12px;border:1px solid var(--bdr2);background:var(--bg2);border-radius:var(--rad);font-size:12px;cursor:pointer;color:var(--txt);display:inline-flex;align-items:center;gap:5px;font-family:inherit;transition:all .1s;white-space:nowrap;}
+.btn:hover{background:var(--bg3);}
+.btn:active{transform:scale(.98);}
+.btn-green{background:#1D9E75;border-color:#1D9E75;color:#fff;}
+.btn-green:hover{background:#0F6E56;}
+.btn-blue{background:#2563eb;border-color:#2563eb;color:#fff;}
+.btn-blue:hover{background:#1d4ed8;}
+.btn-red{background:#fef2f2;border-color:#fecaca;color:#b91c1c;}
+.btn-red:hover{background:#fee2e2;}
+.btn-amber{background:#fffbeb;border-color:#fde68a;color:#92400e;}
+.btn-amber:hover{background:#fef3c7;}
+.btn-sm{padding:3px 8px;font-size:11px;}
+.btn-wa{background:#25D366;border-color:#25D366;color:#fff;font-weight:600;}
+.btn-wa:hover{background:#128C7E;}
 /* METRIC CARDS */
-.metrics { display: grid; gap: 10px; margin-bottom: 16px; }
-.metrics-4 { grid-template-columns: repeat(4, 1fr); }
-.metrics-3 { grid-template-columns: repeat(3, 1fr); }
-.metrics-5 { grid-template-columns: repeat(5, 1fr); }
-.mc { background: var(--bg3); border-radius: var(--rad); padding: 13px; }
-.mc .lb { font-size: 10px; color: var(--txt2); margin-bottom: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: .4px; }
-.mc .vl { font-size: 22px; font-weight: 700; color: var(--txt); }
-.mc .sb { font-size: 10px; color: var(--txt2); margin-top: 2px; }
-.green { color: #15803d !important; } .red { color: #b91c1c !important; } .amber { color: #b45309 !important; } .blue { color: #1d4ed8 !important; }
-
+.metrics{display:grid;gap:9px;margin-bottom:14px;}
+.g4{grid-template-columns:repeat(4,1fr);}
+.g3{grid-template-columns:repeat(3,1fr);}
+.g5{grid-template-columns:repeat(5,1fr);}
+.mc{background:var(--bg3);border-radius:var(--rad);padding:12px;}
+.mc .lb{font-size:10px;color:var(--txt2);margin-bottom:3px;font-weight:500;text-transform:uppercase;letter-spacing:.3px;}
+.mc .vl{font-size:20px;font-weight:700;}
+.mc .sb{font-size:10px;color:var(--txt2);margin-top:2px;}
+.green{color:#15803d!important;}.red{color:#b91c1c!important;}.amber{color:#b45309!important;}.blue{color:#1d4ed8!important;}
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rad2);overflow:hidden;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.card-head{padding:10px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:12px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:6px;}
+.card-body{padding:14px;}
 /* GRID */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
 /* TABLE */
-.tw { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; }
-th { padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 600; color: var(--txt2); border-bottom: 1px solid var(--bdr); background: var(--bg3); white-space: nowrap; text-transform: uppercase; letter-spacing: .3px; }
-td { padding: 9px 12px; font-size: 12px; color: var(--txt); border-bottom: 1px solid var(--bdr); vertical-align: middle; }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: var(--bg3); }
-
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{padding:7px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--txt2);border-bottom:1px solid var(--bdr);background:var(--bg3);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px;}
+td{padding:8px 11px;font-size:12px;color:var(--txt);border-bottom:1px solid var(--bdr);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafaf9;}
 /* BADGES */
-.badge { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
-.b-green { background: #dcfce7; color: #15803d; }
-.b-red { background: #fee2e2; color: #b91c1c; }
-.b-amber { background: #fef3c7; color: #b45309; }
-.b-blue { background: #dbeafe; color: #1d4ed8; }
-.b-gray { background: #f1f5f9; color: #475569; }
-.b-purple { background: #ede9fe; color: #6d28d9; }
-
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap;}
+.b-green{background:#dcfce7;color:#15803d;}.b-red{background:#fee2e2;color:#b91c1c;}.b-amber{background:#fef3c7;color:#92400e;}.b-blue{background:#dbeafe;color:#1d4ed8;}.b-gray{background:#f1f5f9;color:#475569;}.b-purple{background:#ede9fe;color:#6d28d9;}
 /* MODAL */
-.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: flex-start; justify-content: center; padding-top: 60px; }
-.modal-bg.open { display: flex; }
-.modal { background: var(--bg2); border-radius: var(--rad2); border: 1px solid var(--bdr2); width: 520px; max-width: 95vw; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-.modal-head { padding: 14px 16px; border-bottom: 1px solid var(--bdr); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg2); z-index: 1; }
-.modal-title { font-size: 13px; font-weight: 600; color: var(--txt); }
-.modal-body { padding: 16px; }
-.modal-foot { padding: 12px 16px; border-top: 1px solid var(--bdr); display: flex; justify-content: flex-end; gap: 8px; position: sticky; bottom: 0; background: var(--bg2); }
-.frow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-.frow-1 { grid-template-columns: 1fr; }
-.frow-3 { grid-template-columns: 1fr 1fr 1fr; }
-.fg { display: flex; flex-direction: column; gap: 4px; }
-.fg label { font-size: 11px; color: var(--txt2); font-weight: 500; }
-.fg input, .fg select, .fg textarea { padding: 7px 9px; border: 1px solid var(--bdr2); border-radius: var(--rad); background: var(--bg2); color: var(--txt); font-size: 12px; font-family: inherit; width: 100%; transition: border-color 0.15s; }
-.fg input:focus, .fg select:focus, .fg textarea:focus { outline: none; border-color: var(--acc); }
-.fg textarea { resize: vertical; min-height: 60px; }
-.section-label { font-size: 10px; font-weight: 600; color: var(--txt2); text-transform: uppercase; letter-spacing: .5px; margin: 12px 0 6px; padding-bottom: 4px; border-bottom: 1px solid var(--bdr); }
-
-/* ALERTS */
-.alert { padding: 8px 13px; font-size: 11px; display: flex; align-items: center; gap: 7px; border-bottom: 1px solid var(--bdr); }
-.alert-red { background: #fef2f2; color: #991b1b; }
-.alert-amber { background: #fffbeb; color: #92400e; }
-
-/* PROGRESS */
-.pbar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
-.pbar-label { font-size: 11px; color: var(--txt); width: 72px; flex-shrink: 0; }
-.pbar-outer { flex: 1; height: 8px; background: var(--bg3); border-radius: 10px; overflow: hidden; }
-.pbar-fill { height: 100%; border-radius: 10px; transition: width 1.1s ease; }
-.pbar-val { font-size: 11px; color: var(--txt2); width: 34px; text-align: right; }
-
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-start;justify-content:center;padding-top:50px;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--rad2);border:1px solid var(--bdr2);width:540px;max-width:96vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal-head{padding:13px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:1;}
+.modal-title{font-size:13px;font-weight:700;}
+.modal-body{padding:16px;}
+.modal-foot{padding:11px 16px;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg2);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.frow-1{grid-template-columns:1fr;}
+.frow-3{grid-template-columns:1fr 1fr 1fr;}
+.fg{display:flex;flex-direction:column;gap:3px;}
+.fg label{font-size:11px;color:var(--txt2);font-weight:500;}
+.fg input,.fg select,.fg textarea{padding:7px 9px;border:1px solid var(--bdr2);border-radius:var(--rad);background:var(--bg2);color:var(--txt);font-size:12px;font-family:inherit;width:100%;}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--acc);}
+.fg textarea{resize:vertical;min-height:56px;}
+.sec-label{font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--bdr);}
+.calc-note{font-size:10px;color:var(--acc);margin-top:2px;}
+/* PBAR */
+.pbar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.pbar-label{font-size:11px;color:var(--txt);width:80px;flex-shrink:0;}
+.pbar-outer{flex:1;height:7px;background:var(--bg3);border-radius:10px;overflow:hidden;}
+.pbar-fill{height:100%;border-radius:10px;transition:width 1s ease;}
+.pbar-val{font-size:11px;color:var(--txt2);width:36px;text-align:right;}
 /* STOCK FLOW */
-.sf { display: flex; align-items: center; }
-.sfb { flex: 1; background: var(--bg3); border-radius: var(--rad); padding: 10px; text-align: center; }
-.sfb .sl { font-size: 9px; color: var(--txt2); text-transform: uppercase; letter-spacing: .3px; }
-.sfb .sv { font-size: 16px; font-weight: 700; margin-top: 2px; }
-.sfa { font-size: 16px; color: var(--txt3); padding: 0 4px; flex-shrink: 0; }
-
+.sf{display:flex;align-items:center;margin-top:4px;}
+.sfb{flex:1;background:var(--bg3);border-radius:var(--rad);padding:10px;text-align:center;}
+.sfb .sl{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.3px;}
+.sfb .sv{font-size:15px;font-weight:700;margin-top:2px;}
+.sfa{font-size:15px;color:var(--txt3);padding:0 3px;flex-shrink:0;}
+/* WA PREVIEW */
+.wa-preview{background:#0b141a;color:#e9edef;border-radius:var(--rad2);padding:16px;font-size:12px;line-height:1.8;font-family:'Courier New',monospace;white-space:pre-wrap;margin-top:10px;}
 /* TOAST */
-.toast { position: fixed; bottom: 24px; right: 24px; background: var(--txt); color: #fff; padding: 10px 16px; border-radius: var(--rad); font-size: 12px; z-index: 999; opacity: 0; transform: translateY(10px); transition: all 0.25s; pointer-events: none; display: flex; align-items: center; gap: 8px; }
-.toast.show { opacity: 1; transform: translateY(0); }
-.toast.success { background: var(--acc-d); }
-.toast.error { background: #b91c1c; }
-
-/* PAGES */
-.page { display: none; flex-direction: column; }
-.page.active { display: flex; }
-
+.toast{position:fixed;bottom:24px;right:24px;background:#18181b;color:#fff;padding:10px 16px;border-radius:var(--rad);font-size:12px;z-index:999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.ok{background:#15803d;}.toast.err{background:#b91c1c;}
+/* PAGE */
+.page{display:none;flex-direction:column;}
+.page.active{display:flex;}
 /* LOADING */
-.loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--txt2); gap: 10px; }
-.spinner { width: 18px; height: 18px; border: 2px solid var(--bdr2); border-top-color: var(--acc); border-radius: 50%; animation: spin 0.7s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* CHART CONTAINERS */
-.chart-wrap { position: relative; }
-
-/* INLINE EDITABLE */
-.editable-cell { cursor: pointer; border-radius: 3px; padding: 1px 3px; transition: background 0.1s; }
-.editable-cell:hover { background: var(--acc-l); }
-.row-saving { opacity: 0.6; }
-
-/* SHIFT SECTION */
-.shift-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-.shift-card { background: var(--bg3); border-radius: var(--rad); padding: 10px; }
-.shift-lbl { font-size: 10px; color: var(--txt2); font-weight: 500; margin-bottom: 3px; }
-.shift-val { font-size: 15px; font-weight: 700; }
+.loading{display:flex;align-items:center;justify-content:center;padding:32px;color:var(--txt2);gap:10px;}
+.spin{width:16px;height:16px;border:2px solid var(--bdr2);border-top-color:var(--acc);border-radius:50%;animation:spinning .7s linear infinite;}
+@keyframes spinning{to{transform:rotate(360deg);}}
+/* BIZ DIVIDER */
+.biz-divider{height:3px;background:linear-gradient(90deg,#1D9E75,#2563eb);margin:0;}
+.section-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
+.mfg-badge{background:#dcfce7;color:#15803d;}
+.trd-badge{background:#dbeafe;color:#1d4ed8;}
 </style>
 </head>
 <body>
-
 <div class="toast" id="toast"></div>
 
-<div class="app">
+<!-- LOGIN PAGE -->
+<div class="login-page" id="login-page">
+  <div class="login-box">
+    <div class="login-logo">🏭</div>
+    <div class="login-title">Saatvik Enterprise</div>
+    <div class="login-sub">Management System · saatvik.biz</div>
+
+    <div class="login-error" id="login-error"></div>
+    <input type="text" class="login-input" id="login-user" placeholder="Username" autocomplete="username">
+    <input type="password" class="login-input" id="login-pass" placeholder="Password" onkeydown="if(event.key==='Enter')loginWithPassword()">
+    <button class="login-btn login-btn-primary" id="login-submit-btn" onclick="loginWithPassword()">Sign In →</button>
+
+    <div class="login-footer">Saatvik Enterprise · Plastic Recycling &amp; Scrap Trading · Kolkata</div>
+  </div>
+</div>
+
+<div class="app" id="main-app" style="display:none;">
+
+<!-- SIDEBAR -->
 <div class="sidebar">
   <div class="logo">
-    <div class="logo-name"><span class="logo-dot"></span>Saatvik Enterprise</div>
-    <div class="logo-sub">saatvik.biz &nbsp;·&nbsp; Admin</div>
+    <div class="logo-name">Saatvik Enterprise</div>
+    <div class="logo-sub"><span class="sync-dot"></span> <span id="sync-txt">saatvik.biz · Admin</span></div>
   </div>
-  <nav>
-    <div class="ni active" onclick="goTo('dashboard')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Dashboard
-    </div>
-    <div class="ni" onclick="goTo('production')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      Production / MIS
-    </div>
-    <div class="ni" onclick="goTo('inventory')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-      Inventory
-    </div>
-    <div class="ni" onclick="goTo('stock')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      Stock Management
-    </div>
-    <div class="ni" onclick="goTo('breakdown')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-      Breakdown Log
-    </div>
-    <div class="ni" onclick="goTo('scrap')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.67"/></svg>
-      Scrap & Payments
-    </div>
-    <div class="ni" onclick="goTo('tasks')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      Tasks
-    </div>
-  </nav>
+  <div class="biz-switcher">
+    <button class="biz-btn active-mfg" id="sw-mfg" onclick="switchBiz('mfg')">🏭 Mfg</button>
+    <button class="biz-btn" id="sw-trd" onclick="switchBiz('trd')">♻️ Trading</button>
+  </div>
+  <!-- MFG NAV -->
+  <div class="nav-section" id="nav-mfg">
+    <div class="nav-label">Manufacturing</div>
+    <div class="ni active" onclick="goTo('mfg-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+    <div class="ni" onclick="goTo('production')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Production / MIS</div>
+    <div class="ni" onclick="goTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory</div>
+    <div class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Stock Management</div>
+    <div class="ni" onclick="goTo('dispatch')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Dispatch</div>
+    <div class="ni" onclick="goTo('breakdown')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Breakdown Log</div>
+    <div class="ni" onclick="goTo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tasks</div>
+  </div>
+  <!-- TRADING NAV -->
+  <div class="nav-section" id="nav-trd" style="display:none;">
+    <div class="nav-label">Trading (Scrap)</div>
+    <div class="ni" onclick="goTo('trd-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+    <div class="ni" onclick="goTo('trd-purchases')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Purchases</div>
+    <div class="ni" onclick="goTo('trd-sales')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Sales</div>
+    <div class="ni" onclick="goTo('trd-materials')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Materials</div>
+  </div>
   <div class="sidebar-foot">
-    <div>saatvikent2@gmail.com</div>
-    <div class="sync-status"><div class="sync-dot"></div><span id="sync-txt">Connected to Supabase</span></div>
+    <div style="font-size:10px;color:var(--txt2);" id="logged-in-email">saatvikent2@gmail.com</div>
+    <div style="font-size:10px;color:var(--txt3);margin-top:2px;" id="last-sync">Syncing...</div>
+    <button class="logout-btn" style="margin-top:8px;width:100%;" onclick="logout()">Sign out</button>
   </div>
 </div>
 
+<!-- MAIN -->
 <div class="main">
 
-<!-- ===== DASHBOARD ===== -->
-<div id="page-dashboard" class="page active">
+<!-- ========== MFG DASHBOARD ========== -->
+<div id="page-mfg-dashboard" class="page active">
   <div class="topbar">
-    <div class="topbar-title">Dashboard</div>
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭 Manufacturing</span>Dashboard</div>
     <div class="tb-right">
-      <span id="dash-date" style="font-size:11px;color:var(--txt2);"></span>
-      <button class="btn" onclick="loadAll()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.67"/></svg>
-        Refresh
-      </button>
+      <select class="month-selector" id="mfg-dash-month" onchange="renderMfgDashboard()"></select>
+      <button class="btn" onclick="loadAll()">↻ Refresh</button>
     </div>
   </div>
   <div class="content">
-    <div class="metrics metrics-4" id="dash-metrics">
-      <div class="mc"><div class="lb">Loading...</div><div class="vl">—</div></div>
-      <div class="mc"><div class="lb">Loading...</div><div class="vl">—</div></div>
-      <div class="mc"><div class="lb">Loading...</div><div class="vl">—</div></div>
-      <div class="mc"><div class="lb">Loading...</div><div class="vl">—</div></div>
-    </div>
-    <div class="grid-2">
+    <div class="metrics g4" id="mfg-dash-metrics"></div>
+    <div class="g2">
       <div>
         <div class="card">
-          <div class="card-head"><div class="card-title">Machine uptime — this month</div></div>
-          <div class="card-body" id="dash-machines">
-            <div class="loading"><div class="spinner"></div>Loading...</div>
-          </div>
+          <div class="card-head"><div class="card-title">Machine uptime</div></div>
+          <div class="card-body" id="mfg-dash-machines"></div>
         </div>
         <div class="card">
-          <div class="card-head"><div class="card-title">Month over month production</div></div>
-          <div class="card-body">
-            <div class="chart-wrap" style="height:140px;"><canvas id="momChart" role="img" aria-label="Month over month production chart">Monthly trend</canvas></div>
-          </div>
+          <div class="card-head"><div class="card-title">Daily production vs target</div></div>
+          <div class="card-body"><div style="position:relative;height:150px;"><canvas id="dashProdChart" role="img" aria-label="Production chart">Daily production</canvas></div></div>
         </div>
       </div>
       <div>
         <div class="card">
-          <div class="card-head"><div class="card-title">Live alerts</div></div>
-          <div id="dash-alerts"></div>
-          <div style="padding:10px 14px;">
-            <button class="btn btn-primary" style="width:100%" onclick="goTo('tasks')">View all tasks →</button>
-          </div>
+          <div class="card-head"><div class="card-title">Alerts</div></div>
+          <div id="mfg-dash-alerts"></div>
+          <div style="padding:10px 14px;"><button class="btn btn-green" style="width:100%" onclick="goTo('tasks')">View all tasks →</button></div>
         </div>
         <div class="card">
-          <div class="card-head"><div class="card-title">Overdue & upcoming payments</div><button class="btn btn-sm" onclick="goTo('scrap')">View all</button></div>
-          <div class="tw"><table><thead><tr><th>Bill no</th><th>Amount</th><th>Due date</th><th>Status</th></tr></thead><tbody id="dash-scrap"></tbody></table></div>
+          <div class="card-head"><div class="card-title">Stock flow — this month</div></div>
+          <div class="card-body" id="mfg-dash-stock"></div>
         </div>
         <div class="card">
-          <div class="card-head"><div class="card-title">P1 tasks open</div><button class="btn btn-sm" onclick="goTo('tasks')">View all</button></div>
-          <div class="tw"><table><thead><tr><th>Task</th><th>Owner</th></tr></thead><tbody id="dash-tasks"></tbody></table></div>
+          <div class="card-head"><div class="card-title">Low stock items</div><button class="btn btn-sm" onclick="goTo('inventory')">View all</button></div>
+          <div class="tw"><table><thead><tr><th>Item</th><th>Stock</th><th>Min</th><th>Status</th></tr></thead><tbody id="mfg-dash-inv"></tbody></table></div>
         </div>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">Daily production — this month</div></div>
-      <div class="card-body"><div class="chart-wrap" style="height:180px;"><canvas id="dailyChart" role="img" aria-label="Daily production vs target">Daily chart</canvas></div></div>
     </div>
   </div>
 </div>
 
-<!-- ===== PRODUCTION / MIS ===== -->
+<!-- ========== PRODUCTION / MIS ========== -->
 <div id="page-production" class="page">
   <div class="topbar">
-    <div class="topbar-title">Production / MIS</div>
-    <button class="btn btn-primary" onclick="openModal('mis-modal', null)">+ Add entry</button>
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Production / MIS</div>
+    <div class="tb-right">
+      <select class="month-selector" id="mis-month" onchange="renderMIS()"></select>
+      <button class="btn btn-green" onclick="openModal('mis-modal',null)">+ Add entry</button>
+    </div>
   </div>
   <div class="content">
-    <div class="metrics metrics-4" id="mis-metrics"></div>
-    <div class="grid-2" style="margin-bottom:14px;">
+    <div class="metrics g4" id="mis-metrics"></div>
+    <div class="g2" style="margin-bottom:14px;">
       <div class="card">
-        <div class="card-head"><div class="card-title">Production vs target — daily</div></div>
-        <div class="card-body"><div class="chart-wrap" style="height:160px;"><canvas id="prodChart" role="img" aria-label="Production chart">Daily production</canvas></div></div>
+        <div class="card-head"><div class="card-title">Production (Kg) vs target</div></div>
+        <div class="card-body"><div style="position:relative;height:150px;"><canvas id="prodChart" role="img" aria-label="Production">Production</canvas></div></div>
       </div>
       <div class="card">
-        <div class="card-head"><div class="card-title">Efficiency trend</div></div>
-        <div class="card-body"><div class="chart-wrap" style="height:160px;"><canvas id="effChart" role="img" aria-label="Efficiency chart">Efficiency</canvas></div></div>
+        <div class="card-head"><div class="card-title">Machine running hours</div></div>
+        <div class="card-body"><div style="position:relative;height:150px;"><canvas id="runChart" role="img" aria-label="Running hours">Running hours</canvas></div></div>
       </div>
     </div>
     <div class="card">
       <div class="card-head">
-        <div class="card-title">MIS entries — all editable</div>
-        <div style="font-size:11px;color:var(--txt2);">Click any cell to edit inline</div>
+        <div class="card-title">MIS entries</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button class="btn btn-wa" onclick="generateWAMIS()">📱 WhatsApp MIS</button>
+        </div>
       </div>
-      <div class="tw"><table>
-        <thead><tr><th>Date</th><th>Target (T)</th><th>Actual (T)</th><th>Eff%</th><th>Day MP</th><th>Night MP</th><th>Wash DT</th><th>Agglo DT</th><th>Ext DT</th><th>Issue (Day)</th><th>Issue (Night)</th><th>Dispatch</th><th>Actions</th></tr></thead>
-        <tbody id="mis-tbody"><tr><td colspan="13"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-      </table></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Target</th><th>Production</th><th>Eff%</th><th>Day MP</th><th>Night MP</th><th>Wash Run</th><th>Agglo Run</th><th>Ext Run</th><th>Issue (D)</th><th>Issue (N)</th><th>Dispatch</th><th>Total Stock</th><th>Actions</th></tr></thead>
+      <tbody id="mis-tbody"><tr><td colspan="14"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody></table></div>
+    </div>
+    <!-- WhatsApp Preview -->
+    <div class="card" id="wa-card" style="display:none;">
+      <div class="card-head"><div class="card-title">📱 WhatsApp MIS — Ready to send</div><button class="btn btn-sm" onclick="document.getElementById('wa-card').style.display='none'">✕</button></div>
+      <div class="card-body">
+        <div class="wa-preview" id="wa-preview"></div>
+        <div style="margin-top:10px;display:flex;gap:8px;">
+          <button class="btn btn-wa" onclick="copyWA()">📋 Copy Message</button>
+          <button class="btn btn-sm btn-amber" onclick="openWA()">Open WhatsApp</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ===== INVENTORY ===== -->
+<!-- ========== INVENTORY ========== -->
 <div id="page-inventory" class="page">
   <div class="topbar">
-    <div class="topbar-title">Inventory & Stock</div>
-    <button class="btn btn-primary" onclick="openModal('inv-modal', null)">+ Add item</button>
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Inventory & Stock</div>
+    <button class="btn btn-green" onclick="openModal('inv-modal',null)">+ Add item</button>
   </div>
   <div class="content">
-    <div class="metrics metrics-3" id="inv-metrics"></div>
-    <div class="grid-2" style="margin-bottom:14px;">
+    <div class="metrics g3" id="inv-metrics"></div>
+    <div class="g2" style="margin-bottom:14px;">
       <div class="card">
         <div class="card-head"><div class="card-title">Stock levels vs minimum</div></div>
-        <div class="card-body"><div class="chart-wrap" style="height:160px;"><canvas id="invChart" role="img" aria-label="Inventory chart">Inventory levels</canvas></div></div>
+        <div class="card-body"><div style="position:relative;height:160px;"><canvas id="invChart" role="img" aria-label="Inventory">Inventory</canvas></div></div>
       </div>
       <div class="card">
-        <div class="card-head"><div class="card-title">Stock status breakdown</div></div>
-        <div class="card-body" style="display:flex;align-items:center;gap:16px;">
-          <div style="position:relative;height:130px;width:130px;flex-shrink:0;"><canvas id="invPie" role="img" aria-label="Inventory status pie">Status pie</canvas></div>
-          <div style="font-size:12px;display:flex;flex-direction:column;gap:8px;" id="invPieLegend"></div>
+        <div class="card-head"><div class="card-title">Stock status</div></div>
+        <div class="card-body" style="display:flex;gap:14px;align-items:center;">
+          <div style="position:relative;height:120px;width:120px;flex-shrink:0;"><canvas id="invPie" role="img" aria-label="Status pie">Pie</canvas></div>
+          <div id="invPieLeg" style="font-size:12px;display:flex;flex-direction:column;gap:7px;"></div>
         </div>
       </div>
     </div>
     <div class="card">
-      <div class="card-head"><div class="card-title">Stock register — all rows editable</div></div>
-      <div class="tw"><table>
-        <thead><tr><th>Item name</th><th>Category</th><th>UOM</th><th>Min stock</th><th>Current stock</th><th>Rate (₹)</th><th>Value (₹)</th><th>Surplus/Deficit</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="inv-tbody"><tr><td colspan="10"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-      </table></div>
+      <div class="card-head"><div class="card-title">Stock register — colour coded (red=critical, yellow=low, green=OK)</div></div>
+      <div class="tw"><table><thead><tr><th>Item</th><th>Category</th><th>UOM</th><th>Min Stock</th><th>Current Stock</th><th>Rate (₹)</th><th>Value (₹)</th><th>+/−</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="inv-tbody"><tr><td colspan="10"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody></table></div>
     </div>
   </div>
 </div>
 
-<!-- ===== STOCK MANAGEMENT ===== -->
+<!-- ========== STOCK MANAGEMENT ========== -->
 <div id="page-stock" class="page">
   <div class="topbar">
-    <div class="topbar-title">Stock Management</div>
-    <button class="btn btn-primary" onclick="openModal('stock-modal', null)">+ Add month</button>
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Stock Management</div>
+    <div class="tb-right">
+      <select class="month-selector" id="stock-month" onchange="renderStock()"></select>
+      <button class="btn btn-green" onclick="openModal('stock-modal',null)">+ Add month</button>
+    </div>
   </div>
   <div class="content">
-    <div class="metrics metrics-4" id="stock-metrics"></div>
-    <div class="card" style="margin-bottom:14px;">
-      <div class="card-head"><div class="card-title">Current month — stock flow</div></div>
-      <div class="card-body" id="stock-flow-display">
-        <div class="loading"><div class="spinner"></div>Loading...</div>
-      </div>
+    <div class="metrics g4" id="stock-metrics"></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Stock flow — closing auto-calculated</div></div>
+      <div class="card-body" id="stock-flow-display"><div class="loading"><div class="spin"></div></div></div>
     </div>
-    <div class="grid-2" style="margin-bottom:14px;">
-      <div class="card">
-        <div class="card-head"><div class="card-title">Raw material flow</div></div>
-        <div class="card-body"><div class="chart-wrap" style="height:150px;"><canvas id="rmChart" role="img" aria-label="RM flow chart">RM chart</canvas></div></div>
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title">Finished goods flow</div></div>
-        <div class="card-body"><div class="chart-wrap" style="height:150px;"><canvas id="fgChart" role="img" aria-label="FG flow chart">FG chart</canvas></div></div>
-      </div>
+    <div class="g2" style="margin-bottom:14px;">
+      <div class="card"><div class="card-head"><div class="card-title">Raw material trend</div></div><div class="card-body"><div style="position:relative;height:140px;"><canvas id="rmChart" role="img" aria-label="RM">RM</canvas></div></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">Finished goods trend</div></div><div class="card-body"><div style="position:relative;height:140px;"><canvas id="fgChart" role="img" aria-label="FG">FG</canvas></div></div></div>
     </div>
     <div class="card">
       <div class="card-head"><div class="card-title">Monthly stock history</div></div>
-      <div class="tw"><table>
-        <thead><tr><th>Month</th><th>RM Open</th><th>RM Purchased</th><th>RM Consumed</th><th>RM Close</th><th>FG Open</th><th>FG Produced</th><th>FG Dispatched</th><th>FG Close</th><th>Actions</th></tr></thead>
-        <tbody id="stock-tbody"><tr><td colspan="10"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-      </table></div>
+      <div class="tw"><table><thead><tr><th>Month</th><th>RM Open</th><th>RM Purchased</th><th>RM Consumed</th><th>RM Closing (Auto)</th><th>FG Open</th><th>FG Produced</th><th>FG Dispatched</th><th>FG Closing (Auto)</th><th>Actions</th></tr></thead>
+      <tbody id="stock-tbody"><tr><td colspan="10"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
     </div>
   </div>
 </div>
 
-<!-- ===== BREAKDOWN ===== -->
-<div id="page-breakdown" class="page">
+<!-- ========== DISPATCH ========== -->
+<div id="page-dispatch" class="page">
   <div class="topbar">
-    <div class="topbar-title">Machine Breakdown Log</div>
-    <button class="btn btn-primary" onclick="openModal('bd-modal', null)">+ Log breakdown</button>
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Dispatch</div>
+    <div class="tb-right">
+      <select class="month-selector" id="dispatch-month" onchange="renderDispatch()"></select>
+      <button class="btn btn-green" onclick="openModal('dispatch-modal',null)">+ Add dispatch</button>
+    </div>
   </div>
   <div class="content">
-    <div class="metrics metrics-3" id="bd-metrics"></div>
-    <div class="grid-2" style="margin-bottom:14px;">
-      <div class="card">
-        <div class="card-head"><div class="card-title">Breakdowns by machine</div></div>
-        <div class="card-body"><div class="chart-wrap" style="height:150px;"><canvas id="bdPie" role="img" aria-label="Breakdown by machine pie">Breakdown pie</canvas></div></div>
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title">Downtime hours by machine</div></div>
-        <div class="card-body"><div class="chart-wrap" style="height:150px;"><canvas id="bdBar" role="img" aria-label="Downtime hours bar">Downtime bar</canvas></div></div>
-      </div>
+    <div class="metrics g4" id="dispatch-metrics"></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Dispatch log</div></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Customer</th><th>Material</th><th>Qty (Kg)</th><th>Rate/Kg</th><th>Amount</th><th>Vehicle</th><th>LR No</th><th>Invoice</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="dispatch-tbody"><tr><td colspan="11"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== BREAKDOWN ========== -->
+<div id="page-breakdown" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Breakdown Log</div>
+    <div class="tb-right">
+      <select class="month-selector" id="bd-month" onchange="renderBreakdown()"></select>
+      <button class="btn btn-green" onclick="openModal('bd-modal',null)">+ Log breakdown</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="metrics g3" id="bd-metrics"></div>
+    <div class="g2" style="margin-bottom:14px;">
+      <div class="card"><div class="card-head"><div class="card-title">Breakdowns by machine</div></div><div class="card-body"><div style="position:relative;height:140px;"><canvas id="bdPie" role="img" aria-label="BD Pie">Pie</canvas></div></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">Downtime hours</div></div><div class="card-body"><div style="position:relative;height:140px;"><canvas id="bdBar" role="img" aria-label="BD Bar">Bar</canvas></div></div></div>
     </div>
     <div class="card">
       <div class="card-head"><div class="card-title">Breakdown register</div></div>
-      <div class="tw"><table>
-        <thead><tr><th>Date</th><th>Machine</th><th>Shift</th><th>Downtime (h)</th><th>Reason</th><th>Action taken</th><th>Cost (₹)</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="bd-tbody"><tr><td colspan="9"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-      </table></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Machine</th><th>Shift</th><th>DT Hours</th><th>Reason</th><th>Action</th><th>Cost</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="bd-tbody"><tr><td colspan="9"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
     </div>
   </div>
 </div>
 
-<!-- ===== SCRAP ===== -->
-<div id="page-scrap" class="page">
-  <div class="topbar">
-    <div class="topbar-title">Scrap Purchases & Payments</div>
-    <button class="btn btn-primary" onclick="openModal('scrap-modal', null)">+ Add bill</button>
-  </div>
-  <div class="content">
-    <div class="metrics metrics-3" id="scrap-metrics"></div>
-    <div class="grid-2" style="margin-bottom:14px;">
-      <div class="card">
-        <div class="card-head"><div class="card-title">Payment status breakdown</div></div>
-        <div class="card-body" style="display:flex;align-items:center;gap:14px;">
-          <div style="position:relative;height:130px;width:130px;flex-shrink:0;"><canvas id="scrapPie" role="img" aria-label="Payment status pie">Payment status</canvas></div>
-          <div style="font-size:12px;display:flex;flex-direction:column;gap:7px;" id="scrapPieLegend"></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title">Outstanding amount trend</div></div>
-        <div class="card-body"><div class="chart-wrap" style="height:130px;"><canvas id="scrapBar" role="img" aria-label="Outstanding trend">Outstanding</canvas></div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">All scrap bills — 15-day payment cycle</div></div>
-      <div class="tw"><table>
-        <thead><tr><th>Sl</th><th>Date</th><th>Bill no</th><th>Supplier</th><th>Qty (T)</th><th>Amount (₹)</th><th>Due date</th><th>Days old</th><th>Payment date</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="scrap-tbody"><tr><td colspan="11"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-      </table></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== TASKS ===== -->
+<!-- ========== TASKS ========== -->
 <div id="page-tasks" class="page">
   <div class="topbar">
-    <div class="topbar-title">Task Manager</div>
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Tasks</div>
     <div class="tb-right">
-      <select id="task-filter" onchange="renderTasks()" style="font-size:12px;padding:5px 8px;border:1px solid var(--bdr2);border-radius:var(--rad);background:var(--bg2);color:var(--txt);">
-        <option value="all">All tasks</option>
-        <option value="P1">P1 only</option><option value="P2">P2 only</option><option value="P3">P3 only</option>
-        <option value="open">Open only</option><option value="done">Done only</option>
+      <select class="month-selector" id="task-filter" onchange="renderTasks()" style="min-width:120px;">
+        <option value="all">All tasks</option><option value="P1">P1</option><option value="P2">P2</option><option value="P3">P3</option><option value="open">Open</option><option value="done">Done</option>
       </select>
-      <button class="btn btn-primary" onclick="openModal('task-modal', null)">+ Add task</button>
+      <button class="btn btn-green" onclick="openModal('task-modal',null)">+ Add task</button>
     </div>
   </div>
   <div class="content">
-    <div class="metrics metrics-4" id="task-metrics"></div>
-    <div class="grid-2" style="margin-bottom:14px;">
-      <div class="card">
-        <div class="card-head"><div class="card-title">Tasks by priority</div></div>
-        <div class="card-body"><div class="chart-wrap" style="height:140px;"><canvas id="taskPie" role="img" aria-label="Tasks by priority">Priority pie</canvas></div></div>
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title">Tasks by category</div></div>
-        <div class="card-body"><div class="chart-wrap" style="height:140px;"><canvas id="taskCatBar" role="img" aria-label="Tasks by category">Category bar</canvas></div></div>
-      </div>
+    <div class="metrics g4" id="task-metrics"></div>
+    <div class="g2" style="margin-bottom:14px;">
+      <div class="card"><div class="card-head"><div class="card-title">By priority</div></div><div class="card-body"><div style="position:relative;height:130px;"><canvas id="taskPie" role="img" aria-label="Task pie">Pie</canvas></div></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">By category</div></div><div class="card-body"><div style="position:relative;height:130px;"><canvas id="taskCat" role="img" aria-label="Task cat">Cat</canvas></div></div></div>
     </div>
     <div class="card">
       <div class="card-head"><div class="card-title">Task list</div></div>
-      <div class="tw"><table>
-        <thead><tr><th>#</th><th>Task</th><th>Owner</th><th>Priority</th><th>Category</th><th>Due date</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="task-tbody"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-      </table></div>
+      <div class="tw"><table><thead><tr><th>#</th><th>Task</th><th>Owner</th><th>Priority</th><th>Category</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="task-tbody"><tr><td colspan="8"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TRADING DASHBOARD ========== -->
+<div id="page-trd-dashboard" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge trd-badge">♻️ Trading</span>Dashboard</div>
+    <div class="tb-right">
+      <select class="month-selector" id="trd-dash-month" onchange="renderTrdDashboard()"></select>
+      <button class="btn" onclick="loadAll()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="metrics g5" id="trd-dash-metrics"></div>
+    <div class="g2">
+      <div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Buy vs Sell — monthly</div></div>
+          <div class="card-body"><div style="position:relative;height:160px;"><canvas id="trdBuySell" role="img" aria-label="Buy sell">Buy sell</canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Material-wise volume (Kg)</div></div>
+          <div class="card-body"><div style="position:relative;height:150px;"><canvas id="trdMaterial" role="img" aria-label="Material">Material</canvas></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Supplier outstanding (I owe)</div></div>
+          <div class="tw"><table><thead><tr><th>Supplier</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody id="trd-supplier-out"></tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Customer outstanding (They owe me)</div></div>
+          <div class="tw"><table><thead><tr><th>Customer</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody id="trd-customer-out"></tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Avg payment cycles</div></div>
+          <div class="card-body" id="trd-avg-cycles"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TRADING PURCHASES ========== -->
+<div id="page-trd-purchases" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Scrap Purchases</div>
+    <div class="tb-right">
+      <select class="month-selector" id="trd-pur-month" onchange="renderTrdPurchases()"></select>
+      <button class="btn btn-blue" onclick="openModal('trd-pur-modal',null)">+ Add purchase</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="metrics g3" id="trd-pur-metrics"></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Purchase register</div></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Bill no</th><th>Supplier</th><th>Material</th><th>Qty (Kg)</th><th>Rate/Kg</th><th>Amount</th><th>Due date</th><th>Paid on</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="trd-pur-tbody"><tr><td colspan="11"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TRADING SALES ========== -->
+<div id="page-trd-sales" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Scrap Sales</div>
+    <div class="tb-right">
+      <select class="month-selector" id="trd-sal-month" onchange="renderTrdSales()"></select>
+      <button class="btn btn-blue" onclick="openModal('trd-sal-modal',null)">+ Add sale</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="metrics g3" id="trd-sal-metrics"></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Sales register</div></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Invoice</th><th>Customer</th><th>Material</th><th>Qty (Kg)</th><th>Rate/Kg</th><th>Amount</th><th>Due date</th><th>Received on</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="trd-sal-tbody"><tr><td colspan="11"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TRADING MATERIALS ========== -->
+<div id="page-trd-materials" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Materials</div>
+    <button class="btn btn-blue" onclick="openModal('trd-mat-modal',null)">+ Add material</button>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-head"><div class="card-title">Your scrap material types</div></div>
+      <div class="tw"><table><thead><tr><th>Material name</th><th>Unit</th><th>Description</th><th>Actions</th></tr></thead>
+      <tbody id="trd-mat-tbody"></tbody></table></div>
     </div>
   </div>
 </div>
 
 </div><!-- /main -->
-</div><!-- /app -->
 
-<!-- ===== MODALS ===== -->
+<!-- ============================================================ -->
+<!-- MODALS -->
+<!-- ============================================================ -->
 
 <!-- MIS Modal -->
 <div class="modal-bg" id="mis-modal">
   <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="mis-modal-title">Add MIS Entry</span><button class="btn btn-sm" onclick="closeModal('mis-modal')">✕</button></div>
+    <div class="modal-head"><span class="modal-title" id="mis-modal-t">Add MIS Entry</span><button class="btn btn-sm" onclick="closeModal('mis-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="m-date"></div><div class="fg"><label>Target (Tons)</label><input type="number" id="m-target" value="5" step="0.01"></div></div>
-      <div class="frow"><div class="fg"><label>Actual Production (Tons)</label><input type="number" id="m-actual" step="0.01" placeholder="0.00"></div><div class="fg"><label>Dispatched (Tons)</label><input type="number" id="m-dispatch" step="0.01" placeholder="0.00"></div></div>
-      <div class="section-label">Manpower</div>
-      <div class="frow"><div class="fg"><label>Day shift workers</label><input type="number" id="m-mpday" placeholder="0"></div><div class="fg"><label>Night shift workers</label><input type="number" id="m-mpnight" placeholder="0"></div></div>
-      <div class="section-label">Day Shift — Downtime & Issues</div>
-      <div class="frow-3 frow"><div class="fg"><label>Washing DT (h)</label><input type="number" id="m-wdt-d" step="0.5" placeholder="0"></div><div class="fg"><label>Agglo DT (h)</label><input type="number" id="m-adt-d" step="0.5" placeholder="0"></div><div class="fg"><label>Extruder DT (h)</label><input type="number" id="m-edt-d" step="0.5" placeholder="0"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Issue (Day)</label><select id="m-issue-d"><option>None</option><option>Agglo 1</option><option>Agglo 2</option><option>Washing</option><option>Extruder</option><option>Power</option><option>Labour</option><option>Holiday</option><option>Others</option></select></div></div>
-      <div class="section-label">Night Shift — Downtime & Issues</div>
-      <div class="frow-3 frow"><div class="fg"><label>Washing DT (h)</label><input type="number" id="m-wdt-n" step="0.5" placeholder="0"></div><div class="fg"><label>Agglo DT (h)</label><input type="number" id="m-adt-n" step="0.5" placeholder="0"></div><div class="fg"><label>Extruder DT (h)</label><input type="number" id="m-edt-n" step="0.5" placeholder="0"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Issue (Night)</label><select id="m-issue-n"><option>None</option><option>Agglo 1</option><option>Agglo 2</option><option>Washing</option><option>Extruder</option><option>Power</option><option>Labour</option><option>Others</option></select></div></div>
-      <div class="section-label">Opening Stock</div>
-      <div class="frow"><div class="fg"><label>Raw material opening (T)</label><input type="number" id="m-rmopen" step="0.01" placeholder="0.00"></div><div class="fg"><label>FG opening (T)</label><input type="number" id="m-fgopen" step="0.01" placeholder="0.00"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Notes</label><textarea id="m-notes" placeholder="Any additional notes..."></textarea></div></div>
+      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="m-date"></div><div class="fg"><label>Target (Kg)</label><input type="number" id="m-target" value="5000"></div></div>
+      <div class="sec-label">Manpower</div>
+      <div class="frow"><div class="fg"><label>Day shift workers</label><input type="number" id="m-mpd" placeholder="0"></div><div class="fg"><label>Night shift workers</label><input type="number" id="m-mpn" placeholder="0"></div></div>
+      <div class="sec-label">Day Shift — Running Hours & Production (12h shift)</div>
+      <div class="frow-3 frow">
+        <div class="fg"><label>Washing running (h)</label><input type="number" id="m-wrd" step="0.5" placeholder="0–12" max="12" oninput="calcDT()"><div class="calc-note" id="m-wdt-d-show">Downtime: 0h</div></div>
+        <div class="fg"><label>Agglo running (h)</label><input type="number" id="m-ard" step="0.5" placeholder="0–12" max="12" oninput="calcDT()"><div class="calc-note" id="m-adt-d-show">Downtime: 0h</div></div>
+        <div class="fg"><label>Extruder running (h)</label><input type="number" id="m-erd" step="0.5" placeholder="0–12" max="12" oninput="calcDT()"><div class="calc-note" id="m-edt-d-show">Downtime: 0h</div></div>
+      </div>
+      <div class="frow-3 frow">
+        <div class="fg"><label>Washing Kg (Day)</label><input type="number" id="m-wkg" placeholder="0"></div>
+        <div class="fg"><label>Agglo Kg (Day)</label><input type="number" id="m-akg" placeholder="0"></div>
+        <div class="fg"><label>Extruder Kg (total prod)</label><input type="number" id="m-ekg" placeholder="0" oninput="calcTotalProd()"></div>
+      </div>
+      <div class="frow frow-1"><div class="fg"><label>Issue (Day shift)</label><select id="m-issd"><option>None</option><option>Agglo 1</option><option>Agglo 2</option><option>Washing</option><option>Extruder</option><option>Power</option><option>Labour</option><option>Holiday</option><option>Others</option></select></div></div>
+      <div class="sec-label">Night Shift — Running Hours (12h shift)</div>
+      <div class="frow-3 frow">
+        <div class="fg"><label>Washing running (h)</label><input type="number" id="m-wrn" step="0.5" placeholder="0–12" max="12" oninput="calcDT()"><div class="calc-note" id="m-wdt-n-show">Downtime: 0h</div></div>
+        <div class="fg"><label>Agglo running (h)</label><input type="number" id="m-arn" step="0.5" placeholder="0–12" max="12" oninput="calcDT()"><div class="calc-note" id="m-adt-n-show">Downtime: 0h</div></div>
+        <div class="fg"><label>Extruder running (h)</label><input type="number" id="m-ern" step="0.5" placeholder="0–12" max="12" oninput="calcDT()"><div class="calc-note" id="m-edt-n-show">Downtime: 0h</div></div>
+      </div>
+      <div class="frow frow-1"><div class="fg"><label>Issue (Night shift)</label><select id="m-issn"><option>None</option><option>Agglo 1</option><option>Agglo 2</option><option>Washing</option><option>Extruder</option><option>Power</option><option>Labour</option><option>Others</option></select></div></div>
+      <div class="sec-label">Stock & Dispatch</div>
+      <div class="frow-3 frow">
+        <div class="fg"><label>RM opening (Kg)</label><input type="number" id="m-rmop" placeholder="0"></div>
+        <div class="fg"><label>FG opening (Kg)</label><input type="number" id="m-fgop" placeholder="0"></div>
+        <div class="fg"><label>Dispatched (Kg)</label><input type="number" id="m-disp" placeholder="0"></div>
+      </div>
+      <div class="frow"><div class="fg"><label>Total stock (Kg)</label><input type="number" id="m-tstock" placeholder="0"></div><div class="fg"><label>Total production (Kg) — auto</label><input type="number" id="m-tprod" placeholder="0" readonly style="background:var(--bg3)"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><textarea id="m-notes" placeholder="Any notes..."></textarea></div></div>
     </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('mis-modal')">Cancel</button><button class="btn btn-primary" onclick="saveMIS()">Save Entry</button></div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('mis-modal')">Cancel</button><button class="btn btn-green" onclick="saveMIS()">Save Entry</button></div>
   </div>
 </div>
 
 <!-- Inventory Modal -->
 <div class="modal-bg" id="inv-modal">
   <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="inv-modal-title">Add Inventory Item</span><button class="btn btn-sm" onclick="closeModal('inv-modal')">✕</button></div>
+    <div class="modal-head"><span class="modal-title" id="inv-modal-t">Add Item</span><button class="btn btn-sm" onclick="closeModal('inv-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow"><div class="fg"><label>Item name</label><input type="text" id="i-item" placeholder="e.g. PP Granules (FG)"></div><div class="fg"><label>Category</label><select id="i-cat"><option>Raw Material</option><option>Finished Goods</option><option>Jumbo Bags</option><option>Scrap</option><option>Spare Parts</option><option>Chemicals</option></select></div></div>
-      <div class="frow"><div class="fg"><label>UOM</label><select id="i-uom"><option>Tons</option><option>Kg</option><option>Nos</option><option>Liters</option><option>Bags</option></select></div><div class="fg"><label>Minimum stock level</label><input type="number" id="i-min" placeholder="0" step="0.01"></div></div>
-      <div class="frow"><div class="fg"><label>Current stock</label><input type="number" id="i-stock" placeholder="0" step="0.01"></div><div class="fg"><label>Rate per unit (₹)</label><input type="number" id="i-rate" placeholder="0"></div></div>
+      <div class="frow"><div class="fg"><label>Item name</label><input type="text" id="i-item" placeholder="e.g. PP Granules (FG)"></div><div class="fg"><label>Category</label><select id="i-cat"><option>Raw Material</option><option>Finished Goods</option><option>Jumbo Bags</option><option>Chemicals</option><option>Spare Parts</option></select></div></div>
+      <div class="frow"><div class="fg"><label>UOM</label><select id="i-uom"><option>Kg</option><option>Nos</option><option>Liters</option><option>Bags</option></select></div><div class="fg"><label>Min stock</label><input type="number" id="i-min" placeholder="0"></div></div>
+      <div class="frow"><div class="fg"><label>Current stock</label><input type="number" id="i-stk" placeholder="0"></div><div class="fg"><label>Rate per unit (₹)</label><input type="number" id="i-rate" placeholder="0"></div></div>
     </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('inv-modal')">Cancel</button><button class="btn btn-primary" onclick="saveInv()">Save</button></div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('inv-modal')">Cancel</button><button class="btn btn-green" onclick="saveInv()">Save</button></div>
   </div>
 </div>
 
 <!-- Stock Modal -->
 <div class="modal-bg" id="stock-modal">
   <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="stock-modal-title">Add Stock Movement</span><button class="btn btn-sm" onclick="closeModal('stock-modal')">✕</button></div>
+    <div class="modal-head"><span class="modal-title" id="stock-modal-t">Add Stock Movement</span><button class="btn btn-sm" onclick="closeModal('stock-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow frow-1"><div class="fg"><label>Month/Year (e.g. June 2026)</label><input type="text" id="s-month" placeholder="June 2026"></div></div>
-      <div class="section-label">Raw Material</div>
-      <div class="frow"><div class="fg"><label>Opening (T)</label><input type="number" id="s-rmop" step="0.01" placeholder="0"></div><div class="fg"><label>Purchased (T)</label><input type="number" id="s-rmbuy" step="0.01" placeholder="0"></div></div>
-      <div class="frow"><div class="fg"><label>Consumed (T)</label><input type="number" id="s-rmcon" step="0.01" placeholder="0"></div><div class="fg"><label>Closing (T)</label><input type="number" id="s-rmcl" step="0.01" placeholder="0"></div></div>
-      <div class="section-label">Finished Goods</div>
-      <div class="frow"><div class="fg"><label>Opening (T)</label><input type="number" id="s-fgop" step="0.01" placeholder="0"></div><div class="fg"><label>Produced (T)</label><input type="number" id="s-fgprod" step="0.01" placeholder="0"></div></div>
-      <div class="frow"><div class="fg"><label>Dispatched (T)</label><input type="number" id="s-fgdis" step="0.01" placeholder="0"></div><div class="fg"><label>Closing (T)</label><input type="number" id="s-fgcl" step="0.01" placeholder="0"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Month / Year (e.g. June 2026)</label><input type="text" id="s-month" placeholder="June 2026"></div></div>
+      <div class="sec-label">Raw Material (Kg) — closing auto-calculated</div>
+      <div class="frow-3 frow">
+        <div class="fg"><label>Opening</label><input type="number" id="s-rmop" placeholder="0" oninput="calcStockClose()"></div>
+        <div class="fg"><label>Purchased</label><input type="number" id="s-rmbuy" placeholder="0" oninput="calcStockClose()"></div>
+        <div class="fg"><label>Consumed</label><input type="number" id="s-rmcon" placeholder="0" oninput="calcStockClose()"></div>
+      </div>
+      <div class="fg" style="margin-bottom:10px;"><label>Closing RM (auto)</label><input type="number" id="s-rmcl" readonly style="background:var(--bg3);font-weight:700;color:var(--acc);" placeholder="Auto"></div>
+      <div class="sec-label">Finished Goods (Kg) — closing auto-calculated</div>
+      <div class="frow-3 frow">
+        <div class="fg"><label>Opening</label><input type="number" id="s-fgop" placeholder="0" oninput="calcStockClose()"></div>
+        <div class="fg"><label>Produced</label><input type="number" id="s-fgprod" placeholder="0" oninput="calcStockClose()"></div>
+        <div class="fg"><label>Dispatched</label><input type="number" id="s-fgdis" placeholder="0" oninput="calcStockClose()"></div>
+      </div>
+      <div class="fg"><label>Closing FG (auto)</label><input type="number" id="s-fgcl" readonly style="background:var(--bg3);font-weight:700;color:var(--acc);" placeholder="Auto"></div>
     </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('stock-modal')">Cancel</button><button class="btn btn-primary" onclick="saveStock()">Save</button></div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('stock-modal')">Cancel</button><button class="btn btn-green" onclick="saveStock()">Save</button></div>
+  </div>
+</div>
+
+<!-- Dispatch Modal -->
+<div class="modal-bg" id="dispatch-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="dispatch-modal-t">Add Dispatch</span><button class="btn btn-sm" onclick="closeModal('dispatch-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="d-date"></div><div class="fg"><label>Customer</label><input type="text" id="d-cust" placeholder="Customer name"></div></div>
+      <div class="frow"><div class="fg"><label>Material</label><select id="d-mat"><option>PP Granules</option><option>HDPE Granules</option><option>LDPE Granules</option><option>Mixed Granules</option></select></div><div class="fg"><label>Qty (Kg)</label><input type="number" id="d-qty" placeholder="0"></div></div>
+      <div class="frow"><div class="fg"><label>Rate per Kg (₹)</label><input type="number" id="d-rate" placeholder="0" oninput="calcDispatchAmt()"></div><div class="fg"><label>Amount (₹) — auto</label><input type="number" id="d-amt" readonly style="background:var(--bg3)"></div></div>
+      <div class="frow"><div class="fg"><label>Vehicle no</label><input type="text" id="d-veh" placeholder="MH 01 AB 1234"></div><div class="fg"><label>LR no</label><input type="text" id="d-lr" placeholder="LR number"></div></div>
+      <div class="frow"><div class="fg"><label>Invoice no</label><input type="text" id="d-inv" placeholder="Invoice number"></div><div class="fg"><label>Destination</label><input type="text" id="d-dest" placeholder="City/State"></div></div>
+      <div class="frow"><div class="fg"><label>Status</label><select id="d-status"><option>Dispatched</option><option>In Transit</option><option>Delivered</option><option>Returned</option></select></div><div class="fg"><label>Notes</label><input type="text" id="d-notes" placeholder="Optional"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('dispatch-modal')">Cancel</button><button class="btn btn-green" onclick="saveDispatch()">Save</button></div>
   </div>
 </div>
 
 <!-- Breakdown Modal -->
 <div class="modal-bg" id="bd-modal">
   <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="bd-modal-title">Log Breakdown</span><button class="btn btn-sm" onclick="closeModal('bd-modal')">✕</button></div>
+    <div class="modal-head"><span class="modal-title" id="bd-modal-t">Log Breakdown</span><button class="btn btn-sm" onclick="closeModal('bd-modal')">✕</button></div>
     <div class="modal-body">
       <div class="frow"><div class="fg"><label>Date</label><input type="date" id="b-date"></div><div class="fg"><label>Machine</label><select id="b-machine"><option>Washing</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dryer</option><option>Other</option></select></div></div>
       <div class="frow"><div class="fg"><label>Shift</label><select id="b-shift"><option>Day</option><option>Night</option></select></div><div class="fg"><label>Downtime (hours)</label><input type="number" id="b-hours" step="0.5" placeholder="0"></div></div>
-      <div class="frow"><div class="fg"><label>Reason</label><input type="text" id="b-reason" placeholder="Describe the issue"></div><div class="fg"><label>Action taken</label><input type="text" id="b-action" placeholder="What was done"></div></div>
+      <div class="frow"><div class="fg"><label>Reason</label><input type="text" id="b-reason" placeholder="Issue description"></div><div class="fg"><label>Action taken</label><input type="text" id="b-action" placeholder="What was done"></div></div>
       <div class="frow"><div class="fg"><label>Cost (₹)</label><input type="number" id="b-cost" placeholder="0"></div><div class="fg"><label>Status</label><select id="b-status"><option>Pending</option><option>In Progress</option><option>Resolved</option><option>Critical</option></select></div></div>
     </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('bd-modal')">Cancel</button><button class="btn btn-primary" onclick="saveBD()">Save</button></div>
-  </div>
-</div>
-
-<!-- Scrap Modal -->
-<div class="modal-bg" id="scrap-modal">
-  <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="scrap-modal-title">Add Scrap Bill</span><button class="btn btn-sm" onclick="closeModal('scrap-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="frow"><div class="fg"><label>Bill date</label><input type="date" id="sc-date"></div><div class="fg"><label>Bill no</label><input type="text" id="sc-bill" placeholder="SE/26-27/0XX"></div></div>
-      <div class="frow"><div class="fg"><label>Supplier</label><input type="text" id="sc-supplier" placeholder="Supplier name"></div><div class="fg"><label>Qty (Tons)</label><input type="number" id="sc-qty" step="0.01" placeholder="0.00"></div></div>
-      <div class="frow"><div class="fg"><label>Amount (₹)</label><input type="number" id="sc-amt" placeholder="0"></div><div class="fg"><label>Payment terms (days)</label><input type="number" id="sc-terms" value="15"></div></div>
-      <div class="frow"><div class="fg"><label>Payment received date</label><input type="date" id="sc-paid"></div><div class="fg"><label>Notes</label><input type="text" id="sc-notes" placeholder="Optional"></div></div>
-    </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('scrap-modal')">Cancel</button><button class="btn btn-primary" onclick="saveScrap()">Save Bill</button></div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('bd-modal')">Cancel</button><button class="btn btn-green" onclick="saveBD()">Save</button></div>
   </div>
 </div>
 
 <!-- Task Modal -->
 <div class="modal-bg" id="task-modal">
   <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="task-modal-title">Add Task</span><button class="btn btn-sm" onclick="closeModal('task-modal')">✕</button></div>
+    <div class="modal-head"><span class="modal-title" id="task-modal-t">Add Task</span><button class="btn btn-sm" onclick="closeModal('task-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow frow-1"><div class="fg"><label>Task description</label><input type="text" id="t-task" placeholder="Describe the task clearly"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Task description</label><input type="text" id="t-task" placeholder="Describe the task"></div></div>
       <div class="frow"><div class="fg"><label>Assigned to</label><input type="text" id="t-owner" placeholder="e.g. Dalmia Ji"></div><div class="fg"><label>Priority</label><select id="t-priority"><option>P1</option><option>P2</option><option>P3</option></select></div></div>
       <div class="frow"><div class="fg"><label>Category</label><select id="t-cat"><option>Payment</option><option>Operations</option><option>Purchase</option><option>Maintenance</option><option>Sales</option><option>Admin</option><option>Other</option></select></div><div class="fg"><label>Due date</label><input type="date" id="t-due"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Notes</label><textarea id="t-notes" placeholder="Any details..."></textarea></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><textarea id="t-notes" placeholder="Details..."></textarea></div></div>
     </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('task-modal')">Cancel</button><button class="btn btn-primary" onclick="saveTask()">Add Task</button></div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('task-modal')">Cancel</button><button class="btn btn-green" onclick="saveTask()">Add Task</button></div>
   </div>
 </div>
 
-<script>
-const SUPABASE_URL = 'https://cjjwuhrpylqpyjccirou.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqand1aHJweWxxcHlqY2Npcm91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTk0NjAsImV4cCI6MjA5NjEzNTQ2MH0.fskd7g86gfy-hrjij3MXaMafsWwY9V0iODc0I7BMEgU';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<!-- Trading Purchase Modal -->
+<div class="modal-bg" id="trd-pur-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="trd-pur-modal-t">Add Purchase</span><button class="btn btn-sm" onclick="closeModal('trd-pur-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow"><div class="fg"><label>Purchase date</label><input type="date" id="tp-date"></div><div class="fg"><label>Bill no</label><input type="text" id="tp-bill" placeholder="Bill/Challan no"></div></div>
+      <div class="frow"><div class="fg"><label>Supplier</label><input type="text" id="tp-supplier" placeholder="Supplier name"></div><div class="fg"><label>Material</label><select id="tp-material"></select></div></div>
+      <div class="frow"><div class="fg"><label>Qty (Kg)</label><input type="number" id="tp-qty" placeholder="0" oninput="calcTrdPurAmt()"></div><div class="fg"><label>Rate per Kg (₹)</label><input type="number" id="tp-rate" placeholder="0" oninput="calcTrdPurAmt()"></div></div>
+      <div class="frow"><div class="fg"><label>Amount (₹) — auto</label><input type="number" id="tp-amt" readonly style="background:var(--bg3)"></div><div class="fg"><label>Payment terms (days)</label><input type="number" id="tp-terms" value="15"></div></div>
+      <div class="frow"><div class="fg"><label>Payment date (if paid)</label><input type="date" id="tp-paid"></div><div class="fg"><label>Amount paid (₹)</label><input type="number" id="tp-pamt" placeholder="0"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="tp-notes" placeholder="Optional"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('trd-pur-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdPurchase()">Save</button></div>
+  </div>
+</div>
 
-const TODAY = new Date('2026-06-04');
-let DATA = { mis: [], inv: [], scrap: [], bd: [], tasks: [], stock: [] };
-let editId = null;
-let charts = {};
+<!-- Trading Sales Modal -->
+<div class="modal-bg" id="trd-sal-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="trd-sal-modal-t">Add Sale</span><button class="btn btn-sm" onclick="closeModal('trd-sal-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow"><div class="fg"><label>Sale date</label><input type="date" id="ts-date"></div><div class="fg"><label>Invoice no</label><input type="text" id="ts-inv" placeholder="Invoice number"></div></div>
+      <div class="frow"><div class="fg"><label>Customer</label><input type="text" id="ts-customer" placeholder="Customer name"></div><div class="fg"><label>Material</label><select id="ts-material"></select></div></div>
+      <div class="frow"><div class="fg"><label>Qty (Kg)</label><input type="number" id="ts-qty" placeholder="0" oninput="calcTrdSalAmt()"></div><div class="fg"><label>Rate per Kg (₹)</label><input type="number" id="ts-rate" placeholder="0" oninput="calcTrdSalAmt()"></div></div>
+      <div class="frow"><div class="fg"><label>Amount (₹) — auto</label><input type="number" id="ts-amt" readonly style="background:var(--bg3)"></div><div class="fg"><label>Payment terms (days)</label><input type="number" id="ts-terms" value="30"></div></div>
+      <div class="frow"><div class="fg"><label>Payment received date</label><input type="date" id="ts-recvd"></div><div class="fg"><label>Amount received (₹)</label><input type="number" id="ts-ramt" placeholder="0"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="ts-notes" placeholder="Optional"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('trd-sal-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdSale()">Save</button></div>
+  </div>
+</div>
+
+<!-- Trading Material Modal -->
+<div class="modal-bg" id="trd-mat-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Add Material Type</span><button class="btn btn-sm" onclick="closeModal('trd-mat-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow"><div class="fg"><label>Material name</label><input type="text" id="tm-name" placeholder="e.g. Steel Scrap HMS 1"></div><div class="fg"><label>Unit</label><select id="tm-unit"><option>Kg</option><option>Ton</option><option>Nos</option></select></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Description</label><input type="text" id="tm-desc" placeholder="Optional description"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('trd-mat-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdMaterial()">Save</button></div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+const SB_URL='https://cjjwuhrpylqpyjccirou.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqand1aHJweWxxcHlqY2Npcm91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTk0NjAsImV4cCI6MjA5NjEzNTQ2MH0.fskd7g86gfy-hrjij3MXaMafsWwY9V0iODc0I7BMEgU';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+
+// ===== AUTH =====
+function showLogin(){document.getElementById('login-page').style.display='flex';document.getElementById('main-app').style.display='none';}
+function showApp(email){
+  document.getElementById('login-page').style.display='none';
+  document.getElementById('main-app').style.display='flex';
+  if(email)document.getElementById('logged-in-email').textContent=email;
+  populateMonthSelectors();
+  loadAll();
+}
+
+// ===== SIMPLE LOGIN — no external auth needed =====
+const VALID_USER = 'SAATVIK';
+const VALID_PASS = '180925';
+const SESSION_KEY = 'saatvik_session';
+
+function loginWithPassword(){
+  const user = document.getElementById('login-user').value.trim().toUpperCase();
+  const pass = document.getElementById('login-pass').value;
+  const btn = document.getElementById('login-submit-btn');
+  if(!user||!pass){showLoginError('Please enter username and password');return;}
+  btn.textContent='Signing in...';
+  setTimeout(()=>{
+    if(user===VALID_USER && pass===VALID_PASS){
+      sessionStorage.setItem(SESSION_KEY,'1');
+      showApp('SAATVIK');
+    } else {
+      showLoginError('Incorrect username or password');
+      btn.textContent='Sign In →';
+    }
+  },600);
+}
+
+function showLoginError(msg){
+  const el=document.getElementById('login-error');
+  el.textContent=msg;el.style.display='block';
+  setTimeout(()=>el.style.display='none',3500);
+}
+
+function logout(){
+  sessionStorage.removeItem(SESSION_KEY);
+  showLogin();
+}
+
+function checkSession(){
+  if(sessionStorage.getItem(SESSION_KEY)==='1'){showApp('SAATVIK');}
+  else{showLogin();}
+}
+
+checkSession();
+const TODAY=new Date('2026-06-04');
+let DATA={mis:[],inv:[],stock:[],dispatches:[],bd:[],tasks:[],trdPur:[],trdSal:[],trdMat:[]};
+let editId=null, charts={};
 
 // ===== UTILS =====
-function fmtDate(d) { if (!d) return '—'; return new Date(d).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'2-digit'}); }
-function daysSince(d) { return Math.floor((TODAY - new Date(d)) / 86400000); }
-function dueDate(d, t) { const dt = new Date(d); dt.setDate(dt.getDate() + (parseInt(t)||15)); return dt; }
-function fmtMoney(n) { return Number(n||0).toLocaleString('en-IN'); }
-function eff(actual, target) { return target > 0 ? Math.round((actual/target)*100) : 0; }
+const fmtDate=d=>{if(!d)return'—';return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'});};
+const fmtKg=n=>Number(n||0).toLocaleString('en-IN')+' Kg';
+const fmtMoney=n=>'₹'+Number(n||0).toLocaleString('en-IN');
+const daysSince=d=>Math.floor((TODAY-new Date(d))/86400000);
+const dueDate=(d,t)=>{const dt=new Date(d);dt.setDate(dt.getDate()+(parseInt(t)||15));return dt;};
+const eff=(a,t)=>t>0?Math.round((a/t)*100):0;
+const badge=(t,c)=>`<span class="badge b-${c}">${t}</span>`;
+const prioBadge=p=>badge(p,p==='P1'?'red':p==='P2'?'amber':'green');
+const effBadge=e=>badge(e+'%',e>=90?'green':e>=70?'amber':'red');
+const toast=(m,t='ok')=>{const el=document.getElementById('toast');el.textContent=m;el.className=`toast show ${t}`;setTimeout(()=>el.className='toast',2800);};
+const destroyChart=k=>{if(charts[k]){charts[k].destroy();delete charts[k];}};
+const DK=()=>matchMedia('(prefers-color-scheme:dark)').matches;
+const TC=()=>DK()?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.35)';
+const GC=()=>DK()?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
+const BO=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC(),font:{size:10}},grid:{color:GC()}},y:{ticks:{color:TC(),font:{size:10}},grid:{color:GC()}}}});
 
-function badge(text, cls) { return `<span class="badge b-${cls}">${text}</span>`; }
-function statusBadge(s) {
-  const m = {Paid:'green', Overdue:'red', 'Due today':'amber', Upcoming:'blue', Pending:'amber', 'In Progress':'blue', Resolved:'green', Critical:'red', open:'amber', done:'green'};
-  return badge(s, m[s]||'gray');
+// ===== MONTH SELECTORS =====
+const MONTHS=['Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026'];
+function populateMonthSelectors(){
+  ['mfg-dash-month','mis-month','stock-month','dispatch-month','bd-month','trd-dash-month','trd-pur-month','trd-sal-month'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.innerHTML=MONTHS.map(m=>`<option value="${m}"${m==='Jun 2026'?'selected':''}>${m}</option>`).join('');
+  });
 }
-function prioBadge(p) { return badge(p, p==='P1'?'red':p==='P2'?'amber':'green'); }
-function effBadge(e) { return badge(e+'%', e>=90?'green':e>=70?'amber':'red'); }
 
-function toast(msg, type='success') {
-  const t = document.getElementById('toast');
-  t.textContent = (type==='success'?'✓ ':type==='error'?'✕ ':'') + msg;
-  t.className = `toast show ${type}`;
-  setTimeout(() => t.className = 'toast', 2800);
+function getMonth(selId){return document.getElementById(selId)?.value||'Jun 2026';}
+
+// ===== BIZ SWITCHER =====
+function switchBiz(biz){
+  document.getElementById('nav-mfg').style.display=biz==='mfg'?'block':'none';
+  document.getElementById('nav-trd').style.display=biz==='trd'?'block':'none';
+  document.getElementById('sw-mfg').className='biz-btn'+(biz==='mfg'?' active-mfg':'');
+  document.getElementById('sw-trd').className='biz-btn'+(biz==='trd'?' active-trd':'');
+  goTo(biz==='mfg'?'mfg-dashboard':'trd-dashboard');
 }
-
-function showLoading(tbId, cols) {
-  const tb = document.getElementById(tbId);
-  if (tb) tb.innerHTML = `<tr><td colspan="${cols}"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr>`;
-}
-
-function destroyChart(key) { if (charts[key]) { charts[key].destroy(); delete charts[key]; } }
 
 // ===== NAVIGATION =====
-function goTo(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  const idx = {dashboard:0, production:1, inventory:2, stock:3, breakdown:4, scrap:5, tasks:6};
-  document.querySelectorAll('.ni')[idx[id]].classList.add('active');
+const pageMap={
+  'mfg-dashboard':0,'production':1,'inventory':2,'stock':3,'dispatch':4,'breakdown':5,'tasks':6,
+  'trd-dashboard':0,'trd-purchases':1,'trd-sales':2,'trd-materials':3
+};
+function goTo(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  // highlight nav
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const allNi=document.querySelectorAll('.ni');
+  const pages=['mfg-dashboard','production','inventory','stock','dispatch','breakdown','tasks','trd-dashboard','trd-purchases','trd-sales','trd-materials'];
+  const idx=pages.indexOf(id);
+  if(idx>=0&&allNi[idx])allNi[idx].classList.add('active');
   renderPage(id);
 }
 
-function renderPage(id) {
-  if (id === 'dashboard') renderDashboard();
-  if (id === 'production') renderMIS();
-  if (id === 'inventory') renderInventory();
-  if (id === 'stock') renderStock();
-  if (id === 'breakdown') renderBreakdown();
-  if (id === 'scrap') renderScrap();
-  if (id === 'tasks') renderTasks();
+function renderPage(id){
+  const m={
+    'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
+    'stock':renderStock,'dispatch':renderDispatch,'breakdown':renderBreakdown,'tasks':renderTasks,
+    'trd-dashboard':renderTrdDashboard,'trd-purchases':renderTrdPurchases,'trd-sales':renderTrdSales,
+    'trd-materials':renderTrdMaterials
+  };
+  if(m[id])m[id]();
 }
 
 // ===== MODALS =====
-function openModal(id, rowId) {
-  editId = rowId;
-  const m = document.getElementById(id);
-  m.classList.add('open');
-  const isEdit = rowId !== null;
+function openModal(id,rowId){
+  editId=rowId;
+  document.getElementById(id).classList.add('open');
+  const isEdit=rowId!==null;
 
-  if (id === 'mis-modal') {
-    document.getElementById('mis-modal-title').textContent = isEdit ? 'Edit MIS Entry' : 'Add MIS Entry';
-    if (isEdit) {
-      const r = DATA.mis.find(x => x.id === rowId);
-      if (r) {
-        document.getElementById('m-date').value = r.entry_date;
-        document.getElementById('m-target').value = r.target_tons;
-        document.getElementById('m-actual').value = r.actual_tons;
-        document.getElementById('m-dispatch').value = r.dispatched_tons;
-        document.getElementById('m-mpday').value = r.manpower_day;
-        document.getElementById('m-mpnight').value = r.manpower_night;
-        document.getElementById('m-wdt-d').value = r.washing_dt_day;
-        document.getElementById('m-adt-d').value = r.agglo_dt_day;
-        document.getElementById('m-edt-d').value = r.extruder_dt_day;
-        document.getElementById('m-wdt-n').value = r.washing_dt_night;
-        document.getElementById('m-adt-n').value = r.agglo_dt_night;
-        document.getElementById('m-edt-n').value = r.extruder_dt_night;
-        document.getElementById('m-issue-d').value = r.issue_day;
-        document.getElementById('m-issue-n').value = r.issue_night;
-        document.getElementById('m-rmopen').value = r.raw_stock_opening;
-        document.getElementById('m-fgopen').value = r.fg_stock_opening;
-        document.getElementById('m-notes').value = r.notes || '';
+  if(id==='mis-modal'){
+    document.getElementById('mis-modal-t').textContent=isEdit?'Edit MIS Entry':'Add MIS Entry';
+    if(isEdit){
+      const r=DATA.mis.find(x=>x.id===rowId);
+      if(r){
+        ['m-date','m-target','m-mpd','m-mpn','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>{
+          const map={
+            'm-date':'entry_date','m-target':'target_kg','m-mpd':'manpower_day','m-mpn':'manpower_night',
+            'm-wrd':'washing_run_day','m-ard':'agglo_run_day','m-erd':'extruder_run_day',
+            'm-wrn':'washing_run_night','m-arn':'agglo_run_night','m-ern':'extruder_run_night',
+            'm-wkg':'washing_kg','m-akg':'agglo_kg','m-ekg':'extruder_kg',
+            'm-rmop':'raw_stock_opening_kg','m-fgop':'fg_stock_opening_kg','m-disp':'dispatched_kg',
+            'm-tstock':'total_stock_kg','m-notes':'notes'
+          };
+          document.getElementById(fid).value=r[map[fid]]||'';
+        });
+        document.getElementById('m-issd').value=r.issue_day||'None';
+        document.getElementById('m-issn').value=r.issue_night||'None';
+        document.getElementById('m-tprod').value=r.total_production_kg||0;
+        calcDT();
       }
     } else {
-      ['m-date','m-actual','m-dispatch','m-mpday','m-mpnight','m-wdt-d','m-adt-d','m-edt-d','m-wdt-n','m-adt-n','m-edt-n','m-rmopen','m-fgopen','m-notes'].forEach(x => document.getElementById(x).value = '');
-      document.getElementById('m-target').value = 5;
-      document.getElementById('m-issue-d').value = 'None';
-      document.getElementById('m-issue-n').value = 'None';
+      ['m-date','m-mpd','m-mpn','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>document.getElementById(fid).value='');
+      document.getElementById('m-target').value=5000;
+      document.getElementById('m-tprod').value='';
+      document.getElementById('m-issd').value='None';
+      document.getElementById('m-issn').value='None';
     }
   }
-
-  if (id === 'inv-modal') {
-    document.getElementById('inv-modal-title').textContent = isEdit ? 'Edit Item' : 'Add Inventory Item';
-    if (isEdit) {
-      const r = DATA.inv.find(x => x.id === rowId);
-      if (r) { document.getElementById('i-item').value=r.item_name; document.getElementById('i-cat').value=r.category; document.getElementById('i-uom').value=r.uom; document.getElementById('i-min').value=r.minimum_stock; document.getElementById('i-stock').value=r.current_stock; document.getElementById('i-rate').value=r.rate_per_unit; }
-    } else { ['i-item','i-min','i-stock','i-rate'].forEach(x => document.getElementById(x).value = ''); }
+  if(id==='inv-modal'){
+    document.getElementById('inv-modal-t').textContent=isEdit?'Edit Item':'Add Item';
+    if(isEdit){const r=DATA.inv.find(x=>x.id===rowId);if(r){document.getElementById('i-item').value=r.item_name;document.getElementById('i-cat').value=r.category;document.getElementById('i-uom').value=r.uom;document.getElementById('i-min').value=r.minimum_stock;document.getElementById('i-stk').value=r.current_stock;document.getElementById('i-rate').value=r.rate_per_unit;}}
+    else{['i-item','i-min','i-stk','i-rate'].forEach(x=>document.getElementById(x).value='');}
   }
-
-  if (id === 'stock-modal') {
-    document.getElementById('stock-modal-title').textContent = isEdit ? 'Edit Stock Entry' : 'Add Stock Movement';
-    if (isEdit) {
-      const r = DATA.stock.find(x => x.id === rowId);
-      if (r) { document.getElementById('s-month').value=r.month_year; document.getElementById('s-rmop').value=r.rm_opening; document.getElementById('s-rmbuy').value=r.rm_purchased; document.getElementById('s-rmcon').value=r.rm_consumed; document.getElementById('s-rmcl').value=r.rm_closing; document.getElementById('s-fgop').value=r.fg_opening; document.getElementById('s-fgprod').value=r.fg_produced; document.getElementById('s-fgdis').value=r.fg_dispatched; document.getElementById('s-fgcl').value=r.fg_closing; }
-    } else { ['s-month','s-rmop','s-rmbuy','s-rmcon','s-rmcl','s-fgop','s-fgprod','s-fgdis','s-fgcl'].forEach(x => document.getElementById(x).value = ''); }
+  if(id==='stock-modal'){
+    document.getElementById('stock-modal-t').textContent=isEdit?'Edit Entry':'Add Stock Movement';
+    if(isEdit){const r=DATA.stock.find(x=>x.id===rowId);if(r){document.getElementById('s-month').value=r.month_year;document.getElementById('s-rmop').value=r.rm_opening_kg;document.getElementById('s-rmbuy').value=r.rm_purchased_kg;document.getElementById('s-rmcon').value=r.rm_consumed_kg;document.getElementById('s-fgop').value=r.fg_opening_kg;document.getElementById('s-fgprod').value=r.fg_produced_kg;document.getElementById('s-fgdis').value=r.fg_dispatched_kg;calcStockClose();}}
+    else{['s-month','s-rmop','s-rmbuy','s-rmcon','s-fgop','s-fgprod','s-fgdis'].forEach(x=>document.getElementById(x).value='');document.getElementById('s-rmcl').value='';document.getElementById('s-fgcl').value='';}
   }
-
-  if (id === 'bd-modal') {
-    document.getElementById('bd-modal-title').textContent = isEdit ? 'Edit Breakdown' : 'Log Breakdown';
-    if (isEdit) {
-      const r = DATA.bd.find(x => x.id === rowId);
-      if (r) { document.getElementById('b-date').value=r.breakdown_date; document.getElementById('b-machine').value=r.machine; document.getElementById('b-shift').value=r.shift; document.getElementById('b-hours').value=r.downtime_hours; document.getElementById('b-reason').value=r.reason; document.getElementById('b-action').value=r.action_taken; document.getElementById('b-cost').value=r.cost; document.getElementById('b-status').value=r.status; }
-    } else { ['b-date','b-hours','b-reason','b-action','b-cost'].forEach(x => document.getElementById(x).value = ''); document.getElementById('b-status').value = 'Pending'; }
+  if(id==='dispatch-modal'){
+    document.getElementById('dispatch-modal-t').textContent=isEdit?'Edit Dispatch':'Add Dispatch';
+    if(isEdit){const r=DATA.dispatches.find(x=>x.id===rowId);if(r){document.getElementById('d-date').value=r.dispatch_date;document.getElementById('d-cust').value=r.customer;document.getElementById('d-mat').value=r.material_type;document.getElementById('d-qty').value=r.qty_kg;document.getElementById('d-rate').value=r.rate_per_kg;document.getElementById('d-amt').value=r.amount;document.getElementById('d-veh').value=r.vehicle_no||'';document.getElementById('d-lr').value=r.lr_no||'';document.getElementById('d-inv').value=r.invoice_no||'';document.getElementById('d-dest').value=r.destination||'';document.getElementById('d-status').value=r.status;document.getElementById('d-notes').value=r.notes||'';}}
+    else{['d-date','d-cust','d-qty','d-rate','d-amt','d-veh','d-lr','d-inv','d-dest','d-notes'].forEach(x=>document.getElementById(x).value='');}
   }
-
-  if (id === 'scrap-modal') {
-    document.getElementById('scrap-modal-title').textContent = isEdit ? 'Edit Bill' : 'Add Scrap Bill';
-    if (isEdit) {
-      const r = DATA.scrap.find(x => x.id === rowId);
-      if (r) { document.getElementById('sc-date').value=r.bill_date; document.getElementById('sc-bill').value=r.bill_no; document.getElementById('sc-supplier').value=r.supplier; document.getElementById('sc-qty').value=r.qty_tons; document.getElementById('sc-amt').value=r.amount; document.getElementById('sc-terms').value=r.payment_terms_days; document.getElementById('sc-paid').value=r.payment_received_date||''; document.getElementById('sc-notes').value=r.notes||''; }
-    } else { ['sc-date','sc-bill','sc-supplier','sc-qty','sc-amt','sc-paid','sc-notes'].forEach(x => document.getElementById(x).value = ''); document.getElementById('sc-terms').value = 15; }
+  if(id==='bd-modal'){
+    document.getElementById('bd-modal-t').textContent=isEdit?'Edit Breakdown':'Log Breakdown';
+    if(isEdit){const r=DATA.bd.find(x=>x.id===rowId);if(r){document.getElementById('b-date').value=r.breakdown_date;document.getElementById('b-machine').value=r.machine;document.getElementById('b-shift').value=r.shift||'Day';document.getElementById('b-hours').value=r.downtime_hours;document.getElementById('b-reason').value=r.reason;document.getElementById('b-action').value=r.action_taken;document.getElementById('b-cost').value=r.cost;document.getElementById('b-status').value=r.status;}}
+    else{['b-date','b-hours','b-reason','b-action','b-cost'].forEach(x=>document.getElementById(x).value='');document.getElementById('b-status').value='Pending';}
   }
-
-  if (id === 'task-modal') {
-    document.getElementById('task-modal-title').textContent = isEdit ? 'Edit Task' : 'Add Task';
-    if (isEdit) {
-      const r = DATA.tasks.find(x => x.id === rowId);
-      if (r) { document.getElementById('t-task').value=r.task_description; document.getElementById('t-owner').value=r.assigned_to||''; document.getElementById('t-priority').value=r.priority; document.getElementById('t-cat').value=r.category||'Other'; document.getElementById('t-due').value=r.due_date||''; document.getElementById('t-notes').value=r.notes||''; }
-    } else { ['t-task','t-owner','t-due','t-notes'].forEach(x => document.getElementById(x).value = ''); document.getElementById('t-priority').value='P1'; document.getElementById('t-cat').value='Other'; }
+  if(id==='task-modal'){
+    document.getElementById('task-modal-t').textContent=isEdit?'Edit Task':'Add Task';
+    if(isEdit){const r=DATA.tasks.find(x=>x.id===rowId);if(r){document.getElementById('t-task').value=r.task_description;document.getElementById('t-owner').value=r.assigned_to||'';document.getElementById('t-priority').value=r.priority;document.getElementById('t-cat').value=r.category||'Other';document.getElementById('t-due').value=r.due_date||'';document.getElementById('t-notes').value=r.notes||'';}}
+    else{['t-task','t-owner','t-due','t-notes'].forEach(x=>document.getElementById(x).value='');document.getElementById('t-priority').value='P1';}
+  }
+  if(id==='trd-pur-modal'){
+    document.getElementById('trd-pur-modal-t').textContent=isEdit?'Edit Purchase':'Add Purchase';
+    populateMaterialSelect('tp-material');
+    if(isEdit){const r=DATA.trdPur.find(x=>x.id===rowId);if(r){document.getElementById('tp-date').value=r.purchase_date;document.getElementById('tp-bill').value=r.bill_no;document.getElementById('tp-supplier').value=r.supplier;document.getElementById('tp-material').value=r.material;document.getElementById('tp-qty').value=r.qty_kg;document.getElementById('tp-rate').value=r.rate_per_kg;document.getElementById('tp-amt').value=r.amount;document.getElementById('tp-terms').value=r.payment_terms_days;document.getElementById('tp-paid').value=r.payment_date||'';document.getElementById('tp-pamt').value=r.payment_amount||0;document.getElementById('tp-notes').value=r.notes||'';}}
+    else{['tp-date','tp-bill','tp-supplier','tp-qty','tp-rate','tp-paid','tp-notes'].forEach(x=>document.getElementById(x).value='');document.getElementById('tp-terms').value=15;document.getElementById('tp-pamt').value=0;document.getElementById('tp-amt').value='';}
+  }
+  if(id==='trd-sal-modal'){
+    document.getElementById('trd-sal-modal-t').textContent=isEdit?'Edit Sale':'Add Sale';
+    populateMaterialSelect('ts-material');
+    if(isEdit){const r=DATA.trdSal.find(x=>x.id===rowId);if(r){document.getElementById('ts-date').value=r.sale_date;document.getElementById('ts-inv').value=r.invoice_no;document.getElementById('ts-customer').value=r.customer;document.getElementById('ts-material').value=r.material;document.getElementById('ts-qty').value=r.qty_kg;document.getElementById('ts-rate').value=r.rate_per_kg;document.getElementById('ts-amt').value=r.amount;document.getElementById('ts-terms').value=r.payment_terms_days;document.getElementById('ts-recvd').value=r.payment_received_date||'';document.getElementById('ts-ramt').value=r.payment_received_amount||0;document.getElementById('ts-notes').value=r.notes||'';}}
+    else{['ts-date','ts-inv','ts-customer','ts-qty','ts-rate','ts-recvd','ts-notes'].forEach(x=>document.getElementById(x).value='');document.getElementById('ts-terms').value=30;document.getElementById('ts-ramt').value=0;document.getElementById('ts-amt').value='';}
   }
 }
 
-function closeModal(id) { document.getElementById(id).classList.remove('open'); editId = null; }
+function closeModal(id){document.getElementById(id).classList.remove('open');editId=null;}
+function populateMaterialSelect(id){
+  const el=document.getElementById(id);
+  el.innerHTML=DATA.trdMat.map(m=>`<option value="${m.material_name}">${m.material_name}</option>`).join('');
+}
+
+// ===== FORM HELPERS =====
+function calcDT(){
+  [['m-wrd','m-wdt-d-show'],['m-ard','m-adt-d-show'],['m-erd','m-edt-d-show'],['m-wrn','m-wdt-n-show'],['m-arn','m-adt-n-show'],['m-ern','m-edt-n-show']].forEach(([inp,out])=>{
+    const v=parseFloat(document.getElementById(inp)?.value||0);
+    const dt=Math.max(0,12-v).toFixed(1);
+    const el=document.getElementById(out);
+    if(el)el.textContent=`Downtime: ${dt}h`;
+  });
+}
+function calcTotalProd(){
+  const v=parseFloat(document.getElementById('m-ekg')?.value||0);
+  document.getElementById('m-tprod').value=v;
+}
+function calcStockClose(){
+  const g=id=>parseFloat(document.getElementById(id)?.value||0);
+  document.getElementById('s-rmcl').value=(g('s-rmop')+g('s-rmbuy')-g('s-rmcon')).toFixed(0);
+  document.getElementById('s-fgcl').value=(g('s-fgop')+g('s-fgprod')-g('s-fgdis')).toFixed(0);
+}
+function calcDispatchAmt(){
+  const q=parseFloat(document.getElementById('d-qty')?.value||0);
+  const r=parseFloat(document.getElementById('d-rate')?.value||0);
+  document.getElementById('d-amt').value=(q*r).toFixed(0);
+}
+function calcTrdPurAmt(){
+  const q=parseFloat(document.getElementById('tp-qty')?.value||0);
+  const r=parseFloat(document.getElementById('tp-rate')?.value||0);
+  document.getElementById('tp-amt').value=(q*r).toFixed(0);
+}
+function calcTrdSalAmt(){
+  const q=parseFloat(document.getElementById('ts-qty')?.value||0);
+  const r=parseFloat(document.getElementById('ts-rate')?.value||0);
+  document.getElementById('ts-amt').value=(q*r).toFixed(0);
+}
+
+// ===== WHATSAPP MIS =====
+function generateWAMIS(){
+  const mis=DATA.mis.filter(r=>r.month_year===getMonth('mis-month'));
+  if(mis.length===0){toast('No MIS entries for this month','err');return;}
+  // Get most recent entry (previous day)
+  const sorted=[...mis].sort((a,b)=>new Date(b.entry_date)-new Date(a.entry_date));
+  const r=sorted[0];
+  const d=new Date(r.entry_date);
+  const dateStr=`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()).slice(-2)}`;
+  const totalMP=(parseInt(r.manpower_day||0))+(parseInt(r.manpower_night||0));
+  const washRun=((parseFloat(r.washing_run_day||0))+(parseFloat(r.washing_run_night||0))).toFixed(0);
+  const aggloRun=((parseFloat(r.agglo_run_day||0))+(parseFloat(r.agglo_run_night||0))).toFixed(0);
+  const extRun=((parseFloat(r.extruder_run_day||0))+(parseFloat(r.extruder_run_night||0))).toFixed(0);
+  const msg=`MIS -
+Date - ${dateStr}
+Manpower - ${totalMP}
+Washing line - ${washRun} hours ( ${Number(r.washing_kg||0).toLocaleString('en-IN')} kg )
+Agglo line - ${aggloRun} hours ( ${Number(r.agglo_kg||0).toLocaleString('en-IN')} kg )
+Extruder line - ${extRun} hours ( ${Number(r.extruder_kg||0).toLocaleString('en-IN')} kg )
+Total production - ${Number(r.total_production_kg||0).toLocaleString('en-IN')} kg
+Total stock - ${Number(r.total_stock_kg||0).toLocaleString('en-IN')} kg`;
+  document.getElementById('wa-preview').textContent=msg;
+  document.getElementById('wa-card').style.display='block';
+  document.getElementById('wa-card').scrollIntoView({behavior:'smooth'});
+}
+function copyWA(){
+  const txt=document.getElementById('wa-preview').textContent;
+  navigator.clipboard.writeText(txt).then(()=>toast('Copied! Paste in WhatsApp ✓')).catch(()=>toast('Copy failed','err'));
+}
+function openWA(){
+  const txt=encodeURIComponent(document.getElementById('wa-preview').textContent);
+  window.open('https://wa.me/?text='+txt,'_blank');
+}
 
 // ===== DATA LOADING =====
-async function loadAll() {
-  document.getElementById('sync-txt').textContent = 'Syncing...';
-  try {
-    const [mis, inv, scrap, bd, tasks, stock] = await Promise.all([
-      sb.from('mis_entries').select('*').order('entry_date', {ascending:false}),
+async function loadAll(){
+  document.getElementById('last-sync').textContent='Syncing...';
+  try{
+    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm]=await Promise.all([
+      sb.from('mis_entries').select('*').order('entry_date',{ascending:false}),
       sb.from('inventory').select('*').order('item_name'),
-      sb.from('scrap_bills').select('*').order('bill_date', {ascending:false}),
-      sb.from('breakdowns').select('*').order('breakdown_date', {ascending:false}),
+      sb.from('stock_movements').select('*').order('created_at',{ascending:false}),
+      sb.from('dispatches').select('*').order('dispatch_date',{ascending:false}),
+      sb.from('breakdowns').select('*').order('breakdown_date',{ascending:false}),
       sb.from('tasks').select('*').order('priority').order('created_at'),
-      sb.from('stock_movements').select('*').order('created_at', {ascending:false}),
+      sb.from('trading_purchases').select('*').order('purchase_date',{ascending:false}),
+      sb.from('trading_sales').select('*').order('sale_date',{ascending:false}),
+      sb.from('trading_materials').select('*').order('material_name'),
     ]);
-    DATA.mis = mis.data || [];
-    DATA.inv = inv.data || [];
-    DATA.scrap = scrap.data || [];
-    DATA.bd = bd.data || [];
-    DATA.tasks = tasks.data || [];
-    DATA.stock = stock.data || [];
-    document.getElementById('sync-txt').textContent = 'Synced ✓';
-    const activePage = document.querySelector('.page.active')?.id?.replace('page-','');
-    if (activePage) renderPage(activePage);
-  } catch(e) {
-    document.getElementById('sync-txt').textContent = 'Error — check connection';
-    toast('Failed to load data', 'error');
+    DATA.mis=mis.data||[];DATA.inv=inv.data||[];DATA.stock=stock.data||[];
+    DATA.dispatches=disp.data||[];DATA.bd=bd.data||[];DATA.tasks=tasks.data||[];
+    DATA.trdPur=tp.data||[];DATA.trdSal=ts.data||[];DATA.trdMat=tm.data||[];
+    document.getElementById('last-sync').textContent='Synced ✓ '+new Date().toLocaleTimeString('en-IN');
+    const active=document.querySelector('.page.active')?.id?.replace('page-','');
+    if(active)renderPage(active);
+  }catch(e){
+    document.getElementById('last-sync').textContent='Connection error';
+    toast('Failed to load data — check connection','err');
   }
 }
 
 // ===== SAVE FUNCTIONS =====
-async function saveMIS() {
-  const row = {
-    entry_date: document.getElementById('m-date').value,
-    target_tons: parseFloat(document.getElementById('m-target').value)||5,
-    actual_tons: parseFloat(document.getElementById('m-actual').value)||0,
-    dispatched_tons: parseFloat(document.getElementById('m-dispatch').value)||0,
-    manpower_day: parseInt(document.getElementById('m-mpday').value)||0,
-    manpower_night: parseInt(document.getElementById('m-mpnight').value)||0,
-    washing_dt_day: parseFloat(document.getElementById('m-wdt-d').value)||0,
-    agglo_dt_day: parseFloat(document.getElementById('m-adt-d').value)||0,
-    extruder_dt_day: parseFloat(document.getElementById('m-edt-d').value)||0,
-    washing_dt_night: parseFloat(document.getElementById('m-wdt-n').value)||0,
-    agglo_dt_night: parseFloat(document.getElementById('m-adt-n').value)||0,
-    extruder_dt_night: parseFloat(document.getElementById('m-edt-n').value)||0,
-    issue_day: document.getElementById('m-issue-d').value,
-    issue_night: document.getElementById('m-issue-n').value,
-    raw_stock_opening: parseFloat(document.getElementById('m-rmopen').value)||0,
-    fg_stock_opening: parseFloat(document.getElementById('m-fgopen').value)||0,
-    notes: document.getElementById('m-notes').value,
-    updated_at: new Date().toISOString()
+async function saveMIS(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={
+    entry_date:g('m-date'),target_kg:parseFloat(g('m-target'))||5000,
+    manpower_day:parseInt(g('m-mpd'))||0,manpower_night:parseInt(g('m-mpn'))||0,
+    washing_run_day:parseFloat(g('m-wrd'))||0,agglo_run_day:parseFloat(g('m-ard'))||0,extruder_run_day:parseFloat(g('m-erd'))||0,
+    washing_run_night:parseFloat(g('m-wrn'))||0,agglo_run_night:parseFloat(g('m-arn'))||0,extruder_run_night:parseFloat(g('m-ern'))||0,
+    washing_kg:parseFloat(g('m-wkg'))||0,agglo_kg:parseFloat(g('m-akg'))||0,extruder_kg:parseFloat(g('m-ekg'))||0,
+    total_production_kg:parseFloat(g('m-ekg'))||0,
+    issue_day:g('m-issd'),issue_night:g('m-issn'),
+    raw_stock_opening_kg:parseFloat(g('m-rmop'))||0,fg_stock_opening_kg:parseFloat(g('m-fgop'))||0,
+    dispatched_kg:parseFloat(g('m-disp'))||0,total_stock_kg:parseFloat(g('m-tstock'))||0,
+    notes:g('m-notes'),updated_at:new Date().toISOString()
   };
-  if (!row.entry_date) { toast('Please select a date', 'error'); return; }
-  const { error } = editId
-    ? await sb.from('mis_entries').update(row).eq('id', editId)
-    : await sb.from('mis_entries').insert(row);
-  if (error) { toast('Error saving: ' + error.message, 'error'); return; }
-  toast(editId ? 'MIS entry updated' : 'MIS entry saved');
-  closeModal('mis-modal');
-  await loadAll();
+  if(!row.entry_date){toast('Please select a date','err');return;}
+  const{error}=editId?await sb.from('mis_entries').update(row).eq('id',editId):await sb.from('mis_entries').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast(editId?'Entry updated ✓':'Entry saved ✓');closeModal('mis-modal');await loadAll();
 }
 
-async function saveInv() {
-  const row = {
-    item_name: document.getElementById('i-item').value,
-    category: document.getElementById('i-cat').value,
-    uom: document.getElementById('i-uom').value,
-    minimum_stock: parseFloat(document.getElementById('i-min').value)||0,
-    current_stock: parseFloat(document.getElementById('i-stock').value)||0,
-    rate_per_unit: parseFloat(document.getElementById('i-rate').value)||0,
-    updated_at: new Date().toISOString()
-  };
-  if (!row.item_name) { toast('Item name required', 'error'); return; }
-  const { error } = editId
-    ? await sb.from('inventory').update(row).eq('id', editId)
-    : await sb.from('inventory').insert(row);
-  if (error) { toast('Error: ' + error.message, 'error'); return; }
-  toast(editId ? 'Item updated' : 'Item added');
-  closeModal('inv-modal');
-  await loadAll();
+async function saveInv(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={item_name:g('i-item'),category:g('i-cat'),uom:g('i-uom'),minimum_stock:parseFloat(g('i-min'))||0,current_stock:parseFloat(g('i-stk'))||0,rate_per_unit:parseFloat(g('i-rate'))||0,updated_at:new Date().toISOString()};
+  if(!row.item_name){toast('Item name required','err');return;}
+  const{error}=editId?await sb.from('inventory').update(row).eq('id',editId):await sb.from('inventory').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast(editId?'Item updated ✓':'Item added ✓');closeModal('inv-modal');await loadAll();
 }
 
-async function saveStock() {
-  const row = {
-    month_year: document.getElementById('s-month').value,
-    rm_opening: parseFloat(document.getElementById('s-rmop').value)||0,
-    rm_purchased: parseFloat(document.getElementById('s-rmbuy').value)||0,
-    rm_consumed: parseFloat(document.getElementById('s-rmcon').value)||0,
-    rm_closing: parseFloat(document.getElementById('s-rmcl').value)||0,
-    fg_opening: parseFloat(document.getElementById('s-fgop').value)||0,
-    fg_produced: parseFloat(document.getElementById('s-fgprod').value)||0,
-    fg_dispatched: parseFloat(document.getElementById('s-fgdis').value)||0,
-    fg_closing: parseFloat(document.getElementById('s-fgcl').value)||0,
-    updated_at: new Date().toISOString()
-  };
-  const { error } = editId
-    ? await sb.from('stock_movements').update(row).eq('id', editId)
-    : await sb.from('stock_movements').insert(row);
-  if (error) { toast('Error: ' + error.message, 'error'); return; }
-  toast(editId ? 'Updated' : 'Stock entry saved');
-  closeModal('stock-modal');
-  await loadAll();
+async function saveStock(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={month_year:g('s-month'),rm_opening_kg:parseFloat(g('s-rmop'))||0,rm_purchased_kg:parseFloat(g('s-rmbuy'))||0,rm_consumed_kg:parseFloat(g('s-rmcon'))||0,fg_opening_kg:parseFloat(g('s-fgop'))||0,fg_produced_kg:parseFloat(g('s-fgprod'))||0,fg_dispatched_kg:parseFloat(g('s-fgdis'))||0,updated_at:new Date().toISOString()};
+  if(!row.month_year){toast('Month required','err');return;}
+  const{error}=editId?await sb.from('stock_movements').update(row).eq('id',editId):await sb.from('stock_movements').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Saved ✓');closeModal('stock-modal');await loadAll();
 }
 
-async function saveBD() {
-  const row = {
-    breakdown_date: document.getElementById('b-date').value,
-    machine: document.getElementById('b-machine').value,
-    shift: document.getElementById('b-shift').value,
-    downtime_hours: parseFloat(document.getElementById('b-hours').value)||0,
-    reason: document.getElementById('b-reason').value,
-    action_taken: document.getElementById('b-action').value,
-    cost: parseFloat(document.getElementById('b-cost').value)||0,
-    status: document.getElementById('b-status').value,
-    updated_at: new Date().toISOString()
-  };
-  if (!row.breakdown_date) { toast('Please select a date', 'error'); return; }
-  const { error } = editId
-    ? await sb.from('breakdowns').update(row).eq('id', editId)
-    : await sb.from('breakdowns').insert(row);
-  if (error) { toast('Error: ' + error.message, 'error'); return; }
-  toast(editId ? 'Updated' : 'Breakdown logged');
-  closeModal('bd-modal');
-  await loadAll();
+async function saveDispatch(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={dispatch_date:g('d-date'),customer:g('d-cust'),material_type:g('d-mat'),qty_kg:parseFloat(g('d-qty'))||0,rate_per_kg:parseFloat(g('d-rate'))||0,amount:parseFloat(g('d-amt'))||0,vehicle_no:g('d-veh'),lr_no:g('d-lr'),invoice_no:g('d-inv'),destination:g('d-dest'),status:g('d-status'),notes:g('d-notes'),updated_at:new Date().toISOString()};
+  if(!row.dispatch_date||!row.customer){toast('Date and customer required','err');return;}
+  const{error}=editId?await sb.from('dispatches').update(row).eq('id',editId):await sb.from('dispatches').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Dispatch saved ✓');closeModal('dispatch-modal');await loadAll();
 }
 
-async function saveScrap() {
-  const row = {
-    bill_date: document.getElementById('sc-date').value,
-    bill_no: document.getElementById('sc-bill').value,
-    supplier: document.getElementById('sc-supplier').value,
-    qty_tons: parseFloat(document.getElementById('sc-qty').value)||0,
-    amount: parseFloat(document.getElementById('sc-amt').value)||0,
-    payment_terms_days: parseInt(document.getElementById('sc-terms').value)||15,
-    payment_received_date: document.getElementById('sc-paid').value || null,
-    notes: document.getElementById('sc-notes').value,
-    updated_at: new Date().toISOString()
-  };
-  if (!row.bill_date || !row.bill_no) { toast('Bill date and number required', 'error'); return; }
-  const { error } = editId
-    ? await sb.from('scrap_bills').update(row).eq('id', editId)
-    : await sb.from('scrap_bills').insert(row);
-  if (error) { toast('Error: ' + error.message, 'error'); return; }
-  toast(editId ? 'Bill updated' : 'Bill saved');
-  closeModal('scrap-modal');
-  await loadAll();
+async function saveBD(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={breakdown_date:g('b-date'),machine:g('b-machine'),shift:g('b-shift'),downtime_hours:parseFloat(g('b-hours'))||0,reason:g('b-reason'),action_taken:g('b-action'),cost:parseFloat(g('b-cost'))||0,status:g('b-status'),updated_at:new Date().toISOString()};
+  if(!row.breakdown_date){toast('Date required','err');return;}
+  const{error}=editId?await sb.from('breakdowns').update(row).eq('id',editId):await sb.from('breakdowns').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Breakdown logged ✓');closeModal('bd-modal');await loadAll();
 }
 
-async function saveTask() {
-  const row = {
-    task_description: document.getElementById('t-task').value,
-    assigned_to: document.getElementById('t-owner').value,
-    priority: document.getElementById('t-priority').value,
-    category: document.getElementById('t-cat').value,
-    due_date: document.getElementById('t-due').value || null,
-    notes: document.getElementById('t-notes').value,
-    updated_at: new Date().toISOString()
-  };
-  if (!row.task_description) { toast('Task description required', 'error'); return; }
-  const { error } = editId
-    ? await sb.from('tasks').update(row).eq('id', editId)
-    : await sb.from('tasks').insert({ ...row, status: 'open' });
-  if (error) { toast('Error: ' + error.message, 'error'); return; }
-  toast(editId ? 'Task updated' : 'Task added');
-  closeModal('task-modal');
-  await loadAll();
+async function saveTask(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={task_description:g('t-task'),assigned_to:g('t-owner'),priority:g('t-priority'),category:g('t-cat'),due_date:g('t-due')||null,notes:g('t-notes'),updated_at:new Date().toISOString()};
+  if(!row.task_description){toast('Task description required','err');return;}
+  const{error}=editId?await sb.from('tasks').update(row).eq('id',editId):await sb.from('tasks').insert({...row,status:'open'});
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast(editId?'Task updated ✓':'Task added ✓');closeModal('task-modal');await loadAll();
 }
 
-async function deleteRow(table, id, label) {
-  if (!confirm('Delete this ' + label + '? This cannot be undone.')) return;
-  const { error } = await sb.from(table).delete().eq('id', id);
-  if (error) { toast('Delete failed: ' + error.message, 'error'); return; }
-  toast(label + ' deleted');
-  await loadAll();
+async function saveTrdPurchase(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={purchase_date:g('tp-date'),bill_no:g('tp-bill'),supplier:g('tp-supplier'),material:g('tp-material'),qty_kg:parseFloat(g('tp-qty'))||0,rate_per_kg:parseFloat(g('tp-rate'))||0,amount:parseFloat(g('tp-amt'))||0,payment_terms_days:parseInt(g('tp-terms'))||15,payment_date:g('tp-paid')||null,payment_amount:parseFloat(g('tp-pamt'))||0,notes:g('tp-notes'),updated_at:new Date().toISOString()};
+  if(!row.purchase_date||!row.bill_no){toast('Date and bill no required','err');return;}
+  const{error}=editId?await sb.from('trading_purchases').update(row).eq('id',editId):await sb.from('trading_purchases').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Purchase saved ✓');closeModal('trd-pur-modal');await loadAll();
 }
 
-async function markPaid(id) {
-  const d = prompt('Enter payment received date (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
-  if (!d) return;
-  const { error } = await sb.from('scrap_bills').update({ payment_received_date: d, updated_at: new Date().toISOString() }).eq('id', id);
-  if (error) { toast('Error: ' + error.message, 'error'); return; }
-  toast('Marked as paid ✓');
-  await loadAll();
+async function saveTrdSale(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={sale_date:g('ts-date'),invoice_no:g('ts-inv'),customer:g('ts-customer'),material:g('ts-material'),qty_kg:parseFloat(g('ts-qty'))||0,rate_per_kg:parseFloat(g('ts-rate'))||0,amount:parseFloat(g('ts-amt'))||0,payment_terms_days:parseInt(g('ts-terms'))||30,payment_received_date:g('ts-recvd')||null,payment_received_amount:parseFloat(g('ts-ramt'))||0,notes:g('ts-notes'),updated_at:new Date().toISOString()};
+  if(!row.sale_date||!row.invoice_no){toast('Date and invoice required','err');return;}
+  const{error}=editId?await sb.from('trading_sales').update(row).eq('id',editId):await sb.from('trading_sales').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Sale saved ✓');closeModal('trd-sal-modal');await loadAll();
 }
 
-async function toggleTaskDone(id, current) {
-  const newStatus = current === 'done' ? 'open' : 'done';
-  const { error } = await sb.from('tasks').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', id);
-  if (error) { toast('Error', 'error'); return; }
-  toast(newStatus === 'done' ? 'Task marked done ✓' : 'Task reopened');
-  await loadAll();
+async function saveTrdMaterial(){
+  const row={material_name:document.getElementById('tm-name').value,unit:document.getElementById('tm-unit').value,description:document.getElementById('tm-desc').value};
+  if(!row.material_name){toast('Name required','err');return;}
+  const{error}=await sb.from('trading_materials').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Material added ✓');closeModal('trd-mat-modal');await loadAll();
+}
+
+async function deleteRow(table,id,label){
+  if(!confirm('Delete this '+label+'?'))return;
+  const{error}=await sb.from(table).delete().eq('id',id);
+  if(error){toast('Delete failed','err');return;}
+  toast(label+' deleted');await loadAll();
+}
+
+async function markPaid(table,id,field,amtField){
+  const d=prompt('Payment date (YYYY-MM-DD):',TODAY.toISOString().split('T')[0]);
+  if(!d)return;
+  const amt=prompt('Amount paid (₹):','0');
+  const update={[field]:d,updated_at:new Date().toISOString()};
+  if(amtField)update[amtField]=parseFloat(amt)||0;
+  const{error}=await sb.from(table).update(update).eq('id',id);
+  if(error){toast('Error','err');return;}
+  toast('Payment recorded ✓');await loadAll();
+}
+
+async function markRecvd(id){
+  const d=prompt('Payment received date (YYYY-MM-DD):',TODAY.toISOString().split('T')[0]);
+  if(!d)return;
+  const amt=prompt('Amount received (₹):','0');
+  const{error}=await sb.from('trading_sales').update({payment_received_date:d,payment_received_amount:parseFloat(amt)||0,updated_at:new Date().toISOString()}).eq('id',id);
+  if(error){toast('Error','err');return;}
+  toast('Payment received recorded ✓');await loadAll();
+}
+
+async function toggleTaskDone(id,cur){
+  const ns=cur==='done'?'open':'done';
+  await sb.from('tasks').update({status:ns,updated_at:new Date().toISOString()}).eq('id',id);
+  toast(ns==='done'?'Task done ✓':'Task reopened');await loadAll();
 }
 
 // ===== RENDER FUNCTIONS =====
+function filterByMonth(arr,field,monthVal){
+  if(!monthVal||monthVal==='all')return arr;
+  return arr.filter(r=>r.month_year===monthVal);
+}
 
-function renderDashboard() {
-  document.getElementById('dash-date').textContent = TODAY.toLocaleDateString('en-IN', {weekday:'short', day:'2-digit', month:'short', year:'numeric'});
-  const totalProd = DATA.mis.reduce((a, r) => a + Number(r.actual_tons), 0);
-  const totalTarget = DATA.mis.reduce((a, r) => a + Number(r.target_tons), 0);
-  const avgEff = totalTarget > 0 ? Math.round((totalProd/totalTarget)*100) : 0;
-  const outstanding = DATA.scrap.filter(r => !r.payment_received_date).reduce((a, r) => a + Number(r.amount), 0);
-  const p1Open = DATA.tasks.filter(r => r.priority === 'P1' && r.status === 'open').length;
-  const lowStock = DATA.inv.filter(r => Number(r.current_stock) < Number(r.minimum_stock)).length;
+function renderMfgDashboard(){
+  const m=getMonth('mfg-dash-month');
+  const mis=filterByMonth(DATA.mis,'month_year',m);
+  const totalProd=mis.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
+  const totalTgt=mis.reduce((a,r)=>a+Number(r.target_kg||0),0);
+  const avgEff=totalTgt>0?Math.round((totalProd/totalTgt)*100):0;
+  const outstanding=DATA.inv.filter(r=>Number(r.current_stock)<Number(r.minimum_stock)).length;
+  const p1=DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').length;
+  const totalDisp=mis.reduce((a,r)=>a+Number(r.dispatched_kg||0),0);
+  document.getElementById('mfg-dash-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Production (${m})</div><div class="vl green">${Number(totalProd).toLocaleString('en-IN')} Kg</div><div class="sb">Target: ${Number(totalTgt).toLocaleString('en-IN')} Kg</div></div>
+    <div class="mc"><div class="lb">Avg efficiency</div><div class="vl ${avgEff>=90?'green':avgEff>=70?'amber':'red'}">${avgEff}%</div><div class="sb">${mis.length} days logged</div></div>
+    <div class="mc"><div class="lb">Dispatched</div><div class="vl">${Number(totalDisp).toLocaleString('en-IN')} Kg</div></div>
+    <div class="mc"><div class="lb">P1 tasks open</div><div class="vl amber">${p1}</div><div class="sb">${outstanding} low stock items</div></div>`;
 
-  document.getElementById('dash-metrics').innerHTML = `
-    <div class="mc"><div class="lb">Monthly production</div><div class="vl green">${totalProd.toFixed(1)} T</div><div class="sb">Target: ${totalTarget.toFixed(1)} T</div></div>
-    <div class="mc"><div class="lb">Avg efficiency</div><div class="vl ${avgEff>=90?'green':avgEff>=70?'amber':'red'}">${avgEff}%</div><div class="sb">${DATA.mis.length} days logged</div></div>
-    <div class="mc"><div class="lb">Scrap outstanding</div><div class="vl red">₹${(outstanding/100000).toFixed(1)} L</div><div class="sb">${DATA.scrap.filter(r=>!r.payment_received_date).length} unpaid bills</div></div>
-    <div class="mc"><div class="lb">P1 tasks open</div><div class="vl amber">${p1Open}</div><div class="sb">${lowStock} items low stock</div></div>`;
-
-  // Machine uptime from MIS data
-  const machineData = [
-    { name: 'Washing', dtDay: DATA.mis.reduce((a,r)=>a+Number(r.washing_dt_day||0),0), dtNight: DATA.mis.reduce((a,r)=>a+Number(r.washing_dt_night||0),0) },
-    { name: 'Agglo', dtDay: DATA.mis.reduce((a,r)=>a+Number(r.agglo_dt_day||0),0), dtNight: DATA.mis.reduce((a,r)=>a+Number(r.agglo_dt_night||0),0) },
-    { name: 'Extruder', dtDay: DATA.mis.reduce((a,r)=>a+Number(r.extruder_dt_day||0),0), dtNight: DATA.mis.reduce((a,r)=>a+Number(r.extruder_dt_night||0),0) },
+  // Machines uptime
+  const totalH=mis.length*24;
+  const machData=[
+    {n:'Washing',dt:mis.reduce((a,r)=>a+(12-Number(r.washing_run_day||0))+(12-Number(r.washing_run_night||0)),0)},
+    {n:'Agglo',dt:mis.reduce((a,r)=>a+(12-Number(r.agglo_run_day||0))+(12-Number(r.agglo_run_night||0)),0)},
+    {n:'Extruder',dt:mis.reduce((a,r)=>a+(12-Number(r.extruder_run_day||0))+(12-Number(r.extruder_run_night||0)),0)},
   ];
-  const totalHours = DATA.mis.length * 24;
-  document.getElementById('dash-machines').innerHTML = machineData.map(m => {
-    const dt = m.dtDay + m.dtNight;
-    const run = totalHours > 0 ? Math.round(((totalHours-dt)/totalHours)*100) : 0;
-    const col = run>=80?'var(--acc)':run>=50?'#d97706':'#dc2626';
-    return `<div class="pbar-row">
-      <div class="pbar-label">${m.name}</div>
-      <div class="pbar-outer"><div class="pbar-fill" style="width:${run}%;background:${col};"></div></div>
-      <div class="pbar-val">${run}%</div>
-    </div>`;
+  document.getElementById('mfg-dash-machines').innerHTML=machData.map(m=>{
+    const run=totalH>0?Math.round(((totalH-m.dt)/totalH)*100):0;
+    const col=run>=80?'#1D9E75':run>=50?'#d97706':'#dc2626';
+    return`<div class="pbar-row"><div class="pbar-label">${m.n}</div><div class="pbar-outer"><div class="pbar-fill" style="width:${run}%;background:${col};"></div></div><div class="pbar-val">${run}%</div></div>`;
   }).join('');
 
   // Alerts
-  const alerts = [];
-  DATA.scrap.filter(r=>!r.payment_received_date&&dueDate(r.bill_date,r.payment_terms_days)<TODAY).forEach(r=>alerts.push({type:'red',msg:`Bill ${r.bill_no} overdue — ₹${fmtMoney(r.amount)}`}));
-  DATA.inv.filter(r=>Number(r.current_stock)<Number(r.minimum_stock)).forEach(r=>alerts.push({type:'amber',msg:`${r.item_name} below minimum stock`}));
-  DATA.bd.filter(r=>r.status==='Critical').forEach(r=>alerts.push({type:'red',msg:`${r.machine} — ${r.reason} (Critical)`}));
-  document.getElementById('dash-alerts').innerHTML = alerts.slice(0,6).map(a=>
-    `<div class="alert alert-${a.type}">${a.type==='red'?'⚠':''} ${a.msg}</div>`).join('') || '<div style="padding:14px;font-size:12px;color:var(--txt2);">No alerts — all clear</div>';
+  const alerts=[];
+  DATA.bd.filter(r=>r.status==='Critical').forEach(r=>alerts.push({t:'red',m:`${r.machine} — ${r.reason}`}));
+  DATA.inv.filter(r=>Number(r.current_stock)<Number(r.minimum_stock)).forEach(r=>alerts.push({t:'amber',m:`${r.item_name} below min stock`}));
+  DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').slice(0,3).forEach(r=>alerts.push({t:'amber',m:`P1: ${r.task_description}`}));
+  document.getElementById('mfg-dash-alerts').innerHTML=alerts.slice(0,6).map(a=>`<div style="padding:7px 13px;font-size:11px;display:flex;gap:7px;align-items:center;border-bottom:1px solid var(--bdr);background:${a.t==='red'?'#fef2f2':'#fffbeb'};color:${a.t==='red'?'#991b1b':'#92400e'};">⚠ ${a.m}</div>`).join('')||'<div style="padding:14px;font-size:12px;color:var(--txt2);">No alerts</div>';
 
-  // Scrap upcoming
-  const upcoming = DATA.scrap.filter(r=>!r.payment_received_date).sort((a,b)=>new Date(a.bill_date)-new Date(b.bill_date)).slice(0,5);
-  document.getElementById('dash-scrap').innerHTML = upcoming.map(r => {
-    const dd = dueDate(r.bill_date, r.payment_terms_days);
-    const st = dd < TODAY ? 'Overdue' : dd.toDateString()===TODAY.toDateString() ? 'Due today' : 'Upcoming';
-    const sc = st==='Overdue'?'red':st==='Due today'?'amber':'blue';
-    return `<tr><td>${r.bill_no}</td><td>₹${fmtMoney(r.amount)}</td><td>${fmtDate(dd.toISOString().split('T')[0])}</td><td>${badge(st,sc)}</td></tr>`;
-  }).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--txt2);padding:14px;">No outstanding bills</td></tr>';
-
-  // P1 tasks
-  document.getElementById('dash-tasks').innerHTML = DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').slice(0,8).map(r=>
-    `<tr><td>${r.task_description}</td><td>${r.assigned_to||'—'}</td></tr>`).join('');
-
-  // Charts
-  destroyChart('mom'); destroyChart('daily');
-  const DK = matchMedia('(prefers-color-scheme:dark)').matches;
-  const TC = DK?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.35)';
-  const GC = DK?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
-  const BO = {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC}},y:{ticks:{color:TC,font:{size:10}},grid:{color:GC}}}};
-
-  const sorted = [...DATA.mis].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
-  const labels = sorted.map(r=>fmtDate(r.entry_date));
-  const actuals = sorted.map(r=>Number(r.actual_tons));
-  const targets = sorted.map(r=>Number(r.target_tons));
-
-  charts.mom = new Chart(document.getElementById('momChart'), {
-    type:'bar',
-    data:{labels,datasets:[
-      {label:'Production',data:actuals,backgroundColor:actuals.map((v,i)=>v>=targets[i]?'#1D9E75':'#f97316'),borderRadius:4},
-      {label:'Target',data:targets,type:'line',borderColor:'#3b82f6',borderDash:[4,3],borderWidth:1.5,pointRadius:2,pointBackgroundColor:'#3b82f6',fill:false}
-    ]},
-    options:{...BO,scales:{x:{...BO.scales.x},y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>v+'T'}}}}
-  });
-
-  charts.daily = new Chart(document.getElementById('dailyChart'), {
-    type:'bar',
-    data:{labels,datasets:[
-      {label:'Production',data:actuals,backgroundColor:actuals.map((v,i)=>v>=targets[i]?'#1D9E75':'#f97316'),borderRadius:4},
-      {label:'Target',data:targets,type:'line',borderColor:'#3b82f6',borderDash:[4,3],borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#3b82f6',fill:false}
-    ]},
-    options:{...BO,scales:{x:{...BO.scales.x,ticks:{autoSkip:false,maxRotation:0,color:TC,font:{size:10}}},y:{...BO.scales.y,min:0,ticks:{...BO.scales.y.ticks,callback:v=>v+'T'}}}}
-  });
-}
-
-function renderMIS() {
-  const sorted = [...DATA.mis].sort((a,b)=>new Date(b.entry_date)-new Date(a.entry_date));
-  const totalProd = sorted.reduce((a,r)=>a+Number(r.actual_tons),0);
-  const totalTarget = sorted.reduce((a,r)=>a+Number(r.target_tons),0);
-  const avgEff = totalTarget>0?Math.round((totalProd/totalTarget)*100):0;
-  const totalDisp = sorted.reduce((a,r)=>a+Number(r.dispatched_tons||0),0);
-  const avgMP = sorted.length > 0 ? Math.round(sorted.reduce((a,r)=>a+Number(r.manpower_day||0)+Number(r.manpower_night||0),0)/sorted.length) : 0;
-
-  document.getElementById('mis-metrics').innerHTML = `
-    <div class="mc"><div class="lb">Total production</div><div class="vl green">${totalProd.toFixed(1)} T</div><div class="sb">vs ${totalTarget.toFixed(1)} T target</div></div>
-    <div class="mc"><div class="lb">Avg efficiency</div><div class="vl ${avgEff>=90?'green':avgEff>=70?'amber':'red'}">${avgEff}%</div></div>
-    <div class="mc"><div class="lb">Total dispatched</div><div class="vl">${totalDisp.toFixed(1)} T</div></div>
-    <div class="mc"><div class="lb">Avg manpower/day</div><div class="vl">${avgMP}</div><div class="sb">Day + Night combined</div></div>`;
-
-  document.getElementById('mis-tbody').innerHTML = sorted.map(r => {
-    const e = eff(r.actual_tons, r.target_tons);
-    const diff = (Number(r.actual_tons) - Number(r.target_tons)).toFixed(1);
-    return `<tr>
-      <td>${fmtDate(r.entry_date)}</td>
-      <td>${Number(r.target_tons).toFixed(1)}</td>
-      <td>${Number(r.actual_tons).toFixed(1)}</td>
-      <td>${effBadge(e)}</td>
-      <td>${r.manpower_day}</td>
-      <td>${r.manpower_night}</td>
-      <td>${r.washing_dt_day||0}h</td>
-      <td>${r.agglo_dt_day||0}h</td>
-      <td>${r.extruder_dt_day||0}h</td>
-      <td>${r.issue_day||'None'}</td>
-      <td>${r.issue_night||'None'}</td>
-      <td>${Number(r.dispatched_tons||0).toFixed(1)} T</td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-sm" onclick="openModal('mis-modal','${r.id}')">✏</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteRow('mis_entries','${r.id}','MIS entry')">🗑</button>
-      </td></tr>`;
-  }).join('') || '<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--txt2);">No entries yet — add your first entry</td></tr>';
-
-  // Charts
-  destroyChart('prod'); destroyChart('eff');
-  const DK=matchMedia('(prefers-color-scheme:dark)').matches;
-  const TC=DK?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.35)';
-  const GC=DK?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
-  const BO={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC}},y:{ticks:{color:TC,font:{size:10}},grid:{color:GC}}}};
-  const asc=[...sorted].reverse();
-  const labels=asc.map(r=>fmtDate(r.entry_date));
-  charts.prod=new Chart(document.getElementById('prodChart'),{type:'bar',data:{labels,datasets:[{label:'Actual',data:asc.map(r=>Number(r.actual_tons)),backgroundColor:'#1D9E75',borderRadius:3},{label:'Target',data:asc.map(r=>Number(r.target_tons)),type:'line',borderColor:'#3b82f6',borderDash:[4,3],borderWidth:1.4,pointRadius:2,fill:false}]},options:{...BO,scales:{x:{...BO.scales.x},y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>v+'T'}}}}});
-  charts.eff=new Chart(document.getElementById('effChart'),{type:'line',data:{labels,datasets:[{label:'Efficiency',data:asc.map(r=>eff(r.actual_tons,r.target_tons)),borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.08)',fill:true,tension:0.3,pointRadius:3,pointBackgroundColor:'#1D9E75'}]},options:{...BO,scales:{x:{...BO.scales.x},y:{...BO.scales.y,min:0,max:120,ticks:{...BO.scales.y.ticks,callback:v=>v+'%'}}}}});
-}
-
-function renderInventory() {
-  const sorted = [...DATA.inv].sort((a,b)=>a.item_name.localeCompare(b.item_name));
-  const low = sorted.filter(r=>Number(r.current_stock)<Number(r.minimum_stock));
-  const ok = sorted.filter(r=>Number(r.current_stock)>=Number(r.minimum_stock));
-  const warn = sorted.filter(r=>Number(r.current_stock)<Number(r.minimum_stock)*0.5);
-
-  document.getElementById('inv-metrics').innerHTML = `
-    <div class="mc"><div class="lb">Total items</div><div class="vl">${sorted.length}</div></div>
-    <div class="mc"><div class="lb">Low stock</div><div class="vl red">${low.length}</div><div class="sb">Below minimum</div></div>
-    <div class="mc"><div class="lb">Critical stock</div><div class="vl red">${warn.length}</div><div class="sb">Below 50% of min</div></div>`;
-
-  document.getElementById('inv-tbody').innerHTML = sorted.map(r => {
-    const cs = Number(r.current_stock), ms = Number(r.minimum_stock);
-    const surplus = cs - ms;
-    const ratio = ms > 0 ? cs/ms : 1;
-    const rowStyle = ratio < 0.5 ? 'background:#fef2f2;' : ratio < 1 ? 'background:#fffbeb;' : '';
-    const st = ratio >= 1 ? badge('OK','green') : ratio >= 0.5 ? badge('Low','amber') : badge('Critical','red');
-    const val = (cs * Number(r.rate_per_unit||0)).toLocaleString('en-IN');
-    return `<tr style="${rowStyle}">
-      <td>${r.item_name}</td><td>${r.category}</td><td>${r.uom}</td>
-      <td>${ms}</td><td>${cs}</td><td>₹${fmtMoney(r.rate_per_unit)}</td>
-      <td>₹${val}</td>
-      <td style="color:${surplus>=0?'#15803d':'#b91c1c'};font-weight:600">${surplus>=0?'+':''}${surplus.toFixed(1)}</td>
-      <td>${st}</td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-sm" onclick="openModal('inv-modal','${r.id}')">✏</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteRow('inventory','${r.id}','inventory item')">🗑</button>
-      </td></tr>`;
-  }).join('') || '<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--txt2);">No items yet</td></tr>';
-
-  destroyChart('inv'); destroyChart('invPie');
-  const DK=matchMedia('(prefers-color-scheme:dark)').matches;
-  const TC=DK?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.35)';
-  const GC=DK?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
-  const cols = sorted.map(r=>{const ratio=Number(r.current_stock)/Math.max(Number(r.minimum_stock),0.01);return ratio>=1?'#1D9E75':ratio>=0.5?'#d97706':'#dc2626';});
-  charts.inv=new Chart(document.getElementById('invChart'),{type:'bar',data:{labels:sorted.map(r=>r.item_name.split(' ')[0]),datasets:[{data:sorted.map(r=>Number(r.current_stock)),backgroundColor:cols,borderRadius:4},{data:sorted.map(r=>Number(r.minimum_stock)),type:'line',borderColor:DK?'rgba(255,255,255,0.3)':'rgba(0,0,0,0.2)',borderDash:[3,3],borderWidth:1.3,pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC}},y:{ticks:{color:TC,font:{size:10}},grid:{color:GC}}}}});
-
-  const okC=ok.length, lwC=low.filter(r=>Number(r.current_stock)/Number(r.minimum_stock)>=0.5).length, critC=warn.length;
-  charts.invPie=new Chart(document.getElementById('invPie'),{type:'doughnut',data:{labels:['OK','Low','Critical'],datasets:[{data:[okC,lwC,critC],backgroundColor:['#1D9E75','#d97706','#dc2626'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'62%'}});
-  document.getElementById('invPieLegend').innerHTML=[['OK',okC,'#1D9E75'],['Low',lwC,'#d97706'],['Critical',critC,'#dc2626']].map(([l,v,c])=>`<div style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block;"></span>${l}: <strong>${v}</strong></div>`).join('');
-}
-
-function renderStock() {
-  const latest = DATA.stock[0];
-  document.getElementById('stock-metrics').innerHTML = !latest ? '<div class="mc"><div class="lb">No data</div><div class="vl">—</div></div>' : `
-    <div class="mc"><div class="lb">RM Opening</div><div class="vl blue">${Number(latest.rm_opening).toFixed(1)} T</div></div>
-    <div class="mc"><div class="lb">FG Opening</div><div class="vl blue">${Number(latest.fg_opening).toFixed(1)} T</div></div>
-    <div class="mc"><div class="lb">Production</div><div class="vl green">${Number(latest.fg_produced).toFixed(1)} T</div></div>
-    <div class="mc"><div class="lb">FG Closing</div><div class="vl green">${Number(latest.fg_closing).toFixed(1)} T</div></div>`;
-
-  if (latest) {
-    document.getElementById('stock-flow-display').innerHTML = `
-      <div style="margin-bottom:10px;font-size:11px;color:var(--txt2);font-weight:500;">${latest.month_year} — Raw Material</div>
+  // Stock flow
+  const sm=DATA.stock.find(r=>r.month_year===m)||DATA.stock[0];
+  if(sm){
+    const rmClose=Number(sm.rm_opening_kg)+Number(sm.rm_purchased_kg)-Number(sm.rm_consumed_kg);
+    const fgClose=Number(sm.fg_opening_kg)+Number(sm.fg_produced_kg)-Number(sm.fg_dispatched_kg);
+    document.getElementById('mfg-dash-stock').innerHTML=`
+      <div style="font-size:10px;color:var(--txt2);margin-bottom:6px;">RM</div>
       <div class="sf">
-        <div class="sfb"><div class="sl">Opening RM</div><div class="sv blue">${Number(latest.rm_opening).toFixed(1)} T</div></div>
-        <div class="sfa">+</div>
-        <div class="sfb"><div class="sl">Purchased</div><div class="sv green">${Number(latest.rm_purchased).toFixed(1)} T</div></div>
-        <div class="sfa">−</div>
-        <div class="sfb"><div class="sl">Consumed</div><div class="sv amber">${Number(latest.rm_consumed).toFixed(1)} T</div></div>
-        <div class="sfa">=</div>
-        <div class="sfb" style="background:#dcfce7;"><div class="sl" style="color:#15803d;">Closing RM</div><div class="sv green">${Number(latest.rm_closing).toFixed(1)} T</div></div>
+        <div class="sfb"><div class="sl">Opening</div><div class="sv blue">${(Number(sm.rm_opening_kg)/1000).toFixed(1)}T</div></div>
+        <div class="sfa">+</div><div class="sfb"><div class="sl">Purchased</div><div class="sv green">${(Number(sm.rm_purchased_kg)/1000).toFixed(1)}T</div></div>
+        <div class="sfa">−</div><div class="sfb"><div class="sl">Consumed</div><div class="sv amber">${(Number(sm.rm_consumed_kg)/1000).toFixed(1)}T</div></div>
+        <div class="sfa">=</div><div class="sfb" style="background:#dcfce7;"><div class="sl" style="color:#15803d;">Closing</div><div class="sv green">${(rmClose/1000).toFixed(1)}T</div></div>
       </div>
-      <div style="margin:12px 0 6px;font-size:11px;color:var(--txt2);font-weight:500;">Finished Goods</div>
+      <div style="font-size:10px;color:var(--txt2);margin:8px 0 6px;">FG</div>
       <div class="sf">
-        <div class="sfb"><div class="sl">Opening FG</div><div class="sv blue">${Number(latest.fg_opening).toFixed(1)} T</div></div>
-        <div class="sfa">+</div>
-        <div class="sfb"><div class="sl">Produced</div><div class="sv green">${Number(latest.fg_produced).toFixed(1)} T</div></div>
-        <div class="sfa">−</div>
-        <div class="sfb"><div class="sl">Dispatched</div><div class="sv amber">${Number(latest.fg_dispatched).toFixed(1)} T</div></div>
-        <div class="sfa">=</div>
-        <div class="sfb" style="background:#dcfce7;"><div class="sl" style="color:#15803d;">Closing FG</div><div class="sv green">${Number(latest.fg_closing).toFixed(1)} T</div></div>
+        <div class="sfb"><div class="sl">Opening</div><div class="sv blue">${(Number(sm.fg_opening_kg)/1000).toFixed(1)}T</div></div>
+        <div class="sfa">+</div><div class="sfb"><div class="sl">Produced</div><div class="sv green">${(Number(sm.fg_produced_kg)/1000).toFixed(1)}T</div></div>
+        <div class="sfa">−</div><div class="sfb"><div class="sl">Dispatched</div><div class="sv amber">${(Number(sm.fg_dispatched_kg)/1000).toFixed(1)}T</div></div>
+        <div class="sfa">=</div><div class="sfb" style="background:#dcfce7;"><div class="sl" style="color:#15803d;">Closing</div><div class="sv green">${(fgClose/1000).toFixed(1)}T</div></div>
       </div>`;
   }
 
-  document.getElementById('stock-tbody').innerHTML = DATA.stock.map(r=>`<tr>
-    <td>${r.month_year}</td><td>${Number(r.rm_opening).toFixed(1)}</td><td>${Number(r.rm_purchased).toFixed(1)}</td><td>${Number(r.rm_consumed).toFixed(1)}</td><td>${Number(r.rm_closing).toFixed(1)}</td>
-    <td>${Number(r.fg_opening).toFixed(1)}</td><td>${Number(r.fg_produced).toFixed(1)}</td><td>${Number(r.fg_dispatched).toFixed(1)}</td><td>${Number(r.fg_closing).toFixed(1)}</td>
-    <td style="white-space:nowrap"><button class="btn btn-sm" onclick="openModal('stock-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-danger" onclick="deleteRow('stock_movements','${r.id}','entry')">🗑</button></td></tr>`).join('')
-    || '<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--txt2);">No stock movements yet</td></tr>';
+  // Low stock
+  document.getElementById('mfg-dash-inv').innerHTML=DATA.inv.filter(r=>Number(r.current_stock)<Number(r.minimum_stock)).map(r=>`<tr><td>${r.item_name}</td><td>${Number(r.current_stock).toLocaleString('en-IN')} ${r.uom}</td><td>${Number(r.minimum_stock).toLocaleString('en-IN')}</td><td>${badge('Low','red')}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;padding:12px;color:var(--txt2);">All stock levels OK ✓</td></tr>';
 
-  destroyChart('rm'); destroyChart('fg');
-  if (DATA.stock.length > 0) {
-    const DK=matchMedia('(prefers-color-scheme:dark)').matches;
-    const TC=DK?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.35)';
-    const GC=DK?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
-    const labels=DATA.stock.map(r=>r.month_year).reverse();
-    charts.rm=new Chart(document.getElementById('rmChart'),{type:'bar',data:{labels,datasets:[{label:'Opening',data:DATA.stock.map(r=>Number(r.rm_opening)).reverse(),backgroundColor:'#3b82f6',borderRadius:3},{label:'Purchased',data:DATA.stock.map(r=>Number(r.rm_purchased)).reverse(),backgroundColor:'#1D9E75',borderRadius:3},{label:'Consumed',data:DATA.stock.map(r=>Number(r.rm_consumed)).reverse(),backgroundColor:'#f97316',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC}},y:{ticks:{color:TC,font:{size:10},callback:v=>v+'T'},grid:{color:GC}}}}});
-    charts.fg=new Chart(document.getElementById('fgChart'),{type:'bar',data:{labels,datasets:[{label:'Opening',data:DATA.stock.map(r=>Number(r.fg_opening)).reverse(),backgroundColor:'#3b82f6',borderRadius:3},{label:'Produced',data:DATA.stock.map(r=>Number(r.fg_produced)).reverse(),backgroundColor:'#1D9E75',borderRadius:3},{label:'Dispatched',data:DATA.stock.map(r=>Number(r.fg_dispatched)).reverse(),backgroundColor:'#f97316',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC}},y:{ticks:{color:TC,font:{size:10},callback:v=>v+'T'},grid:{color:GC}}}}});
+  // Charts
+  destroyChart('dashProd');
+  const asc=[...mis].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
+  charts.dashProd=new Chart(document.getElementById('dashProdChart'),{type:'bar',data:{labels:asc.map(r=>fmtDate(r.entry_date)),datasets:[{label:'Production',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:4},{label:'Target',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,autoSkip:false,maxRotation:0}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
+}
+
+function renderMIS(){
+  const m=getMonth('mis-month');
+  const mis=filterByMonth(DATA.mis,'month_year',m);
+  const sorted=[...mis].sort((a,b)=>new Date(b.entry_date)-new Date(a.entry_date));
+  const totalProd=sorted.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
+  const totalTgt=sorted.reduce((a,r)=>a+Number(r.target_kg||0),0);
+  const avgEff=totalTgt>0?Math.round((totalProd/totalTgt)*100):0;
+  const totalDisp=sorted.reduce((a,r)=>a+Number(r.dispatched_kg||0),0);
+  const avgMP=sorted.length>0?Math.round(sorted.reduce((a,r)=>a+Number(r.manpower_day||0)+Number(r.manpower_night||0),0)/sorted.length):0;
+  document.getElementById('mis-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total production</div><div class="vl green">${Number(totalProd).toLocaleString('en-IN')} Kg</div><div class="sb">Target: ${Number(totalTgt).toLocaleString('en-IN')} Kg</div></div>
+    <div class="mc"><div class="lb">Avg efficiency</div><div class="vl ${avgEff>=90?'green':avgEff>=70?'amber':'red'}">${avgEff}%</div></div>
+    <div class="mc"><div class="lb">Total dispatched</div><div class="vl">${Number(totalDisp).toLocaleString('en-IN')} Kg</div></div>
+    <div class="mc"><div class="lb">Avg manpower</div><div class="vl">${avgMP}/day</div><div class="sb">Day + Night</div></div>`;
+
+  document.getElementById('mis-tbody').innerHTML=sorted.map(r=>{
+    const e=eff(r.total_production_kg,r.target_kg);
+    const wRunTotal=(parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0)).toFixed(1);
+    const aRunTotal=(parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0)).toFixed(1);
+    const eRunTotal=(parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0)).toFixed(1);
+    return`<tr>
+      <td>${fmtDate(r.entry_date)}</td>
+      <td>${Number(r.target_kg).toLocaleString('en-IN')}</td>
+      <td>${Number(r.total_production_kg).toLocaleString('en-IN')}</td>
+      <td>${effBadge(e)}</td>
+      <td>${r.manpower_day}</td><td>${r.manpower_night}</td>
+      <td>${wRunTotal}h</td><td>${aRunTotal}h</td><td>${eRunTotal}h</td>
+      <td>${r.issue_day||'None'}</td><td>${r.issue_night||'None'}</td>
+      <td>${Number(r.dispatched_kg||0).toLocaleString('en-IN')}</td>
+      <td>${Number(r.total_stock_kg||0).toLocaleString('en-IN')}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm" onclick="openModal('mis-modal','${r.id}')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('mis_entries','${r.id}','entry')">🗑</button>
+      </td></tr>`;
+  }).join('')||'<tr><td colspan="14" style="text-align:center;padding:20px;color:var(--txt2);">No entries for '+m+'</td></tr>';
+
+  destroyChart('prod');destroyChart('run');
+  const asc=[...sorted].reverse();
+  const labels=asc.map(r=>fmtDate(r.entry_date));
+  charts.prod=new Chart(document.getElementById('prodChart'),{type:'bar',data:{labels,datasets:[{label:'Prod',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:'#1D9E75',borderRadius:3},{label:'Tgt',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.4,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
+  charts.run=new Chart(document.getElementById('runChart'),{type:'bar',data:{labels,datasets:[{label:'Washing',data:asc.map(r=>parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0)),backgroundColor:'#3b82f6',borderRadius:3},{label:'Agglo',data:asc.map(r=>parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0)),backgroundColor:'#1D9E75',borderRadius:3},{label:'Extruder',data:asc.map(r=>parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0)),backgroundColor:'#d97706',borderRadius:3}]},options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:10},color:TC(),boxWidth:10}}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,max:24,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}});
+}
+
+function renderInventory(){
+  const sorted=[...DATA.inv].sort((a,b)=>a.item_name.localeCompare(b.item_name));
+  const low=sorted.filter(r=>Number(r.current_stock)<Number(r.minimum_stock));
+  const crit=sorted.filter(r=>Number(r.current_stock)<Number(r.minimum_stock)*0.5);
+  document.getElementById('inv-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total items</div><div class="vl">${sorted.length}</div></div>
+    <div class="mc"><div class="lb">Low stock</div><div class="vl red">${low.length}</div><div class="sb">Below minimum</div></div>
+    <div class="mc"><div class="lb">Critical</div><div class="vl red">${crit.length}</div><div class="sb">Below 50% of min</div></div>`;
+
+  document.getElementById('inv-tbody').innerHTML=sorted.map(r=>{
+    const cs=Number(r.current_stock),ms=Number(r.minimum_stock);
+    const ratio=ms>0?cs/ms:1;
+    const bg=ratio<0.5?'background:#fef2f2;':ratio<1?'background:#fffbeb;':'';
+    const st=ratio>=1?badge('OK','green'):ratio>=0.5?badge('Low','amber'):badge('Critical','red');
+    const surplus=cs-ms;
+    return`<tr style="${bg}">
+      <td>${r.item_name}</td><td>${r.category}</td><td>${r.uom}</td>
+      <td>${Number(ms).toLocaleString('en-IN')}</td><td>${Number(cs).toLocaleString('en-IN')}</td>
+      <td>${fmtMoney(r.rate_per_unit)}</td>
+      <td>${fmtMoney(cs*Number(r.rate_per_unit||0))}</td>
+      <td style="color:${surplus>=0?'#15803d':'#b91c1c'};font-weight:600">${surplus>=0?'+':''}${Number(surplus).toLocaleString('en-IN')}</td>
+      <td>${st}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm" onclick="openModal('inv-modal','${r.id}')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('inventory','${r.id}','item')">🗑</button>
+      </td></tr>`;
+  }).join('');
+
+  destroyChart('inv');destroyChart('invPie');
+  const cols=sorted.map(r=>{const ratio=Number(r.current_stock)/Math.max(Number(r.minimum_stock),0.01);return ratio>=1?'#1D9E75':ratio>=0.5?'#d97706':'#dc2626';});
+  charts.inv=new Chart(document.getElementById('invChart'),{type:'bar',data:{labels:sorted.map(r=>r.item_name.split(' ')[0]),datasets:[{data:sorted.map(r=>Number(r.current_stock)),backgroundColor:cols,borderRadius:4},{data:sorted.map(r=>Number(r.minimum_stock)),type:'line',borderColor:DK()?'rgba(255,255,255,0.25)':'rgba(0,0,0,0.18)',borderDash:[3,3],borderWidth:1.2,pointRadius:0,fill:false}]},options:{...BO(),plugins:{legend:{display:false}}}});
+  const okC=sorted.filter(r=>Number(r.current_stock)>=Number(r.minimum_stock)).length;
+  const lwC=low.length-crit.length;
+  charts.invPie=new Chart(document.getElementById('invPie'),{type:'doughnut',data:{labels:['OK','Low','Critical'],datasets:[{data:[okC,lwC,crit.length],backgroundColor:['#1D9E75','#d97706','#dc2626'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'62%'}});
+  document.getElementById('invPieLeg').innerHTML=[['OK',okC,'#1D9E75'],['Low',lwC,'#d97706'],['Critical',crit.length,'#dc2626']].map(([l,v,c])=>`<div style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block;"></span>${l}: <strong>${v}</strong></div>`).join('');
+}
+
+function renderStock(){
+  const m=getMonth('stock-month');
+  const sm=DATA.stock.find(r=>r.month_year===m)||DATA.stock[0];
+  if(sm){
+    const rmClose=Number(sm.rm_opening_kg)+Number(sm.rm_purchased_kg)-Number(sm.rm_consumed_kg);
+    const fgClose=Number(sm.fg_opening_kg)+Number(sm.fg_produced_kg)-Number(sm.fg_dispatched_kg);
+    document.getElementById('stock-metrics').innerHTML=`
+      <div class="mc"><div class="lb">RM Opening</div><div class="vl blue">${(Number(sm.rm_opening_kg)/1000).toFixed(1)} T</div></div>
+      <div class="mc"><div class="lb">RM Closing (auto)</div><div class="vl green">${(rmClose/1000).toFixed(1)} T</div></div>
+      <div class="mc"><div class="lb">FG Opening</div><div class="vl blue">${(Number(sm.fg_opening_kg)/1000).toFixed(1)} T</div></div>
+      <div class="mc"><div class="lb">FG Closing (auto)</div><div class="vl green">${(fgClose/1000).toFixed(1)} T</div></div>`;
+    document.getElementById('stock-flow-display').innerHTML=`
+      <div style="font-size:10px;color:var(--txt2);font-weight:600;margin-bottom:6px;">${sm.month_year} — Raw Material (Kg)</div>
+      <div class="sf">
+        <div class="sfb"><div class="sl">Opening</div><div class="sv blue">${Number(sm.rm_opening_kg).toLocaleString('en-IN')}</div></div>
+        <div class="sfa">+</div><div class="sfb"><div class="sl">Purchased</div><div class="sv green">${Number(sm.rm_purchased_kg).toLocaleString('en-IN')}</div></div>
+        <div class="sfa">−</div><div class="sfb"><div class="sl">Consumed</div><div class="sv amber">${Number(sm.rm_consumed_kg).toLocaleString('en-IN')}</div></div>
+        <div class="sfa">=</div><div class="sfb" style="background:#dcfce7;"><div class="sl" style="color:#15803d;">Closing (auto)</div><div class="sv green">${rmClose.toLocaleString('en-IN')}</div></div>
+      </div>
+      <div style="font-size:10px;color:var(--txt2);font-weight:600;margin:10px 0 6px;">Finished Goods (Kg)</div>
+      <div class="sf">
+        <div class="sfb"><div class="sl">Opening</div><div class="sv blue">${Number(sm.fg_opening_kg).toLocaleString('en-IN')}</div></div>
+        <div class="sfa">+</div><div class="sfb"><div class="sl">Produced</div><div class="sv green">${Number(sm.fg_produced_kg).toLocaleString('en-IN')}</div></div>
+        <div class="sfa">−</div><div class="sfb"><div class="sl">Dispatched</div><div class="sv amber">${Number(sm.fg_dispatched_kg).toLocaleString('en-IN')}</div></div>
+        <div class="sfa">=</div><div class="sfb" style="background:#dcfce7;"><div class="sl" style="color:#15803d;">Closing (auto)</div><div class="sv green">${fgClose.toLocaleString('en-IN')}</div></div>
+      </div>`;
+  }else{document.getElementById('stock-flow-display').innerHTML='<div style="padding:16px;color:var(--txt2);font-size:12px;">No stock data for this month. Click "+ Add month" to add.</div>';}
+
+  document.getElementById('stock-tbody').innerHTML=DATA.stock.map(r=>{
+    const rc=Number(r.rm_opening_kg)+Number(r.rm_purchased_kg)-Number(r.rm_consumed_kg);
+    const fc=Number(r.fg_opening_kg)+Number(r.fg_produced_kg)-Number(r.fg_dispatched_kg);
+    return`<tr>
+      <td>${r.month_year}</td>
+      <td>${Number(r.rm_opening_kg).toLocaleString('en-IN')}</td><td>${Number(r.rm_purchased_kg).toLocaleString('en-IN')}</td><td>${Number(r.rm_consumed_kg).toLocaleString('en-IN')}</td>
+      <td style="font-weight:700;color:#15803d;">${rc.toLocaleString('en-IN')}</td>
+      <td>${Number(r.fg_opening_kg).toLocaleString('en-IN')}</td><td>${Number(r.fg_produced_kg).toLocaleString('en-IN')}</td><td>${Number(r.fg_dispatched_kg).toLocaleString('en-IN')}</td>
+      <td style="font-weight:700;color:#15803d;">${fc.toLocaleString('en-IN')}</td>
+      <td style="white-space:nowrap"><button class="btn btn-sm" onclick="openModal('stock-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-red" onclick="deleteRow('stock_movements','${r.id}','entry')">🗑</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--txt2);">No stock records yet</td></tr>';
+
+  destroyChart('rm');destroyChart('fg');
+  if(DATA.stock.length>0){
+    const rev=[...DATA.stock].reverse();
+    const labels=rev.map(r=>r.month_year);
+    charts.rm=new Chart(document.getElementById('rmChart'),{type:'bar',data:{labels,datasets:[{label:'Opening',data:rev.map(r=>Number(r.rm_opening_kg)),backgroundColor:'#3b82f6',borderRadius:3},{label:'Purchased',data:rev.map(r=>Number(r.rm_purchased_kg)),backgroundColor:'#1D9E75',borderRadius:3},{label:'Consumed',data:rev.map(r=>Number(r.rm_consumed_kg)),backgroundColor:'#f97316',borderRadius:3}]},options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:9},color:TC(),boxWidth:9}}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(0)+'T':v}}}}});
+    charts.fg=new Chart(document.getElementById('fgChart'),{type:'bar',data:{labels,datasets:[{label:'Opening',data:rev.map(r=>Number(r.fg_opening_kg)),backgroundColor:'#3b82f6',borderRadius:3},{label:'Produced',data:rev.map(r=>Number(r.fg_produced_kg)),backgroundColor:'#1D9E75',borderRadius:3},{label:'Dispatched',data:rev.map(r=>Number(r.fg_dispatched_kg)),backgroundColor:'#f97316',borderRadius:3}]},options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:9},color:TC(),boxWidth:9}}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(0)+'T':v}}}}});
   }
 }
 
-function renderBreakdown() {
-  const totalDT = DATA.bd.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
-  const totalCost = DATA.bd.reduce((a,r)=>a+Number(r.cost||0),0);
-  const critical = DATA.bd.filter(r=>r.status==='Critical').length;
-  document.getElementById('bd-metrics').innerHTML = `
-    <div class="mc"><div class="lb">Total breakdowns</div><div class="vl amber">${DATA.bd.length}</div></div>
-    <div class="mc"><div class="lb">Total downtime</div><div class="vl red">${totalDT.toFixed(1)} hrs</div></div>
-    <div class="mc"><div class="lb">Repair spend</div><div class="vl">₹${fmtMoney(totalCost)}</div><div class="sb">${critical} critical pending</div></div>`;
-
-  document.getElementById('bd-tbody').innerHTML = DATA.bd.map(r=>{
-    const sc={Pending:'amber','In Progress':'blue',Resolved:'green',Critical:'red'};
-    return `<tr>
-      <td>${fmtDate(r.breakdown_date)}</td><td>${r.machine}</td><td>${r.shift||'Day'}</td>
-      <td>${r.downtime_hours}h</td><td>${r.reason}</td><td>${r.action_taken}</td>
-      <td>${r.cost?'₹'+fmtMoney(r.cost):'—'}</td>
-      <td>${badge(r.status,sc[r.status]||'gray')}</td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-sm" onclick="openModal('bd-modal','${r.id}')">✏</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteRow('breakdowns','${r.id}','breakdown')">🗑</button>
-      </td></tr>`;
-  }).join('') || '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--txt2);">No breakdowns logged</td></tr>';
-
-  destroyChart('bdPie'); destroyChart('bdBar');
-  const DK=matchMedia('(prefers-color-scheme:dark)').matches;
-  const TC=DK?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.35)';
-  const GC=DK?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
-  const machines=['Washing','Agglo 1','Agglo 2','Extruder','Other'];
-  const counts=machines.map(m=>DATA.bd.filter(r=>r.machine===m).length);
-  const dtHours=machines.map(m=>DATA.bd.filter(r=>r.machine===m).reduce((a,r)=>a+Number(r.downtime_hours||0),0));
-  charts.bdPie=new Chart(document.getElementById('bdPie'),{type:'doughnut',data:{labels:machines,datasets:[{data:counts,backgroundColor:['#1D9E75','#3b82f6','#dc2626','#d97706','#6b7280'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
-  charts.bdBar=new Chart(document.getElementById('bdBar'),{type:'bar',data:{labels:machines,datasets:[{label:'Downtime hrs',data:dtHours,backgroundColor:'#dc2626',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC,font:{size:10}},grid:{color:GC}},y:{ticks:{color:TC,font:{size:10},callback:v=>v+'h'},grid:{color:GC}}}}});
+function renderDispatch(){
+  const m=getMonth('dispatch-month');
+  const disp=filterByMonth(DATA.dispatches,'month_year',m);
+  const totalKg=disp.reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  const totalAmt=disp.reduce((a,r)=>a+Number(r.amount||0),0);
+  document.getElementById('dispatch-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total dispatches</div><div class="vl">${disp.length}</div></div>
+    <div class="mc"><div class="lb">Total qty</div><div class="vl green">${Number(totalKg).toLocaleString('en-IN')} Kg</div></div>
+    <div class="mc"><div class="lb">Total value</div><div class="vl">${fmtMoney(totalAmt)}</div></div>
+    <div class="mc"><div class="lb">Customers</div><div class="vl">${[...new Set(disp.map(r=>r.customer))].length}</div></div>`;
+  document.getElementById('dispatch-tbody').innerHTML=[...disp].sort((a,b)=>new Date(b.dispatch_date)-new Date(a.dispatch_date)).map(r=>{
+    const sc={Dispatched:'blue','In Transit':'amber',Delivered:'green',Returned:'red'};
+    return`<tr><td>${fmtDate(r.dispatch_date)}</td><td>${r.customer}</td><td>${r.material_type}</td><td>${Number(r.qty_kg).toLocaleString('en-IN')}</td><td>${fmtMoney(r.rate_per_kg)}</td><td>${fmtMoney(r.amount)}</td><td>${r.vehicle_no||'—'}</td><td>${r.lr_no||'—'}</td><td>${r.invoice_no||'—'}</td><td>${badge(r.status,sc[r.status]||'gray')}</td>
+    <td style="white-space:nowrap"><button class="btn btn-sm" onclick="openModal('dispatch-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-red" onclick="deleteRow('dispatches','${r.id}','dispatch')">🗑</button></td></tr>`;
+  }).join('')||'<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No dispatches for '+m+'</td></tr>';
 }
 
-function renderScrap() {
-  const unpaid = DATA.scrap.filter(r=>!r.payment_received_date);
-  const outstanding = unpaid.reduce((a,r)=>a+Number(r.amount),0);
-  const overdue = unpaid.filter(r=>dueDate(r.bill_date,r.payment_terms_days)<TODAY).length;
-  const paid = DATA.scrap.filter(r=>r.payment_received_date);
-  const paidAmt = paid.reduce((a,r)=>a+Number(r.amount),0);
-
-  document.getElementById('scrap-metrics').innerHTML = `
-    <div class="mc"><div class="lb">Total outstanding</div><div class="vl red">₹${(outstanding/100000).toFixed(1)} L</div><div class="sb">${unpaid.length} unpaid bills</div></div>
-    <div class="mc"><div class="lb">Overdue bills</div><div class="vl red">${overdue}</div><div class="sb">Immediate action</div></div>
-    <div class="mc"><div class="lb">Total paid</div><div class="vl green">₹${(paidAmt/100000).toFixed(1)} L</div><div class="sb">${paid.length} bills cleared</div></div>`;
-
-  document.getElementById('scrap-tbody').innerHTML = DATA.scrap.map((r,i)=>{
-    let st, sc;
-    if (r.payment_received_date) { st='Paid'; sc='green'; }
-    else { const dd=dueDate(r.bill_date,r.payment_terms_days); st=dd<TODAY?'Overdue':dd.toDateString()===TODAY.toDateString()?'Due today':'Upcoming'; sc=st==='Overdue'?'red':st==='Due today'?'amber':'blue'; }
-    const dd = dueDate(r.bill_date,r.payment_terms_days);
-    const paidBtn = !r.payment_received_date ? `<button class="btn btn-sm btn-success" onclick="markPaid('${r.id}')">✓ Paid</button> ` : '';
-    return `<tr>
-      <td>${i+1}</td><td>${fmtDate(r.bill_date)}</td><td>${r.bill_no}</td><td>${r.supplier}</td>
-      <td>${Number(r.qty_tons).toFixed(2)}</td><td>₹${fmtMoney(r.amount)}</td>
-      <td>${fmtDate(dd.toISOString().split('T')[0])}</td>
-      <td>${daysSince(r.bill_date)}</td>
-      <td>${r.payment_received_date?fmtDate(r.payment_received_date):'—'}</td>
-      <td>${badge(st,sc)}</td>
-      <td style="white-space:nowrap">${paidBtn}<button class="btn btn-sm" onclick="openModal('scrap-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-danger" onclick="deleteRow('scrap_bills','${r.id}','bill')">🗑</button></td>
-    </tr>`;
-  }).join('') || '<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No scrap bills yet</td></tr>';
-
-  destroyChart('scrapPie'); destroyChart('scrapBar');
-  const DK=matchMedia('(prefers-color-scheme:dark)').matches;
-  const TC=DK?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.35)';
-  const GC=DK?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
-  const paidC=paid.length, overdueC=overdue, upcomingC=unpaid.length-overdue;
-  charts.scrapPie=new Chart(document.getElementById('scrapPie'),{type:'doughnut',data:{labels:['Paid','Overdue','Upcoming'],datasets:[{data:[paidC,overdueC,upcomingC],backgroundColor:['#1D9E75','#dc2626','#3b82f6'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'60%'}});
-  document.getElementById('scrapPieLegend').innerHTML=[['Paid',paidC,'#1D9E75'],['Overdue',overdueC,'#dc2626'],['Upcoming',upcomingC,'#3b82f6']].map(([l,v,c])=>`<div style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block;"></span>${l}: <strong>${v}</strong></div>`).join('');
-  const last6=DATA.scrap.slice(-6).reverse();
-  charts.scrapBar=new Chart(document.getElementById('scrapBar'),{type:'bar',data:{labels:last6.map(r=>r.bill_no),datasets:[{label:'Amount',data:last6.map(r=>Number(r.amount)),backgroundColor:last6.map(r=>r.payment_received_date?'#1D9E75':'#dc2626'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC,font:{size:9}},grid:{color:GC}},y:{ticks:{color:TC,font:{size:10},callback:v=>'₹'+(v/100000).toFixed(1)+'L'},grid:{color:GC}}}}});
-}
-
-function renderTasks() {
-  const fv = document.getElementById('task-filter')?.value || 'all';
-  const filtered = DATA.tasks.filter(r => {
-    if (fv==='all') return true;
-    if (fv==='open') return r.status==='open';
-    if (fv==='done') return r.status==='done';
-    return r.priority===fv;
+function renderBreakdown(){
+  const m=getMonth('bd-month');
+  const bd=DATA.bd.filter(r=>{
+    if(!m||m==='all')return true;
+    const d=new Date(r.breakdown_date);
+    const my=d.toLocaleDateString('en-US',{month:'short',year:'numeric'}).replace(',','');
+    return my===m||r.month_year===m;
   });
+  const totalDT=bd.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
+  const totalCost=bd.reduce((a,r)=>a+Number(r.cost||0),0);
+  document.getElementById('bd-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Breakdowns</div><div class="vl amber">${bd.length}</div></div>
+    <div class="mc"><div class="lb">Total downtime</div><div class="vl red">${totalDT.toFixed(1)} hrs</div></div>
+    <div class="mc"><div class="lb">Repair spend</div><div class="vl">${fmtMoney(totalCost)}</div></div>`;
+  document.getElementById('bd-tbody').innerHTML=bd.map(r=>{
+    const sc={Pending:'amber','In Progress':'blue',Resolved:'green',Critical:'red'};
+    return`<tr><td>${fmtDate(r.breakdown_date)}</td><td>${r.machine}</td><td>${r.shift||'Day'}</td><td>${r.downtime_hours}h</td><td>${r.reason}</td><td>${r.action_taken}</td><td>${r.cost?fmtMoney(r.cost):'—'}</td><td>${badge(r.status,sc[r.status]||'gray')}</td>
+    <td style="white-space:nowrap"><button class="btn btn-sm" onclick="openModal('bd-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-red" onclick="deleteRow('breakdowns','${r.id}','breakdown')">🗑</button></td></tr>`;
+  }).join('')||'<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--txt2);">No breakdowns</td></tr>';
+  destroyChart('bdPie');destroyChart('bdBar');
+  const mach=['Washing','Agglo 1','Agglo 2','Extruder','Other'];
+  charts.bdPie=new Chart(document.getElementById('bdPie'),{type:'doughnut',data:{labels:mach,datasets:[{data:mach.map(m=>bd.filter(r=>r.machine===m).length),backgroundColor:['#1D9E75','#3b82f6','#dc2626','#d97706','#6b7280'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
+  charts.bdBar=new Chart(document.getElementById('bdBar'),{type:'bar',data:{labels:mach,datasets:[{label:'DT hrs',data:mach.map(m=>bd.filter(r=>r.machine===m).reduce((a,r)=>a+Number(r.downtime_hours||0),0)),backgroundColor:'#dc2626',borderRadius:4}]},options:{...BO(),scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}});
+}
 
+function renderTasks(){
+  const fv=document.getElementById('task-filter')?.value||'all';
+  const filtered=DATA.tasks.filter(r=>fv==='all'?true:fv==='open'?r.status==='open':fv==='done'?r.status==='done':r.priority===fv);
   const p1=DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').length;
   const p2=DATA.tasks.filter(r=>r.priority==='P2'&&r.status==='open').length;
   const done=DATA.tasks.filter(r=>r.status==='done').length;
-  document.getElementById('task-metrics').innerHTML = `
-    <div class="mc"><div class="lb">Total tasks</div><div class="vl">${DATA.tasks.length}</div></div>
+  document.getElementById('task-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total</div><div class="vl">${DATA.tasks.length}</div></div>
     <div class="mc"><div class="lb">P1 open</div><div class="vl red">${p1}</div></div>
     <div class="mc"><div class="lb">P2 open</div><div class="vl amber">${p2}</div></div>
-    <div class="mc"><div class="lb">Completed</div><div class="vl green">${done}</div></div>`;
-
-  document.getElementById('task-tbody').innerHTML = filtered.map((r,i)=>{
-    const isDone = r.status==='done';
-    return `<tr style="${isDone?'opacity:0.5;text-decoration:line-through;':''}">
+    <div class="mc"><div class="lb">Done</div><div class="vl green">${done}</div></div>`;
+  document.getElementById('task-tbody').innerHTML=filtered.map((r,i)=>
+    `<tr style="${r.status==='done'?'opacity:.5;text-decoration:line-through;':''}">
       <td>${i+1}</td><td>${r.task_description}</td><td>${r.assigned_to||'—'}</td>
       <td>${prioBadge(r.priority)}</td><td>${r.category||'—'}</td>
       <td>${r.due_date?fmtDate(r.due_date):'—'}</td>
-      <td>${badge(r.status,isDone?'green':'amber')}</td>
+      <td>${badge(r.status,r.status==='done'?'green':'amber')}</td>
       <td style="white-space:nowrap">
-        <button class="btn btn-sm ${isDone?'':'btn-success'}" onclick="toggleTaskDone('${r.id}','${r.status}')">${isDone?'Reopen':'✓ Done'}</button>
+        <button class="btn btn-sm ${r.status==='done'?'':'btn-green'}" onclick="toggleTaskDone('${r.id}','${r.status}')">${r.status==='done'?'Reopen':'✓ Done'}</button>
         <button class="btn btn-sm" onclick="openModal('task-modal','${r.id}')">✏</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteRow('tasks','${r.id}','task')">🗑</button>
-      </td></tr>`;
-  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No tasks</td></tr>';
-
-  destroyChart('taskPie'); destroyChart('taskCatBar');
-  const DK=matchMedia('(prefers-color-scheme:dark)').matches;
-  const TC=DK?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.35)';
-  const GC=DK?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
+        <button class="btn btn-sm btn-red" onclick="deleteRow('tasks','${r.id}','task')">🗑</button>
+      </td></tr>`).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No tasks</td></tr>';
+  destroyChart('taskPie');destroyChart('taskCat');
   const open=DATA.tasks.filter(r=>r.status==='open');
   charts.taskPie=new Chart(document.getElementById('taskPie'),{type:'doughnut',data:{labels:['P1','P2','P3'],datasets:[{data:[open.filter(r=>r.priority==='P1').length,open.filter(r=>r.priority==='P2').length,open.filter(r=>r.priority==='P3').length],backgroundColor:['#dc2626','#d97706','#1D9E75'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
   const cats=['Payment','Operations','Purchase','Maintenance','Sales','Admin','Other'];
-  charts.taskCatBar=new Chart(document.getElementById('taskCatBar'),{type:'bar',data:{labels:cats,datasets:[{label:'Open',data:cats.map(c=>open.filter(r=>r.category===c).length),backgroundColor:'#1D9E75',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC,font:{size:9}},grid:{color:GC}},y:{ticks:{color:TC,font:{size:10}},grid:{color:GC}}}}});
+  charts.taskCat=new Chart(document.getElementById('taskCat'),{type:'bar',data:{labels:cats,datasets:[{data:cats.map(c=>open.filter(r=>r.category===c).length),backgroundColor:'#1D9E75',borderRadius:4}]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>Math.round(v)}}}}});
 }
 
-// ===== INIT =====
-document.getElementById('dash-date').textContent = TODAY.toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
-loadAll();
+// ===== TRADING RENDERS =====
+function renderTrdDashboard(){
+  const m=getMonth('trd-dash-month');
+  const pur=filterByMonth(DATA.trdPur,'month_year',m);
+  const sal=filterByMonth(DATA.trdSal,'month_year',m);
+  const totalBuy=pur.reduce((a,r)=>a+Number(r.amount||0),0);
+  const totalSell=sal.reduce((a,r)=>a+Number(r.amount||0),0);
+  const margin=totalSell-totalBuy;
+  const supplierOut=DATA.trdPur.filter(r=>!r.payment_date).reduce((a,r)=>a+Number(r.amount||0),0);
+  const customerOut=DATA.trdSal.filter(r=>!r.payment_received_date).reduce((a,r)=>a+Number(r.amount||0),0);
+  document.getElementById('trd-dash-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total purchases</div><div class="vl red">${fmtMoney(totalBuy)}</div><div class="sb">${pur.length} bills</div></div>
+    <div class="mc"><div class="lb">Total sales</div><div class="vl green">${fmtMoney(totalSell)}</div><div class="sb">${sal.length} invoices</div></div>
+    <div class="mc"><div class="lb">Gross margin</div><div class="vl ${margin>=0?'green':'red'}">${fmtMoney(margin)}</div></div>
+    <div class="mc"><div class="lb">I owe suppliers</div><div class="vl red">${fmtMoney(supplierOut)}</div></div>
+    <div class="mc"><div class="lb">Customers owe me</div><div class="vl amber">${fmtMoney(customerOut)}</div></div>`;
+
+  // Supplier outstanding
+  const supGroups={};
+  DATA.trdPur.filter(r=>!r.payment_date).forEach(r=>{supGroups[r.supplier]=(supGroups[r.supplier]||0)+Number(r.amount||0);});
+  document.getElementById('trd-supplier-out').innerHTML=Object.entries(supGroups).map(([s,a])=>{
+    const bills=DATA.trdPur.filter(r=>r.supplier===s&&!r.payment_date);
+    const earliest=bills.sort((a,b)=>new Date(a.purchase_date)-new Date(b.purchase_date))[0];
+    const dd=earliest?dueDate(earliest.purchase_date,earliest.payment_terms_days):null;
+    const isOD=dd&&dd<TODAY;
+    return`<tr><td>${s}</td><td>${fmtMoney(a)}</td><td>${dd?fmtDate(dd.toISOString().split('T')[0]):'—'}</td><td>${badge(isOD?'Overdue':'Upcoming',isOD?'red':'blue')}</td></tr>`;
+  }).join('')||'<tr><td colspan="4" style="text-align:center;padding:12px;color:var(--txt2);">All paid ✓</td></tr>';
+
+  // Customer outstanding
+  const custGroups={};
+  DATA.trdSal.filter(r=>!r.payment_received_date).forEach(r=>{custGroups[r.customer]=(custGroups[r.customer]||0)+Number(r.amount||0);});
+  document.getElementById('trd-customer-out').innerHTML=Object.entries(custGroups).map(([c,a])=>{
+    const invs=DATA.trdSal.filter(r=>r.customer===c&&!r.payment_received_date);
+    const earliest=invs.sort((a,b)=>new Date(a.sale_date)-new Date(b.sale_date))[0];
+    const dd=earliest?dueDate(earliest.sale_date,earliest.payment_terms_days):null;
+    const isOD=dd&&dd<TODAY;
+    return`<tr><td>${c}</td><td>${fmtMoney(a)}</td><td>${dd?fmtDate(dd.toISOString().split('T')[0]):'—'}</td><td>${badge(isOD?'Overdue':'Pending',isOD?'red':'amber')}</td></tr>`;
+  }).join('')||'<tr><td colspan="4" style="text-align:center;padding:12px;color:var(--txt2);">All received ✓</td></tr>';
+
+  // Avg payment cycles
+  const paidPur=DATA.trdPur.filter(r=>r.payment_date);
+  const paidSal=DATA.trdSal.filter(r=>r.payment_received_date);
+  const avgSupCycle=paidPur.length>0?Math.round(paidPur.reduce((a,r)=>a+daysSince(r.purchase_date),0)/paidPur.length):0;
+  const avgCustCycle=paidSal.length>0?Math.round(paidSal.reduce((a,r)=>a+Math.abs(new Date(r.payment_received_date)-new Date(r.sale_date))/86400000,0)/paidSal.length):0;
+  document.getElementById('trd-avg-cycles').innerHTML=`
+    <div style="display:flex;gap:12px;">
+      <div class="mc" style="flex:1;"><div class="lb">Avg days to pay supplier</div><div class="vl amber">${avgSupCycle} days</div></div>
+      <div class="mc" style="flex:1;"><div class="lb">Avg days to receive from customer</div><div class="vl blue">${avgCustCycle} days</div></div>
+    </div>`;
+
+  destroyChart('trdBS');destroyChart('trdMat');
+  const allMonths=[...new Set([...DATA.trdPur.map(r=>r.month_year),...DATA.trdSal.map(r=>r.month_year)])].sort();
+  charts.trdBS=new Chart(document.getElementById('trdBuySell'),{type:'bar',data:{labels:allMonths,datasets:[{label:'Purchases',data:allMonths.map(mo=>DATA.trdPur.filter(r=>r.month_year===mo).reduce((a,r)=>a+Number(r.amount||0),0)),backgroundColor:'#dc2626',borderRadius:4},{label:'Sales',data:allMonths.map(mo=>DATA.trdSal.filter(r=>r.month_year===mo).reduce((a,r)=>a+Number(r.amount||0),0)),backgroundColor:'#1D9E75',borderRadius:4}]},options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:10},color:TC(),boxWidth:10}}}}});
+  const mats=[...new Set([...DATA.trdPur.map(r=>r.material),...DATA.trdSal.map(r=>r.material)])].filter(Boolean);
+  charts.trdMat=new Chart(document.getElementById('trdMaterial'),{type:'bar',data:{labels:mats,datasets:[{label:'Buy Kg',data:mats.map(mt=>filterByMonth(DATA.trdPur,'month_year',m).filter(r=>r.material===mt).reduce((a,r)=>a+Number(r.qty_kg||0),0)),backgroundColor:'#dc2626',borderRadius:3},{label:'Sell Kg',data:mats.map(mt=>filterByMonth(DATA.trdSal,'month_year',m).filter(r=>r.material===mt).reduce((a,r)=>a+Number(r.qty_kg||0),0)),backgroundColor:'#1D9E75',borderRadius:3}]},options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:10},color:TC(),boxWidth:10}}}}});
+}
+
+function renderTrdPurchases(){
+  const m=getMonth('trd-pur-month');
+  const pur=filterByMonth(DATA.trdPur,'month_year',m);
+  const totalAmt=pur.reduce((a,r)=>a+Number(r.amount||0),0);
+  const unpaid=pur.filter(r=>!r.payment_date);
+  document.getElementById('trd-pur-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total purchases</div><div class="vl">${fmtMoney(totalAmt)}</div><div class="sb">${pur.length} bills</div></div>
+    <div class="mc"><div class="lb">Outstanding (I owe)</div><div class="vl red">${fmtMoney(unpaid.reduce((a,r)=>a+Number(r.amount||0),0))}</div><div class="sb">${unpaid.length} unpaid</div></div>
+    <div class="mc"><div class="lb">Paid</div><div class="vl green">${fmtMoney(pur.filter(r=>r.payment_date).reduce((a,r)=>a+Number(r.amount||0),0))}</div></div>`;
+
+  document.getElementById('trd-pur-tbody').innerHTML=[...DATA.trdPur].sort((a,b)=>new Date(b.purchase_date)-new Date(a.purchase_date)).map(r=>{
+    const dd=dueDate(r.purchase_date,r.payment_terms_days);
+    let st,sc;
+    if(r.payment_date){st='Paid';sc='green';}
+    else if(dd<TODAY){st='Overdue';sc='red';}
+    else{st='Pending';sc='amber';}
+    const paidBtn=!r.payment_date?`<button class="btn btn-sm btn-green" onclick="markPaid('trading_purchases','${r.id}','payment_date','payment_amount')">✓ I Paid</button> `:'';
+    return`<tr>
+      <td>${fmtDate(r.purchase_date)}</td><td>${r.bill_no}</td><td>${r.supplier}</td><td>${r.material}</td>
+      <td>${Number(r.qty_kg).toLocaleString('en-IN')}</td><td>${fmtMoney(r.rate_per_kg)}</td><td>${fmtMoney(r.amount)}</td>
+      <td>${fmtDate(dd.toISOString().split('T')[0])}</td><td>${r.payment_date?fmtDate(r.payment_date):'—'}</td>
+      <td>${badge(st,sc)}</td>
+      <td style="white-space:nowrap">${paidBtn}<button class="btn btn-sm" onclick="openModal('trd-pur-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-red" onclick="deleteRow('trading_purchases','${r.id}','purchase')">🗑</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No purchases yet</td></tr>';
+}
+
+function renderTrdSales(){
+  const m=getMonth('trd-sal-month');
+  const sal=filterByMonth(DATA.trdSal,'month_year',m);
+  const totalAmt=sal.reduce((a,r)=>a+Number(r.amount||0),0);
+  const unreceived=sal.filter(r=>!r.payment_received_date);
+  document.getElementById('trd-sal-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total sales</div><div class="vl green">${fmtMoney(totalAmt)}</div><div class="sb">${sal.length} invoices</div></div>
+    <div class="mc"><div class="lb">Outstanding (they owe)</div><div class="vl amber">${fmtMoney(unreceived.reduce((a,r)=>a+Number(r.amount||0),0))}</div><div class="sb">${unreceived.length} pending</div></div>
+    <div class="mc"><div class="lb">Received</div><div class="vl green">${fmtMoney(sal.filter(r=>r.payment_received_date).reduce((a,r)=>a+Number(r.amount||0),0))}</div></div>`;
+
+  document.getElementById('trd-sal-tbody').innerHTML=[...DATA.trdSal].sort((a,b)=>new Date(b.sale_date)-new Date(a.sale_date)).map(r=>{
+    const dd=dueDate(r.sale_date,r.payment_terms_days);
+    let st,sc;
+    if(r.payment_received_date){st='Received';sc='green';}
+    else if(dd<TODAY){st='Overdue';sc='red';}
+    else{st='Pending';sc='amber';}
+    const recvBtn=!r.payment_received_date?`<button class="btn btn-sm btn-amber" onclick="markRecvd('${r.id}')">₹ Received</button> `:'';
+    return`<tr>
+      <td>${fmtDate(r.sale_date)}</td><td>${r.invoice_no}</td><td>${r.customer}</td><td>${r.material}</td>
+      <td>${Number(r.qty_kg).toLocaleString('en-IN')}</td><td>${fmtMoney(r.rate_per_kg)}</td><td>${fmtMoney(r.amount)}</td>
+      <td>${fmtDate(dd.toISOString().split('T')[0])}</td><td>${r.payment_received_date?fmtDate(r.payment_received_date):'—'}</td>
+      <td>${badge(st,sc)}</td>
+      <td style="white-space:nowrap">${recvBtn}<button class="btn btn-sm" onclick="openModal('trd-sal-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-red" onclick="deleteRow('trading_sales','${r.id}','sale')">🗑</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No sales yet</td></tr>';
+}
+
+function renderTrdMaterials(){
+  document.getElementById('trd-mat-tbody').innerHTML=DATA.trdMat.map(r=>`<tr><td>${r.material_name}</td><td>${r.unit}</td><td>${r.description||'—'}</td>
+    <td><button class="btn btn-sm btn-red" onclick="deleteRow('trading_materials','${r.id}','material')">🗑</button></td></tr>`).join('')
+    ||'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--txt2);">No materials defined yet. Add your scrap types.</td></tr>';
+}
+
+// ===== INIT — handled by checkSession() above =====
+
 </script>
 </body>
 </html>
