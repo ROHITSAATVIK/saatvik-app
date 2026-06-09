@@ -224,8 +224,12 @@ tr:hover td{background:#fafaf9;}
     <div class="g2">
       <div>
         <div class="card">
-          <div class="card-head"><div class="card-title">Machine uptime</div></div>
+          <div class="card-head"><div class="card-title">Machine uptime — avg running time</div></div>
           <div class="card-body" id="mfg-dash-machines"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Avg running hours/day — this month</div></div>
+          <div class="card-body"><div style="position:relative;height:130px;"><canvas id="dashMachineAvg" role="img" aria-label="Avg machine running hours">Machine avg</canvas></div></div>
         </div>
         <div class="card">
           <div class="card-head"><div class="card-title">Daily production vs target</div></div>
@@ -268,8 +272,14 @@ tr:hover td{background:#fafaf9;}
         <div class="card-body"><div style="position:relative;height:150px;"><canvas id="prodChart" role="img" aria-label="Production">Production</canvas></div></div>
       </div>
       <div class="card">
-        <div class="card-head"><div class="card-title">Machine running hours</div></div>
+        <div class="card-head"><div class="card-title">Machine running hours — daily</div></div>
         <div class="card-body"><div style="position:relative;height:150px;"><canvas id="runChart" role="img" aria-label="Running hours">Running hours</canvas></div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-head"><div class="card-title">Avg running hours/day this month — Washing / Agglo / Extruder</div></div>
+      <div class="card-body">
+        <div id="mis-avg-running" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;"></div>
       </div>
     </div>
     <div class="card">
@@ -721,10 +731,11 @@ tr:hover td{background:#fafaf9;}
   <div class="modal">
     <div class="modal-head"><span class="modal-title" id="comp-modal-t">Add Component</span><button class="btn btn-sm" onclick="closeModal('comp-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow frow-1"><div class="fg"><label>Component name</label><input type="text" id="cp-name" placeholder="e.g. Blade Set, Motor, Gearbox, Belt..."></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Component / Part name</label><input type="text" id="cp-name" placeholder="e.g. Blade Set, Motor, Gearbox, Belt, Bearing..."></div></div>
       <div class="frow"><div class="fg"><label>Last replaced date</label><input type="date" id="cp-date"></div><div class="fg"><label>Expected life (days)</label><input type="number" id="cp-life" placeholder="e.g. 90"></div></div>
-      <div class="frow"><div class="fg"><label>Current condition</label><select id="cp-cond"><option>Good</option><option>Warning</option><option>Critical</option><option>Just Replaced</option></select></div><div class="fg"><label>Replacement cost (₹)</label><input type="number" id="cp-cost" placeholder="0"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Notes</label><textarea id="cp-notes" placeholder="Any details about this component..."></textarea></div></div>
+      <div class="frow"><div class="fg"><label>Current condition</label><select id="cp-cond"><option>Good</option><option>Warning</option><option>Critical</option><option>Just Replaced</option></select></div><div class="fg"><label>Unit cost (₹)</label><input type="number" id="cp-cost" placeholder="0"></div></div>
+      <div class="frow"><div class="fg"><label>Qty in stock</label><input type="number" id="cp-qty" placeholder="0"></div><div class="fg"><label>Reorder level</label><input type="number" id="cp-reorder" placeholder="1"></div></div>
+      <div class="frow"><div class="fg"><label>Supplier</label><input type="text" id="cp-supplier" placeholder="Supplier name"></div><div class="fg"><label>Notes</label><input type="text" id="cp-notes" placeholder="Any details..."></div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('comp-modal')">Cancel</button><button class="btn btn-green" onclick="saveComponent()">Save</button></div>
   </div>
@@ -762,10 +773,11 @@ tr:hover td{background:#fafaf9;}
   <div class="modal">
     <div class="modal-head"><span class="modal-title" id="comp-modal-t">Add Component</span><button class="btn btn-sm" onclick="closeModal('comp-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow frow-1"><div class="fg"><label>Component name</label><input type="text" id="cp-name" placeholder="e.g. Blade Set, Motor, Gearbox, Belt..."></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Component / Part name</label><input type="text" id="cp-name" placeholder="e.g. Blade Set, Motor, Gearbox, Belt, Bearing..."></div></div>
       <div class="frow"><div class="fg"><label>Last replaced date</label><input type="date" id="cp-date"></div><div class="fg"><label>Expected life (days)</label><input type="number" id="cp-life" placeholder="e.g. 90"></div></div>
-      <div class="frow"><div class="fg"><label>Current condition</label><select id="cp-cond"><option>Good</option><option>Warning</option><option>Critical</option><option>Just Replaced</option></select></div><div class="fg"><label>Replacement cost (₹)</label><input type="number" id="cp-cost" placeholder="0"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Notes</label><textarea id="cp-notes" placeholder="Any details about this component..."></textarea></div></div>
+      <div class="frow"><div class="fg"><label>Current condition</label><select id="cp-cond"><option>Good</option><option>Warning</option><option>Critical</option><option>Just Replaced</option></select></div><div class="fg"><label>Unit cost (₹)</label><input type="number" id="cp-cost" placeholder="0"></div></div>
+      <div class="frow"><div class="fg"><label>Qty in stock</label><input type="number" id="cp-qty" placeholder="0"></div><div class="fg"><label>Reorder level</label><input type="number" id="cp-reorder" placeholder="1"></div></div>
+      <div class="frow"><div class="fg"><label>Supplier</label><input type="text" id="cp-supplier" placeholder="Supplier name"></div><div class="fg"><label>Notes</label><input type="text" id="cp-notes" placeholder="Any details..."></div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('comp-modal')">Cancel</button><button class="btn btn-green" onclick="saveComponent()">Save</button></div>
   </div>
@@ -1310,6 +1322,21 @@ function renderMfgDashboard(){
   // Charts
   destroyChart('dashProd');
   const asc=[...mis].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
+  // Avg machine running time chart
+  const avgWash=mis.length>0?(mis.reduce((a,r)=>a+parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0),0)/mis.length).toFixed(1):0;
+  const avgAgglo=mis.length>0?(mis.reduce((a,r)=>a+parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0),0)/mis.length).toFixed(1):0;
+  const avgExt=mis.length>0?(mis.reduce((a,r)=>a+parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0),0)/mis.length).toFixed(1):0;
+  destroyChart('dashMachAvg');
+  if(document.getElementById('dashMachineAvg')){
+    charts.dashMachAvg=new Chart(document.getElementById('dashMachineAvg'),{
+      type:'bar',
+      data:{labels:['Washing','Agglo','Extruder'],datasets:[
+        {label:'Avg run hrs/day',data:[avgWash,avgAgglo,avgExt],backgroundColor:['#3b82f6','#1D9E75','#d97706'],borderRadius:6},
+        {label:'Target (20h)',data:[20,20,20],type:'line',borderColor:'#dc2626',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false}
+      ]},
+      options:{...BO(),plugins:{legend:{display:false}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,min:0,max:24,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}
+    });
+  }
   charts.dashProd=new Chart(document.getElementById('dashProdChart'),{type:'bar',data:{labels:asc.map(r=>fmtDate(r.entry_date)),datasets:[{label:'Production',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:4},{label:'Target',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,autoSkip:false,maxRotation:0}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
 }
 
@@ -1353,6 +1380,25 @@ function renderMIS(){
   const asc=[...sorted].reverse();
   const labels=asc.map(r=>fmtDate(r.entry_date));
   charts.prod=new Chart(document.getElementById('prodChart'),{type:'bar',data:{labels,datasets:[{label:'Prod',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:'#1D9E75',borderRadius:3},{label:'Tgt',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.4,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
+  // Avg running time summary cards
+  const avgW=sorted.length>0?(sorted.reduce((a,r)=>a+parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0),0)/sorted.length).toFixed(1):0;
+  const avgA=sorted.length>0?(sorted.reduce((a,r)=>a+parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0),0)/sorted.length).toFixed(1):0;
+  const avgE=sorted.length>0?(sorted.reduce((a,r)=>a+parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0),0)/sorted.length).toFixed(1):0;
+  const avgRunEl=document.getElementById('mis-avg-running');
+  if(avgRunEl){
+    avgRunEl.innerHTML=[
+      {name:'Washing Line',avg:avgW,col:'#3b82f6'},
+      {name:'Agglo (1+2)',avg:avgA,col:'#1D9E75'},
+      {name:'Extruder',avg:avgE,col:'#d97706'}
+    ].map(m=>`<div style="background:var(--bg3);border-radius:var(--rad);padding:14px;text-align:center;">
+      <div style="font-size:10px;color:var(--txt2);margin-bottom:6px;font-weight:600;text-transform:uppercase;">${m.name}</div>
+      <div style="font-size:28px;font-weight:700;color:${m.col};">${m.avg}h</div>
+      <div style="font-size:10px;color:var(--txt2);margin-top:4px;">avg per day (of 24h)</div>
+      <div style="height:5px;background:var(--bg2);border-radius:10px;margin-top:8px;overflow:hidden;">
+        <div style="height:100%;width:${Math.round(m.avg/24*100)}%;background:${m.col};border-radius:10px;"></div>
+      </div>
+    </div>`).join('');
+  }
   charts.run=new Chart(document.getElementById('runChart'),{type:'bar',data:{labels,datasets:[{label:'Washing',data:asc.map(r=>parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0)),backgroundColor:'#3b82f6',borderRadius:3},{label:'Agglo',data:asc.map(r=>parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0)),backgroundColor:'#1D9E75',borderRadius:3},{label:'Extruder',data:asc.map(r=>parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0)),backgroundColor:'#d97706',borderRadius:3}]},options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:10},color:TC(),boxWidth:10}}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,max:24,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}});
 }
 
@@ -1794,18 +1840,22 @@ function renderMHComponents(){
     const daysLeft=r.last_replaced_date&&r.expected_life_days
       ?r.expected_life_days-Math.floor((new Date()-new Date(r.last_replaced_date))/86400000)
       :null;
-    return`<tr>
+    const isLowStock=r.qty_in_stock<=r.reorder_level&&r.reorder_level>0;
+    return`<tr style="${r.condition==='Critical'?'background:#fef2f2;':isLowStock?'background:#fffbeb;':''}">
       <td><strong>${r.component_name}</strong></td>
       <td>${r.last_replaced_date?fmtDate(r.last_replaced_date):'—'}</td>
-      <td>${r.expected_life_days?r.expected_life_days+' days'+(daysLeft!==null?' ('+daysLeft+' left)':''):'—'}</td>
+      <td>${r.expected_life_days?r.expected_life_days+' days'+(daysLeft!==null?' <span style="color:'+(daysLeft<10?'#dc2626':'#1D9E75')+';">('+daysLeft+'d left)</span>':''):'—'}</td>
       <td><span class="badge ${condCol[r.condition]||'b-gray'}">${r.condition}</span></td>
+      <td style="font-weight:${isLowStock?'700':'400'};color:${isLowStock?'#dc2626':'inherit'}">${r.qty_in_stock||0}</td>
+      <td>${r.reorder_level||1}</td>
       <td>${r.replacement_cost?fmtMoney(r.replacement_cost):'—'}</td>
+      <td>${r.supplier||'—'}</td>
       <td>${r.notes||'—'}</td>
       <td style="white-space:nowrap">
         <button class="btn btn-sm" onclick="editComponent('${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteMHRow('machine_components','${r.id}','comp')">🗑</button>
       </td></tr>`;
-  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txt2);">No components added yet — click "+ Add component" to start building your machine profile</td></tr>';
+  }).join('')||'<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--txt2);">No components added yet — click "+ Add component" to start</td></tr>';
 }
 
 function renderMHMaintenance(){
@@ -1936,13 +1986,16 @@ function editComponent(id){
   document.getElementById('cp-life').value=r.expected_life_days||'';
   document.getElementById('cp-cond').value=r.condition;
   document.getElementById('cp-cost').value=r.replacement_cost||'';
+  document.getElementById('cp-qty').value=r.qty_in_stock||0;
+  document.getElementById('cp-reorder').value=r.reorder_level||1;
+  document.getElementById('cp-supplier').value=r.supplier||'';
   document.getElementById('cp-notes').value=r.notes||'';
   document.getElementById('comp-modal').classList.add('open');
 }
 
 async function saveComponent(){
   const g=id=>document.getElementById(id)?.value;
-  const row={machine_name:currentMachine,component_name:g('cp-name'),last_replaced_date:g('cp-date')||null,expected_life_days:parseInt(g('cp-life'))||0,condition:g('cp-cond'),replacement_cost:parseFloat(g('cp-cost'))||0,notes:g('cp-notes'),updated_at:new Date().toISOString()};
+  const row={machine_name:currentMachine,component_name:g('cp-name'),last_replaced_date:g('cp-date')||null,expected_life_days:parseInt(g('cp-life'))||0,condition:g('cp-cond'),replacement_cost:parseFloat(g('cp-cost'))||0,qty_in_stock:parseInt(g('cp-qty'))||0,reorder_level:parseInt(g('cp-reorder'))||1,supplier:g('cp-supplier')||'',notes:g('cp-notes')||'',updated_at:new Date().toISOString()};
   if(!row.component_name){toast('Component name required','err');return;}
   const{error}=editId?await sb.from('machine_components').update(row).eq('id',editId):await sb.from('machine_components').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
