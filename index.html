@@ -190,6 +190,7 @@ tr:hover td{background:#fafaf9;}
     <div class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Stock Management</div>
     <div class="ni" onclick="goTo('dispatch')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Dispatch</div>
     <div class="ni" onclick="goTo('breakdown')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Breakdown Log</div>
+    <div class="ni" onclick="goTo('machines')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h2v3H7zM11 8h2v3h-2zM15 8h2v3h-2z"/></svg>Machine Health</div>
     <div class="ni" onclick="goTo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tasks</div>
   </div>
   <!-- TRADING NAV -->
@@ -497,6 +498,77 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
+<!-- ========== MACHINE HEALTH ========== -->
+<div id="page-machines" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Machine Health</div>
+    <div class="tb-right">
+      <select class="month-selector" id="mh-month" onchange="renderMachines()"></select>
+    </div>
+  </div>
+  <div class="content">
+    <!-- Overview metrics -->
+    <div class="metrics g4" id="mh-overview-metrics"></div>
+    <!-- Monthly avg running chart -->
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-head"><div class="card-title">Monthly avg running time — all machines</div></div>
+      <div class="card-body"><div style="position:relative;height:160px;"><canvas id="mhRunChart" role="img" aria-label="Machine running time chart">Running time</canvas></div></div>
+    </div>
+    <!-- 8 Machine Cards -->
+    <div id="mh-machine-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;"></div>
+    <!-- Machine Detail Panel -->
+    <div id="mh-detail-panel" style="display:none;">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title" id="mh-detail-title">Machine Detail</div>
+          <button class="btn btn-sm" onclick="document.getElementById('mh-detail-panel').style.display='none'">✕ Close</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <!-- Tabs -->
+          <div style="display:flex;border-bottom:1px solid var(--bdr);background:var(--bg3);">
+            <button class="mh-tab active" onclick="switchMHTab('components')" id="tab-components" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:12px;font-weight:600;border-bottom:2px solid var(--acc);color:var(--acc);">Components</button>
+            <button class="mh-tab" onclick="switchMHTab('maintenance')" id="tab-maintenance" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:12px;color:var(--txt2);">Maintenance Checklist</button>
+            <button class="mh-tab" onclick="switchMHTab('spares')" id="tab-spares" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:12px;color:var(--txt2);">Spare Parts</button>
+            <button class="mh-tab" onclick="switchMHTab('history')" id="tab-history" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:12px;color:var(--txt2);">Issue History</button>
+          </div>
+          <!-- Components Tab -->
+          <div id="mh-tab-components" class="mh-tab-content" style="padding:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-size:12px;color:var(--txt2);">Add and track all components for this machine</div>
+              <button class="btn btn-green btn-sm" onclick="openModal('comp-modal',null)">+ Add component</button>
+            </div>
+            <div class="tw"><table><thead><tr><th>Component</th><th>Last replaced</th><th>Expected life</th><th>Condition</th><th>Replacement cost</th><th>Notes</th><th>Actions</th></tr></thead>
+            <tbody id="mh-comp-tbody"></tbody></table></div>
+          </div>
+          <!-- Maintenance Tab -->
+          <div id="mh-tab-maintenance" class="mh-tab-content" style="padding:14px;display:none;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-size:12px;color:var(--txt2);">Daily / Weekly / Monthly checks</div>
+              <button class="btn btn-green btn-sm" onclick="openModal('maint-modal',null)">+ Add check</button>
+            </div>
+            <div class="tw"><table><thead><tr><th>Check</th><th>Frequency</th><th>Last done</th><th>Done by</th><th>Notes</th><th>Actions</th></tr></thead>
+            <tbody id="mh-maint-tbody"></tbody></table></div>
+          </div>
+          <!-- Spare Parts Tab -->
+          <div id="mh-tab-spares" class="mh-tab-content" style="padding:14px;display:none;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-size:12px;color:var(--txt2);">Parts in stock for this machine</div>
+              <button class="btn btn-green btn-sm" onclick="openModal('spare-modal',null)">+ Add part</button>
+            </div>
+            <div class="tw"><table><thead><tr><th>Part name</th><th>Qty in stock</th><th>Reorder level</th><th>Unit cost</th><th>Supplier</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="mh-spare-tbody"></tbody></table></div>
+          </div>
+          <!-- Issue History Tab -->
+          <div id="mh-tab-history" class="mh-tab-content" style="padding:14px;display:none;">
+            <div class="tw"><table><thead><tr><th>Date</th><th>Shift</th><th>Downtime (h)</th><th>Reason</th><th>Action taken</th><th>Cost</th><th>Status</th></tr></thead>
+            <tbody id="mh-history-tbody"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div><!-- /main -->
 
 <!-- ============================================================ -->
@@ -644,7 +716,89 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
-<!-- Trading Material Modal --><!-- Trading Material Modal -->
+<!-- Component Modal -->
+<div class="modal-bg" id="comp-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="comp-modal-t">Add Component</span><button class="btn btn-sm" onclick="closeModal('comp-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow frow-1"><div class="fg"><label>Component name</label><input type="text" id="cp-name" placeholder="e.g. Blade Set, Motor, Gearbox, Belt..."></div></div>
+      <div class="frow"><div class="fg"><label>Last replaced date</label><input type="date" id="cp-date"></div><div class="fg"><label>Expected life (days)</label><input type="number" id="cp-life" placeholder="e.g. 90"></div></div>
+      <div class="frow"><div class="fg"><label>Current condition</label><select id="cp-cond"><option>Good</option><option>Warning</option><option>Critical</option><option>Just Replaced</option></select></div><div class="fg"><label>Replacement cost (₹)</label><input type="number" id="cp-cost" placeholder="0"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><textarea id="cp-notes" placeholder="Any details about this component..."></textarea></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('comp-modal')">Cancel</button><button class="btn btn-green" onclick="saveComponent()">Save</button></div>
+  </div>
+</div>
+
+<!-- Maintenance Modal -->
+<div class="modal-bg" id="maint-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="maint-modal-t">Add Maintenance Check</span><button class="btn btn-sm" onclick="closeModal('maint-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow frow-1"><div class="fg"><label>Check description</label><input type="text" id="mt-name" placeholder="e.g. Check blade sharpness, Lubricate gearbox..."></div></div>
+      <div class="frow"><div class="fg"><label>Frequency</label><select id="mt-freq"><option>Daily</option><option>Weekly</option><option>Monthly</option><option>Quarterly</option></select></div><div class="fg"><label>Last done date</label><input type="date" id="mt-date"></div></div>
+      <div class="frow"><div class="fg"><label>Done by</label><input type="text" id="mt-by" placeholder="e.g. Zakir Ji"></div><div class="fg"><label>Notes</label><input type="text" id="mt-notes" placeholder="Optional"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('maint-modal')">Cancel</button><button class="btn btn-green" onclick="saveMaintenance()">Save</button></div>
+  </div>
+</div>
+
+<!-- Spare Parts Modal -->
+<div class="modal-bg" id="spare-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="spare-modal-t">Add Spare Part</span><button class="btn btn-sm" onclick="closeModal('spare-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow frow-1"><div class="fg"><label>Part name</label><input type="text" id="sp-name" placeholder="e.g. Blade, Belt, Bearing, Heater Band..."></div></div>
+      <div class="frow"><div class="fg"><label>Qty in stock</label><input type="number" id="sp-qty" placeholder="0"></div><div class="fg"><label>Reorder level</label><input type="number" id="sp-reorder" placeholder="1"></div></div>
+      <div class="frow"><div class="fg"><label>Unit cost (₹)</label><input type="number" id="sp-cost" placeholder="0"></div><div class="fg"><label>Supplier</label><input type="text" id="sp-supplier" placeholder="Supplier name"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="sp-notes" placeholder="Optional"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('spare-modal')">Cancel</button><button class="btn btn-green" onclick="saveSparePart()">Save</button></div>
+  </div>
+</div>
+
+<!-- Trading Material Modal --><!-- Component Modal -->
+<div class="modal-bg" id="comp-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="comp-modal-t">Add Component</span><button class="btn btn-sm" onclick="closeModal('comp-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow frow-1"><div class="fg"><label>Component name</label><input type="text" id="cp-name" placeholder="e.g. Blade Set, Motor, Gearbox, Belt..."></div></div>
+      <div class="frow"><div class="fg"><label>Last replaced date</label><input type="date" id="cp-date"></div><div class="fg"><label>Expected life (days)</label><input type="number" id="cp-life" placeholder="e.g. 90"></div></div>
+      <div class="frow"><div class="fg"><label>Current condition</label><select id="cp-cond"><option>Good</option><option>Warning</option><option>Critical</option><option>Just Replaced</option></select></div><div class="fg"><label>Replacement cost (₹)</label><input type="number" id="cp-cost" placeholder="0"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><textarea id="cp-notes" placeholder="Any details about this component..."></textarea></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('comp-modal')">Cancel</button><button class="btn btn-green" onclick="saveComponent()">Save</button></div>
+  </div>
+</div>
+
+<!-- Maintenance Modal -->
+<div class="modal-bg" id="maint-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="maint-modal-t">Add Maintenance Check</span><button class="btn btn-sm" onclick="closeModal('maint-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow frow-1"><div class="fg"><label>Check description</label><input type="text" id="mt-name" placeholder="e.g. Check blade sharpness, Lubricate gearbox..."></div></div>
+      <div class="frow"><div class="fg"><label>Frequency</label><select id="mt-freq"><option>Daily</option><option>Weekly</option><option>Monthly</option><option>Quarterly</option></select></div><div class="fg"><label>Last done date</label><input type="date" id="mt-date"></div></div>
+      <div class="frow"><div class="fg"><label>Done by</label><input type="text" id="mt-by" placeholder="e.g. Zakir Ji"></div><div class="fg"><label>Notes</label><input type="text" id="mt-notes" placeholder="Optional"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('maint-modal')">Cancel</button><button class="btn btn-green" onclick="saveMaintenance()">Save</button></div>
+  </div>
+</div>
+
+<!-- Spare Parts Modal -->
+<div class="modal-bg" id="spare-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="spare-modal-t">Add Spare Part</span><button class="btn btn-sm" onclick="closeModal('spare-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow frow-1"><div class="fg"><label>Part name</label><input type="text" id="sp-name" placeholder="e.g. Blade, Belt, Bearing, Heater Band..."></div></div>
+      <div class="frow"><div class="fg"><label>Qty in stock</label><input type="number" id="sp-qty" placeholder="0"></div><div class="fg"><label>Reorder level</label><input type="number" id="sp-reorder" placeholder="1"></div></div>
+      <div class="frow"><div class="fg"><label>Unit cost (₹)</label><input type="number" id="sp-cost" placeholder="0"></div><div class="fg"><label>Supplier</label><input type="text" id="sp-supplier" placeholder="Supplier name"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="sp-notes" placeholder="Optional"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('spare-modal')">Cancel</button><button class="btn btn-green" onclick="saveSparePart()">Save</button></div>
+  </div>
+</div>
+
+<!-- Trading Material Modal -->
 <div class="modal-bg" id="trd-mat-modal">
   <div class="modal">
     <div class="modal-head"><span class="modal-title">Add Material Type</span><button class="btn btn-sm" onclick="closeModal('trd-mat-modal')">✕</button></div>
@@ -742,7 +896,7 @@ const BO=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{displa
 // ===== MONTH SELECTORS =====
 const MONTHS=['Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026'];
 function populateMonthSelectors(){
-  ['mfg-dash-month','mis-month','stock-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month'].forEach(id=>{
+  ['mfg-dash-month','mis-month','stock-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','mh-month'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
     el.innerHTML=MONTHS.map(m=>`<option value="${m}"${m==='Jun 2026'?'selected':''}>${m}</option>`).join('');
@@ -781,7 +935,7 @@ function renderPage(id){
   const m={
     'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
     'stock':renderStock,'dispatch':renderDispatch,'breakdown':renderBreakdown,'tasks':renderTasks,
-    'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,
+    'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines,
     'trd-materials':renderTrdMaterials
   };
   if(m[id])m[id]();
@@ -1586,6 +1740,280 @@ function renderTrdMaterials(){
   document.getElementById('trd-mat-tbody').innerHTML=DATA.trdMat.map(r=>`<tr><td>${r.material_name}</td><td>${r.unit}</td><td>${r.description||'—'}</td>
     <td><button class="btn btn-sm btn-red" onclick="deleteRow('trading_materials','${r.id}','material')">🗑</button></td></tr>`).join('')
     ||'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--txt2);">No materials. Add your scrap types.</td></tr>';
+}
+
+// ===== MACHINE HEALTH =====
+const MACHINES = ['Jumbo Cutter','Grinder','Washing Line','Dryer','Agglo 1','Agglo 2','Extruder','Dana Cutter'];
+const MACHINE_ICONS = {'Jumbo Cutter':'✂️','Grinder':'⚙️','Washing Line':'🚿','Dryer':'🌀','Agglo 1':'🔥','Agglo 2':'🔥','Extruder':'📦','Dana Cutter':'✂️'};
+let currentMachine = null;
+let DATA_comp = [], DATA_maint = [], DATA_spare = [];
+
+async function loadMachineData(machine){
+  const[comp,maint,spare]=await Promise.all([
+    sb.from('machine_components').select('*').eq('machine_name',machine).order('component_name'),
+    sb.from('machine_maintenance').select('*').eq('machine_name',machine).order('frequency'),
+    sb.from('machine_spare_parts').select('*').eq('machine_name',machine).order('part_name'),
+  ]);
+  DATA_comp=comp.data||[];
+  DATA_maint=maint.data||[];
+  DATA_spare=spare.data||[];
+}
+
+async function openMachineDetail(machine){
+  currentMachine=machine;
+  document.getElementById('mh-detail-title').textContent=MACHINE_ICONS[machine]||'🔧'+' '+machine;
+  document.getElementById('mh-detail-panel').style.display='block';
+  document.getElementById('mh-detail-panel').scrollIntoView({behavior:'smooth'});
+  await loadMachineData(machine);
+  renderMHComponents();
+  switchMHTab('components');
+}
+
+function switchMHTab(tab){
+  ['components','maintenance','spares','history'].forEach(t=>{
+    const el=document.getElementById('mh-tab-'+t);
+    const btn=document.getElementById('tab-'+t);
+    if(el)el.style.display=t===tab?'block':'none';
+    if(btn){
+      btn.style.borderBottom=t===tab?'2px solid var(--acc)':'2px solid transparent';
+      btn.style.color=t===tab?'var(--acc)':'var(--txt2)';
+      btn.style.fontWeight=t===tab?'600':'400';
+    }
+  });
+  if(tab==='components')renderMHComponents();
+  if(tab==='maintenance')renderMHMaintenance();
+  if(tab==='spares')renderMHSpares();
+  if(tab==='history')renderMHHistory();
+}
+
+function renderMHComponents(){
+  const tb=document.getElementById('mh-comp-tbody');
+  if(!tb)return;
+  tb.innerHTML=DATA_comp.map(r=>{
+    const condCol={Good:'b-green',Warning:'b-amber',Critical:'b-red','Just Replaced':'b-blue'};
+    const daysLeft=r.last_replaced_date&&r.expected_life_days
+      ?r.expected_life_days-Math.floor((new Date()-new Date(r.last_replaced_date))/86400000)
+      :null;
+    return`<tr>
+      <td><strong>${r.component_name}</strong></td>
+      <td>${r.last_replaced_date?fmtDate(r.last_replaced_date):'—'}</td>
+      <td>${r.expected_life_days?r.expected_life_days+' days'+(daysLeft!==null?' ('+daysLeft+' left)':''):'—'}</td>
+      <td><span class="badge ${condCol[r.condition]||'b-gray'}">${r.condition}</span></td>
+      <td>${r.replacement_cost?fmtMoney(r.replacement_cost):'—'}</td>
+      <td>${r.notes||'—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm" onclick="editComponent('${r.id}')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteMHRow('machine_components','${r.id}','comp')">🗑</button>
+      </td></tr>`;
+  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txt2);">No components added yet — click "+ Add component" to start building your machine profile</td></tr>';
+}
+
+function renderMHMaintenance(){
+  const tb=document.getElementById('mh-maint-tbody');
+  if(!tb)return;
+  const freqOrder={Daily:1,Weekly:2,Monthly:3,Quarterly:4};
+  const sorted=[...DATA_maint].sort((a,b)=>(freqOrder[a.frequency]||5)-(freqOrder[b.frequency]||5));
+  tb.innerHTML=sorted.map(r=>{
+    const freqCol={Daily:'b-blue',Weekly:'b-green',Monthly:'b-amber',Quarterly:'b-purple'};
+    const daysSince=r.last_done_date?Math.floor((new Date()-new Date(r.last_done_date))/86400000):null;
+    return`<tr>
+      <td>${r.check_name}</td>
+      <td><span class="badge ${freqCol[r.frequency]||'b-gray'}">${r.frequency}</span></td>
+      <td>${r.last_done_date?fmtDate(r.last_done_date)+(daysSince!==null?' ('+daysSince+'d ago)':''):'—'}</td>
+      <td>${r.done_by||'—'}</td>
+      <td>${r.notes||'—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm btn-green" onclick="markCheckDone('${r.id}')">✓ Done</button>
+        <button class="btn btn-sm" onclick="editMaintenance('${r.id}')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteMHRow('machine_maintenance','${r.id}','maint')">🗑</button>
+      </td></tr>`;
+  }).join('')||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--txt2);">No maintenance checks added yet</td></tr>';
+}
+
+function renderMHSpares(){
+  const tb=document.getElementById('mh-spare-tbody');
+  if(!tb)return;
+  tb.innerHTML=DATA_spare.map(r=>{
+    const isLow=r.qty_in_stock<=r.reorder_level;
+    return`<tr style="${isLow?'background:#fef2f2;':''}">
+      <td>${r.part_name}</td>
+      <td style="font-weight:${isLow?'700':'400'};color:${isLow?'#b91c1c':'inherit'}">${r.qty_in_stock}</td>
+      <td>${r.reorder_level}</td>
+      <td>${r.unit_cost?fmtMoney(r.unit_cost):'—'}</td>
+      <td>${r.supplier||'—'}</td>
+      <td>${isLow?'<span class="badge b-red">Reorder now</span>':'<span class="badge b-green">OK</span>'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm" onclick="editSpare('${r.id}')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteMHRow('machine_spare_parts','${r.id}','spare')">🗑</button>
+      </td></tr>`;
+  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txt2);">No spare parts tracked yet</td></tr>';
+}
+
+function renderMHHistory(){
+  const tb=document.getElementById('mh-history-tbody');
+  if(!tb)return;
+  const history=DATA.bd.filter(r=>r.machine===currentMachine);
+  const sc={Pending:'b-amber','In Progress':'b-blue',Resolved:'b-green',Critical:'b-red'};
+  tb.innerHTML=history.map(r=>`<tr>
+    <td>${fmtDate(r.breakdown_date)}</td><td>${r.shift||'Day'}</td>
+    <td>${r.downtime_hours}h</td><td>${r.reason}</td><td>${r.action_taken}</td>
+    <td>${r.cost?fmtMoney(r.cost):'—'}</td>
+    <td><span class="badge ${sc[r.status]||'b-gray'}">${r.status}</span></td>
+  </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txt2);">No breakdowns recorded for this machine</td></tr>';
+}
+
+function renderMachines(){
+  const m=getMonth('mh-month');
+  const mis=filterByMonth(DATA.mis,'month_year',m);
+  const totalH=mis.length*24;
+
+  // Overview metrics
+  const totalBD=DATA.bd.length;
+  const totalDT=DATA.bd.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
+  const totalCost=DATA.bd.reduce((a,r)=>a+Number(r.cost||0),0);
+  const criticals=DATA.bd.filter(r=>r.status==='Critical').length;
+  document.getElementById('mh-overview-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total breakdowns</div><div class="vl amber">${totalBD}</div><div class="sb">All time</div></div>
+    <div class="mc"><div class="lb">Total downtime</div><div class="vl red">${totalDT.toFixed(1)} hrs</div><div class="sb">All time</div></div>
+    <div class="mc"><div class="lb">Repair spend</div><div class="vl">${fmtMoney(totalCost)}</div><div class="sb">All time</div></div>
+    <div class="mc"><div class="lb">Critical pending</div><div class="vl red">${criticals}</div><div class="sb">Needs action</div></div>`;
+
+  // Machine cards
+  const machineCards=MACHINES.map(machine=>{
+    const mBD=DATA.bd.filter(r=>r.machine===machine);
+    const mDT=mBD.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
+    const runHours=totalH>0?totalH-mBD.filter(r=>mis.some(m=>m.entry_date===r.breakdown_date)).reduce((a,r)=>a+Number(r.downtime_hours||0),0):0;
+    const runPct=totalH>0?Math.round(((totalH-mDT)/totalH)*100):100;
+    const hasCritical=mBD.some(r=>r.status==='Critical');
+    const col=hasCritical?'#dc2626':runPct>=80?'#1D9E75':runPct>=60?'#d97706':'#dc2626';
+    return`<div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rad2);padding:14px;cursor:pointer;transition:box-shadow .15s;" 
+      onclick="openMachineDetail('${machine}')"
+      onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.12)'"
+      onmouseout="this.style.boxShadow='none'">
+      <div style="font-size:22px;margin-bottom:8px;">${MACHINE_ICONS[machine]||'🔧'}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:6px;">${machine}</div>
+      <div style="height:5px;background:var(--bg3);border-radius:10px;overflow:hidden;margin-bottom:6px;">
+        <div style="height:100%;width:${runPct}%;background:${col};border-radius:10px;transition:width 1s ease;"></div>
+      </div>
+      <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;">Uptime: <strong style="color:${col}">${runPct}%</strong></div>
+      <div style="font-size:10px;color:var(--txt2);">${mBD.length} breakdowns</div>
+      ${hasCritical?'<div style="margin-top:6px;"><span class="badge b-red">Critical</span></div>':''}
+      <div style="margin-top:8px;font-size:10px;color:var(--acc);font-weight:600;">Click to manage →</div>
+    </div>`;
+  }).join('');
+  document.getElementById('mh-machine-grid').innerHTML=machineCards;
+
+  // Running time chart
+  destroyChart('mhRun');
+  const runData=MACHINES.map(machine=>{
+    const mBD=DATA.bd.filter(r=>r.machine===machine);
+    const mDT=mBD.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
+    return totalH>0?Math.round(((totalH-mDT)/totalH)*100):100;
+  });
+  if(document.getElementById('mhRunChart')){
+    charts.mhRun=new Chart(document.getElementById('mhRunChart'),{
+      type:'bar',
+      data:{
+        labels:MACHINES.map(m=>m.replace(' Line','').replace(' Cutter',' Cut.')),
+        datasets:[
+          {label:'Uptime %',data:runData,backgroundColor:runData.map(v=>v>=80?'#1D9E75':v>=60?'#d97706':'#dc2626'),borderRadius:4},
+          {label:'Target',data:MACHINES.map(()=>85),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false}
+        ]
+      },
+      options:{...BO(),plugins:{legend:{display:false}},scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:10}}},y:{...BO().scales.y,min:0,max:100,ticks:{...BO().scales.y.ticks,callback:v=>v+'%'}}}}
+    });
+  }
+}
+
+// Component CRUD
+function editComponent(id){
+  const r=DATA_comp.find(x=>x.id===id);
+  if(!r)return;
+  editId=id;
+  document.getElementById('comp-modal-t').textContent='Edit Component';
+  document.getElementById('cp-name').value=r.component_name;
+  document.getElementById('cp-date').value=r.last_replaced_date||'';
+  document.getElementById('cp-life').value=r.expected_life_days||'';
+  document.getElementById('cp-cond').value=r.condition;
+  document.getElementById('cp-cost').value=r.replacement_cost||'';
+  document.getElementById('cp-notes').value=r.notes||'';
+  document.getElementById('comp-modal').classList.add('open');
+}
+
+async function saveComponent(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={machine_name:currentMachine,component_name:g('cp-name'),last_replaced_date:g('cp-date')||null,expected_life_days:parseInt(g('cp-life'))||0,condition:g('cp-cond'),replacement_cost:parseFloat(g('cp-cost'))||0,notes:g('cp-notes'),updated_at:new Date().toISOString()};
+  if(!row.component_name){toast('Component name required','err');return;}
+  const{error}=editId?await sb.from('machine_components').update(row).eq('id',editId):await sb.from('machine_components').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Component saved ✓');closeModal('comp-modal');
+  await loadMachineData(currentMachine);renderMHComponents();editId=null;
+}
+
+function editMaintenance(id){
+  const r=DATA_maint.find(x=>x.id===id);
+  if(!r)return;
+  editId=id;
+  document.getElementById('maint-modal-t').textContent='Edit Check';
+  document.getElementById('mt-name').value=r.check_name;
+  document.getElementById('mt-freq').value=r.frequency;
+  document.getElementById('mt-date').value=r.last_done_date||'';
+  document.getElementById('mt-by').value=r.done_by||'';
+  document.getElementById('mt-notes').value=r.notes||'';
+  document.getElementById('maint-modal').classList.add('open');
+}
+
+async function saveMaintenance(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={machine_name:currentMachine,check_name:g('mt-name'),frequency:g('mt-freq'),last_done_date:g('mt-date')||null,done_by:g('mt-by'),notes:g('mt-notes'),updated_at:new Date().toISOString()};
+  if(!row.check_name){toast('Check description required','err');return;}
+  const{error}=editId?await sb.from('machine_maintenance').update(row).eq('id',editId):await sb.from('machine_maintenance').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Check saved ✓');closeModal('maint-modal');
+  await loadMachineData(currentMachine);renderMHMaintenance();editId=null;
+}
+
+async function markCheckDone(id){
+  const today=new Date().toISOString().split('T')[0];
+  const who=prompt('Done by:','');
+  const{error}=await sb.from('machine_maintenance').update({last_done_date:today,done_by:who||'',updated_at:new Date().toISOString()}).eq('id',id);
+  if(error){toast('Error','err');return;}
+  toast('Marked done ✓');await loadMachineData(currentMachine);renderMHMaintenance();
+}
+
+function editSpare(id){
+  const r=DATA_spare.find(x=>x.id===id);
+  if(!r)return;
+  editId=id;
+  document.getElementById('spare-modal-t').textContent='Edit Part';
+  document.getElementById('sp-name').value=r.part_name;
+  document.getElementById('sp-qty').value=r.qty_in_stock;
+  document.getElementById('sp-reorder').value=r.reorder_level;
+  document.getElementById('sp-cost').value=r.unit_cost||'';
+  document.getElementById('sp-supplier').value=r.supplier||'';
+  document.getElementById('sp-notes').value=r.notes||'';
+  document.getElementById('spare-modal').classList.add('open');
+}
+
+async function saveSparePart(){
+  const g=id=>document.getElementById(id)?.value;
+  const row={machine_name:currentMachine,part_name:g('sp-name'),qty_in_stock:parseInt(g('sp-qty'))||0,reorder_level:parseInt(g('sp-reorder'))||1,unit_cost:parseFloat(g('sp-cost'))||0,supplier:g('sp-supplier'),notes:g('sp-notes'),updated_at:new Date().toISOString()};
+  if(!row.part_name){toast('Part name required','err');return;}
+  const{error}=editId?await sb.from('machine_spare_parts').update(row).eq('id',editId):await sb.from('machine_spare_parts').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Part saved ✓');closeModal('spare-modal');
+  await loadMachineData(currentMachine);renderMHSpares();editId=null;
+}
+
+async function deleteMHRow(table,id,type){
+  if(!confirm('Delete this?'))return;
+  const{error}=await sb.from(table).delete().eq('id',id);
+  if(error){toast('Error','err');return;}
+  toast('Deleted');
+  await loadMachineData(currentMachine);
+  if(type==='comp')renderMHComponents();
+  if(type==='maint')renderMHMaintenance();
+  if(type==='spare')renderMHSpares();
 }
 
 // ===== INIT — handled by checkSession() above =====
