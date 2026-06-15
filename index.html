@@ -189,7 +189,6 @@ tr:hover td{background:#fafaf9;}
     <div class="ni" onclick="goTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory</div>
     <div class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Stock Management</div>
     <div class="ni" onclick="goTo('dispatch')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Dispatch</div>
-    <div class="ni" onclick="goTo('breakdown')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Breakdown Log</div>
     <div class="ni" onclick="goTo('machines')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h2v3H7zM11 8h2v3h-2zM15 8h2v3h-2z"/></svg>Machine Health</div>
     <div class="ni" onclick="goTo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tasks</div>
   </div>
@@ -508,73 +507,87 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
-<!-- ========== MACHINE HEALTH ========== -->
+<!-- ========== MACHINE HEALTH (COMBINED) ========== -->
 <div id="page-machines" class="page">
   <div class="topbar">
-    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Machine Health</div>
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Machine Health &amp; Breakdowns</div>
     <div class="tb-right">
       <select class="month-selector" id="mh-month" onchange="renderMachines()"></select>
+      <button class="btn btn-green" onclick="openModal('bd-modal',null)">+ Log breakdown</button>
     </div>
   </div>
   <div class="content">
-    <!-- Overview metrics -->
     <div class="metrics g4" id="mh-overview-metrics"></div>
-    <!-- Monthly avg running chart -->
     <div class="card" style="margin-bottom:14px;">
-      <div class="card-head"><div class="card-title">Monthly avg running time — all machines</div></div>
-      <div class="card-body"><div style="position:relative;height:160px;"><canvas id="mhRunChart" role="img" aria-label="Machine running time chart">Running time</canvas></div></div>
-    </div>
-    <!-- 8 Machine Cards -->
-    <div id="mh-machine-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;"></div>
-    <!-- Machine Detail Panel -->
-    <div id="mh-detail-panel" style="display:none;">
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title" id="mh-detail-title">Machine Detail</div>
-          <button class="btn btn-sm" onclick="document.getElementById('mh-detail-panel').style.display='none'">✕ Close</button>
-        </div>
-        <div class="card-body" style="padding:0;">
-          <!-- Tabs -->
-          <div style="display:flex;border-bottom:1px solid var(--bdr);background:var(--bg3);">
-            <button class="mh-tab active" onclick="switchMHTab('components')" id="tab-components" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:12px;font-weight:600;border-bottom:2px solid var(--acc);color:var(--acc);">Components</button>
-            <button class="mh-tab" onclick="switchMHTab('maintenance')" id="tab-maintenance" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:12px;color:var(--txt2);">Maintenance Checklist</button>
-            <button class="mh-tab" onclick="switchMHTab('spares')" id="tab-spares" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:12px;color:var(--txt2);">Spare Parts</button>
-            <button class="mh-tab" onclick="switchMHTab('history')" id="tab-history" style="padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:12px;color:var(--txt2);">Issue History</button>
-          </div>
-          <!-- Components Tab -->
-          <div id="mh-tab-components" class="mh-tab-content" style="padding:14px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-              <div style="font-size:12px;color:var(--txt2);">Add and track all components for this machine</div>
-              <button class="btn btn-green btn-sm" onclick="openModal('comp-modal',null)">+ Add component</button>
-            </div>
-            <div class="tw"><table><thead><tr><th>Component</th><th>Last replaced</th><th>Expected life</th><th>Condition</th><th>Replacement cost</th><th>Notes</th><th>Actions</th></tr></thead>
-            <tbody id="mh-comp-tbody"></tbody></table></div>
-          </div>
-          <!-- Maintenance Tab -->
-          <div id="mh-tab-maintenance" class="mh-tab-content" style="padding:14px;display:none;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-              <div style="font-size:12px;color:var(--txt2);">Daily / Weekly / Monthly checks</div>
-              <button class="btn btn-green btn-sm" onclick="openModal('maint-modal',null)">+ Add check</button>
-            </div>
-            <div class="tw"><table><thead><tr><th>Check</th><th>Frequency</th><th>Last done</th><th>Done by</th><th>Notes</th><th>Actions</th></tr></thead>
-            <tbody id="mh-maint-tbody"></tbody></table></div>
-          </div>
-          <!-- Spare Parts Tab -->
-          <div id="mh-tab-spares" class="mh-tab-content" style="padding:14px;display:none;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-              <div style="font-size:12px;color:var(--txt2);">Parts in stock for this machine</div>
-              <button class="btn btn-green btn-sm" onclick="openModal('spare-modal',null)">+ Add part</button>
-            </div>
-            <div class="tw"><table><thead><tr><th>Part name</th><th>Qty in stock</th><th>Reorder level</th><th>Unit cost</th><th>Supplier</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="mh-spare-tbody"></tbody></table></div>
-          </div>
-          <!-- Issue History Tab -->
-          <div id="mh-tab-history" class="mh-tab-content" style="padding:14px;display:none;">
-            <div class="tw"><table><thead><tr><th>Date</th><th>Shift</th><th>Downtime (h)</th><th>Reason</th><th>Action taken</th><th>Cost</th><th>Status</th></tr></thead>
-            <tbody id="mh-history-tbody"></tbody></table></div>
-          </div>
+      <div class="card-head">
+        <div class="card-title">Factory health — click any machine to manage</div>
+        <div style="display:flex;gap:12px;font-size:10px;align-items:center;">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:#1D9E75;display:inline-block;"></span>Healthy</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:#d97706;display:inline-block;"></span>Watch</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:#dc2626;display:inline-block;"></span>Critical</span>
         </div>
       </div>
+      <div class="card-body">
+        <div id="mh-machine-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;"></div>
+      </div>
+    </div>
+    <div class="g2" style="margin-bottom:14px;">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Avg running hours/day this month</div></div>
+        <div class="card-body"><div style="position:relative;height:140px;"><canvas id="mhRunChart" role="img" aria-label="Running time">Running time</canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Downtime hours by machine</div></div>
+        <div class="card-body"><div style="position:relative;height:140px;"><canvas id="mhDtChart" role="img" aria-label="Downtime chart">Downtime</canvas></div></div>
+      </div>
+    </div>
+    <div id="mh-detail-panel" style="display:none;">
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-head">
+          <div class="card-title" id="mh-detail-title" style="font-size:14px;font-weight:700;"></div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div id="mh-health-badge"></div>
+            <button class="btn btn-sm" onclick="closeMachineDetail()">✕ Close</button>
+          </div>
+        </div>
+        <div id="mh-quick-stats" style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--bdr);"></div>
+        <div style="display:flex;border-bottom:1px solid var(--bdr);background:var(--bg3);overflow-x:auto;">
+          <button onclick="switchMHTab('breakdowns')" id="tab-breakdowns" style="padding:10px 16px;border:none;border-bottom:2px solid var(--acc);background:transparent;cursor:pointer;font-size:12px;font-weight:600;color:var(--acc);white-space:nowrap;">Breakdowns</button>
+          <button onclick="switchMHTab('components')" id="tab-components" style="padding:10px 16px;border:none;border-bottom:2px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:var(--txt2);white-space:nowrap;">Components &amp; Parts</button>
+          <button onclick="switchMHTab('maintenance')" id="tab-maintenance" style="padding:10px 16px;border:none;border-bottom:2px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:var(--txt2);white-space:nowrap;">Maintenance Checklist</button>
+        </div>
+        <div id="mh-tab-breakdowns" style="padding:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:12px;color:var(--txt2);">All breakdowns for this machine</div>
+            <button class="btn btn-green btn-sm" onclick="openModal('bd-modal',null)">+ Log breakdown</button>
+          </div>
+          <div class="tw"><table><thead><tr><th>Date</th><th>Shift</th><th>Downtime</th><th>Reason</th><th>Action taken</th><th>Cost</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="mh-bd-tbody"></tbody></table></div>
+        </div>
+        <div id="mh-tab-components" style="padding:14px;display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:12px;color:var(--txt2);">Components, spare parts &amp; stock — all in one</div>
+            <button class="btn btn-green btn-sm" onclick="openModal('comp-modal',null)">+ Add component</button>
+          </div>
+          <div class="tw"><table><thead><tr><th>Component / Part</th><th>Last replaced</th><th>Life remaining</th><th>Condition</th><th>Qty stock</th><th>Reorder at</th><th>Unit cost</th><th>Supplier</th><th>Notes</th><th>Actions</th></tr></thead>
+          <tbody id="mh-comp-tbody"></tbody></table></div>
+        </div>
+        <div id="mh-tab-maintenance" style="padding:14px;display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:12px;color:var(--txt2);">Preventive maintenance schedule</div>
+            <button class="btn btn-green btn-sm" onclick="openModal('maint-modal',null)">+ Add check</button>
+          </div>
+          <div class="tw"><table><thead><tr><th>Check</th><th>Frequency</th><th>Last done</th><th>Days ago</th><th>Done by</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="mh-maint-tbody"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">All recent breakdowns</div></div>
+      <div class="tw"><table>
+        <thead><tr><th>Date</th><th>Machine</th><th>Shift</th><th>Downtime</th><th>Reason</th><th>Action</th><th>Cost</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="bd-tbody"></tbody>
+      </table></div>
     </div>
   </div>
 </div>
@@ -946,7 +959,7 @@ function goTo(id){
 function renderPage(id){
   const m={
     'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
-    'stock':renderStock,'dispatch':renderDispatch,'breakdown':renderBreakdown,'tasks':renderTasks,
+    'stock':renderStock,'dispatch':renderDispatch,'tasks':renderTasks,
     'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines,
     'trd-materials':renderTrdMaterials
   };
@@ -1030,7 +1043,8 @@ function openModal(id,rowId){
 function closeModal(id){document.getElementById(id).classList.remove('open');editId=null;}
 function populateMaterialSelect(id){
   const el=document.getElementById(id);
-  el.innerHTML=DATA.trdMat.map(m=>`<option value="${m.material_name}">${m.material_name}</option>`).join('');
+  const mats=['Boring Bundle','Heavy Melting','Black Melting','Mix'];
+  el.innerHTML=mats.map(m=>`<option value="${m}">${m}</option>`).join('');
 }
 
 // ===== FORM HELPERS =====
@@ -1641,10 +1655,13 @@ function renderTrdRegister(){
   const unpaidAmt=unpaidSupplier.reduce((a,r)=>a+Number(r.amount||0),0);
 
   // Avg payment cycle
-  const paid=DATA.trdPur.filter(r=>r.payment_date);
-  const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>a+Math.abs(new Date(r.payment_date)-new Date(r.purchase_date))/86400000,0)/paid.length):0;
+  const paid=DATA.trdPur.filter(r=>r.payment_date&&r.purchase_date);
+  const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>{
+    const diff=Math.abs(new Date(r.payment_date)-new Date(r.purchase_date))/86400000;
+    return a+diff;
+  },0)/paid.length):0;
   const el=document.getElementById('trd-avg-cycle-display');
-  if(el)el.textContent=avgCycle+' days';
+  if(el)el.textContent=avgCycle>0?avgCycle+' days':'No paid bills yet';
 
   document.getElementById('trd-reg-metrics').innerHTML=`
     <div class="mc"><div class="lb">Total trades</div><div class="vl">${trades.length}</div><div class="sb">${m}</div></div>
@@ -1718,8 +1735,11 @@ function renderTrdDashboard(){
   const trades=filterByMonth(DATA.trdPur,'month_year',m);
   const totalVal=trades.reduce((a,r)=>a+Number(r.amount||0),0);
   const supplierOut=DATA.trdPur.filter(r=>!r.payment_date).reduce((a,r)=>a+Number(r.amount||0),0);
-  const paid=DATA.trdPur.filter(r=>r.payment_date);
-  const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>a+Math.abs(new Date(r.payment_date)-new Date(r.purchase_date))/86400000,0)/paid.length):0;
+  const paid=DATA.trdPur.filter(r=>r.payment_date&&r.purchase_date);
+  const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>{
+    const diff=Math.abs(new Date(r.payment_date)-new Date(r.purchase_date))/86400000;
+    return a+diff;
+  },0)/paid.length):0;
 
   // Customer outstanding from notes
   const custOut=DATA.trdPur.filter(r=>{
@@ -1805,18 +1825,32 @@ async function loadMachineData(machine){
   DATA_spare=spare.data||[];
 }
 
+function closeMachineDetail(){
+  document.getElementById('mh-detail-panel').style.display='none';
+  currentMachine=null;
+}
+
 async function openMachineDetail(machine){
   currentMachine=machine;
-  document.getElementById('mh-detail-title').textContent=MACHINE_ICONS[machine]||'🔧'+' '+machine;
+  const h=getHealthScore(machine,filterByMonth(DATA.mis,'month_year',getMonth('mh-month')));
+  const mBD=DATA.bd.filter(r=>r.machine===machine);
+  const totalDT=mBD.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
+  const totalCost=mBD.reduce((a,r)=>a+Number(r.cost||0),0);
+  document.getElementById('mh-detail-title').textContent=(MACHINE_ICONS[machine]||'🔧')+' '+machine;
+  document.getElementById('mh-health-badge').innerHTML=`<span class="badge" style="background:${h.bg};color:${h.col};border:1px solid ${h.col}33;font-size:12px;padding:4px 10px;">${h.light} ${h.score}</span>`;
+  document.getElementById('mh-quick-stats').innerHTML=`
+    <div style="padding:12px 16px;border-right:1px solid var(--bdr);"><div style="font-size:10px;color:var(--txt2);margin-bottom:3px;">Total breakdowns</div><div style="font-size:20px;font-weight:700;color:var(--txt);">${mBD.length}</div></div>
+    <div style="padding:12px 16px;border-right:1px solid var(--bdr);"><div style="font-size:10px;color:var(--txt2);margin-bottom:3px;">Total downtime</div><div style="font-size:20px;font-weight:700;color:#dc2626;">${totalDT.toFixed(1)}h</div></div>
+    <div style="padding:12px 16px;border-right:1px solid var(--bdr);"><div style="font-size:10px;color:var(--txt2);margin-bottom:3px;">Repair spend</div><div style="font-size:20px;font-weight:700;color:var(--txt);">${fmtMoney(totalCost)}</div></div>
+    <div style="padding:12px 16px;"><div style="font-size:10px;color:var(--txt2);margin-bottom:3px;">Critical issues</div><div style="font-size:20px;font-weight:700;color:${mBD.filter(r=>r.status==='Critical').length>0?'#dc2626':'#1D9E75'};">${mBD.filter(r=>r.status==='Critical').length}</div></div>`;
   document.getElementById('mh-detail-panel').style.display='block';
-  document.getElementById('mh-detail-panel').scrollIntoView({behavior:'smooth'});
+  document.getElementById('mh-detail-panel').scrollIntoView({behavior:'smooth',block:'start'});
   await loadMachineData(machine);
-  renderMHComponents();
-  switchMHTab('components');
+  switchMHTab('breakdowns');
 }
 
 function switchMHTab(tab){
-  ['components','maintenance','spares','history'].forEach(t=>{
+  ['breakdowns','components','maintenance'].forEach(t=>{
     const el=document.getElementById('mh-tab-'+t);
     const btn=document.getElementById('tab-'+t);
     if(el)el.style.display=t===tab?'block':'none';
@@ -1826,10 +1860,24 @@ function switchMHTab(tab){
       btn.style.fontWeight=t===tab?'600':'400';
     }
   });
+  if(tab==='breakdowns')renderMHBreakdowns();
   if(tab==='components')renderMHComponents();
   if(tab==='maintenance')renderMHMaintenance();
-  if(tab==='spares')renderMHSpares();
-  if(tab==='history')renderMHHistory();
+}
+
+function renderMHBreakdowns(){
+  const tb=document.getElementById('mh-bd-tbody');
+  if(!tb)return;
+  const history=DATA.bd.filter(r=>r.machine===currentMachine);
+  const sc={Pending:'b-amber','In Progress':'b-blue',Resolved:'b-green',Critical:'b-red'};
+  tb.innerHTML=history.sort((a,b)=>new Date(b.breakdown_date)-new Date(a.breakdown_date)).map(r=>`<tr>
+    <td>${fmtDate(r.breakdown_date)}</td><td>${r.shift||'Day'}</td><td>${r.downtime_hours}h</td>
+    <td>${r.reason}</td><td>${r.action_taken}</td><td>${r.cost?fmtMoney(r.cost):'—'}</td>
+    <td><span class="badge ${sc[r.status]||'b-gray'}">${r.status}</span></td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-sm" onclick="openModal('bd-modal','${r.id}')">✏</button>
+      <button class="btn btn-sm btn-red" onclick="deleteRow('breakdowns','${r.id}','breakdown')">🗑</button>
+    </td></tr>`).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No breakdowns for this machine</td></tr>';
 }
 
 function renderMHComponents(){
@@ -1912,66 +1960,109 @@ function renderMHHistory(){
   </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txt2);">No breakdowns recorded for this machine</td></tr>';
 }
 
+function getHealthScore(machine, mis){
+  const mBD = DATA.bd.filter(r=>r.machine===machine);
+  const hasCritical = mBD.some(r=>r.status==='Critical');
+  const recentBD = mBD.filter(r=>daysSince(r.breakdown_date)<30).length;
+  const totalH = mis.length*24;
+  const mDT = mBD.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
+  const runPct = totalH>0?Math.round(((totalH-mDT)/totalH)*100):100;
+  if(hasCritical||runPct<60||recentBD>=3)return{score:'Critical',col:'#dc2626',bg:'#fee2e2',light:'🔴'};
+  if(runPct<80||recentBD>=2)return{score:'Watch',col:'#d97706',bg:'#fef3c7',light:'🟡'};
+  return{score:'Healthy',col:'#1D9E75',bg:'#dcfce7',light:'🟢'};
+}
+
 function renderMachines(){
   const m=getMonth('mh-month');
   const mis=filterByMonth(DATA.mis,'month_year',m);
   const totalH=mis.length*24;
 
-  // Overview metrics
+  const monthBD=DATA.bd.filter(r=>{
+    if(!m)return true;
+    const d=new Date(r.breakdown_date);
+    return(MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear())===m;
+  });
+
   const totalBD=DATA.bd.length;
   const totalDT=DATA.bd.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
   const totalCost=DATA.bd.reduce((a,r)=>a+Number(r.cost||0),0);
   const criticals=DATA.bd.filter(r=>r.status==='Critical').length;
+
   document.getElementById('mh-overview-metrics').innerHTML=`
     <div class="mc"><div class="lb">Total breakdowns</div><div class="vl amber">${totalBD}</div><div class="sb">All time</div></div>
     <div class="mc"><div class="lb">Total downtime</div><div class="vl red">${totalDT.toFixed(1)} hrs</div><div class="sb">All time</div></div>
     <div class="mc"><div class="lb">Repair spend</div><div class="vl">${fmtMoney(totalCost)}</div><div class="sb">All time</div></div>
-    <div class="mc"><div class="lb">Critical pending</div><div class="vl red">${criticals}</div><div class="sb">Needs action</div></div>`;
+    <div class="mc"><div class="lb">Critical pending</div><div class="vl ${criticals>0?'red':'green'}">${criticals}</div><div class="sb">${criticals>0?'Needs action':'All clear'}</div></div>`;
 
-  // Machine cards
-  const machineCards=MACHINES.map(machine=>{
+  // Traffic light machine cards
+  document.getElementById('mh-machine-grid').innerHTML=MACHINES.map(machine=>{
+    const h=getHealthScore(machine,mis);
     const mBD=DATA.bd.filter(r=>r.machine===machine);
     const mDT=mBD.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
-    const runHours=totalH>0?totalH-mBD.filter(r=>mis.some(m=>m.entry_date===r.breakdown_date)).reduce((a,r)=>a+Number(r.downtime_hours||0),0):0;
     const runPct=totalH>0?Math.round(((totalH-mDT)/totalH)*100):100;
-    const hasCritical=mBD.some(r=>r.status==='Critical');
-    const col=hasCritical?'#dc2626':runPct>=80?'#1D9E75':runPct>=60?'#d97706':'#dc2626';
-    return`<div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rad2);padding:14px;cursor:pointer;transition:box-shadow .15s;" 
+    const lastBD=mBD.sort((a,b)=>new Date(b.breakdown_date)-new Date(a.breakdown_date))[0];
+    return`<div style="background:${h.bg};border:1.5px solid ${h.col}33;border-radius:var(--rad2);padding:14px;cursor:pointer;transition:all .15s;position:relative;"
       onclick="openMachineDetail('${machine}')"
-      onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.12)'"
-      onmouseout="this.style.boxShadow='none'">
-      <div style="font-size:22px;margin-bottom:8px;">${MACHINE_ICONS[machine]||'🔧'}</div>
-      <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:6px;">${machine}</div>
-      <div style="height:5px;background:var(--bg3);border-radius:10px;overflow:hidden;margin-bottom:6px;">
-        <div style="height:100%;width:${runPct}%;background:${col};border-radius:10px;transition:width 1s ease;"></div>
+      onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.12)';this.style.transform='translateY(-2px)'"
+      onmouseout="this.style.boxShadow='none';this.style.transform='translateY(0)'">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div style="font-size:20px;">${MACHINE_ICONS[machine]||'🔧'}</div>
+        <div style="font-size:18px;">${h.light}</div>
       </div>
-      <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;">Uptime: <strong style="color:${col}">${runPct}%</strong></div>
-      <div style="font-size:10px;color:var(--txt2);">${mBD.length} breakdowns</div>
-      ${hasCritical?'<div style="margin-top:6px;"><span class="badge b-red">Critical</span></div>':''}
-      <div style="margin-top:8px;font-size:10px;color:var(--acc);font-weight:600;">Click to manage →</div>
+      <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:4px;">${machine}</div>
+      <div style="font-size:18px;font-weight:700;color:${h.col};margin-bottom:4px;">${h.score}</div>
+      <div style="height:4px;background:rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;margin-bottom:8px;">
+        <div style="height:100%;width:${runPct}%;background:${h.col};border-radius:10px;"></div>
+      </div>
+      <div style="font-size:10px;color:var(--txt2);">Uptime: <strong>${runPct}%</strong> · ${mBD.length} total breakdowns</div>
+      ${lastBD?`<div style="font-size:10px;color:${h.col};margin-top:4px;">Last issue: ${fmtDate(lastBD.breakdown_date)}</div>`:'<div style="font-size:10px;color:#1D9E75;margin-top:4px;">No breakdowns recorded</div>'}
+      <div style="margin-top:8px;font-size:10px;color:${h.col};font-weight:600;">Click to manage →</div>
     </div>`;
   }).join('');
-  document.getElementById('mh-machine-grid').innerHTML=machineCards;
 
-  // Running time chart
-  destroyChart('mhRun');
-  const runData=MACHINES.map(machine=>{
+  // Charts
+  destroyChart('mhRun');destroyChart('mhDt');
+  const machLabels=MACHINES.map(m=>m.replace(' Line','').replace(' Cutter',' Cut.'));
+  const avgRun=MACHINES.map(machine=>{
     const mBD=DATA.bd.filter(r=>r.machine===machine);
     const mDT=mBD.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
-    return totalH>0?Math.round(((totalH-mDT)/totalH)*100):100;
+    return totalH>0?((totalH-mDT)/Math.max(mis.length,1)).toFixed(1):0;
   });
+  const totalDTByMachine=MACHINES.map(machine=>
+    DATA.bd.filter(r=>r.machine===machine).reduce((a,r)=>a+Number(r.downtime_hours||0),0)
+  );
+
   if(document.getElementById('mhRunChart')){
     charts.mhRun=new Chart(document.getElementById('mhRunChart'),{
       type:'bar',
-      data:{
-        labels:MACHINES.map(m=>m.replace(' Line','').replace(' Cutter',' Cut.')),
-        datasets:[
-          {label:'Uptime %',data:runData,backgroundColor:runData.map(v=>v>=80?'#1D9E75':v>=60?'#d97706':'#dc2626'),borderRadius:4},
-          {label:'Target',data:MACHINES.map(()=>85),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false}
-        ]
-      },
-      options:{...BO(),plugins:{legend:{display:false}},scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:10}}},y:{...BO().scales.y,min:0,max:100,ticks:{...BO().scales.y.ticks,callback:v=>v+'%'}}}}
+      data:{labels:machLabels,datasets:[
+        {label:'Avg run h/day',data:avgRun,backgroundColor:avgRun.map(v=>v>=18?'#1D9E75':v>=14?'#d97706':'#dc2626'),borderRadius:4},
+        {label:'Target 20h',data:MACHINES.map(()=>20),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false}
+      ]},
+      options:{...BO(),plugins:{legend:{display:false}},scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:9}}},y:{...BO().scales.y,min:0,max:24,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}
     });
+  }
+  if(document.getElementById('mhDtChart')){
+    charts.mhDt=new Chart(document.getElementById('mhDtChart'),{
+      type:'bar',
+      data:{labels:machLabels,datasets:[{label:'Downtime hrs',data:totalDTByMachine,backgroundColor:totalDTByMachine.map(v=>v>=20?'#dc2626':v>=10?'#d97706':'#1D9E75'),borderRadius:4}]},
+      options:{...BO(),plugins:{legend:{display:false}},scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}
+    });
+  }
+
+  // All breakdowns table
+  const bdTb=document.getElementById('bd-tbody');
+  if(bdTb){
+    const sc={Pending:'b-amber','In Progress':'b-blue',Resolved:'b-green',Critical:'b-red'};
+    bdTb.innerHTML=[...DATA.bd].sort((a,b)=>new Date(b.breakdown_date)-new Date(a.breakdown_date)).map(r=>`<tr>
+      <td>${fmtDate(r.breakdown_date)}</td><td><strong>${r.machine}</strong></td><td>${r.shift||'Day'}</td>
+      <td>${r.downtime_hours}h</td><td>${r.reason}</td><td>${r.action_taken}</td>
+      <td>${r.cost?fmtMoney(r.cost):'—'}</td>
+      <td><span class="badge ${sc[r.status]||'b-gray'}">${r.status}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm" onclick="openModal('bd-modal','${r.id}')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('breakdowns','${r.id}','breakdown')">🗑</button>
+      </td></tr>`).join('')||'<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--txt2);">No breakdowns logged yet</td></tr>';
   }
 }
 
