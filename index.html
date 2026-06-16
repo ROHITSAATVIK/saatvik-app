@@ -890,7 +890,6 @@ function checkSession(){
   else{showLogin();}
 }
 
-checkSession();
 const TODAY=new Date('2026-06-04');
 let DATA={mis:[],inv:[],stock:[],dispatches:[],bd:[],tasks:[],trdPur:[],trdSal:[],trdMat:[]};
 let editId=null, charts={};
@@ -2160,7 +2159,8 @@ async function deleteMHRow(table,id,type){
   if(type==='spare')renderMHSpares();
 }
 
-// ===== INIT — handled by checkSession() above =====
+// ===== INIT =====
+checkSession();
 
 </script>
 </body>
