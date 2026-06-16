@@ -528,18 +528,12 @@ tr:hover td{background:#fafaf9;}
         </div>
       </div>
       <div class="card-body">
-        <div id="mh-machine-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;"></div>
+        <div id="mh-machine-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;"></div>
       </div>
     </div>
-    <div class="g2" style="margin-bottom:14px;">
-      <div class="card">
-        <div class="card-head"><div class="card-title">Avg running hours/day this month</div></div>
-        <div class="card-body"><div style="position:relative;height:140px;"><canvas id="mhRunChart" role="img" aria-label="Running time">Running time</canvas></div></div>
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title">Downtime hours by machine</div></div>
-        <div class="card-body"><div style="position:relative;height:140px;"><canvas id="mhDtChart" role="img" aria-label="Downtime chart">Downtime</canvas></div></div>
-      </div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-head"><div class="card-title">Downtime hours by machine — this month</div></div>
+      <div class="card-body"><div style="position:relative;height:150px;"><canvas id="mhDtChart" role="img" aria-label="Downtime chart">Downtime</canvas></div></div>
     </div>
     <div id="mh-detail-panel" style="display:none;">
       <div class="card" style="margin-bottom:14px;">
@@ -1976,12 +1970,6 @@ function renderMachines(){
   const mis=filterByMonth(DATA.mis,'month_year',m);
   const totalH=mis.length*24;
 
-  const monthBD=DATA.bd.filter(r=>{
-    if(!m)return true;
-    const d=new Date(r.breakdown_date);
-    return(MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear())===m;
-  });
-
   const totalBD=DATA.bd.length;
   const totalDT=DATA.bd.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
   const totalCost=DATA.bd.reduce((a,r)=>a+Number(r.cost||0),0);
@@ -1993,59 +1981,46 @@ function renderMachines(){
     <div class="mc"><div class="lb">Repair spend</div><div class="vl">${fmtMoney(totalCost)}</div><div class="sb">All time</div></div>
     <div class="mc"><div class="lb">Critical pending</div><div class="vl ${criticals>0?'red':'green'}">${criticals}</div><div class="sb">${criticals>0?'Needs action':'All clear'}</div></div>`;
 
-  // Traffic light machine cards
+  // Clean machine cards — focused on health status, not confusing uptime %
   document.getElementById('mh-machine-grid').innerHTML=MACHINES.map(machine=>{
     const h=getHealthScore(machine,mis);
     const mBD=DATA.bd.filter(r=>r.machine===machine);
     const mDT=mBD.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
-    const runPct=totalH>0?Math.round(((totalH-mDT)/totalH)*100):100;
+    const recentBD=mBD.filter(r=>daysSince(r.breakdown_date)<30).length;
     const lastBD=mBD.sort((a,b)=>new Date(b.breakdown_date)-new Date(a.breakdown_date))[0];
-    return`<div style="background:${h.bg};border:1.5px solid ${h.col}33;border-radius:var(--rad2);padding:14px;cursor:pointer;transition:all .15s;position:relative;"
+    return`<div style="background:var(--bg2);border:1px solid var(--bdr);border-left:4px solid ${h.col};border-radius:var(--rad2);padding:16px;cursor:pointer;transition:all .15s;"
       onclick="openMachineDetail('${machine}')"
-      onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.12)';this.style.transform='translateY(-2px)'"
-      onmouseout="this.style.boxShadow='none';this.style.transform='translateY(0)'">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
-        <div style="font-size:20px;">${MACHINE_ICONS[machine]||'🔧'}</div>
-        <div style="font-size:18px;">${h.light}</div>
+      onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.1)'"
+      onmouseout="this.style.boxShadow='none'">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:22px;">${MACHINE_ICONS[machine]||'🔧'}</span>
+          <span style="font-size:13px;font-weight:700;color:var(--txt);">${machine}</span>
+        </div>
+        <span class="badge" style="background:${h.bg};color:${h.col};font-size:10px;font-weight:700;">${h.score}</span>
       </div>
-      <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:4px;">${machine}</div>
-      <div style="font-size:18px;font-weight:700;color:${h.col};margin-bottom:4px;">${h.score}</div>
-      <div style="height:4px;background:rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;margin-bottom:8px;">
-        <div style="height:100%;width:${runPct}%;background:${h.col};border-radius:10px;"></div>
+      <div style="display:flex;gap:16px;margin-bottom:6px;">
+        <div><div style="font-size:9px;color:var(--txt2);text-transform:uppercase;">Breakdowns</div><div style="font-size:16px;font-weight:700;color:var(--txt);">${mBD.length}</div></div>
+        <div><div style="font-size:9px;color:var(--txt2);text-transform:uppercase;">Downtime</div><div style="font-size:16px;font-weight:700;color:var(--txt);">${mDT.toFixed(1)}h</div></div>
+        <div><div style="font-size:9px;color:var(--txt2);text-transform:uppercase;">Last 30d</div><div style="font-size:16px;font-weight:700;color:${recentBD>0?'#d97706':'#1D9E75'};">${recentBD}</div></div>
       </div>
-      <div style="font-size:10px;color:var(--txt2);">Uptime: <strong>${runPct}%</strong> · ${mBD.length} total breakdowns</div>
-      ${lastBD?`<div style="font-size:10px;color:${h.col};margin-top:4px;">Last issue: ${fmtDate(lastBD.breakdown_date)}</div>`:'<div style="font-size:10px;color:#1D9E75;margin-top:4px;">No breakdowns recorded</div>'}
-      <div style="margin-top:8px;font-size:10px;color:${h.col};font-weight:600;">Click to manage →</div>
+      <div style="font-size:11px;color:var(--txt2);border-top:1px solid var(--bdr);padding-top:8px;margin-top:6px;">
+        ${lastBD?`Last issue: ${fmtDate(lastBD.breakdown_date)} — ${lastBD.reason}`:'No breakdowns recorded yet'}
+      </div>
     </div>`;
   }).join('');
 
-  // Charts
-  destroyChart('mhRun');destroyChart('mhDt');
+  // Single clean downtime chart
+  destroyChart('mhDt');
   const machLabels=MACHINES.map(m=>m.replace(' Line','').replace(' Cutter',' Cut.'));
-  const avgRun=MACHINES.map(machine=>{
-    const mBD=DATA.bd.filter(r=>r.machine===machine);
-    const mDT=mBD.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
-    return totalH>0?((totalH-mDT)/Math.max(mis.length,1)).toFixed(1):0;
-  });
   const totalDTByMachine=MACHINES.map(machine=>
     DATA.bd.filter(r=>r.machine===machine).reduce((a,r)=>a+Number(r.downtime_hours||0),0)
   );
-
-  if(document.getElementById('mhRunChart')){
-    charts.mhRun=new Chart(document.getElementById('mhRunChart'),{
-      type:'bar',
-      data:{labels:machLabels,datasets:[
-        {label:'Avg run h/day',data:avgRun,backgroundColor:avgRun.map(v=>v>=18?'#1D9E75':v>=14?'#d97706':'#dc2626'),borderRadius:4},
-        {label:'Target 20h',data:MACHINES.map(()=>20),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false}
-      ]},
-      options:{...BO(),plugins:{legend:{display:false}},scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:9}}},y:{...BO().scales.y,min:0,max:24,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}
-    });
-  }
   if(document.getElementById('mhDtChart')){
     charts.mhDt=new Chart(document.getElementById('mhDtChart'),{
       type:'bar',
       data:{labels:machLabels,datasets:[{label:'Downtime hrs',data:totalDTByMachine,backgroundColor:totalDTByMachine.map(v=>v>=20?'#dc2626':v>=10?'#d97706':'#1D9E75'),borderRadius:4}]},
-      options:{...BO(),plugins:{legend:{display:false}},scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}
+      options:{...BO(),plugins:{legend:{display:false}},scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:10}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}
     });
   }
 
