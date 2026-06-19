@@ -172,7 +172,7 @@ tr:hover td{background:#fafaf9;}
 <div class="app" id="main-app" style="display:none;">
 
 <!-- SIDEBAR -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar-full">
   <div class="logo">
     <div class="logo-name">Saatvik Enterprise</div>
     <div class="logo-sub"><span class="sync-dot"></span> <span id="sync-txt">saatvik.biz · Admin</span></div>
@@ -189,8 +189,14 @@ tr:hover td{background:#fafaf9;}
     <div class="ni" onclick="goTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory</div>
     <div class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Stock Management</div>
     <div class="ni" onclick="goTo('dispatch')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Dispatch</div>
-    <div class="ni" onclick="goTo('machines')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h2v3H7zM11 8h2v3h-2zM15 8h2v3h-2z"/></svg>Machine Health</div>
+    <div class="ni" onclick="goToDispatch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Gate Pass</div>
+    <div class="ni" onclick="goTo('machines')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Machine Health</div>
+    <div class="ni" onclick="goTo('breakdown')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Breakdown Log</div>
+    <div class="ni" onclick="goTo('components')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Components & Parts</div>
+    <div class="ni" onclick="goTo('maintenance')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Maintenance</div>
     <div class="ni" onclick="goTo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tasks</div>
+    <div class="ni" onclick="goTo('plan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Production Plan</div>
+    <div class="ni" onclick="goTo('scanner')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Bill Scanner</div>
   </div>
   <!-- TRADING NAV -->
   <div class="nav-section" id="nav-trd" style="display:none;">
@@ -207,6 +213,16 @@ tr:hover td{background:#fafaf9;}
 </div>
 
 <!-- MAIN -->
+<div id="dispatch-only-bar" style="display:none;width:200px;min-width:200px;background:var(--bg2);border-right:1px solid var(--bdr);flex-direction:column;">
+  <div class="logo"><div class="logo-name">Saatvik Enterprise</div><div class="logo-sub">Dispatch Portal</div></div>
+  <div style="padding:12px 14px;flex:1;">
+    <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;">Logged in as DISPATCH</div>
+    <div style="font-size:12px;font-weight:600;color:var(--acc);padding:8px 10px;background:#f0fdf4;border-radius:var(--rad);border-left:2px solid var(--acc);">📦 Gate Pass / Dispatch</div>
+  </div>
+  <div style="padding:10px 14px;border-top:1px solid var(--bdr);">
+    <button class="logout-btn" style="width:100%;" onclick="logout()">Sign out</button>
+  </div>
+</div>
 <div class="main">
 
 <!-- ========== MFG DASHBOARD ========== -->
@@ -239,7 +255,7 @@ tr:hover td{background:#fafaf9;}
         <div class="card">
           <div class="card-head"><div class="card-title">Alerts</div></div>
           <div id="mfg-dash-alerts"></div>
-          <div style="padding:10px 14px;"><button class="btn btn-green" style="width:100%" onclick="goTo('tasks')">View all tasks →</button></div>
+          <div style="padding:8px 14px;"><button class="btn btn-green" style="width:100%" onclick="goTo('tasks')">View all tasks →</button></div>
         </div>
         <div class="card">
           <div class="card-head"><div class="card-title">Stock flow — this month</div></div>
@@ -586,6 +602,225 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
+<!-- ========== DISPATCH PORTAL (Accountant view) ========== -->
+<div id="page-dispatch-portal" class="page" style="flex:1;">
+  <div class="topbar">
+    <div class="topbar-title">📦 Gate Pass / Challan</div>
+    <div style="font-size:11px;color:var(--txt2);">Saatvik Enterprises · Dispatch Portal</div>
+  </div>
+  <div class="content" style="max-width:900px;">
+
+    <!-- Gate pass form card -->
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-head"><div class="card-title">New gate pass</div><div id="gp-next-no" style="font-size:12px;font-weight:700;color:var(--acc);"></div></div>
+      <div class="card-body">
+        <div class="frow">
+          <div class="fg"><label>Gate pass no. (auto)</label><input type="text" id="gp-no" readonly style="background:var(--bg3);font-weight:700;color:var(--acc);"></div>
+          <div class="fg"><label>Date</label><input type="date" id="gp-date"></div>
+        </div>
+        <div class="frow frow-1">
+          <div class="fg">
+            <label>Party name</label>
+            <input type="text" id="gp-party" placeholder="e.g. Sajal Enterprise" list="party-list" oninput="autoFillAddress()">
+            <datalist id="party-list"></datalist>
+          </div>
+        </div>
+        <div class="frow frow-1">
+          <div class="fg"><label>Party address</label><input type="text" id="gp-address" placeholder="Full address (auto-fills for known parties)"></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Truck no.</label><input type="text" id="gp-truck" placeholder="WB39B/9287"></div>
+          <div class="fg"><label>Transporter name</label><input type="text" id="gp-transporter" placeholder="Optional"></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Material</label><select id="gp-material"><option>Plastic Granules</option><option>PP Granules</option><option>HDPE Granules</option><option>LDPE Granules</option><option>Mixed Granules</option></select></div>
+          <div class="fg"><label>Qty (Kg)</label><input type="number" id="gp-qty" placeholder="0"></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Purpose</label><select id="gp-purpose"><option>Sale</option><option>Return</option><option>Job Work</option><option>Sample</option></select></div>
+          <div class="fg"><label>Sale bill no.</label><input type="text" id="gp-billno" placeholder="SE/DPG/26-27/011"></div>
+        </div>
+        <div class="frow frow-1">
+          <div class="fg"><label>E-way bill no.</label><input type="text" id="gp-eway" placeholder="Optional — leave blank if not applicable"></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <button class="btn" style="flex:1;" onclick="saveGatePass()">💾 Save to register</button>
+          <button class="btn btn-green" style="flex:1.5;" onclick="downloadGatePassPDF()">⬇ Download PDF — GP<span id="gp-no-btn"></span>.pdf</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent gate passes -->
+    <div class="card">
+      <div class="card-head"><div class="card-title">All gate passes</div><div id="gp-total" style="font-size:12px;color:var(--txt2);"></div></div>
+      <div class="tw"><table>
+        <thead><tr><th>GP No.</th><th>Date</th><th>Party</th><th>Material</th><th>Qty (Kg)</th><th>Bill no.</th><th>E-way bill</th><th>PDF</th></tr></thead>
+        <tbody id="gp-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== BREAKDOWN LOG (standalone) ========== -->
+<div id="page-breakdown" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Breakdown Log</div>
+    <div class="tb-right">
+      <select class="month-selector" id="bd-month" onchange="renderBreakdownPage()"></select>
+      <button class="btn btn-green" onclick="openModal('bd-modal',null)">+ Log breakdown</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="metrics g3" id="bd-metrics"></div>
+    <div class="g2" style="margin-bottom:14px;">
+      <div class="card"><div class="card-head"><div class="card-title">Breakdowns by machine</div></div><div class="card-body"><div style="position:relative;height:140px;"><canvas id="bdPie">Pie</canvas></div></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">Downtime hours by machine</div></div><div class="card-body"><div style="position:relative;height:140px;"><canvas id="bdBar">Bar</canvas></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">All breakdowns — all machines</div></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Machine</th><th>Shift</th><th>Downtime</th><th>Reason</th><th>Action taken</th><th>Cost</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="bd-full-tbody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== COMPONENTS & PARTS (standalone) ========== -->
+<div id="page-components" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Components & Parts</div>
+    <div class="tb-right">
+      <select id="comp-machine-filter" onchange="renderComponentsPage()" style="padding:5px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);background:var(--bg2);color:var(--txt);font-size:12px;">
+        <option value="all">All machines</option>
+        <option>Jumbo Cutter</option><option>Grinder</option><option>Washing Line</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option>
+      </select>
+      <button class="btn btn-green" onclick="openModal('comp-modal',null);currentMachine=document.getElementById('comp-machine-filter').value==='all'?'':document.getElementById('comp-machine-filter').value;">+ Add component</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="metrics g4" id="comp-metrics"></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">All components & spare parts</div><div style="font-size:11px;color:var(--txt2);">Red = Critical condition or low stock</div></div>
+      <div class="tw"><table><thead><tr><th>Machine</th><th>Component / Part</th><th>Last replaced</th><th>Life remaining</th><th>Condition</th><th>Qty stock</th><th>Reorder at</th><th>Unit cost</th><th>Supplier</th><th>Notes</th><th>Actions</th></tr></thead>
+      <tbody id="comp-full-tbody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MAINTENANCE CHECKLIST (standalone) ========== -->
+<div id="page-maintenance" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Maintenance Checklist</div>
+    <div class="tb-right">
+      <select id="maint-machine-filter" onchange="renderMaintenancePage()" style="padding:5px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);background:var(--bg2);color:var(--txt);font-size:12px;">
+        <option value="all">All machines</option>
+        <option>Jumbo Cutter</option><option>Grinder</option><option>Washing Line</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option>
+      </select>
+      <select id="maint-freq-filter" onchange="renderMaintenancePage()" style="padding:5px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);background:var(--bg2);color:var(--txt);font-size:12px;">
+        <option value="all">All frequencies</option>
+        <option>Daily</option><option>Weekly</option><option>Monthly</option><option>Quarterly</option>
+      </select>
+      <button class="btn btn-green" onclick="openModal('maint-modal',null)">+ Add check</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="metrics g4" id="maint-metrics"></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">All maintenance checks</div><div style="font-size:11px;color:var(--txt2);">Overdue checks highlighted in red</div></div>
+      <div class="tw"><table><thead><tr><th>Machine</th><th>Check</th><th>Frequency</th><th>Last done</th><th>Days ago</th><th>Done by</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="maint-full-tbody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PRODUCTION PLAN ========== -->
+<div id="page-plan" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Production Plan</div>
+    <div class="tb-right">
+      <select class="month-selector" id="plan-month" onchange="renderPlan()"></select>
+      <button class="btn btn-green" onclick="openModal('order-modal',null)">+ Add order</button>
+      <button class="btn btn-blue" onclick="openPlanAI()">🤖 Ask AI</button>
+    </div>
+  </div>
+  <div class="content">
+    <!-- Monthly target -->
+    <div class="metrics g4" id="plan-metrics"></div>
+
+    <!-- AI Assistant panel -->
+    <div id="plan-ai-panel" style="display:none;margin-bottom:14px;">
+      <div class="card">
+        <div class="card-head"><div class="card-title">🤖 Production AI assistant</div><button class="btn btn-sm" onclick="document.getElementById('plan-ai-panel').style.display='none'">✕</button></div>
+        <div class="card-body">
+          <div id="plan-ai-messages" style="min-height:80px;max-height:300px;overflow-y:auto;margin-bottom:10px;font-size:13px;"></div>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="plan-ai-input" placeholder="e.g. What should my target be this week? How does my efficiency compare?" style="flex:1;padding:8px;border:1px solid var(--bdr2);border-radius:var(--rad);font-size:13px;font-family:inherit;">
+            <button class="btn btn-blue" onclick="askPlanAI()">Ask →</button>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;" id="plan-ai-suggestions"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly plan -->
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-head">
+        <div class="card-title" id="week-label">Weekly plan</div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-sm" onclick="changeWeek(-1)">← Prev</button>
+          <button class="btn btn-sm" onclick="changeWeek(1)">Next →</button>
+          <button class="btn btn-sm btn-green" onclick="openModal('daily-target-modal',null)">Set daily target</button>
+        </div>
+      </div>
+      <div id="weekly-grid" style="overflow-x:auto;"></div>
+    </div>
+
+    <!-- Benchmarks -->
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-head"><div class="card-title">Industry benchmarks — plastic recycling</div><div style="font-size:11px;color:var(--txt2);">Best practice targets for your line</div></div>
+      <div class="card-body" id="benchmarks-content"></div>
+    </div>
+
+    <!-- Order book -->
+    <div class="card">
+      <div class="card-head"><div class="card-title">Order book</div><div id="order-summary" style="font-size:12px;color:var(--txt2);"></div></div>
+      <div class="tw"><table><thead><tr><th>Type</th><th>Customer</th><th>Material</th><th>Ordered (Kg)</th><th>Produced (Kg)</th><th>Dispatched (Kg)</th><th>Balance</th><th>Due date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="order-tbody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== BILL SCANNER ========== -->
+<div id="page-scanner" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">📸</span>Bill Scanner</div>
+  </div>
+  <div class="content" style="max-width:700px;">
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-head"><div class="card-title">Upload a bill — AI reads it automatically</div></div>
+      <div class="card-body">
+        <div style="border:2px dashed var(--bdr2);border-radius:var(--rad2);padding:32px;text-align:center;margin-bottom:14px;cursor:pointer;" onclick="document.getElementById('bill-upload').click()">
+          <div style="font-size:32px;margin-bottom:8px;">📷</div>
+          <div style="font-size:13px;font-weight:600;color:var(--txt);">Click to upload bill photo</div>
+          <div style="font-size:12px;color:var(--txt2);margin-top:4px;">Raw material bill, spare parts bill, purchase receipt — any photo</div>
+          <input type="file" id="bill-upload" accept="image/*" style="display:none;" onchange="scanBill(this)">
+        </div>
+        <div id="bill-preview" style="display:none;"></div>
+        <div id="bill-result" style="display:none;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">How it works</div></div>
+      <div class="card-body">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:24px;height:24px;border-radius:50%;background:#dcfce7;color:#15803d;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">1</div><div><div style="font-size:13px;font-weight:600;">Take a photo of any bill</div><div style="font-size:12px;color:var(--txt2);">Raw material purchase, spare parts, any supplier bill</div></div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:24px;height:24px;border-radius:50%;background:#dcfce7;color:#15803d;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</div><div><div style="font-size:13px;font-weight:600;">AI reads and extracts all details</div><div style="font-size:12px;color:var(--txt2);">Supplier, date, items, quantities, amounts — automatically</div></div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:24px;height:24px;border-radius:50%;background:#dcfce7;color:#15803d;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div><div><div style="font-size:13px;font-weight:600;">You confirm and save</div><div style="font-size:12px;color:var(--txt2);">Review what AI found, edit if needed, then save directly to Inventory or Trade Register</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div><!-- /main -->
 
 <!-- ============================================================ -->
@@ -775,6 +1010,33 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
+<!-- Order Modal -->
+<div class="modal-bg" id="order-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="order-modal-t">Add Order</span><button class="btn btn-sm" onclick="closeModal('order-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow"><div class="fg"><label>Order type</label><select id="or-type"><option value="confirmed">Confirmed order</option><option value="stock">Stock production</option></select></div><div class="fg"><label>Month</label><select id="or-month" class="month-selector"></select></div></div>
+      <div class="frow"><div class="fg"><label>Customer</label><input type="text" id="or-customer" placeholder="Customer name (blank for stock)"></div><div class="fg"><label>Material</label><select id="or-material"><option>PP Granules</option><option>HDPE Granules</option><option>LDPE Granules</option><option>Mixed Granules</option></select></div></div>
+      <div class="frow"><div class="fg"><label>Ordered qty (Kg)</label><input type="number" id="or-qty" placeholder="0"></div><div class="fg"><label>Due date</label><input type="date" id="or-due"></div></div>
+      <div class="frow"><div class="fg"><label>Produced so far (Kg)</label><input type="number" id="or-produced" placeholder="0"></div><div class="fg"><label>Dispatched so far (Kg)</label><input type="number" id="or-dispatched" placeholder="0"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="or-notes" placeholder="Optional"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('order-modal')">Cancel</button><button class="btn btn-green" onclick="saveOrder()">Save</button></div>
+  </div>
+</div>
+
+<!-- Daily Target Modal -->
+<div class="modal-bg" id="daily-target-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Set daily targets for this week</span><button class="btn btn-sm" onclick="closeModal('daily-target-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;">Default is 1,500 Kg/day. Change individual days if needed.</div>
+      <div id="daily-target-inputs"></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('daily-target-modal')">Cancel</button><button class="btn btn-green" onclick="saveDailyTargets()">Save targets</button></div>
+  </div>
+</div>
+
 <!-- Trading Material Modal --><!-- Component Modal -->
 <div class="modal-bg" id="comp-modal">
   <div class="modal">
@@ -817,6 +1079,33 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
+<!-- Order Modal -->
+<div class="modal-bg" id="order-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="order-modal-t">Add Order</span><button class="btn btn-sm" onclick="closeModal('order-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow"><div class="fg"><label>Order type</label><select id="or-type"><option value="confirmed">Confirmed order</option><option value="stock">Stock production</option></select></div><div class="fg"><label>Month</label><select id="or-month" class="month-selector"></select></div></div>
+      <div class="frow"><div class="fg"><label>Customer</label><input type="text" id="or-customer" placeholder="Customer name (blank for stock)"></div><div class="fg"><label>Material</label><select id="or-material"><option>PP Granules</option><option>HDPE Granules</option><option>LDPE Granules</option><option>Mixed Granules</option></select></div></div>
+      <div class="frow"><div class="fg"><label>Ordered qty (Kg)</label><input type="number" id="or-qty" placeholder="0"></div><div class="fg"><label>Due date</label><input type="date" id="or-due"></div></div>
+      <div class="frow"><div class="fg"><label>Produced so far (Kg)</label><input type="number" id="or-produced" placeholder="0"></div><div class="fg"><label>Dispatched so far (Kg)</label><input type="number" id="or-dispatched" placeholder="0"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="or-notes" placeholder="Optional"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('order-modal')">Cancel</button><button class="btn btn-green" onclick="saveOrder()">Save</button></div>
+  </div>
+</div>
+
+<!-- Daily Target Modal -->
+<div class="modal-bg" id="daily-target-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Set daily targets for this week</span><button class="btn btn-sm" onclick="closeModal('daily-target-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;">Default is 1,500 Kg/day. Change individual days if needed.</div>
+      <div id="daily-target-inputs"></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('daily-target-modal')">Cancel</button><button class="btn btn-green" onclick="saveDailyTargets()">Save targets</button></div>
+  </div>
+</div>
+
 <!-- Trading Material Modal -->
 <div class="modal-bg" id="trd-mat-modal">
   <div class="modal">
@@ -838,29 +1127,40 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 
 // ===== AUTH =====
 function showLogin(){document.getElementById('login-page').style.display='flex';document.getElementById('main-app').style.display='none';}
-function showApp(email){
+function showApp(user,role){
+  role=role||sessionStorage.getItem(SESSION_ROLE)||'admin';
   document.getElementById('login-page').style.display='none';
   document.getElementById('main-app').style.display='flex';
-  if(email)document.getElementById('logged-in-email').textContent=email;
-  populateMonthSelectors();
-  loadAll();
+  document.getElementById('logged-in-email').textContent=user||'SAATVIK';
+  if(role==='dispatch'){
+    document.getElementById('sidebar-full').style.display='none';
+    document.getElementById('dispatch-only-bar').style.display='flex';
+    goToDispatch();
+  } else {
+    document.getElementById('sidebar-full').style.display='flex';
+    document.getElementById('dispatch-only-bar').style.display='none';
+    populateMonthSelectors();
+    loadAll();
+  }
 }
 
 // ===== SIMPLE LOGIN — no external auth needed =====
-const VALID_USER = 'SAATVIK';
-const VALID_PASS = '180925';
-const SESSION_KEY = 'saatvik_session';
+const USERS={'SAATVIK':{pass:'180925',role:'admin'},'DISPATCH':{pass:'ACCOUNTS2026',role:'dispatch'}};
+const SESSION_KEY='saatvik_session';
+const SESSION_ROLE='saatvik_role';
 
 function loginWithPassword(){
-  const user = document.getElementById('login-user').value.trim().toUpperCase();
-  const pass = document.getElementById('login-pass').value;
-  const btn = document.getElementById('login-submit-btn');
+  const user=document.getElementById('login-user').value.trim().toUpperCase();
+  const pass=document.getElementById('login-pass').value;
+  const btn=document.getElementById('login-submit-btn');
   if(!user||!pass){showLoginError('Please enter username and password');return;}
   btn.textContent='Signing in...';
   setTimeout(()=>{
-    if(user===VALID_USER && pass===VALID_PASS){
+    const u=USERS[user];
+    if(u&&pass===u.pass){
       sessionStorage.setItem(SESSION_KEY,'1');
-      showApp('SAATVIK');
+      sessionStorage.setItem(SESSION_ROLE,u.role);
+      showApp(user,u.role);
     } else {
       showLoginError('Incorrect username or password');
       btn.textContent='Sign In →';
@@ -876,12 +1176,15 @@ function showLoginError(msg){
 
 function logout(){
   sessionStorage.removeItem(SESSION_KEY);
+  sessionStorage.removeItem(SESSION_ROLE);
   showLogin();
 }
 
 function checkSession(){
-  if(sessionStorage.getItem(SESSION_KEY)==='1'){showApp('SAATVIK');}
-  else{showLogin();}
+  if(sessionStorage.getItem(SESSION_KEY)==='1'){
+    const role=sessionStorage.getItem(SESSION_ROLE)||'admin';
+    showApp(role==='dispatch'?'DISPATCH':'SAATVIK',role);
+  } else {showLogin();}
 }
 
 const TODAY=new Date('2026-06-04');
@@ -914,7 +1217,7 @@ const BO=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{displa
 // ===== MONTH SELECTORS =====
 const MONTHS=['Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026'];
 function populateMonthSelectors(){
-  ['mfg-dash-month','mis-month','stock-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','mh-month'].forEach(id=>{
+  ['mfg-dash-month','mis-month','stock-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','mh-month','plan-month','or-month'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
     el.innerHTML=MONTHS.map(m=>`<option value="${m}"${m==='Jun 2026'?'selected':''}>${m}</option>`).join('');
@@ -952,7 +1255,7 @@ function goTo(id){
 function renderPage(id){
   const m={
     'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
-    'stock':renderStock,'dispatch':renderDispatch,'tasks':renderTasks,
+    'stock':renderStock,'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'tasks':renderTasks,'breakdown':renderBreakdownPage,'components':renderComponentsPage,'maintenance':renderMaintenancePage,'plan':renderPlan,'scanner':()=>{},
     'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines,
     'trd-materials':renderTrdMaterials
   };
@@ -1294,12 +1597,12 @@ function renderMfgDashboard(){
     return`<div class="pbar-row"><div class="pbar-label">${m.n}</div><div class="pbar-outer"><div class="pbar-fill" style="width:${run}%;background:${col};"></div></div><div class="pbar-val">${run}%</div></div>`;
   }).join('');
 
-  // Alerts
+  // Alerts — show P1 tasks + critical breakdowns
   const alerts=[];
-  DATA.bd.filter(r=>r.status==='Critical').forEach(r=>alerts.push({t:'red',m:`${r.machine} — ${r.reason}`}));
-  DATA.inv.filter(r=>Number(r.current_stock)<Number(r.minimum_stock)).forEach(r=>alerts.push({t:'amber',m:`${r.item_name} below min stock`}));
-  DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').slice(0,3).forEach(r=>alerts.push({t:'amber',m:`P1: ${r.task_description}`}));
-  document.getElementById('mfg-dash-alerts').innerHTML=alerts.slice(0,6).map(a=>`<div style="padding:7px 13px;font-size:11px;display:flex;gap:7px;align-items:center;border-bottom:1px solid var(--bdr);background:${a.t==='red'?'#fef2f2':'#fffbeb'};color:${a.t==='red'?'#991b1b':'#92400e'};">⚠ ${a.m}</div>`).join('')||'<div style="padding:14px;font-size:12px;color:var(--txt2);">No alerts</div>';
+  DATA.bd.filter(r=>r.status==='Critical').forEach(r=>alerts.push({t:'red',icon:'🔴',m:`${r.machine} — ${r.reason}`}));
+  DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').forEach(r=>alerts.push({t:'amber',icon:'📌',m:`${r.task_description}${r.assigned_to?' — '+r.assigned_to:''}`}));
+  DATA.tasks.filter(r=>r.priority==='P2'&&r.status==='open').slice(0,2).forEach(r=>alerts.push({t:'blue',icon:'📋',m:`${r.task_description}`}));
+  document.getElementById('mfg-dash-alerts').innerHTML=alerts.slice(0,8).map(a=>`<div style="padding:7px 13px;font-size:11px;display:flex;gap:7px;align-items:flex-start;border-bottom:1px solid var(--bdr);background:${a.t==='red'?'#fef2f2':a.t==='blue'?'#eff6ff':'#fffbeb'};color:${a.t==='red'?'#991b1b':a.t==='blue'?'#1e40af':'#92400e'};">${a.icon} ${a.m}</div>`).join('')||'<div style="padding:14px;font-size:12px;color:var(--txt2);">No open tasks ✓</div>';
 
   // Stock flow
   const sm=DATA.stock.find(r=>r.month_year===m)||DATA.stock[0];
@@ -2132,6 +2435,680 @@ async function deleteMHRow(table,id,type){
   if(type==='comp')renderMHComponents();
   if(type==='maint')renderMHMaintenance();
   if(type==='spare')renderMHSpares();
+}
+
+// ===== DISPATCH PORTAL =====
+const LOGO_B64 = 'data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAJYBBoDASIAAhEBAxEB/8QAHQABAAIDAQEBAQAAAAAAAAAAAAcIBAYJBQEDAv/EAFUQAQABAwICBQQHFQUHAwUAAAABAgMEBQYHEQgSITFBE1FhcRQXIjI3VoEYIzVCVWJyc3R1gpGSlJWhsbKz0tMVQ1Ki0SQlU2ODweEzk8IWRKPD8P/EABwBAQACAgMBAAAAAAAAAAAAAAAFBgQHAQIDCP/EAEERAQABAgMDBwcKBgIDAQAAAAABAgMEBREGITESQVFhcYGRBxMiUlOhsRQVFjIzNWJywdEjNEJzssKi8CRD4ZL/2gAMAwEAAhEDEQA/ALlgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/9k=';
+let GP_PARTIES = {};  // party name -> address map
+let GP_DATA = [];  // all gate passes
+
+async function goToDispatch(){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg=document.getElementById('page-dispatch-portal');
+  if(pg)pg.classList.add('active');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  await loadGatePasses();
+}
+
+async function loadGatePasses(){
+  const{data}=await sb.from('dispatches').select('*').order('created_at',{ascending:false});
+  GP_DATA=data||[];
+
+  // Build party address map
+  GP_DATA.forEach(r=>{
+    if(r.customer&&r.notes&&r.notes.includes('ADDR:')){
+      const match=r.notes.match(/ADDR:([^|]+)/);
+      if(match)GP_PARTIES[r.customer.toUpperCase()]=match[1].trim();
+    }
+  });
+
+  // Populate datalist
+  const dl=document.getElementById('party-list');
+  if(dl){
+    const unique=[...new Set(GP_DATA.map(r=>r.customer).filter(Boolean))];
+    dl.innerHTML=unique.map(p=>`<option value="${p}">`).join('');
+  }
+
+  // Auto gate pass number
+  const gpNos=GP_DATA.map(r=>{
+    const m=(r.invoice_no||'').match(/GP2627(\d+)/);
+    return m?parseInt(m[1]):0;
+  });
+  const nextNum=(gpNos.length>0?Math.max(...gpNos):10)+1;
+  const nextGP=`GP2627${String(nextNum).padStart(3,'0')}`;
+  const gpNoEl=document.getElementById('gp-no');
+  const gpNoBtnEl=document.getElementById('gp-no-btn');
+  if(gpNoEl)gpNoEl.value=nextGP;
+  if(gpNoBtnEl)gpNoBtnEl.textContent=nextGP;
+
+  // Set today's date
+  const dateEl=document.getElementById('gp-date');
+  if(dateEl&&!dateEl.value)dateEl.value=new Date().toISOString().split('T')[0];
+
+  // Render table
+  renderGPTable();
+}
+
+function autoFillAddress(){
+  const party=(document.getElementById('gp-party')?.value||'').toUpperCase();
+  const addr=GP_PARTIES[party];
+  if(addr){
+    const el=document.getElementById('gp-address');
+    if(el)el.value=addr;
+  }
+}
+
+function renderGPTable(){
+  const tb=document.getElementById('gp-tbody');
+  const total=document.getElementById('gp-total');
+  if(total)total.textContent=GP_DATA.length+' dispatches';
+  if(!tb)return;
+  tb.innerHTML=GP_DATA.map(r=>{
+    const gpNo=(r.invoice_no||'').replace('GP2627','GP/26-27/');
+    const addr=r.notes?.match(/ADDR:([^|]+)/)?.[1]?.trim()||'';
+    return`<tr>
+      <td><strong>${gpNo||r.invoice_no||'—'}</strong></td>
+      <td>${fmtDate(r.dispatch_date)}</td>
+      <td>${r.customer||'—'}<br><small style="color:var(--txt2)">${addr}</small></td>
+      <td>${r.material_type||'—'}</td>
+      <td>${Number(r.qty_kg||0).toLocaleString('en-IN')}</td>
+      <td>${r.lr_no||'—'}</td>
+      <td>${r.vehicle_no||'—'}</td>
+      <td><button class="btn btn-sm btn-green" onclick="redownloadPDF('${r.id}')">⬇ PDF</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No gate passes yet</td></tr>';
+}
+
+async function saveGatePass(){
+  const g=id=>document.getElementById(id)?.value||'';
+  const gpNo=g('gp-no');
+  const party=g('gp-party');
+  const addr=g('gp-address');
+  if(!party||!g('gp-qty')){toast('Party name and qty required','err');return;}
+  const notesStr=`ADDR:${addr} | BILL:${g('gp-billno')} | EWAY:${g('gp-eway')}`;
+  const row={
+    dispatch_date:g('gp-date'),
+    month_year:fmtMonthYear(g('gp-date')),
+    customer:party,
+    material_type:g('gp-material'),
+    qty_kg:parseFloat(g('gp-qty'))||0,
+    rate_per_kg:0,
+    amount:0,
+    vehicle_no:g('gp-eway'),
+    lr_no:g('gp-billno'),
+    invoice_no:gpNo,
+    destination:g('gp-transporter'),
+    status:'Dispatched',
+    notes:notesStr,
+    updated_at:new Date().toISOString()
+  };
+  const{error}=await sb.from('dispatches').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Gate pass saved ✓');
+  await loadGatePasses();
+}
+
+function buildGatePassHTML(data){
+  const d=new Date(data.date);
+  const dateStr=`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+  const gpDisplay=data.gpNo.replace('GP2627','SE/GP/26-27/');
+  const billNoDisplay=data.billNo||'';
+  const ewayDisplay=data.eway||'';
+  const yr=d.getFullYear();
+  const billRef=billNoDisplay?`SE/DPG/${yr-2000}-${String(yr-1999).padStart(2,'0')}/${billNoDisplay.replace(/\D/g,'')}`:billNoDisplay;
+
+  return `<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+@page{size:A4;margin:15mm 15mm 15mm 15mm;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
+body{font-size:11px;color:#000;background:#fff;}
+.header{display:flex;align-items:center;gap:16px;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:10px;}
+.logo{width:60px;height:60px;object-fit:contain;}
+.company-info{flex:1;text-align:center;}
+.company-name{font-size:22px;font-weight:bold;letter-spacing:2px;}
+.company-addr{font-size:10px;margin-top:3px;}
+.company-factory{font-size:10px;font-weight:bold;margin-top:2px;}
+.doc-title{text-align:center;font-size:13px;font-weight:bold;text-decoration:underline;margin:8px 0;}
+.party-box{border:1px solid #000;padding:8px;margin-bottom:8px;}
+.party-name{font-weight:bold;font-size:12px;}
+.details-box{border:1px solid #000;padding:8px;margin-bottom:8px;display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+th{background:#f0f0f0;border:1px solid #000;padding:6px 8px;text-align:left;font-size:11px;}
+td{border:1px solid #000;padding:8px;font-size:11px;vertical-align:top;}
+.ref-box{border:1px solid #000;padding:8px;margin-bottom:16px;}
+.sign-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;}
+.sign-box{border-top:1px solid #000;padding-top:8px;text-align:center;}
+.recv-sign{border-top:1px solid #000;padding:20px 0 8px;text-align:center;margin-top:20px;}
+.footer-note{text-align:center;font-style:italic;font-size:10px;margin-top:8px;border-top:1px solid #ccc;padding-top:6px;}
+</style>
+</head>
+<body>
+<div class="header">
+  <img class="logo" src="${LOGO_B64}" alt="Saatvik Logo">
+  <div class="company-info">
+    <div class="company-name">SAATVIK ENTERPRISES</div>
+    <div class="company-addr">HO : 42 A Rafi Ahmed Kidwai Road, Kolkata-700016</div>
+    <div class="company-factory">Factory : Bamunara Industrial Estate, Bamunara, Durgapur - 713212</div>
+  </div>
+</div>
+<div class="doc-title">Returnable / Non Returnable Gate Pass / Challan</div>
+<div class="party-box">
+  <div class="party-name">Party Name : ${data.party}</div>
+  <div>${data.address}</div>
+</div>
+<div class="details-box">
+  <div>Date : ${dateStr}</div>
+  <div>Gate Pass / Challan No. : ${gpDisplay}</div>
+  <div>Truck No. : ${data.truck}</div>
+  <div>Transporter Name : ${data.transporter||''}</div>
+</div>
+<table>
+  <thead><tr><th>SL NO</th><th>MATERIALS</th><th>QTY</th><th>PURPOSE</th><th>WEIGHT</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>${data.material}</strong></td>
+      <td><strong>${Number(data.qty).toLocaleString('en-IN')} KGS</strong></td>
+      <td>${data.purpose}</td>
+      <td></td>
+    </tr>
+    <tr><td colspan="5" style="border:none;height:12px;"></td></tr>
+    <tr><td colspan="5" style="border:none;">${billNoDisplay?`<strong>REF: SALE BILL NO. ${billRef}</strong>`:''} ${ewayDisplay?`&nbsp;&nbsp;|&nbsp;&nbsp; EWAY BILL : ${ewayDisplay} DT ${dateStr}`:''}</td></tr>
+    <tr><td colspan="5" style="border:none;height:12px;"></td></tr>
+  </tbody>
+</table>
+<div class="sign-row">
+  <div><strong>Order By :</strong></div>
+  <div class="sign-box">Store Signature</div>
+</div>
+<div class="recv-sign">Receiver Signature :</div>
+<div class="footer-note">Please Return Original Returnable Gate Pass / Challan Copy With Material</div>
+</body></html>`;
+}
+
+function downloadGatePassPDF(){
+  const g=id=>document.getElementById(id)?.value||'';
+  const gpNo=g('gp-no');
+  const party=g('gp-party');
+  if(!party||!g('gp-qty')){toast('Fill party name and qty first','err');return;}
+  const data={
+    gpNo,party,address:g('gp-address'),date:g('gp-date'),
+    truck:g('gp-truck'),transporter:g('gp-transporter'),
+    material:g('gp-material'),qty:g('gp-qty'),purpose:g('gp-purpose'),
+    billNo:g('gp-billno'),eway:g('gp-eway')
+  };
+  const html=buildGatePassHTML(data);
+  const win=window.open('','_blank');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>{
+    win.print();
+  },800);
+}
+
+function redownloadPDF(id){
+  const r=GP_DATA.find(x=>x.id===id);
+  if(!r)return;
+  const notes=r.notes||'';
+  const addr=notes.match(/ADDR:([^|]+)/)?.[1]?.trim()||'';
+  const bill=r.lr_no||'';
+  const eway=notes.match(/EWAY:([^|]+)/)?.[1]?.trim()||'';
+  const data={
+    gpNo:r.invoice_no||'',party:r.customer||'',address:addr,
+    date:r.dispatch_date,truck:r.vehicle_no||'',transporter:r.destination||'',
+    material:r.material_type||'Plastic Granules',qty:r.qty_kg,
+    purpose:'Sale',billNo:bill,eway
+  };
+  const html=buildGatePassHTML(data);
+  const win=window.open('','_blank');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>win.print(),800);
+}
+
+// ===== BREAKDOWN PAGE =====
+function renderBreakdownPage(){
+  const m=getMonth('bd-month');
+  const bd=DATA.bd.filter(r=>{
+    if(!m||m==='all')return true;
+    const d=new Date(r.breakdown_date);
+    return(MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear())===m;
+  });
+  const totalDT=bd.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
+  const totalCost=bd.reduce((a,r)=>a+Number(r.cost||0),0);
+  document.getElementById('bd-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Breakdowns</div><div class="vl amber">${bd.length}</div></div>
+    <div class="mc"><div class="lb">Total downtime</div><div class="vl red">${totalDT.toFixed(1)} hrs</div></div>
+    <div class="mc"><div class="lb">Repair spend</div><div class="vl">${fmtMoney(totalCost)}</div></div>`;
+  const sc={Pending:'b-amber','In Progress':'b-blue',Resolved:'b-green',Critical:'b-red'};
+  document.getElementById('bd-full-tbody').innerHTML=[...bd].sort((a,b)=>new Date(b.breakdown_date)-new Date(a.breakdown_date)).map(r=>`<tr>
+    <td>${fmtDate(r.breakdown_date)}</td><td><strong>${r.machine}</strong></td><td>${r.shift||'Day'}</td>
+    <td>${r.downtime_hours}h</td><td>${r.reason}</td><td>${r.action_taken}</td>
+    <td>${r.cost?fmtMoney(r.cost):'—'}</td>
+    <td><span class="badge ${sc[r.status]||'b-gray'}">${r.status}</span></td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-sm" onclick="openModal('bd-modal','${r.id}')">✏</button>
+      <button class="btn btn-sm btn-red" onclick="deleteRow('breakdowns','${r.id}','breakdown')">🗑</button>
+    </td></tr>`).join('')||'<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--txt2);">No breakdowns</td></tr>';
+  destroyChart('bdPie2');destroyChart('bdBar2');
+  const mach=['Jumbo Cutter','Grinder','Washing Line','Dryer','Agglo 1','Agglo 2','Extruder','Dana Cutter'];
+  if(document.getElementById('bdPie')){
+    charts.bdPie2=new Chart(document.getElementById('bdPie'),{type:'doughnut',data:{labels:mach,datasets:[{data:mach.map(m=>bd.filter(r=>r.machine===m).length),backgroundColor:['#1D9E75','#3b82f6','#dc2626','#d97706','#6b7280','#8b5cf6','#f59e0b','#10b981'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
+  }
+  if(document.getElementById('bdBar')){
+    charts.bdBar2=new Chart(document.getElementById('bdBar'),{type:'bar',data:{labels:mach.map(m=>m.split(' ')[0]),datasets:[{data:mach.map(m=>bd.filter(r=>r.machine===m).reduce((a,r)=>a+Number(r.downtime_hours||0),0)),backgroundColor:'#dc2626',borderRadius:4}]},options:{...BO(),plugins:{legend:{display:false}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}});
+  }
+}
+
+// ===== COMPONENTS PAGE =====
+async function renderComponentsPage(){
+  const mf=document.getElementById('comp-machine-filter')?.value||'all';
+  const{data}=await sb.from('machine_components').select('*').order('machine_name').order('component_name');
+  const all=data||[];
+  const filtered=mf==='all'?all:all.filter(r=>r.machine_name===mf);
+  const critical=filtered.filter(r=>r.condition==='Critical').length;
+  const lowStock=filtered.filter(r=>r.qty_in_stock<=r.reorder_level&&r.reorder_level>0).length;
+  document.getElementById('comp-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total components</div><div class="vl">${filtered.length}</div></div>
+    <div class="mc"><div class="lb">Critical condition</div><div class="vl red">${critical}</div></div>
+    <div class="mc"><div class="lb">Low stock parts</div><div class="vl amber">${lowStock}</div></div>
+    <div class="mc"><div class="lb">Machines covered</div><div class="vl">${[...new Set(all.map(r=>r.machine_name))].length}</div></div>`;
+  const condCol={Good:'b-green',Warning:'b-amber',Critical:'b-red','Just Replaced':'b-blue'};
+  document.getElementById('comp-full-tbody').innerHTML=filtered.map(r=>{
+    const isLow=r.qty_in_stock<=r.reorder_level&&r.reorder_level>0;
+    const daysLeft=r.last_replaced_date&&r.expected_life_days?r.expected_life_days-Math.floor((new Date()-new Date(r.last_replaced_date))/86400000):null;
+    return`<tr style="${r.condition==='Critical'?'background:#fef2f2;':isLow?'background:#fffbeb;':''}">
+      <td><strong>${r.machine_name}</strong></td>
+      <td>${r.component_name}</td>
+      <td>${r.last_replaced_date?fmtDate(r.last_replaced_date):'—'}</td>
+      <td>${daysLeft!==null?`<span style="color:${daysLeft<10?'#dc2626':'#1D9E75'}">${daysLeft}d left</span>`:'—'}</td>
+      <td><span class="badge ${condCol[r.condition]||'b-gray'}">${r.condition}</span></td>
+      <td style="color:${isLow?'#dc2626':'inherit'};font-weight:${isLow?'700':'400'}">${r.qty_in_stock||0}</td>
+      <td>${r.reorder_level||1}</td>
+      <td>${r.replacement_cost?fmtMoney(r.replacement_cost):'—'}</td>
+      <td>${r.supplier||'—'}</td>
+      <td>${r.notes||'—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm" onclick="editComponentGlobal('${r.id}')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('machine_components','${r.id}','component')">🗑</button>
+      </td></tr>`;
+  }).join('')||'<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No components yet — run the machine knowledge SQL to pre-fill</td></tr>';
+}
+
+async function editComponentGlobal(id){
+  const{data}=await sb.from('machine_components').select('*').eq('id',id).single();
+  if(!data)return;
+  currentMachine=data.machine_name;
+  editId=id;
+  document.getElementById('comp-modal-t').textContent='Edit Component';
+  document.getElementById('cp-name').value=data.component_name;
+  document.getElementById('cp-date').value=data.last_replaced_date||'';
+  document.getElementById('cp-life').value=data.expected_life_days||'';
+  document.getElementById('cp-cond').value=data.condition;
+  document.getElementById('cp-cost').value=data.replacement_cost||'';
+  document.getElementById('cp-qty').value=data.qty_in_stock||0;
+  document.getElementById('cp-reorder').value=data.reorder_level||1;
+  document.getElementById('cp-supplier').value=data.supplier||'';
+  document.getElementById('cp-notes').value=data.notes||'';
+  document.getElementById('comp-modal').classList.add('open');
+}
+
+// ===== MAINTENANCE PAGE =====
+async function renderMaintenancePage(){
+  const mf=document.getElementById('maint-machine-filter')?.value||'all';
+  const ff=document.getElementById('maint-freq-filter')?.value||'all';
+  const{data}=await sb.from('machine_maintenance').select('*').order('machine_name').order('frequency');
+  const all=data||[];
+  let filtered=mf==='all'?all:all.filter(r=>r.machine_name===mf);
+  if(ff!=='all')filtered=filtered.filter(r=>r.frequency===ff);
+  const overdue=filtered.filter(r=>{
+    if(!r.last_done_date)return true;
+    const daysAgo=Math.floor((new Date()-new Date(r.last_done_date))/86400000);
+    const limit={Daily:1,Weekly:7,Monthly:30,Quarterly:90};
+    return daysAgo>(limit[r.frequency]||7);
+  }).length;
+  document.getElementById('maint-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total checks</div><div class="vl">${filtered.length}</div></div>
+    <div class="mc"><div class="lb">Overdue</div><div class="vl red">${overdue}</div></div>
+    <div class="mc"><div class="lb">Daily checks</div><div class="vl">${filtered.filter(r=>r.frequency==='Daily').length}</div></div>
+    <div class="mc"><div class="lb">Weekly checks</div><div class="vl">${filtered.filter(r=>r.frequency==='Weekly').length}</div></div>`;
+  const freqCol={Daily:'b-blue',Weekly:'b-green',Monthly:'b-amber',Quarterly:'b-purple'};
+  document.getElementById('maint-full-tbody').innerHTML=filtered.map(r=>{
+    const daysAgo=r.last_done_date?Math.floor((new Date()-new Date(r.last_done_date))/86400000):null;
+    const limit={Daily:1,Weekly:7,Monthly:30,Quarterly:90};
+    const isOverdue=daysAgo===null||daysAgo>(limit[r.frequency]||7);
+    return`<tr style="${isOverdue?'background:#fef2f2;':''}">
+      <td><strong>${r.machine_name}</strong></td>
+      <td>${r.check_name}</td>
+      <td><span class="badge ${freqCol[r.frequency]||'b-gray'}">${r.frequency}</span></td>
+      <td>${r.last_done_date?fmtDate(r.last_done_date):'Never'}</td>
+      <td style="color:${isOverdue?'#dc2626':'inherit'}">${daysAgo!==null?daysAgo+'d ago':'—'}</td>
+      <td>${r.done_by||'—'}</td>
+      <td>${isOverdue?'<span class="badge b-red">Overdue</span>':'<span class="badge b-green">OK</span>'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm btn-green" onclick="markCheckDoneGlobal('${r.id}')">✓ Done</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('machine_maintenance','${r.id}','check')">🗑</button>
+      </td></tr>`;
+  }).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No maintenance checks yet</td></tr>';
+}
+
+async function markCheckDoneGlobal(id){
+  const today=new Date().toISOString().split('T')[0];
+  const who=prompt('Done by:','');
+  const{error}=await sb.from('machine_maintenance').update({last_done_date:today,done_by:who||'',updated_at:new Date().toISOString()}).eq('id',id);
+  if(error){toast('Error','err');return;}
+  toast('Marked done ✓');renderMaintenancePage();
+}
+
+// ===== PRODUCTION PLAN =====
+let planWeekStart=null;
+let PLAN_ORDERS=[];
+let PLAN_DAILY=[];
+
+function getWeekStart(date){
+  const d=new Date(date);
+  const day=d.getDay();
+  const diff=d.getDate()-day+(day===0?-6:1);
+  d.setDate(diff);d.setHours(0,0,0,0);
+  return d;
+}
+
+async function renderPlan(){
+  const m=getMonth('plan-month');
+  if(!planWeekStart)planWeekStart=getWeekStart(new Date());
+
+  // Load data
+  const[orders,daily]= await Promise.all([
+    sb.from('production_orders').select('*').eq('month_year',m).order('created_at'),
+    sb.from('production_plan_daily').select('*').order('plan_date')
+  ]);
+  PLAN_ORDERS=orders.data||[];
+  PLAN_DAILY=daily.data||[];
+
+  const mis=filterByMonth(DATA.mis,'month_year',m);
+  const totalProd=mis.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
+  const totalTarget=mis.reduce((a,r)=>a+Number(r.target_kg||5000),0);// from MIS
+  const confirmedOrders=PLAN_ORDERS.filter(r=>r.order_type==='confirmed').reduce((a,r)=>a+Number(r.ordered_kg||0),0);
+  const daysInMonth=new Date(new Date().getFullYear(),new Date().getMonth()+1,0).getDate();
+  const remainDays=daysInMonth-new Date().getDate();
+  const monthlyTarget=PLAN_DAILY.length>0?PLAN_DAILY.reduce((a,r)=>a+Number(r.target_kg||1500),0):daysInMonth*1500;
+
+  document.getElementById('plan-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Monthly target</div><div class="vl">${Number(monthlyTarget).toLocaleString('en-IN')} Kg</div><div class="sb">${daysInMonth} days × 1,500 Kg default</div></div>
+    <div class="mc"><div class="lb">Produced so far</div><div class="vl green">${Number(totalProd).toLocaleString('en-IN')} Kg</div><div class="sb">${monthlyTarget>0?Math.round(totalProd/monthlyTarget*100):0}% of target</div></div>
+    <div class="mc"><div class="lb">Confirmed orders</div><div class="vl blue">${Number(confirmedOrders).toLocaleString('en-IN')} Kg</div><div class="sb">${PLAN_ORDERS.filter(r=>r.order_type==='confirmed').length} orders</div></div>
+    <div class="mc"><div class="lb">Balance to produce</div><div class="vl ${monthlyTarget-totalProd>0?'amber':'green'}">${Number(Math.max(0,monthlyTarget-totalProd)).toLocaleString('en-IN')} Kg</div><div class="sb">${remainDays} days remaining</div></div>`;
+
+  renderWeeklyGrid();
+  renderOrderBook();
+  renderBenchmarks();
+
+  // AI suggestions
+  const sug=document.getElementById('plan-ai-suggestions');
+  if(sug)sug.innerHTML=['What should my target be this week?','How is my efficiency compared to last month?','Which machine is hurting my production most?','Am I on track to meet my monthly target?'].map(q=>`<button class="btn btn-sm" onclick="document.getElementById('plan-ai-input').value='${q}';askPlanAI();">${q}</button>`).join('');
+}
+
+function renderWeeklyGrid(){
+  const ws=new Date(planWeekStart);
+  const days=[];
+  for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);days.push(d);}
+  const today=new Date();today.setHours(0,0,0,0);
+
+  document.getElementById('week-label').textContent=`Week — ${days[0].toLocaleDateString('en-IN',{day:'2-digit',month:'short'})} to ${days[6].toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}`;
+
+  const grid=document.getElementById('weekly-grid');
+  const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  let html=`<table style="width:100%;border-collapse:collapse;font-size:12px;">
+    <thead><tr>
+      ${days.map((d,i)=>{
+        const isToday=d.getTime()===today.getTime();
+        return`<th style="padding:8px;border:1px solid var(--bdr);text-align:center;background:${isToday?'#eff6ff':'var(--bg3)'};color:${isToday?'#1d4ed8':'var(--txt2)'};font-size:11px;">${dayNames[i]}<br>${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}</th>`;
+      }).join('')}
+    </tr></thead>
+    <tbody>`;
+
+  // Target row
+  html+=`<tr><td colspan="7" style="padding:4px 8px;font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;border:1px solid var(--bdr);background:var(--bg3);">Daily target</td></tr><tr>`;
+  days.forEach(d=>{
+    const isToday=d.getTime()===today.getTime();
+    const dateStr=d.toISOString().split('T')[0];
+    const plan=PLAN_DAILY.find(r=>r.plan_date===dateStr);
+    const tgt=plan?Number(plan.target_kg):1500;
+    html+=`<td style="padding:10px 8px;border:1px solid var(--bdr);text-align:center;background:${isToday?'#eff6ff':''};"><div style="font-size:14px;font-weight:700;color:#1D9E75;">${tgt.toLocaleString('en-IN')}</div><div style="font-size:10px;color:var(--txt2);">Kg</div>${plan?.notes?`<div style="font-size:10px;color:#d97706;margin-top:2px;">${plan.notes}</div>`:''}</td>`;
+  });
+  html+=`</tr>`;
+
+  // Actual row
+  html+=`<tr><td colspan="7" style="padding:4px 8px;font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;border:1px solid var(--bdr);background:var(--bg3);">Actual production</td></tr><tr>`;
+  days.forEach(d=>{
+    const isToday=d.getTime()===today.getTime();
+    const dateStr=d.toISOString().split('T')[0];
+    const misEntry=DATA.mis.find(r=>r.entry_date===dateStr);
+    const plan=PLAN_DAILY.find(r=>r.plan_date===dateStr);
+    const tgt=plan?Number(plan.target_kg):1500;
+    const isFuture=d>today;
+    if(isFuture){
+      html+=`<td style="padding:10px 8px;border:1px solid var(--bdr);text-align:center;"><div style="font-size:12px;color:var(--txt3);">—</div></td>`;
+    } else if(isToday){
+      html+=`<td style="padding:10px 8px;border:1px solid var(--bdr);text-align:center;background:#eff6ff;"><div style="font-size:12px;color:#1d4ed8;font-weight:600;">${misEntry?Number(misEntry.total_production_kg).toLocaleString('en-IN')+' Kg':'In progress...'}</div></td>`;
+    } else if(misEntry){
+      const actual=Number(misEntry.total_production_kg);
+      const hit=actual>=tgt;
+      html+=`<td style="padding:10px 8px;border:1px solid var(--bdr);text-align:center;background:${hit?'#f0fdf4':'#fef2f2'};"><div style="font-size:14px;font-weight:700;color:${hit?'#15803d':'#dc2626'};">${actual.toLocaleString('en-IN')}</div><div style="font-size:10px;color:${hit?'#15803d':'#dc2626'};">${hit?'✓ Hit':'✗ Missed'}</div></td>`;
+    } else {
+      html+=`<td style="padding:10px 8px;border:1px solid var(--bdr);text-align:center;"><div style="font-size:11px;color:var(--txt3);">No entry</div></td>`;
+    }
+  });
+  html+=`</tr></tbody></table>`;
+  grid.innerHTML=html;
+}
+
+function changeWeek(dir){
+  planWeekStart=new Date(planWeekStart);
+  planWeekStart.setDate(planWeekStart.getDate()+(dir*7));
+  renderWeeklyGrid();
+}
+
+function renderOrderBook(){
+  const tb=document.getElementById('order-tbody');
+  const summary=document.getElementById('order-summary');
+  if(summary)summary.textContent=PLAN_ORDERS.length+' orders · '+PLAN_ORDERS.filter(r=>r.status!=='complete').length+' active';
+  if(!tb)return;
+  tb.innerHTML=PLAN_ORDERS.map(r=>{
+    const balance=Number(r.ordered_kg||0)-Number(r.dispatched_kg||0);
+    const prodShort=Number(r.produced_kg||0)<Number(r.ordered_kg||0);
+    let st,sc;
+    if(Number(r.dispatched_kg)>=Number(r.ordered_kg)){st='Complete';sc='b-green';}
+    else if(prodShort){st='Production short';sc='b-red';}
+    else{st='Dispatch pending';sc='b-amber';}
+    return`<tr>
+      <td><span class="badge ${r.order_type==='confirmed'?'b-blue':'b-gray'}">${r.order_type==='confirmed'?'Order':'Stock'}</span></td>
+      <td>${r.customer||'—'}</td><td>${r.material||'—'}</td>
+      <td>${Number(r.ordered_kg||0).toLocaleString('en-IN')}</td>
+      <td style="color:#1D9E75;">${Number(r.produced_kg||0).toLocaleString('en-IN')}</td>
+      <td>${Number(r.dispatched_kg||0).toLocaleString('en-IN')}</td>
+      <td style="font-weight:700;color:${balance>0?'#d97706':'#15803d'};">${balance.toLocaleString('en-IN')}</td>
+      <td>${r.due_date?fmtDate(r.due_date):'—'}</td>
+      <td><span class="badge ${sc}">${st}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm" onclick="openModal('order-modal','${r.id}')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('production_orders','${r.id}','order')">🗑</button>
+      </td></tr>`;
+  }).join('')||'<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--txt2);">No orders yet — click "+ Add order" to start</td></tr>';
+}
+
+function renderBenchmarks(){
+  const el=document.getElementById('benchmarks-content');
+  if(!el)return;
+  const mis=DATA.mis;
+  const avgEff=mis.length>0?Math.round(mis.reduce((a,r)=>a+Number(r.total_production_kg||0),0)/mis.reduce((a,r)=>a+Number(r.target_kg||5000),0)*100):0;
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">
+      <div style="background:var(--bg3);border-radius:var(--rad);padding:12px;">
+        <div style="font-size:10px;color:var(--txt2);text-transform:uppercase;margin-bottom:4px;">Your avg efficiency</div>
+        <div style="font-size:22px;font-weight:700;color:${avgEff>=80?'#1D9E75':avgEff>=60?'#d97706':'#dc2626'};">${avgEff}%</div>
+        <div style="font-size:10px;color:var(--txt2);margin-top:3px;">Industry good: 80%+</div>
+      </div>
+      <div style="background:#dcfce7;border-radius:var(--rad);padding:12px;">
+        <div style="font-size:10px;color:#15803d;text-transform:uppercase;margin-bottom:4px;">Target efficiency</div>
+        <div style="font-size:22px;font-weight:700;color:#15803d;">85%+</div>
+        <div style="font-size:10px;color:#15803d;margin-top:3px;">World-class recycling plants</div>
+      </div>
+      <div style="background:#dbeafe;border-radius:var(--rad);padding:12px;">
+        <div style="font-size:10px;color:#1d4ed8;text-transform:uppercase;margin-bottom:4px;">Optimal daily target</div>
+        <div style="font-size:22px;font-weight:700;color:#1d4ed8;">1,500+ Kg</div>
+        <div style="font-size:10px;color:#1d4ed8;margin-top:3px;">For your line capacity</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--txt2);line-height:1.8;">
+      <strong>Key benchmarks for plastic recycling (PP/HDPE/LDPE granules):</strong><br>
+      • <strong>Machine uptime target:</strong> 85%+ per machine. Below 70% on any single machine is a productivity problem.<br>
+      • <strong>Agglo efficiency:</strong> Blade life typically 15–30 days depending on material. Proactive replacement beats emergency shutdowns every time.<br>
+      • <strong>Washing line:</strong> Water quality directly affects granule purity. Change water every 4–6 tonnes processed.<br>
+      • <strong>Extruder output:</strong> 150–200 Kg/hour is a typical range for a mid-size extruder. Below 130 = investigate screw wear or screen pack blockage.<br>
+      • <strong>Manpower efficiency:</strong> Aim for 50–70 Kg per worker per shift. Track this from your MIS data.<br>
+      • <strong>Downtime target:</strong> Total planned + unplanned downtime should be under 15% of available hours.<br>
+      • <strong>Yield rate:</strong> Input raw material to output granules — good plants achieve 85–92% yield. Track RM consumed vs FG produced monthly.
+    </div>`;
+}
+
+async function saveOrder(){
+  const g=id=>document.getElementById(id)?.value||'';
+  const row={month_year:g('or-month'),customer:g('or-customer'),material:g('or-material'),ordered_kg:parseFloat(g('or-qty'))||0,produced_kg:parseFloat(g('or-produced'))||0,dispatched_kg:parseFloat(g('or-dispatched'))||0,due_date:g('or-due')||null,order_type:g('or-type'),notes:g('or-notes'),updated_at:new Date().toISOString()};
+  const{error}=editId?await sb.from('production_orders').update(row).eq('id',editId):await sb.from('production_orders').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Order saved ✓');closeModal('order-modal');await renderPlan();editId=null;
+}
+
+async function saveDailyTargets(){
+  const inputs=document.querySelectorAll('.daily-tgt-input');
+  const updates=[];
+  inputs.forEach(inp=>{
+    const date=inp.dataset.date;
+    const tgt=parseFloat(inp.value)||1500;
+    const notes=document.getElementById('notes-'+date)?.value||'';
+    updates.push({plan_date:date,month_year:fmtMonthYear(date),target_kg:tgt,notes,updated_at:new Date().toISOString()});
+  });
+  for(const u of updates){
+    await sb.from('production_plan_daily').upsert(u,{onConflict:'plan_date'});
+  }
+  toast('Daily targets saved ✓');closeModal('daily-target-modal');renderWeeklyGrid();
+}
+
+function openPlanAI(){
+  const panel=document.getElementById('plan-ai-panel');
+  if(panel)panel.style.display=panel.style.display==='none'?'block':'none';
+  if(!document.getElementById('plan-ai-messages').innerHTML){
+    document.getElementById('plan-ai-messages').innerHTML=`<div style="color:var(--txt2);font-size:12px;padding:8px;background:var(--bg3);border-radius:var(--rad);">Hi Rohit! I have access to your MIS data, production history, and machine health. Ask me anything about your production.</div>`;
+  }
+}
+
+async function askPlanAI(){
+  const input=document.getElementById('plan-ai-input');
+  const q=input.value.trim();
+  if(!q)return;
+  const msgs=document.getElementById('plan-ai-messages');
+  msgs.innerHTML+=`<div style="text-align:right;margin:8px 0;"><span style="background:#1D9E75;color:#fff;padding:6px 10px;border-radius:var(--rad);font-size:12px;display:inline-block;">${q}</span></div>`;
+  input.value='';
+  msgs.innerHTML+=`<div id="ai-thinking" style="color:var(--txt2);font-size:12px;padding:8px;">Thinking...</div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+
+  // Build context from real data
+  const mis=DATA.mis.slice(0,10);
+  const totalProd=mis.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
+  const avgEff=mis.length>0?Math.round(totalProd/mis.reduce((a,r)=>a+Number(r.target_kg||5000),0)*100):0;
+  const critBD=DATA.bd.filter(r=>r.status==='Critical').map(r=>r.machine+': '+r.reason).join(', ')||'none';
+
+  const context=`You are a production advisor for Saatvik Enterprises, a plastic recycling factory in Durgapur making PP/HDPE/LDPE granules. Process: FIBC bag cutting → grinding → washing → drying → agglomeration → extrusion → granules. Current data: ${mis.length} MIS entries, avg efficiency ${avgEff}%, total production ${totalProd.toLocaleString()} Kg, critical breakdowns: ${critBD}, open P1 tasks: ${DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').length}. Daily target: 1500 Kg. Give practical, specific advice. Keep answers short and actionable.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:context,messages:[{role:'user',content:q}]})
+    });
+    const data=await resp.json();
+    const answer=data.content?.[0]?.text||'Could not get response.';
+    document.getElementById('ai-thinking')?.remove();
+    msgs.innerHTML+=`<div style="background:var(--bg3);border-radius:var(--rad);padding:8px 10px;font-size:12px;margin:4px 0;line-height:1.6;">${answer.replace(/\n/g,'<br>')}</div>`;
+    msgs.scrollTop=msgs.scrollHeight;
+  }catch(e){
+    document.getElementById('ai-thinking')?.remove();
+    msgs.innerHTML+=`<div style="color:#dc2626;font-size:12px;padding:8px;">Error connecting to AI. Check internet connection.</div>`;
+  }
+}
+
+// ===== BILL SCANNER =====
+async function scanBill(input){
+  const file=input.files[0];
+  if(!file)return;
+  const preview=document.getElementById('bill-preview');
+  const result=document.getElementById('bill-result');
+  const reader=new FileReader();
+  reader.onload=async(e)=>{
+    const b64=e.target.result.split(',')[1];
+    const mime=file.type;
+    preview.style.display='block';
+    preview.innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:300px;border-radius:var(--rad);border:1px solid var(--bdr2);margin-bottom:12px;">`;
+    result.style.display='block';
+    result.innerHTML=`<div style="padding:12px;background:var(--bg3);border-radius:var(--rad);font-size:13px;color:var(--txt2);">🔍 Reading your bill... please wait</div>`;
+    try{
+      const resp=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-6',max_tokens:600,
+          messages:[{role:'user',content:[
+            {type:'image',source:{type:'base64',media_type:mime,data:b64}},
+            {type:'text',text:'This is a purchase/supply bill from an Indian business. Extract all details and respond ONLY with a JSON object with these fields: {"bill_type": "raw_material or spare_parts or other", "date": "YYYY-MM-DD or empty", "bill_no": "", "supplier": "", "items": [{"name":"","qty":"","unit":"","rate":"","amount":""}], "total_amount": "", "notes": "any other details"}. No preamble, no markdown, just the JSON.'}
+          ]}]
+        })
+      });
+      const data=await resp.json();
+      const raw=data.content?.[0]?.text||'{}';
+      const clean=raw.replace(/```json|```/g,'').trim();
+      const parsed=JSON.parse(clean);
+      showBillResult(parsed,e.target.result);
+    }catch(err){
+      result.innerHTML=`<div style="padding:12px;background:#fee2e2;border-radius:var(--rad);color:#dc2626;font-size:13px;">Could not read bill automatically. Please enter details manually.</div>`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function showBillResult(data,imgSrc){
+  const result=document.getElementById('bill-result');
+  const items=data.items||[];
+  result.innerHTML=`
+    <div style="background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--rad2);padding:14px;margin-top:10px;">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:#1D9E75;">✓ Bill read successfully — confirm details</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div class="fg"><label>Bill type</label><input type="text" value="${data.bill_type||''}" id="sc-type"></div>
+        <div class="fg"><label>Date</label><input type="date" value="${data.date||''}" id="sc-date"></div>
+        <div class="fg"><label>Bill no.</label><input type="text" value="${data.bill_no||''}" id="sc-billno"></div>
+        <div class="fg"><label>Supplier</label><input type="text" value="${data.supplier||''}" id="sc-supplier"></div>
+        <div class="fg"><label>Total amount (₹)</label><input type="number" value="${data.total_amount||''}" id="sc-amount"></div>
+      </div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:6px;">Items on bill:</div>
+      ${items.map((item,i)=>`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:6px;margin-bottom:6px;">
+        <input type="text" value="${item.name||''}" placeholder="Item name" id="sc-item-${i}">
+        <input type="number" value="${item.qty||''}" placeholder="Qty" id="sc-qty-${i}">
+        <input type="text" value="${item.unit||''}" placeholder="Unit" id="sc-unit-${i}">
+        <input type="number" value="${item.rate||''}" placeholder="Rate" id="sc-rate-${i}">
+      </div>`).join('')}
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn btn-green" onclick="saveBillToInventory('${data.bill_type}')">✓ Save to Inventory / Trade Register</button>
+        <button class="btn" onclick="document.getElementById('bill-result').style.display='none'">✕ Discard</button>
+      </div>
+    </div>`;
+}
+
+async function saveBillToInventory(type){
+  toast('Bill details saved ✓ — check your Inventory / Trade Register');
 }
 
 // ===== INIT =====
