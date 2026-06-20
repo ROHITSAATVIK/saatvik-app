@@ -190,7 +190,6 @@ tr:hover td{background:#fafaf9;}
     <div class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Stock Management</div>
     <div class="ni" onclick="goTo('dispatch')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Dispatch</div>
     <div class="ni" onclick="goToDispatch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Gate Pass</div>
-    <div class="ni" onclick="goTo('machines')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Machine Health</div>
     <div class="ni" onclick="goTo('breakdown')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Breakdown Log</div>
     <div class="ni" onclick="goTo('components')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Components & Parts</div>
     <div class="ni" onclick="goTo('maintenance')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Maintenance</div>
@@ -615,7 +614,7 @@ tr:hover td{background:#fafaf9;}
       <div class="card-head"><div class="card-title">New gate pass</div><div id="gp-next-no" style="font-size:12px;font-weight:700;color:var(--acc);"></div></div>
       <div class="card-body">
         <div class="frow">
-          <div class="fg"><label>Gate pass no. (auto)</label><input type="text" id="gp-no" readonly style="background:var(--bg3);font-weight:700;color:var(--acc);"></div>
+          <div class="fg"><label>Gate pass no. (auto)</label><input type="text" id="gp-no" style="font-weight:700;color:var(--acc);" placeholder="Auto-generated — editable if needed"></div>
           <div class="fg"><label>Date</label><input type="date" id="gp-date"></div>
         </div>
         <div class="frow frow-1">
@@ -638,7 +637,7 @@ tr:hover td{background:#fafaf9;}
         </div>
         <div class="frow">
           <div class="fg"><label>Purpose</label><select id="gp-purpose"><option>Sale</option><option>Return</option><option>Job Work</option><option>Sample</option></select></div>
-          <div class="fg"><label>Sale bill no.</label><input type="text" id="gp-billno" placeholder="SE/DPG/26-27/011"></div>
+          <div class="fg"><label>Sale bill no. (editable)</label><input type="text" id="gp-billno" placeholder="e.g. SE/DPG/26-27/011"></div>
         </div>
         <div class="frow frow-1">
           <div class="fg"><label>E-way bill no.</label><input type="text" id="gp-eway" placeholder="Optional — leave blank if not applicable"></div>
@@ -654,7 +653,7 @@ tr:hover td{background:#fafaf9;}
     <div class="card">
       <div class="card-head"><div class="card-title">All gate passes</div><div id="gp-total" style="font-size:12px;color:var(--txt2);"></div></div>
       <div class="tw"><table>
-        <thead><tr><th>GP No.</th><th>Date</th><th>Party</th><th>Material</th><th>Qty (Kg)</th><th>Bill no.</th><th>E-way bill</th><th>PDF</th></tr></thead>
+        <thead><tr><th>GP No.</th><th>Date</th><th>Party</th><th>Material</th><th>Qty (Kg)</th><th>Bill no.</th><th>E-way bill</th><th>Actions</th></tr></thead>
         <tbody id="gp-tbody"></tbody>
       </table></div>
     </div>
@@ -973,7 +972,7 @@ tr:hover td{background:#fafaf9;}
   <div class="modal">
     <div class="modal-head"><span class="modal-title" id="comp-modal-t">Add Component</span><button class="btn btn-sm" onclick="closeModal('comp-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow frow-1"><div class="fg"><label>Component / Part name</label><input type="text" id="cp-name" placeholder="e.g. Blade Set, Motor, Gearbox, Belt, Bearing..."></div></div>
+      <div class="frow"><div class="fg"><label>Machine</label><select id="cp-machine"><option value="">Select machine</option><option>Jumbo Cutter</option><option>Grinder</option><option>Washing Line</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option></select></div><div class="fg"><label>Component / Part name</label><input type="text" id="cp-name" placeholder="e.g. Blade Set, Motor, Gearbox, Belt..."></div></div>
       <div class="frow"><div class="fg"><label>Last replaced date</label><input type="date" id="cp-date"></div><div class="fg"><label>Expected life (days)</label><input type="number" id="cp-life" placeholder="e.g. 90"></div></div>
       <div class="frow"><div class="fg"><label>Current condition</label><select id="cp-cond"><option>Good</option><option>Warning</option><option>Critical</option><option>Just Replaced</option></select></div><div class="fg"><label>Unit cost (₹)</label><input type="number" id="cp-cost" placeholder="0"></div></div>
       <div class="frow"><div class="fg"><label>Qty in stock</label><input type="number" id="cp-qty" placeholder="0"></div><div class="fg"><label>Reorder level</label><input type="number" id="cp-reorder" placeholder="1"></div></div>
@@ -988,7 +987,8 @@ tr:hover td{background:#fafaf9;}
   <div class="modal">
     <div class="modal-head"><span class="modal-title" id="maint-modal-t">Add Maintenance Check</span><button class="btn btn-sm" onclick="closeModal('maint-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow frow-1"><div class="fg"><label>Check description</label><input type="text" id="mt-name" placeholder="e.g. Check blade sharpness, Lubricate gearbox..."></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Machine</label><select id="mt-machine"><option value="">Select machine</option><option>Jumbo Cutter</option><option>Grinder</option><option>Washing Line</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option></select></div></div>
+      <div class="frow"><div class="fg"><label>Machine</label><select id="mt-machine"><option value="">Select machine</option><option>Jumbo Cutter</option><option>Grinder</option><option>Washing Line</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option></select></div><div class="fg"><label>Check description</label><input type="text" id="mt-name" placeholder="e.g. Check blade sharpness, Lubricate gearbox..."></div></div>
       <div class="frow"><div class="fg"><label>Frequency</label><select id="mt-freq"><option>Daily</option><option>Weekly</option><option>Monthly</option><option>Quarterly</option></select></div><div class="fg"><label>Last done date</label><input type="date" id="mt-date"></div></div>
       <div class="frow"><div class="fg"><label>Done by</label><input type="text" id="mt-by" placeholder="e.g. Zakir Ji"></div><div class="fg"><label>Notes</label><input type="text" id="mt-notes" placeholder="Optional"></div></div>
     </div>
@@ -1057,6 +1057,7 @@ tr:hover td{background:#fafaf9;}
   <div class="modal">
     <div class="modal-head"><span class="modal-title" id="maint-modal-t">Add Maintenance Check</span><button class="btn btn-sm" onclick="closeModal('maint-modal')">✕</button></div>
     <div class="modal-body">
+      <div class="frow frow-1"><div class="fg"><label>Machine</label><select id="mt-machine"><option value="">Select machine</option><option>Jumbo Cutter</option><option>Grinder</option><option>Washing Line</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option></select></div></div>
       <div class="frow frow-1"><div class="fg"><label>Check description</label><input type="text" id="mt-name" placeholder="e.g. Check blade sharpness, Lubricate gearbox..."></div></div>
       <div class="frow"><div class="fg"><label>Frequency</label><select id="mt-freq"><option>Daily</option><option>Weekly</option><option>Monthly</option><option>Quarterly</option></select></div><div class="fg"><label>Last done date</label><input type="date" id="mt-date"></div></div>
       <div class="frow"><div class="fg"><label>Done by</label><input type="text" id="mt-by" placeholder="e.g. Zakir Ji"></div><div class="fg"><label>Notes</label><input type="text" id="mt-notes" placeholder="Optional"></div></div>
@@ -2363,7 +2364,8 @@ function editComponent(id){
 
 async function saveComponent(){
   const g=id=>document.getElementById(id)?.value;
-  const row={machine_name:currentMachine,component_name:g('cp-name'),last_replaced_date:g('cp-date')||null,expected_life_days:parseInt(g('cp-life'))||0,condition:g('cp-cond'),replacement_cost:parseFloat(g('cp-cost'))||0,qty_in_stock:parseInt(g('cp-qty'))||0,reorder_level:parseInt(g('cp-reorder'))||1,supplier:g('cp-supplier')||'',notes:g('cp-notes')||'',updated_at:new Date().toISOString()};
+  const machine=g('cp-machine')||currentMachine||'';
+  const row={machine_name:machine,component_name:g('cp-name'),last_replaced_date:g('cp-date')||null,expected_life_days:parseInt(g('cp-life'))||0,condition:g('cp-cond'),replacement_cost:parseFloat(g('cp-cost'))||0,qty_in_stock:parseInt(g('cp-qty'))||0,reorder_level:parseInt(g('cp-reorder'))||1,supplier:g('cp-supplier')||'',notes:g('cp-notes')||'',updated_at:new Date().toISOString()};
   if(!row.component_name){toast('Component name required','err');return;}
   const{error}=editId?await sb.from('machine_components').update(row).eq('id',editId):await sb.from('machine_components').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
@@ -2386,7 +2388,8 @@ function editMaintenance(id){
 
 async function saveMaintenance(){
   const g=id=>document.getElementById(id)?.value;
-  const row={machine_name:currentMachine,check_name:g('mt-name'),frequency:g('mt-freq'),last_done_date:g('mt-date')||null,done_by:g('mt-by'),notes:g('mt-notes'),updated_at:new Date().toISOString()};
+  const machine2=g('mt-machine')||currentMachine||'';
+  const row={machine_name:machine2,check_name:g('mt-name'),frequency:g('mt-freq'),last_done_date:g('mt-date')||null,done_by:g('mt-by'),notes:g('mt-notes'),updated_at:new Date().toISOString()};
   if(!row.check_name){toast('Check description required','err');return;}
   const{error}=editId?await sb.from('machine_maintenance').update(row).eq('id',editId):await sb.from('machine_maintenance').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
@@ -2448,6 +2451,28 @@ async function goToDispatch(){
   if(pg)pg.classList.add('active');
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   await loadGatePasses();
+}
+
+async function editGatePass(id){
+  const r=GP_DATA.find(x=>x.id===id);
+  if(!r)return;
+  const notes=r.notes||'';
+  const addr=notes.match(/ADDR:([^|]+)/)?.[1]?.trim()||'';
+  const eway=notes.match(/EWAY:([^|]+)/)?.[1]?.trim()||'';
+  document.getElementById('gp-no').value=r.invoice_no||'';
+  document.getElementById('gp-date').value=r.dispatch_date||'';
+  document.getElementById('gp-party').value=r.customer||'';
+  document.getElementById('gp-address').value=addr;
+  document.getElementById('gp-truck').value=r.vehicle_no||'';
+  document.getElementById('gp-transporter').value=r.destination||'';
+  document.getElementById('gp-material').value=r.material_type||'Plastic Granules';
+  document.getElementById('gp-qty').value=r.qty_kg||0;
+  document.getElementById('gp-billno').value=r.lr_no||'';
+  document.getElementById('gp-eway').value=eway;
+  // Store edit id
+  window._gpEditId=id;
+  window.scrollTo({top:0,behavior:'smooth'});
+  toast('Gate pass loaded for editing — make changes and save');
 }
 
 async function loadGatePasses(){
@@ -2514,7 +2539,11 @@ function renderGPTable(){
       <td>${Number(r.qty_kg||0).toLocaleString('en-IN')}</td>
       <td>${r.lr_no||'—'}</td>
       <td>${r.vehicle_no||'—'}</td>
-      <td><button class="btn btn-sm btn-green" onclick="redownloadPDF('${r.id}')">⬇ PDF</button></td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm" onclick="editGatePass('${r.id}')">✏</button>
+        <button class="btn btn-sm btn-green" onclick="redownloadPDF('${r.id}')">⬇ PDF</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('dispatches','${r.id}','gate pass')">🗑</button>
+      </td>
     </tr>`;
   }).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No gate passes yet</td></tr>';
 }
@@ -2542,7 +2571,13 @@ async function saveGatePass(){
     notes:notesStr,
     updated_at:new Date().toISOString()
   };
-  const{error}=await sb.from('dispatches').insert(row);
+  let error;
+  if(window._gpEditId){
+    ({error}=await sb.from('dispatches').update(row).eq('id',window._gpEditId));
+    window._gpEditId=null;
+  } else {
+    ({error}=await sb.from('dispatches').insert(row));
+  }
   if(error){toast('Error: '+error.message,'err');return;}
   toast('Gate pass saved ✓');
   await loadGatePasses();
@@ -2744,6 +2779,7 @@ async function editComponentGlobal(id){
   currentMachine=data.machine_name;
   editId=id;
   document.getElementById('comp-modal-t').textContent='Edit Component';
+  document.getElementById('cp-machine').value=data.machine_name||'';
   document.getElementById('cp-name').value=data.component_name;
   document.getElementById('cp-date').value=data.last_replaced_date||'';
   document.getElementById('cp-life').value=data.expected_life_days||'';
@@ -3026,13 +3062,14 @@ async function askPlanAI(){
   const context=`You are a production advisor for Saatvik Enterprises, a plastic recycling factory in Durgapur making PP/HDPE/LDPE granules. Process: FIBC bag cutting → grinding → washing → drying → agglomeration → extrusion → granules. Current data: ${mis.length} MIS entries, avg efficiency ${avgEff}%, total production ${totalProd.toLocaleString()} Kg, critical breakdowns: ${critBD}, open P1 tasks: ${DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').length}. Daily target: 1500 Kg. Give practical, specific advice. Keep answers short and actionable.`;
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    const resp=await fetch(`${SB_URL}/functions/v1/plan-ai`,{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:context,messages:[{role:'user',content:q}]})
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`},
+      body:JSON.stringify({question:q,context})
     });
-    const data=await resp.json();
-    const answer=data.content?.[0]?.text||'Could not get response.';
+    let answer='Could not get response.';
+    if(resp.ok){const data=await resp.json();answer=data.answer||answer;}
+    else{answer='AI assistant not configured yet. Set up the Supabase Edge Function to enable this feature.';}
     document.getElementById('ai-thinking')?.remove();
     msgs.innerHTML+=`<div style="background:var(--bg3);border-radius:var(--rad);padding:8px 10px;font-size:12px;margin:4px 0;line-height:1.6;">${answer.replace(/\n/g,'<br>')}</div>`;
     msgs.scrollTop=msgs.scrollHeight;
@@ -3057,24 +3094,35 @@ async function scanBill(input){
     result.style.display='block';
     result.innerHTML=`<div style="padding:12px;background:var(--bg3);border-radius:var(--rad);font-size:13px;color:var(--txt2);">🔍 Reading your bill... please wait</div>`;
     try{
-      const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      // Use Supabase Edge Function to avoid CORS
+      const resp=await fetch(`${SB_URL}/functions/v1/scan-bill`,{
         method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-6',max_tokens:600,
-          messages:[{role:'user',content:[
-            {type:'image',source:{type:'base64',media_type:mime,data:b64}},
-            {type:'text',text:'This is a purchase/supply bill from an Indian business. Extract all details and respond ONLY with a JSON object with these fields: {"bill_type": "raw_material or spare_parts or other", "date": "YYYY-MM-DD or empty", "bill_no": "", "supplier": "", "items": [{"name":"","qty":"","unit":"","rate":"","amount":""}], "total_amount": "", "notes": "any other details"}. No preamble, no markdown, just the JSON.'}
-          ]}]
-        })
+        headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`},
+        body:JSON.stringify({image:b64,mime})
       });
-      const data=await resp.json();
-      const raw=data.content?.[0]?.text||'{}';
-      const clean=raw.replace(/```json|```/g,'').trim();
-      const parsed=JSON.parse(clean);
+      if(!resp.ok) throw new Error('Edge function error: '+resp.status);
+      const parsed=await resp.json();
       showBillResult(parsed,e.target.result);
     }catch(err){
-      result.innerHTML=`<div style="padding:12px;background:#fee2e2;border-radius:var(--rad);color:#dc2626;font-size:13px;">Could not read bill automatically. Please enter details manually.</div>`;
+      // Fallback — show manual entry form
+      result.innerHTML=`<div style="background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--rad2);padding:14px;margin-top:10px;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:#d97706;">⚠ Auto-read not set up yet — enter details manually</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div class="fg"><label>Bill type</label><select id="sc-type"><option>raw_material</option><option>spare_parts</option><option>other</option></select></div>
+          <div class="fg"><label>Date</label><input type="date" id="sc-date"></div>
+          <div class="fg"><label>Bill no.</label><input type="text" id="sc-billno" placeholder="Bill number"></div>
+          <div class="fg"><label>Supplier</label><input type="text" id="sc-supplier" placeholder="Supplier name"></div>
+          <div class="fg"><label>Item name</label><input type="text" id="sc-item-0" placeholder="Material / Part name"></div>
+          <div class="fg"><label>Qty</label><input type="number" id="sc-qty-0" placeholder="0"></div>
+          <div class="fg"><label>Rate (₹)</label><input type="number" id="sc-rate-0" placeholder="0"></div>
+          <div class="fg"><label>Total amount (₹)</label><input type="number" id="sc-amount" placeholder="0"></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-green" onclick="saveBillToInventory('raw_material')">✓ Save to Inventory / Trade Register</button>
+          <button class="btn" onclick="document.getElementById('bill-result').style.display='none'">✕ Discard</button>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--txt2);">To enable auto-reading, set up the Supabase Edge Function (ask Rohit/Claude to configure)</div>
+      </div>`;
     }
   };
   reader.readAsDataURL(file);
