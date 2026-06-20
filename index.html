@@ -3131,25 +3131,41 @@ async function scanBill(input){
 function showBillResult(data,imgSrc){
   const result=document.getElementById('bill-result');
   const items=data.items||[];
+  // Fix date format — AI returns DD-MM-YYYY, input needs YYYY-MM-DD
+  let dateVal='';
+  if(data.date){
+    const parts=data.date.split(/[-\/]/);
+    if(parts.length===3){
+      if(parts[0].length===4) dateVal=data.date; // already YYYY-MM-DD
+      else dateVal=`${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+    }
+  }
+  // Clean total amount — remove ₹ and commas
+  const totalAmt=(data.total_amount||'').toString().replace(/[₹,\s]/g,'');
   result.innerHTML=`
     <div style="background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--rad2);padding:14px;margin-top:10px;">
-      <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:#1D9E75;">✓ Bill read successfully — confirm details</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:#1D9E75;">✓ Bill read successfully — confirm and edit if needed</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-        <div class="fg"><label>Bill type</label><input type="text" value="${data.bill_type||''}" id="sc-type"></div>
-        <div class="fg"><label>Date</label><input type="date" value="${data.date||''}" id="sc-date"></div>
-        <div class="fg"><label>Bill no.</label><input type="text" value="${data.bill_no||''}" id="sc-billno"></div>
-        <div class="fg"><label>Supplier</label><input type="text" value="${data.supplier||''}" id="sc-supplier"></div>
-        <div class="fg"><label>Total amount (₹)</label><input type="number" value="${data.total_amount||''}" id="sc-amount"></div>
+        <div class="fg"><label>Bill type</label><select id="sc-type"><option value="spare_parts" ${data.bill_type==='spare_parts'?'selected':''}>Spare Parts</option><option value="raw_material" ${data.bill_type==='raw_material'?'selected':''}>Raw Material</option><option value="other">Other</option></select></div>
+        <div class="fg"><label>Date</label><input type="date" value="${dateVal}" id="sc-date"></div>
+        <div class="fg"><label>Bill no.</label><input type="text" value="${data.bill_no||''}" id="sc-billno" placeholder="Bill number"></div>
+        <div class="fg"><label>Supplier</label><input type="text" value="${data.supplier||''}" id="sc-supplier" placeholder="Supplier name"></div>
+        <div class="fg"><label>Total amount (₹)</label><input type="text" value="${totalAmt}" id="sc-amount" placeholder="Total"></div>
+        <div class="fg"><label>Notes</label><input type="text" value="${data.notes||''}" id="sc-notes" placeholder="Any notes"></div>
       </div>
-      <div style="font-size:12px;font-weight:600;margin-bottom:6px;">Items on bill:</div>
-      ${items.map((item,i)=>`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:6px;margin-bottom:6px;">
-        <input type="text" value="${item.name||''}" placeholder="Item name" id="sc-item-${i}">
-        <input type="number" value="${item.qty||''}" placeholder="Qty" id="sc-qty-${i}">
-        <input type="text" value="${item.unit||''}" placeholder="Unit" id="sc-unit-${i}">
-        <input type="number" value="${item.rate||''}" placeholder="Rate" id="sc-rate-${i}">
+      <div style="font-size:12px;font-weight:600;margin-bottom:6px;border-top:1px solid var(--bdr);padding-top:8px;">Items on bill (${items.length} items found):</div>
+      <div style="display:grid;grid-template-columns:3fr 1fr 1fr 1fr;gap:4px;margin-bottom:4px;font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;">
+        <div>Item name</div><div>Qty</div><div>Rate (₹)</div><div>Amount (₹)</div>
+      </div>
+      ${items.map((item,i)=>`<div style="display:grid;grid-template-columns:3fr 1fr 1fr 1fr;gap:4px;margin-bottom:6px;">
+        <input type="text" value="${item.name||''}" placeholder="Item name" id="sc-item-${i}" style="font-size:12px;">
+        <input type="text" value="${item.qty||''}" placeholder="Qty" id="sc-qty-${i}" style="font-size:12px;">
+        <input type="text" value="${(item.rate||'').toString().replace(/[₹,]/g,'')}" placeholder="Rate" id="sc-rate-${i}" style="font-size:12px;">
+        <input type="text" value="${(item.amount||'').toString().replace(/[₹,]/g,'')}" placeholder="Amount" id="sc-amt-${i}" style="font-size:12px;">
       </div>`).join('')}
+      ${items.length===0?`<div style="color:var(--txt2);font-size:12px;padding:8px;background:var(--bg3);border-radius:var(--rad);">No items detected — add manually above</div>`:''}
       <div style="display:flex;gap:8px;margin-top:12px;">
-        <button class="btn btn-green" onclick="saveBillToInventory('${data.bill_type}')">✓ Save to Inventory / Trade Register</button>
+        <button class="btn btn-green" onclick="saveBillToInventory()">✓ Save to Components / Inventory</button>
         <button class="btn" onclick="document.getElementById('bill-result').style.display='none'">✕ Discard</button>
       </div>
     </div>`;
