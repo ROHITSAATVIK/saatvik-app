@@ -3062,7 +3062,7 @@ async function askPlanAI(){
   const context=`You are a production advisor for Saatvik Enterprises, a plastic recycling factory in Durgapur making PP/HDPE/LDPE granules. Process: FIBC bag cutting → grinding → washing → drying → agglomeration → extrusion → granules. Current data: ${mis.length} MIS entries, avg efficiency ${avgEff}%, total production ${totalProd.toLocaleString()} Kg, critical breakdowns: ${critBD}, open P1 tasks: ${DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').length}. Daily target: 1500 Kg. Give practical, specific advice. Keep answers short and actionable.`;
 
   try{
-    const resp=await fetch(`${SB_URL}/functions/v1/plan-ai`,{
+    const resp=await fetch(`${SB_URL}/functions/v1/bright-worker`,{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`},
       body:JSON.stringify({question:q,context})
@@ -3095,7 +3095,7 @@ async function scanBill(input){
     result.innerHTML=`<div style="padding:12px;background:var(--bg3);border-radius:var(--rad);font-size:13px;color:var(--txt2);">🔍 Reading your bill... please wait</div>`;
     try{
       // Use Supabase Edge Function to avoid CORS
-      const resp=await fetch(`${SB_URL}/functions/v1/scan-bill`,{
+      const resp=await fetch(`${SB_URL}/functions/v1/clever-task`,{
         method:'POST',
         headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`},
         body:JSON.stringify({image:b64,mime})
