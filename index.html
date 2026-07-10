@@ -323,32 +323,59 @@ tr:hover td{background:#fafaf9;}
 <!-- ========== INVENTORY ========== -->
 <div id="page-inventory" class="page">
   <div class="topbar">
-    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Inventory & Stock</div>
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Spare Parts Inventory</div>
     <div class="tb-right">
       <input type="text" id="inv-search" placeholder="Search items..." oninput="renderInventory()" style="padding:6px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);font-size:12px;width:180px;">
+      <select id="inv-cat-filter" onchange="renderInventory()" style="padding:6px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);font-size:12px;background:var(--bg2);color:var(--txt);">
+        <option value="all">All categories</option>
+        <option>Bearings</option><option>Belts</option><option>Machine Parts</option><option>Consumables</option><option>Electrical</option><option>Other</option>
+      </select>
       <button class="btn btn-green" onclick="openModal('inv-modal',null)">+ Add item</button>
     </div>
   </div>
   <div class="content">
-    <div class="metrics g3" id="inv-metrics"></div>
-    <div class="g2" style="margin-bottom:14px;">
-      <div class="card">
-        <div class="card-head"><div class="card-title">Stock levels vs minimum</div></div>
-        <div class="card-body"><div style="position:relative;height:160px;"><canvas id="invChart" role="img" aria-label="Inventory">Inventory</canvas></div></div>
+
+    <!-- WHATSAPP PASTE BOX -->
+    <div class="card" style="margin-bottom:14px;border-left:3px solid #25D366;">
+      <div class="card-head">
+        <div class="card-title">📱 Paste Pandey Ji's WhatsApp message — AI updates stock automatically</div>
+        <button class="btn btn-sm" onclick="toggleWABox()" id="wa-box-toggle">Hide</button>
       </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title">Stock status</div></div>
-        <div class="card-body" style="display:flex;gap:14px;align-items:center;">
-          <div style="position:relative;height:120px;width:120px;flex-shrink:0;"><canvas id="invPie" role="img" aria-label="Status pie">Pie</canvas></div>
-          <div id="invPieLeg" style="font-size:12px;display:flex;flex-direction:column;gap:7px;"></div>
+      <div class="card-body" id="wa-box-content">
+        <textarea id="wa-inv-text" rows="4" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:var(--rad);font-size:13px;font-family:inherit;resize:vertical;" placeholder="Paste message here, e.g.:&#10;Inventory in&#10;2 pc Dana roller&#10;1pc bearing (6318)&#10;&#10;Inventory out&#10;Packing bag 1 bag&#10;Extruder jali 14 pc"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="btn btn-green" onclick="processWAMessage()">🤖 Process message</button>
+          <button class="btn btn-sm" onclick="document.getElementById('wa-inv-text').value=''">Clear</button>
+        </div>
+        <div id="wa-preview" style="display:none;margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- METRICS -->
+    <div class="metrics g4" id="inv-metrics" style="margin-bottom:14px;"></div>
+
+    <!-- STOCK REGISTER -->
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-head"><div class="card-title">Stock register</div><div style="font-size:11px;color:var(--txt2);">Red = out of stock · Yellow = low · Green = OK</div></div>
+      <div class="tw"><table>
+        <thead><tr><th>Item</th><th>Category</th><th>UOM</th><th>In stock</th><th>Min</th><th>Rate (₹)</th><th>Value</th><th>Last used</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="inv-tbody"><tr><td colspan="10"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ITEM LIFE TRACKER -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Item life tracker</div>
+        <div style="font-size:11px;color:var(--txt2);">Full IN/OUT history — how long each part lasts</div>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <div id="life-tracker-content" style="padding:14px;">
+          <div style="font-size:12px;color:var(--txt2);text-align:center;padding:20px;">No movement history yet — start by pasting a WhatsApp message above</div>
         </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">Stock register — colour coded (red=critical, yellow=low, green=OK)</div></div>
-      <div class="tw"><table><thead><tr><th>Item</th><th>Category</th><th>UOM</th><th>Min Stock</th><th>Current Stock</th><th>Rate (₹)</th><th>Value (₹)</th><th>+/−</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="inv-tbody"><tr><td colspan="10"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody></table></div>
-    </div>
+
   </div>
 </div>
 
@@ -1446,10 +1473,12 @@ async function loadAll(){
       sb.from('trading_purchases').select('*').order('purchase_date',{ascending:false}),
       sb.from('trading_sales').select('*').order('sale_date',{ascending:false}),
       sb.from('trading_materials').select('*').order('material_name'),
+      sb.from('inventory_movements').select('*').order('movement_date',{ascending:false}),
     ]);
     DATA.mis=mis.data||[];DATA.inv=inv.data||[];DATA.stock=stock.data||[];
     DATA.dispatches=disp.data||[];DATA.bd=bd.data||[];DATA.tasks=tasks.data||[];
     DATA.trdPur=tp.data||[];DATA.trdSal=ts.data||[];DATA.trdMat=tm.data||[];
+    DATA.invMov=invmov.data||[];
     document.getElementById('last-sync').textContent='Synced ✓ '+new Date().toLocaleTimeString('en-IN');
     const active=document.querySelector('.page.active')?.id?.replace('page-','');
     if(active)renderPage(active);
@@ -3222,6 +3251,258 @@ function showBillResult(data,imgSrc){
 
 async function saveBillToInventory(type){
   toast('Bill details saved ✓ — check your Inventory / Trade Register');
+}
+
+// ===== INVENTORY REVAMP =====
+let WA_PARSED = [];
+
+function toggleWABox(){
+  const el=document.getElementById('wa-box-content');
+  const btn=document.getElementById('wa-box-toggle');
+  if(el.style.display==='none'){el.style.display='block';btn.textContent='Hide';}
+  else{el.style.display='none';btn.textContent='Show';}
+}
+
+async function processWAMessage(){
+  const text=document.getElementById('wa-inv-text')?.value?.trim();
+  if(!text){toast('Paste a message first','err');return;}
+  const preview=document.getElementById('wa-preview');
+  preview.style.display='block';
+  preview.innerHTML='<div style="padding:12px;background:var(--bg3);border-radius:var(--rad);font-size:13px;color:var(--txt2);">🤖 Reading message...</div>';
+
+  try{
+    const resp=await fetch(`${SB_URL}/functions/v1/bright-worker`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`},
+      body:JSON.stringify({
+        question:text,
+        context:`You are reading a WhatsApp inventory message from a factory worker in India. Extract all inventory movements. The message may say "Inventory in" or "Inventory out" followed by items. Each item has a name and quantity. Respond ONLY with a JSON array, no markdown: [{"item":"item name","direction":"IN or OUT","qty":number,"unit":"pc or bag or roll or litre or kg or nos"}]. Parse every item you find. Example input: "Inventory in\n2 pc Dana roller\n1pc bearing (6318)\nInventory out\nPacking bag 1 bag" Example output: [{"item":"Dana roller","direction":"IN","qty":2,"unit":"pc"},{"item":"bearing (6318)","direction":"IN","qty":1,"unit":"pc"},{"item":"Packing bag","direction":"OUT","qty":1,"unit":"bag"}]`
+      })
+    });
+    const data=await resp.json();
+    const raw=(data.answer||'[]').replace(/```json|```/g,'').trim();
+    WA_PARSED=JSON.parse(raw);
+    showWAPreview(WA_PARSED);
+  }catch(e){
+    // Fallback: parse manually
+    WA_PARSED=parseWAManually(text);
+    showWAPreview(WA_PARSED);
+  }
+}
+
+function parseWAManually(text){
+  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
+  const items=[];
+  let currentDir='OUT';
+  for(const line of lines){
+    const lower=line.toLowerCase();
+    if(lower.includes('inventory in')||lower==='in'){currentDir='IN';continue;}
+    if(lower.includes('inventory out')||lower==='out'){currentDir='OUT';continue;}
+    // Parse "2 pc Dana roller" or "1pc bearing (6318)"
+    const match=line.match(/^(\d+\.?\d*)\s*(pc|pcs|nos|bag|bags|roll|rolls|kg|ltr|litre|meter|mtr|set)?\s*(.+)/i);
+    if(match){
+      items.push({
+        item:match[3].replace(/^\d+\./,'').trim(),
+        direction:currentDir,
+        qty:parseFloat(match[1]),
+        unit:match[2]||'pc'
+      });
+    } else if(line.match(/^\d+\./)){
+      // numbered list like "1.roller"
+      const itemName=line.replace(/^\d+\./,'').trim();
+      if(itemName)items.push({item:itemName,direction:currentDir,qty:1,unit:'pc'});
+    }
+  }
+  return items;
+}
+
+function showWAPreview(items){
+  const preview=document.getElementById('wa-preview');
+  if(!items.length){
+    preview.innerHTML='<div style="padding:12px;background:#fee2e2;border-radius:var(--rad);color:#b91c1c;font-size:13px;">Could not find any items in this message. Check the format.</div>';
+    return;
+  }
+  // Match items to existing inventory
+  const matched=items.map(item=>{
+    const inv=DATA.inv.find(r=>r.item_name.toLowerCase().includes(item.item.toLowerCase())||item.item.toLowerCase().includes(r.item_name.toLowerCase()));
+    return{...item,matched:inv||null};
+  });
+  preview.innerHTML=`
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:#1D9E75;">✓ Found ${items.length} items — confirm before saving</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px;">
+      <thead><tr style="background:var(--bg3);">
+        <th style="padding:6px 10px;text-align:left;">Item</th>
+        <th style="padding:6px 10px;">Direction</th>
+        <th style="padding:6px 10px;">Qty</th>
+        <th style="padding:6px 10px;text-align:left;">Match in inventory</th>
+        <th style="padding:6px 10px;">Include</th>
+      </tr></thead>
+      <tbody>${matched.map((item,i)=>`
+        <tr style="border-top:1px solid var(--bdr);">
+          <td style="padding:8px 10px;">${item.item}</td>
+          <td style="padding:8px 10px;text-align:center;"><span class="badge ${item.direction==='IN'?'b-green':'b-red'}">${item.direction}</span></td>
+          <td style="padding:8px 10px;text-align:center;">${item.qty} ${item.unit}</td>
+          <td style="padding:8px 10px;color:${item.matched?'#15803d':'#d97706'};">${item.matched?'✓ '+item.matched.item_name:'⚠ New item — will create'}</td>
+          <td style="padding:8px 10px;text-align:center;"><input type="checkbox" id="wa-chk-${i}" checked></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-green" onclick="confirmWAUpdate()">✓ Confirm — update stock</button>
+      <button class="btn btn-sm" onclick="document.getElementById('wa-preview').style.display='none'">✕ Discard</button>
+    </div>`;
+}
+
+async function confirmWAUpdate(){
+  const today=new Date().toISOString().split('T')[0];
+  let updated=0,created=0;
+  for(let i=0;i<WA_PARSED.length;i++){
+    const chk=document.getElementById('wa-chk-'+i);
+    if(!chk?.checked)continue;
+    const item=WA_PARSED[i];
+    // Find matching inventory item
+    let inv=DATA.inv.find(r=>r.item_name.toLowerCase().includes(item.item.toLowerCase())||item.item.toLowerCase().includes(r.item_name.toLowerCase()));
+    // Create new item if not found
+    if(!inv){
+      const{data}=await sb.from('inventory').insert({item_name:item.item,category:'Other',uom:item.unit||'pc',minimum_stock:1,current_stock:0,rate_per_unit:0}).select().single();
+      inv=data;
+      created++;
+    }
+    if(!inv)continue;
+    const stockBefore=Number(inv.current_stock||0);
+    const stockAfter=item.direction==='IN'?stockBefore+item.qty:Math.max(0,stockBefore-item.qty);
+    // Calculate life days for OUT entries
+    let lifeDays=null;
+    if(item.direction==='OUT'){
+      const lastIn=DATA.invMov?.filter(m=>m.item_id===inv.id&&m.direction==='IN').sort((a,b)=>new Date(b.movement_date)-new Date(a.movement_date))[0];
+      if(lastIn)lifeDays=Math.floor((new Date(today)-new Date(lastIn.movement_date))/86400000);
+    }
+    // Update stock
+    await sb.from('inventory').update({current_stock:stockAfter,updated_at:new Date().toISOString()}).eq('id',inv.id);
+    // Log movement
+    await sb.from('inventory_movements').insert({
+      item_id:inv.id,item_name:inv.item_name,direction:item.direction,
+      qty:item.qty,stock_before:stockBefore,stock_after:stockAfter,
+      life_days:lifeDays,source:'whatsapp',movement_date:today
+    });
+    updated++;
+  }
+  toast(`✓ Stock updated — ${updated} items, ${created} new created`);
+  document.getElementById('wa-inv-text').value='';
+  document.getElementById('wa-preview').style.display='none';
+  await loadAll();
+}
+
+function renderInventory(){
+  const sorted=[...DATA.inv].sort((a,b)=>a.item_name.localeCompare(b.item_name));
+  const low=sorted.filter(r=>Number(r.current_stock)<Number(r.minimum_stock));
+  const crit=sorted.filter(r=>Number(r.current_stock)===0);
+  const searchQ=(document.getElementById('inv-search')?.value||'').toLowerCase();
+  const catQ=(document.getElementById('inv-cat-filter')?.value||'all');
+  let filtered=sorted;
+  if(searchQ)filtered=filtered.filter(r=>r.item_name.toLowerCase().includes(searchQ)||(r.category||'').toLowerCase().includes(searchQ));
+  if(catQ!=='all')filtered=filtered.filter(r=>r.category===catQ);
+
+  document.getElementById('inv-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Total items</div><div class="vl">${sorted.length}</div><div class="sb">spare parts</div></div>
+    <div class="mc"><div class="lb">Out of stock</div><div class="vl red">${crit.length}</div><div class="sb">Order immediately</div></div>
+    <div class="mc"><div class="lb">Low stock</div><div class="vl amber">${low.length-crit.length}</div><div class="sb">Below minimum</div></div>
+    <div class="mc"><div class="lb">Total value</div><div class="vl">${fmtMoney(sorted.reduce((a,r)=>a+Number(r.current_stock||0)*Number(r.rate_per_unit||0),0))}</div><div class="sb">At current rates</div></div>`;
+
+  // Get last used date per item from movements
+  const lastUsed={};
+  (DATA.invMov||[]).filter(m=>m.direction==='OUT').forEach(m=>{
+    if(!lastUsed[m.item_id]||new Date(m.movement_date)>new Date(lastUsed[m.item_id])){
+      lastUsed[m.item_id]=m.movement_date;
+    }
+  });
+
+  document.getElementById('inv-tbody').innerHTML=filtered.map(r=>{
+    const cs=Number(r.current_stock),ms=Number(r.minimum_stock);
+    const isOut=cs===0;
+    const isLow=cs<ms&&cs>0;
+    const bg=isOut?'background:#fef2f2;':isLow?'background:#fffbeb;':'';
+    const st=isOut?'<span class="badge b-red">Out of stock</span>':isLow?'<span class="badge b-amber">Low</span>':'<span class="badge b-green">OK</span>';
+    const lastU=lastUsed[r.id]?fmtDate(lastUsed[r.id]):'—';
+    return`<tr style="${bg}">
+      <td><strong>${r.item_name}</strong></td>
+      <td>${r.category||'—'}</td>
+      <td>${r.uom||'pc'}</td>
+      <td style="font-weight:700;color:${isOut?'#dc2626':isLow?'#d97706':'#15803d'};">${cs}</td>
+      <td>${ms}</td>
+      <td>${fmtMoney(r.rate_per_unit||0)}</td>
+      <td>${fmtMoney(cs*(r.rate_per_unit||0))}</td>
+      <td style="color:var(--txt2);font-size:11px;">${lastU}</td>
+      <td>${st}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-sm btn-green" onclick="quickStockUpdate('${r.id}',${cs},1,'${r.item_name}')" title="Add stock">+</button>
+        <button class="btn btn-sm btn-amber" onclick="quickStockUpdate('${r.id}',${cs},-1,'${r.item_name}')" title="Use stock">−</button>
+        <button class="btn btn-sm" onclick="openModal('inv-modal','${r.id}')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('inventory','${r.id}','item')">🗑</button>
+      </td></tr>`;
+  }).join('')||'<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--txt2);">No items found</td></tr>';
+
+  renderLifeTracker();
+}
+
+function renderLifeTracker(){
+  const el=document.getElementById('life-tracker-content');
+  if(!el)return;
+  const movements=DATA.invMov||[];
+  if(!movements.length){
+    el.innerHTML='<div style="padding:20px;text-align:center;color:var(--txt2);font-size:12px;">No movement history yet — paste a WhatsApp message above to start tracking</div>';
+    return;
+  }
+  // Group by item
+  const byItem={};
+  movements.forEach(m=>{
+    if(!byItem[m.item_name])byItem[m.item_name]=[];
+    byItem[m.item_name].push(m);
+  });
+  const itemNames=Object.keys(byItem).sort();
+  el.innerHTML=itemNames.map(name=>{
+    const movs=byItem[name].sort((a,b)=>new Date(b.movement_date)-new Date(a.movement_date));
+    const outs=movs.filter(m=>m.direction==='OUT');
+    const ins=movs.filter(m=>m.direction==='IN');
+    const avgLife=outs.filter(m=>m.life_days).length>0
+      ?Math.round(outs.filter(m=>m.life_days).reduce((a,m)=>a+m.life_days,0)/outs.filter(m=>m.life_days).length)
+      :null;
+    const currentStock=DATA.inv.find(r=>r.item_name===name)?.current_stock||0;
+    const avgConsumption=outs.length>0?outs.reduce((a,m)=>a+Number(m.qty),0)/outs.length:0;
+    const daysLeft=avgConsumption>0&&avgLife?Math.round(currentStock/avgConsumption*avgLife):null;
+    return`<div style="border:1px solid var(--bdr);border-radius:var(--rad2);padding:14px;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div>
+          <div style="font-size:13px;font-weight:700;">${name}</div>
+          <div style="font-size:11px;color:var(--txt2);">${ins.length} receipts · ${outs.length} usages · Stock: ${currentStock}</div>
+        </div>
+        <div style="text-align:right;">
+          ${avgLife?`<div style="font-size:11px;color:var(--txt2);">Avg life per unit</div><div style="font-size:18px;font-weight:700;color:#1D9E75;">${avgLife} days</div>`:''}
+          ${daysLeft!==null?`<div style="font-size:11px;color:${daysLeft<7?'#dc2626':daysLeft<14?'#d97706':'#15803d'};">~${daysLeft} days stock left</div>`:''}
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead><tr style="background:var(--bg3);">
+          <th style="padding:5px 8px;text-align:left;color:var(--txt2);">Date</th>
+          <th style="padding:5px 8px;color:var(--txt2);">Direction</th>
+          <th style="padding:5px 8px;color:var(--txt2);">Qty</th>
+          <th style="padding:5px 8px;text-align:right;color:var(--txt2);">Stock before</th>
+          <th style="padding:5px 8px;text-align:right;color:var(--txt2);">Stock after</th>
+          <th style="padding:5px 8px;text-align:right;color:var(--txt2);">Life (days)</th>
+          <th style="padding:5px 8px;color:var(--txt2);">Source</th>
+        </tr></thead>
+        <tbody>${movs.map(m=>`<tr style="border-top:1px solid var(--bdr);">
+          <td style="padding:5px 8px;">${fmtDate(m.movement_date)}</td>
+          <td style="padding:5px 8px;text-align:center;"><span class="badge ${m.direction==='IN'?'b-green':'b-red'}" style="font-size:10px;">${m.direction}</span></td>
+          <td style="padding:5px 8px;text-align:center;font-weight:600;">${m.qty} ${DATA.inv.find(r=>r.item_name===m.item_name)?.uom||'pc'}</td>
+          <td style="padding:5px 8px;text-align:right;color:var(--txt2);">${m.stock_before}</td>
+          <td style="padding:5px 8px;text-align:right;font-weight:600;color:${m.direction==='IN'?'#15803d':'#dc2626'};">${m.stock_after}</td>
+          <td style="padding:5px 8px;text-align:right;color:${m.life_days?'#1D9E75':'var(--txt3)'};">${m.life_days?m.life_days+' days':'—'}</td>
+          <td style="padding:5px 8px;color:var(--txt2);">${m.source||'manual'}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  }).join('');
 }
 
 // ===== INIT =====
