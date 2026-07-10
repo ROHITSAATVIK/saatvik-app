@@ -1631,7 +1631,6 @@ function renderMfgDashboard(){
     const col=run>=80?'#1D9E75':run>=50?'#d97706':'#dc2626';
     return`<div class="pbar-row"><div class="pbar-label">${m.n}</div><div class="pbar-outer"><div class="pbar-fill" style="width:${run}%;background:${col};"></div></div><div class="pbar-val">${run}%</div></div>`;
   }).join('');
-}
 
   // Alerts — show P1 tasks + critical breakdowns
   const alerts=[];
