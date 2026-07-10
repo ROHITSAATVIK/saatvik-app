@@ -324,7 +324,10 @@ tr:hover td{background:#fafaf9;}
 <div id="page-inventory" class="page">
   <div class="topbar">
     <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Inventory & Stock</div>
-    <button class="btn btn-green" onclick="openModal('inv-modal',null)">+ Add item</button>
+    <div class="tb-right">
+      <input type="text" id="inv-search" placeholder="Search items..." oninput="renderInventory()" style="padding:6px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);font-size:12px;width:180px;">
+      <button class="btn btn-green" onclick="openModal('inv-modal',null)">+ Add item</button>
+    </div>
   </div>
   <div class="content">
     <div class="metrics g3" id="inv-metrics"></div>
@@ -831,7 +834,7 @@ tr:hover td{background:#fafaf9;}
   <div class="modal">
     <div class="modal-head"><span class="modal-title" id="mis-modal-t">Add MIS Entry</span><button class="btn btn-sm" onclick="closeModal('mis-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="m-date"></div><div class="fg"><label>Target (Kg)</label><input type="number" id="m-target" value="5000"></div></div>
+      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="m-date"></div><div class="fg"><label>Target (Kg)</label><input type="number" id="m-target" value="1500"></div></div>
       <div class="sec-label">Manpower</div>
       <div class="frow"><div class="fg"><label>Day shift workers</label><input type="number" id="m-mpd" placeholder="0"></div><div class="fg"><label>Night shift workers</label><input type="number" id="m-mpn" placeholder="0"></div></div>
       <div class="sec-label">Day Shift — Running Hours & Production (12h shift)</div>
@@ -854,12 +857,15 @@ tr:hover td{background:#fafaf9;}
       </div>
       <div class="frow frow-1"><div class="fg"><label>Issue (Night shift)</label><select id="m-issn"><option>None</option><option>Agglo 1</option><option>Agglo 2</option><option>Washing</option><option>Extruder</option><option>Power</option><option>Labour</option><option>Others</option></select></div></div>
       <div class="sec-label">Stock & Dispatch</div>
-      <div class="frow-3 frow">
-        <div class="fg"><label>RM opening (Kg)</label><input type="number" id="m-rmop" placeholder="0"></div>
-        <div class="fg"><label>FG opening (Kg)</label><input type="number" id="m-fgop" placeholder="0"></div>
-        <div class="fg"><label>Dispatched (Kg)</label><input type="number" id="m-disp" placeholder="0"></div>
+      <div class="frow">
+        <div class="fg"><label>RM opening (Kg)</label><input type="number" id="m-rmop" placeholder="0" oninput="calcMISStock()"></div>
+        <div class="fg"><label>FG opening (Kg)</label><input type="number" id="m-fgop" placeholder="0" oninput="calcMISStock()"></div>
       </div>
-      <div class="frow"><div class="fg"><label>Total stock (Kg)</label><input type="number" id="m-tstock" placeholder="0"></div><div class="fg"><label>Total production (Kg) — auto</label><input type="number" id="m-tprod" placeholder="0" readonly style="background:var(--bg3)"></div></div>
+      <div class="frow">
+        <div class="fg"><label>Total production (Kg) — auto</label><input type="number" id="m-tprod" placeholder="0" readonly style="background:var(--bg3)"></div>
+        <div class="fg"><label>Total stock (Kg) — auto</label><input type="number" id="m-tstock" placeholder="0" readonly style="background:var(--bg3);color:var(--acc);font-weight:700;"><div class="calc-note">FG opening + production - dispatched (from dispatch page)</div></div>
+      </div>
+      <input type="hidden" id="m-disp" value="0">
       <div class="frow frow-1"><div class="fg"><label>Notes</label><textarea id="m-notes" placeholder="Any notes..."></textarea></div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('mis-modal')">Cancel</button><button class="btn btn-green" onclick="saveMIS()">Save Entry</button></div>
@@ -1356,6 +1362,20 @@ function calcDT(){
 function calcTotalProd(){
   const v=parseFloat(document.getElementById('m-ekg')?.value||0);
   document.getElementById('m-tprod').value=v;
+  calcMISStock();
+}
+function calcMISStock(){
+  const date=document.getElementById('m-date')?.value;
+  const fgOpen=parseFloat(document.getElementById('m-fgop')?.value||0);
+  const prod=parseFloat(document.getElementById('m-tprod')?.value||0);
+  // Auto-pull dispatched from dispatch records for this date
+  let dispatched=0;
+  if(date&&DATA.dispatches){
+    dispatched=DATA.dispatches.filter(r=>r.dispatch_date===date).reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  }
+  const totalStock=fgOpen+prod-dispatched;
+  const el=document.getElementById('m-tstock');
+  if(el)el.value=totalStock.toFixed(0);
 }
 function calcStockClose(){
   const g=id=>parseFloat(document.getElementById(id)?.value||0);
@@ -1443,7 +1463,7 @@ async function loadAll(){
 async function saveMIS(){
   const g=id=>document.getElementById(id)?.value;
   const row={
-    entry_date:g('m-date'),month_year:g('m-date')?fmtMonthYear(g('m-date')):'',target_kg:parseFloat(g('m-target'))||5000,
+    entry_date:g('m-date'),month_year:g('m-date')?fmtMonthYear(g('m-date')):'',target_kg:parseFloat(g('m-target'))||1500,
     manpower_day:parseInt(g('m-mpd'))||0,manpower_night:parseInt(g('m-mpn'))||0,
     washing_run_day:parseFloat(g('m-wrd'))||0,agglo_run_day:parseFloat(g('m-ard'))||0,extruder_run_day:parseFloat(g('m-erd'))||0,
     washing_run_night:parseFloat(g('m-wrn'))||0,agglo_run_night:parseFloat(g('m-arn'))||0,extruder_run_night:parseFloat(g('m-ern'))||0,
@@ -1451,13 +1471,27 @@ async function saveMIS(){
     total_production_kg:parseFloat(g('m-ekg'))||0,
     issue_day:g('m-issd'),issue_night:g('m-issn'),
     raw_stock_opening_kg:parseFloat(g('m-rmop'))||0,fg_stock_opening_kg:parseFloat(g('m-fgop'))||0,
-    dispatched_kg:parseFloat(g('m-disp'))||0,total_stock_kg:parseFloat(g('m-tstock'))||0,
+    dispatched_kg:(()=>{
+      const date=g('m-date');
+      if(!date||!DATA.dispatches)return 0;
+      return DATA.dispatches.filter(r=>r.dispatch_date===date).reduce((a,r)=>a+Number(r.qty_kg||0),0);
+    })(),total_stock_kg:parseFloat(g('m-tstock'))||0,
     notes:g('m-notes'),updated_at:new Date().toISOString()
   };
   if(!row.entry_date){toast('Please select a date','err');return;}
   const{error}=editId?await sb.from('mis_entries').update(row).eq('id',editId):await sb.from('mis_entries').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
   toast(editId?'Entry updated ✓':'Entry saved ✓');closeModal('mis-modal');await loadAll();
+}
+
+async function quickStockUpdate(id, currentStock, direction){
+  const amt=parseFloat(prompt(`${direction>0?'Add to':'Remove from'} stock (current: ${currentStock}):`,'0')||'0');
+  if(!amt||isNaN(amt))return;
+  const newStock=Math.max(0, Number(currentStock)+(amt*direction));
+  const{error}=await sb.from('inventory').update({current_stock:newStock,updated_at:new Date().toISOString()}).eq('id',id);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast(`Stock updated ✓ → ${newStock.toLocaleString('en-IN')}`);
+  await loadAll();
 }
 
 async function saveInv(){
@@ -1597,6 +1631,7 @@ function renderMfgDashboard(){
     const col=run>=80?'#1D9E75':run>=50?'#d97706':'#dc2626';
     return`<div class="pbar-row"><div class="pbar-label">${m.n}</div><div class="pbar-outer"><div class="pbar-fill" style="width:${run}%;background:${col};"></div></div><div class="pbar-val">${run}%</div></div>`;
   }).join('');
+}
 
   // Alerts — show P1 tasks + critical breakdowns
   const alerts=[];
@@ -1659,12 +1694,13 @@ function renderMIS(){
   const totalTgt=sorted.reduce((a,r)=>a+Number(r.target_kg||0),0);
   const avgEff=totalTgt>0?Math.round((totalProd/totalTgt)*100):0;
   const totalDisp=sorted.reduce((a,r)=>a+Number(r.dispatched_kg||0),0);
-  const avgMP=sorted.length>0?Math.round(sorted.reduce((a,r)=>a+Number(r.manpower_day||0)+Number(r.manpower_night||0),0)/sorted.length):0;
+  const avgMPDay=sorted.length>0?Math.round(sorted.reduce((a,r)=>a+Number(r.manpower_day||0),0)/sorted.length):0;
+  const avgMPNight=sorted.length>0?Math.round(sorted.reduce((a,r)=>a+Number(r.manpower_night||0),0)/sorted.length):0;
   document.getElementById('mis-metrics').innerHTML=`
     <div class="mc"><div class="lb">Total production</div><div class="vl green">${Number(totalProd).toLocaleString('en-IN')} Kg</div><div class="sb">Target: ${Number(totalTgt).toLocaleString('en-IN')} Kg</div></div>
     <div class="mc"><div class="lb">Avg efficiency</div><div class="vl ${avgEff>=90?'green':avgEff>=70?'amber':'red'}">${avgEff}%</div></div>
-    <div class="mc"><div class="lb">Total dispatched</div><div class="vl">${Number(totalDisp).toLocaleString('en-IN')} Kg</div></div>
-    <div class="mc"><div class="lb">Avg manpower</div><div class="vl">${avgMP}/day</div><div class="sb">Day + Night</div></div>`;
+    <div class="mc"><div class="lb">Avg day manpower</div><div class="vl">${avgMPDay}</div><div class="sb">Day shift avg</div></div>
+    <div class="mc"><div class="lb">Avg night manpower</div><div class="vl">${avgMPNight}</div><div class="sb">Night shift avg</div></div>`;
 
   document.getElementById('mis-tbody').innerHTML=sorted.map(r=>{
     const e=eff(r.total_production_kg,r.target_kg);
@@ -1722,7 +1758,9 @@ function renderInventory(){
     <div class="mc"><div class="lb">Low stock</div><div class="vl red">${low.length}</div><div class="sb">Below minimum</div></div>
     <div class="mc"><div class="lb">Critical</div><div class="vl red">${crit.length}</div><div class="sb">Below 50% of min</div></div>`;
 
-  document.getElementById('inv-tbody').innerHTML=sorted.map(r=>{
+  const searchQ=(document.getElementById('inv-search')?.value||'').toLowerCase();
+  const filtered2=searchQ?sorted.filter(r=>r.item_name.toLowerCase().includes(searchQ)||r.category.toLowerCase().includes(searchQ)):sorted;
+  document.getElementById('inv-tbody').innerHTML=filtered2.map(r=>{
     const cs=Number(r.current_stock),ms=Number(r.minimum_stock);
     const ratio=ms>0?cs/ms:1;
     const bg=ratio<0.5?'background:#fef2f2;':ratio<1?'background:#fffbeb;':'';
@@ -1736,6 +1774,8 @@ function renderInventory(){
       <td style="color:${surplus>=0?'#15803d':'#b91c1c'};font-weight:600">${surplus>=0?'+':''}${Number(surplus).toLocaleString('en-IN')}</td>
       <td>${st}</td>
       <td style="white-space:nowrap">
+        <button class="btn btn-sm btn-green" onclick="quickStockUpdate('${r.id}',${r.current_stock},1)" title="Add stock">+</button>
+        <button class="btn btn-sm btn-amber" onclick="quickStockUpdate('${r.id}',${r.current_stock},-1)" title="Remove stock">−</button>
         <button class="btn btn-sm" onclick="openModal('inv-modal','${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteRow('inventory','${r.id}','item')">🗑</button>
       </td></tr>`;
@@ -2675,29 +2715,39 @@ function downloadGatePassPDF(){
   };
   const html=buildGatePassHTML(data);
   const win=window.open('','_blank');
+  if(!win){toast('Please allow popups for saatvik.biz to download PDF','err');return;}
   win.document.write(html);
   win.document.close();
   win.focus();
-  setTimeout(()=>{
-    win.print();
-  },800);
+  setTimeout(()=>win.print(),800);
 }
 
 function redownloadPDF(id){
   const r=GP_DATA.find(x=>x.id===id);
   if(!r)return;
   const notes=r.notes||'';
-  const addr=notes.match(/ADDR:([^|]+)/)?.[1]?.trim()||'';
-  const bill=r.lr_no||'';
-  const eway=notes.match(/EWAY:([^|]+)/)?.[1]?.trim()||'';
+  // Extract all stored fields from notes
+  const addr=notes.match(/ADDR:([^|]+)/)?.[1]?.trim()||r.destination||'';
+  const billMatch=notes.match(/BILL:([^|]+)/);
+  const bill=billMatch?billMatch[1].trim():r.lr_no||'';
+  const ewayMatch=notes.match(/EWAY:([^|]+)/);
+  const eway=ewayMatch?ewayMatch[1].trim():'';
   const data={
-    gpNo:r.invoice_no||'',party:r.customer||'',address:addr,
-    date:r.dispatch_date,truck:r.vehicle_no||'',transporter:r.destination||'',
-    material:r.material_type||'Plastic Granules',qty:r.qty_kg,
-    purpose:'Sale',billNo:bill,eway
+    gpNo:r.invoice_no||'',
+    party:r.customer||'',
+    address:addr,
+    date:r.dispatch_date,
+    truck:r.vehicle_no||'',
+    transporter:'',
+    material:r.material_type||'Plastic Granules',
+    qty:r.qty_kg,
+    purpose:'Sale',
+    billNo:bill,
+    eway:eway
   };
   const html=buildGatePassHTML(data);
   const win=window.open('','_blank');
+  if(!win){toast('Please allow popups for saatvik.biz to download PDF','err');return;}
   win.document.write(html);
   win.document.close();
   win.focus();
