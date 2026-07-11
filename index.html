@@ -235,7 +235,7 @@ tr:hover td{background:#fafaf9;}
   </div>
   <div class="content">
     <!-- ROW 1: 6 key metrics -->
-    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;" id="mfg-dash-metrics"></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;" id="mfg-dash-metrics"></div>
 
     <!-- ROW 2: Colour production + Tasks -->
     <div class="g2" style="margin-bottom:0;">
@@ -897,17 +897,20 @@ tr:hover td{background:#fafaf9;}
         <div class="fg"><label>Extruder running (h)</label><input type="number" id="m-ern" step="0.5" placeholder="0–12" max="12" oninput="calcDT()"><div class="calc-note" id="m-edt-n-show">Downtime: 0h</div></div>
       </div>
       <div class="frow frow-1"><div class="fg"><label>Issue (Night shift)</label><select id="m-issn"><option>None</option><option>Agglo 1</option><option>Agglo 2</option><option>Washing</option><option>Extruder</option><option>Power</option><option>Labour</option><option>Others</option></select></div></div>
-      <div class="sec-label">Stock & Dispatch</div>
+      <div class="sec-label">Production</div>
       <div class="frow">
-        <div class="fg"><label>RM opening (Kg)</label><input type="number" id="m-rmop" placeholder="0" oninput="calcMISStock()"></div>
-        <div class="fg"><label>FG opening (Kg)</label><input type="number" id="m-fgop" placeholder="0" oninput="calcMISStock()"></div>
+        <div class="fg"><label>Production (Kg)</label><input type="number" id="m-tprod" placeholder="0"></div>
+        <div class="fg"><label>Colour / Grade</label><input type="text" id="m-colour" list="colour-list" placeholder="e.g. Natural, Black..."><datalist id="colour-list"></datalist></div>
       </div>
       <div class="frow">
-        <div class="fg"><label>Total production (Kg) — auto</label><input type="number" id="m-tprod" placeholder="0" readonly style="background:var(--bg3)"></div>
-        <div class="fg"><label>Total stock (Kg) — auto</label><input type="number" id="m-tstock" placeholder="0" readonly style="background:var(--bg3);color:var(--acc);font-weight:700;"><div class="calc-note">FG opening + production - dispatched (from dispatch page)</div></div>
+        <div class="fg"><label>Production 2 (Kg) — if 2 colours today</label><input type="number" id="m-tprod2" placeholder="0 (optional)"></div>
+        <div class="fg"><label>Colour 2 — if 2 colours today</label><input type="text" id="m-colour2" list="colour-list" placeholder="Optional 2nd colour"></div>
       </div>
       <input type="hidden" id="m-disp" value="0">
-      <div class="frow"><div class="fg"><label>Colour / Grade</label><input type="text" id="m-colour" list="colour-list" placeholder="e.g. Natural, Black, White..."><datalist id="colour-list"></datalist></div><div class="fg"><label>Notes</label><input type="text" id="m-notes" placeholder="Any notes..."></div></div>
+      <input type="hidden" id="m-rmop" value="0">
+      <input type="hidden" id="m-fgop" value="0">
+      <input type="hidden" id="m-tstock" value="0">
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="m-notes" placeholder="Any notes..."></div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('mis-modal')">Cancel</button><button class="btn btn-green" onclick="saveMIS()">Save Entry</button></div>
   </div>
@@ -961,7 +964,8 @@ tr:hover td{background:#fafaf9;}
       <div class="frow"><div class="fg"><label>Rate per Kg (₹)</label><input type="number" id="d-rate" placeholder="0" oninput="calcDispatchAmt()"></div><div class="fg"><label>Amount (₹) — auto</label><input type="number" id="d-amt" readonly style="background:var(--bg3)"></div></div>
       <div class="frow"><div class="fg"><label>Vehicle no</label><input type="text" id="d-veh" placeholder="MH 01 AB 1234"></div><div class="fg"><label>LR no</label><input type="text" id="d-lr" placeholder="LR number"></div></div>
       <div class="frow"><div class="fg"><label>Invoice no</label><input type="text" id="d-inv" placeholder="Invoice number"></div><div class="fg"><label>Destination</label><input type="text" id="d-dest" placeholder="City/State"></div></div>
-      <div class="frow"><div class="fg"><label>Status</label><select id="d-status"><option>Dispatched</option><option>In Transit</option><option>Delivered</option><option>Returned</option></select></div><div class="fg"><label>Notes</label><input type="text" id="d-notes" placeholder="Optional"></div></div>
+      <div class="frow"><div class="fg"><label>Colour / Grade</label><input type="text" id="d-colour" list="colour-list" placeholder="e.g. Natural, Black..."></div><div class="fg"><label>Status</label><select id="d-status"><option>Dispatched</option><option>In Transit</option><option>Delivered</option><option>Returned</option></select></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="d-notes" placeholder="Optional"></div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('dispatch-modal')">Cancel</button><button class="btn btn-green" onclick="saveDispatch()">Save</button></div>
   </div>
@@ -1502,8 +1506,8 @@ async function loadAll(){
     const active=document.querySelector('.page.active')?.id?.replace('page-','');
     if(active)renderPage(active);
   }catch(e){
-    document.getElementById('last-sync').textContent='Error: '+e.message;
-    toast('Load error: '+e.message,'err');
+    document.getElementById('last-sync').textContent='Sync error';
+    toast('Connection issue — retrying...','err');setTimeout(loadAll,3000);
     console.error('loadAll error:',e);
   }
 }
@@ -1517,15 +1521,15 @@ async function saveMIS(){
     washing_run_day:parseFloat(g('m-wrd'))||0,agglo_run_day:parseFloat(g('m-ard'))||0,extruder_run_day:parseFloat(g('m-erd'))||0,
     washing_run_night:parseFloat(g('m-wrn'))||0,agglo_run_night:parseFloat(g('m-arn'))||0,extruder_run_night:parseFloat(g('m-ern'))||0,
     washing_kg:parseFloat(g('m-wkg'))||0,agglo_kg:parseFloat(g('m-akg'))||0,extruder_kg:parseFloat(g('m-ekg'))||0,
-    total_production_kg:parseFloat(g('m-ekg'))||0,
+    total_production_kg:(parseFloat(g('m-tprod'))||0)+(parseFloat(g('m-tprod2'))||0),
     issue_day:g('m-issd'),issue_night:g('m-issn'),
-    raw_stock_opening_kg:parseFloat(g('m-rmop'))||0,fg_stock_opening_kg:parseFloat(g('m-fgop'))||0,
+    raw_stock_opening_kg:0,fg_stock_opening_kg:0,
     dispatched_kg:(()=>{
       const date=g('m-date');
       if(!date||!DATA.dispatches)return 0;
       return DATA.dispatches.filter(r=>r.dispatch_date===date).reduce((a,r)=>a+Number(r.qty_kg||0),0);
-    })(),total_stock_kg:parseFloat(g('m-tstock'))||0,
-    colour:g('m-colour')||'',notes:g('m-notes'),updated_at:new Date().toISOString()
+    })(),total_stock_kg:0,
+    colour:(g('m-colour')||'')+(g('m-colour2')&&g('m-colour2').trim()?'+'+g('m-colour2').trim():''),notes:g('m-notes'),updated_at:new Date().toISOString()
   };
   if(!row.entry_date){toast('Please select a date','err');return;}
   const{error}=editId?await sb.from('mis_entries').update(row).eq('id',editId):await sb.from('mis_entries').insert(row);
@@ -1563,7 +1567,8 @@ async function saveStock(){
 
 async function saveDispatch(){
   const g=id=>document.getElementById(id)?.value;
-  const row={dispatch_date:g('d-date'),month_year:g('d-date')?fmtMonthYear(g('d-date')):'',customer:g('d-cust'),material_type:g('d-mat'),qty_kg:parseFloat(g('d-qty'))||0,rate_per_kg:parseFloat(g('d-rate'))||0,amount:parseFloat(g('d-amt'))||0,vehicle_no:g('d-veh'),lr_no:g('d-lr'),invoice_no:g('d-inv'),destination:g('d-dest'),status:g('d-status'),notes:g('d-notes'),updated_at:new Date().toISOString()};
+  const dColour=document.getElementById('d-colour')?.value?.trim()||'';
+  const row={dispatch_date:g('d-date'),month_year:g('d-date')?fmtMonthYear(g('d-date')):'',customer:g('d-cust'),material_type:g('d-mat'),qty_kg:parseFloat(g('d-qty'))||0,rate_per_kg:parseFloat(g('d-rate'))||0,amount:parseFloat(g('d-amt'))||0,vehicle_no:g('d-veh'),lr_no:g('d-lr'),invoice_no:g('d-inv'),destination:g('d-dest'),status:g('d-status'),notes:(dColour?'Colour:'+dColour+(g('d-notes')?' | '+g('d-notes'):''):g('d-notes')),updated_at:new Date().toISOString()};
   if(!row.dispatch_date||!row.customer){toast('Date and customer required','err');return;}
   const{error}=editId?await sb.from('dispatches').update(row).eq('id',editId):await sb.from('dispatches').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
@@ -1867,30 +1872,26 @@ function renderMIS(){
       </td></tr>`;
   }).join('')||'<tr><td colspan="14" style="text-align:center;padding:20px;color:var(--txt2);">No entries for '+m+'</td></tr>';
 
-  destroyChart('prod');destroyChart('run');
+  destroyChart('prod');destroyChart('cumProd');
   const asc=[...sorted].reverse();
   const labels=asc.map(r=>fmtDate(r.entry_date));
-  charts.prod=new Chart(document.getElementById('prodChart'),{type:'bar',data:{labels,datasets:[{label:'Prod',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:'#1D9E75',borderRadius:3},{label:'Tgt',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.4,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
-  // Avg running time summary cards
-  const avgW=sorted.length>0?(sorted.reduce((a,r)=>a+parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0),0)/sorted.length).toFixed(1):0;
-  const avgA=sorted.length>0?(sorted.reduce((a,r)=>a+parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0),0)/sorted.length).toFixed(1):0;
-  const avgE=sorted.length>0?(sorted.reduce((a,r)=>a+parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0),0)/sorted.length).toFixed(1):0;
-  const avgRunEl=document.getElementById('mis-avg-running');
-  if(avgRunEl){
-    avgRunEl.innerHTML=[
-      {name:'Washing Line',avg:avgW,col:'#3b82f6'},
-      {name:'Agglo (1+2)',avg:avgA,col:'#1D9E75'},
-      {name:'Extruder',avg:avgE,col:'#d97706'}
-    ].map(m=>`<div style="background:var(--bg3);border-radius:var(--rad);padding:14px;text-align:center;">
-      <div style="font-size:10px;color:var(--txt2);margin-bottom:6px;font-weight:600;text-transform:uppercase;">${m.name}</div>
-      <div style="font-size:28px;font-weight:700;color:${m.col};">${m.avg}h</div>
-      <div style="font-size:10px;color:var(--txt2);margin-top:4px;">avg per day (of 24h)</div>
-      <div style="height:5px;background:var(--bg2);border-radius:10px;margin-top:8px;overflow:hidden;">
-        <div style="height:100%;width:${Math.round(m.avg/24*100)}%;background:${m.col};border-radius:10px;"></div>
-      </div>
-    </div>`).join('');
+  // Daily production vs target chart
+  charts.prod=new Chart(document.getElementById('prodChart'),{type:'bar',data:{labels,datasets:[{label:'Prod',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:3},{label:'Tgt',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.4,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
+  // Cumulative production vs target chart
+  let cumP=0,cumT=0;
+  const cumPData=asc.map(r=>{cumP+=Number(r.total_production_kg||0);return cumP;});
+  const cumTData=asc.map(r=>{cumT+=Number(r.target_kg||1500);return cumT;});
+  if(document.getElementById('cumChart')){
+    destroyChart('cumChart');
+    charts.cumProd=new Chart(document.getElementById('cumChart'),{
+      type:'line',
+      data:{labels,datasets:[
+        {label:'Cumulative production',data:cumPData,borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.08)',fill:true,tension:0.3,pointRadius:2,borderWidth:2},
+        {label:'Cumulative target',data:cumTData,borderColor:'#2563eb',borderDash:[5,4],fill:false,tension:0,pointRadius:0,borderWidth:1.5}
+      ]},
+      options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:10},color:TC(),boxWidth:10}}},scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,maxTicksLimit:10}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}
+    });
   }
-  charts.run=new Chart(document.getElementById('runChart'),{type:'bar',data:{labels,datasets:[{label:'Washing',data:asc.map(r=>parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0)),backgroundColor:'#3b82f6',borderRadius:3},{label:'Agglo',data:asc.map(r=>parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0)),backgroundColor:'#1D9E75',borderRadius:3},{label:'Extruder',data:asc.map(r=>parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0)),backgroundColor:'#d97706',borderRadius:3}]},options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:10},color:TC(),boxWidth:10}}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,max:24,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}});
 }
 
 function renderInventory(){
@@ -1936,10 +1937,18 @@ function renderInventory(){
 
 function renderStock(){
   const m=getMonth('stock-month');
+  // Auto-calculate FG produced from MIS entries for this month
+  const fgProducedAuto=filterByMonth(DATA.mis,'month_year',m).reduce((a,r)=>a+Number(r.total_production_kg||0),0);
+  // Auto-calculate FG dispatched from dispatch entries for this month
+  const fgDispatchedAuto=DATA.dispatches.filter(r=>r.month_year===m).reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  // Update fg_produced and fg_dispatched silently in DB
   const sm=DATA.stock.find(r=>r.month_year===m)||DATA.stock[0];
   if(sm){
+    if(Math.abs(Number(sm.fg_produced_kg)-fgProducedAuto)>0.1||Math.abs(Number(sm.fg_dispatched_kg)-fgDispatchedAuto)>0.1){
+      sb.from('stock_movements').update({fg_produced_kg:fgProducedAuto,fg_dispatched_kg:fgDispatchedAuto,updated_at:new Date().toISOString()}).eq('id',sm.id).then(()=>{});
+    }
     const rmClose=Number(sm.rm_opening_kg)+Number(sm.rm_purchased_kg)-Number(sm.rm_consumed_kg);
-    const fgClose=Number(sm.fg_opening_kg)+Number(sm.fg_produced_kg)-Number(sm.fg_dispatched_kg);
+    const fgClose=Number(sm.fg_opening_kg)+fgProducedAuto-fgDispatchedAuto;
     document.getElementById('stock-metrics').innerHTML=`
       <div class="mc"><div class="lb">RM Opening</div><div class="vl blue">${(Number(sm.rm_opening_kg)/1000).toFixed(1)} T</div></div>
       <div class="mc"><div class="lb">RM Closing (auto)</div><div class="vl green">${(rmClose/1000).toFixed(1)} T</div></div>
@@ -2899,7 +2908,10 @@ function redownloadPDF(id){
 }
 
 // ===== BREAKDOWN PAGE =====
-function renderBreakdownPage(){
+async function renderBreakdownPage(){
+  // Force reload breakdown data directly
+  const{data:freshBD}=await sb.from('breakdowns').select('*').order('breakdown_date',{ascending:false});
+  if(freshBD)DATA.bd=freshBD;
   const m=getMonth('bd-month');
   const bd=DATA.bd.filter(r=>{
     if(!m||m==='all')return true;
