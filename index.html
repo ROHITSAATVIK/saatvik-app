@@ -8,14 +8,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root{--acc:#1D9E75;--acc2:#2563eb;--bg:#f4f4f2;--bg2:#fff;--bg3:#f0efe8;--txt:#18181b;--txt2:#71717a;--txt3:#a1a1aa;--bdr:rgba(0,0,0,0.09);--bdr2:rgba(0,0,0,0.15);--rad:8px;--rad2:12px;}
+:root{--acc:#1D9E75;--acc2:#2563eb;--bg:#ebebea;--bg2:#fff;--bg3:#e8e8e6;--txt:#18181b;--txt2:#6b7280;--txt3:#9ca3af;--bdr:rgba(0,0,0,0.08);--bdr2:rgba(0,0,0,0.13);--rad:8px;--rad2:12px;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);font-size:13px;}
+body{font-family:'Verdana',Geneva,Tahoma,sans-serif;background:#f0efeb;color:var(--txt);font-size:13px;}
 .app{display:flex;min-height:100vh;}
 
 /* LOGIN PAGE */
 .login-page{display:flex;min-height:100vh;align-items:center;justify-content:center;background:var(--bg);}
-.login-box{background:var(--bg2);border:1px solid var(--bdr2);border-radius:16px;padding:40px 36px;width:380px;max-width:95vw;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.1);}
+.login-box{background:#fff;border:1px solid var(--bdr2);border-radius:16px;padding:40px 36px;width:380px;max-width:95vw;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.08);}
 .login-logo{width:52px;height:52px;border-radius:14px;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;}
 .login-title{font-size:20px;font-weight:700;color:var(--txt);margin-bottom:4px;}
 .login-sub{font-size:12px;color:var(--txt2);margin-bottom:28px;}
@@ -33,7 +33,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .logout-btn{padding:4px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);background:transparent;font-size:11px;cursor:pointer;color:var(--txt2);}
 .logout-btn:hover{background:#fee2e2;color:#b91c1c;border-color:#fecaca;}
 /* SIDEBAR */
-.sidebar{width:210px;min-width:210px;background:var(--bg2);border-right:1px solid var(--bdr);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar{width:210px;min-width:210px;background:#f7f7f5;border-right:1px solid var(--bdr);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
 .logo{padding:14px 16px;border-bottom:1px solid var(--bdr);}
 .logo-name{font-size:13px;font-weight:700;color:var(--txt);}
 .logo-sub{font-size:10px;color:var(--txt2);margin-top:1px;}
@@ -53,7 +53,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 /* MAIN */
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0;}
-.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:30;}
+.topbar{background:#f7f7f5;border-bottom:1px solid var(--bdr);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:30;}
 .topbar-title{font-size:14px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:8px;}
 .tb-right{display:flex;align-items:center;gap:8px;}
 .month-selector{padding:5px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);background:var(--bg2);color:var(--txt);font-size:12px;font-family:inherit;cursor:pointer;}
@@ -84,7 +84,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .mc .sb{font-size:10px;color:var(--txt2);margin-top:2px;}
 .green{color:#15803d!important;}.red{color:#b91c1c!important;}.amber{color:#b45309!important;}.blue{color:#1d4ed8!important;}
 /* CARDS */
-.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rad2);overflow:hidden;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.card{background:#fff;border:0.5px solid var(--bdr);border-radius:var(--rad2);overflow:hidden;margin-bottom:14px;}
 .card-head{padding:10px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
 .card-title{font-size:12px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:6px;}
 .card-body{padding:14px;}
@@ -234,35 +234,49 @@ tr:hover td{background:#fafaf9;}
     </div>
   </div>
   <div class="content">
-    <div class="metrics g4" id="mfg-dash-metrics"></div>
-    <div class="g2">
+    <!-- ROW 1: 6 key metrics -->
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;" id="mfg-dash-metrics"></div>
+
+    <!-- ROW 2: Colour production + Tasks -->
+    <div class="g2" style="margin-bottom:0;">
       <div>
+        <!-- Colour production breakdown -->
         <div class="card">
-          <div class="card-head"><div class="card-title">Machine uptime — avg running time</div></div>
+          <div class="card-head">
+            <div class="card-title">Production by colour / grade</div>
+            <div id="dash-colour-total" style="font-size:11px;color:var(--txt2);"></div>
+          </div>
+          <div class="card-body" id="dash-colour-breakdown"></div>
+        </div>
+        <!-- Machine uptime -->
+        <div class="card">
+          <div class="card-head"><div class="card-title">Machine avg running hrs/day</div><div style="font-size:11px;color:var(--txt2);">Target: 20h</div></div>
           <div class="card-body" id="mfg-dash-machines"></div>
         </div>
-        <div class="card">
-          <div class="card-head"><div class="card-title">Avg running hours/day — this month</div></div>
-          <div class="card-body"><div style="position:relative;height:130px;"><canvas id="dashMachineAvg" role="img" aria-label="Avg machine running hours">Machine avg</canvas></div></div>
-        </div>
+        <!-- Daily production chart -->
         <div class="card">
           <div class="card-head"><div class="card-title">Daily production vs target</div></div>
-          <div class="card-body"><div style="position:relative;height:150px;"><canvas id="dashProdChart" role="img" aria-label="Production chart">Daily production</canvas></div></div>
+          <div class="card-body"><div style="position:relative;height:140px;"><canvas id="dashProdChart" role="img" aria-label="Production chart">Daily production</canvas></div></div>
         </div>
       </div>
       <div>
+        <!-- Tasks -->
         <div class="card">
-          <div class="card-head"><div class="card-title">Alerts</div></div>
+          <div class="card-head"><div class="card-title">Open tasks</div><button class="btn btn-sm" onclick="goTo('tasks')">View all</button></div>
           <div id="mfg-dash-alerts"></div>
-          <div style="padding:8px 14px;"><button class="btn btn-green" style="width:100%" onclick="goTo('tasks')">View all tasks →</button></div>
         </div>
+        <!-- Stock flow -->
         <div class="card">
           <div class="card-head"><div class="card-title">Stock flow — this month</div></div>
           <div class="card-body" id="mfg-dash-stock"></div>
         </div>
+        <!-- Spare parts below 50% -->
         <div class="card">
-          <div class="card-head"><div class="card-title">Low stock items</div><button class="btn btn-sm" onclick="goTo('inventory')">View all</button></div>
-          <div class="tw"><table><thead><tr><th>Item</th><th>Stock</th><th>Min</th><th>Status</th></tr></thead><tbody id="mfg-dash-inv"></tbody></table></div>
+          <div class="card-head">
+            <div class="card-title">Spare parts — below 50%</div>
+            <button class="btn btn-sm" onclick="goTo('inventory')">View all</button>
+          </div>
+          <div id="mfg-dash-inv"></div>
         </div>
       </div>
     </div>
@@ -893,7 +907,7 @@ tr:hover td{background:#fafaf9;}
         <div class="fg"><label>Total stock (Kg) — auto</label><input type="number" id="m-tstock" placeholder="0" readonly style="background:var(--bg3);color:var(--acc);font-weight:700;"><div class="calc-note">FG opening + production - dispatched (from dispatch page)</div></div>
       </div>
       <input type="hidden" id="m-disp" value="0">
-      <div class="frow frow-1"><div class="fg"><label>Notes</label><textarea id="m-notes" placeholder="Any notes..."></textarea></div></div>
+      <div class="frow"><div class="fg"><label>Colour / Grade</label><input type="text" id="m-colour" list="colour-list" placeholder="e.g. Natural, Black, White..."><datalist id="colour-list"></datalist></div><div class="fg"><label>Notes</label><input type="text" id="m-notes" placeholder="Any notes..."></div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('mis-modal')">Cancel</button><button class="btn btn-green" onclick="saveMIS()">Save Entry</button></div>
   </div>
@@ -1321,6 +1335,7 @@ function openModal(id,rowId){
         document.getElementById('m-issd').value=r.issue_day||'None';
         document.getElementById('m-issn').value=r.issue_night||'None';
         document.getElementById('m-tprod').value=r.total_production_kg||0;
+        document.getElementById('m-colour').value=r.colour||'';
         calcDT();
       }
     } else {
@@ -1480,6 +1495,10 @@ async function loadAll(){
     DATA.trdPur=tp.data||[];DATA.trdSal=ts.data||[];DATA.trdMat=tm.data||[];
     DATA.invMov=invmov.data||[];
     document.getElementById('last-sync').textContent='Synced ✓ '+new Date().toLocaleTimeString('en-IN');
+    // Populate colour datalist from production colours + existing MIS entries
+    const colours=new Set([...(DATA.mis||[]).map(r=>r.colour).filter(Boolean)]);
+    const dl=document.getElementById('colour-list');
+    if(dl)dl.innerHTML=[...colours].map(c=>`<option value="${c}">`).join('');
     const active=document.querySelector('.page.active')?.id?.replace('page-','');
     if(active)renderPage(active);
   }catch(e){
@@ -1505,7 +1524,7 @@ async function saveMIS(){
       if(!date||!DATA.dispatches)return 0;
       return DATA.dispatches.filter(r=>r.dispatch_date===date).reduce((a,r)=>a+Number(r.qty_kg||0),0);
     })(),total_stock_kg:parseFloat(g('m-tstock'))||0,
-    notes:g('m-notes'),updated_at:new Date().toISOString()
+    colour:g('m-colour')||'',notes:g('m-notes'),updated_at:new Date().toISOString()
   };
   if(!row.entry_date){toast('Please select a date','err');return;}
   const{error}=editId?await sb.from('mis_entries').update(row).eq('id',editId):await sb.from('mis_entries').insert(row);
@@ -1639,34 +1658,119 @@ function renderMfgDashboard(){
   const totalProd=mis.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
   const totalTgt=mis.reduce((a,r)=>a+Number(r.target_kg||0),0);
   const avgEff=totalTgt>0?Math.round((totalProd/totalTgt)*100):0;
-  const outstanding=DATA.inv.filter(r=>Number(r.current_stock)<Number(r.minimum_stock)).length;
+  const totalDisp=DATA.dispatches.filter(r=>r.month_year===m).reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  const fgStock=Math.max(0,totalProd-totalDisp);
   const p1=DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').length;
-  const totalDisp=mis.reduce((a,r)=>a+Number(r.dispatched_kg||0),0);
-  document.getElementById('mfg-dash-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Production (${m})</div><div class="vl green">${Number(totalProd).toLocaleString('en-IN')} Kg</div><div class="sb">Target: ${Number(totalTgt).toLocaleString('en-IN')} Kg</div></div>
-    <div class="mc"><div class="lb">Avg efficiency</div><div class="vl ${avgEff>=90?'green':avgEff>=70?'amber':'red'}">${avgEff}%</div><div class="sb">${mis.length} days logged</div></div>
-    <div class="mc"><div class="lb">Dispatched</div><div class="vl">${Number(totalDisp).toLocaleString('en-IN')} Kg</div></div>
-    <div class="mc"><div class="lb">P1 tasks open</div><div class="vl amber">${p1}</div><div class="sb">${outstanding} low stock items</div></div>`;
+  const p2=DATA.tasks.filter(r=>r.priority==='P2'&&r.status==='open').length;
+  const critBD=DATA.bd.filter(r=>r.status==='Critical').length;
+  const daysInMonth=30;
+  const dayOfMonth=new Date().getDate();
+  const monthlyTarget=daysInMonth*1500;
 
-  // Machines uptime
+  // 6 key metrics
+  document.getElementById('mfg-dash-metrics').innerHTML=`
+    <div style="background:#fff;border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);">
+      <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">Production</div>
+      <div style="font-size:20px;font-weight:700;color:#1D9E75;">${(totalProd/1000).toFixed(1)}T</div>
+      <div style="font-size:10px;color:var(--txt2);margin-top:2px;">of ${(monthlyTarget/1000).toFixed(0)}T target</div>
+      <div style="height:3px;background:var(--bg3);border-radius:3px;margin-top:6px;overflow:hidden;"><div style="height:100%;width:${Math.min(100,Math.round(totalProd/monthlyTarget*100))}%;background:#1D9E75;"></div></div>
+    </div>
+    <div style="background:#fff;border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);">
+      <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">Efficiency</div>
+      <div style="font-size:20px;font-weight:700;color:${avgEff>=85?'#1D9E75':avgEff>=70?'#d97706':'#dc2626'};">${avgEff}%</div>
+      <div style="font-size:10px;color:var(--txt2);margin-top:2px;">Target: 85%</div>
+      <div style="height:3px;background:var(--bg3);border-radius:3px;margin-top:6px;overflow:hidden;"><div style="height:100%;width:${avgEff}%;background:${avgEff>=85?'#1D9E75':avgEff>=70?'#d97706':'#dc2626'};"></div></div>
+    </div>
+    <div style="background:#fff;border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);">
+      <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">Dispatched</div>
+      <div style="font-size:20px;font-weight:700;">${(totalDisp/1000).toFixed(1)}T</div>
+      <div style="font-size:10px;color:var(--txt2);margin-top:2px;">this month</div>
+    </div>
+    <div style="background:#fff;border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);">
+      <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">FG in hand</div>
+      <div style="font-size:20px;font-weight:700;color:#2563eb;">${Number(fgStock).toLocaleString('en-IN')}</div>
+      <div style="font-size:10px;color:var(--txt2);margin-top:2px;">Kg stock</div>
+    </div>
+    <div style="background:${p1>0?'#fffbeb':'#fff'};border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);${p1>0?'border-left:3px solid #d97706;':''}">
+      <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">Open tasks</div>
+      <div style="font-size:20px;font-weight:700;color:${p1>0?'#d97706':'#1D9E75'};">${p1+p2}</div>
+      <div style="font-size:10px;color:var(--txt2);margin-top:2px;">${p1} P1 · ${p2} P2</div>
+    </div>
+    <div style="background:${critBD>0?'#fef2f2':'#fff'};border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);${critBD>0?'border-left:3px solid #dc2626;':''}">
+      <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">Critical</div>
+      <div style="font-size:20px;font-weight:700;color:${critBD>0?'#dc2626':'#1D9E75'};">${critBD}</div>
+      <div style="font-size:10px;color:var(--txt2);margin-top:2px;">breakdowns</div>
+    </div>`;
+
+  // Colour production breakdown
+  const colourMap={};
+  mis.forEach(r=>{
+    if(r.colour&&r.colour.trim()){
+      const c=r.colour.trim();
+      colourMap[c]=(colourMap[c]||0)+Number(r.total_production_kg||0);
+    } else {
+      colourMap['Untagged']=(colourMap['Untagged']||0)+Number(r.total_production_kg||0);
+    }
+  });
+  const colourEntries=Object.entries(colourMap).sort((a,b)=>b[1]-a[1]);
+  const colourBars=['#6b7280','#1a1a1a','#9ca3af','#d97706','#1D9E75','#2563eb','#dc2626','#7c3aed'];
+  const colEl=document.getElementById('dash-colour-breakdown');
+  const totEl=document.getElementById('dash-colour-total');
+  if(totEl)totEl.textContent=`${(totalProd/1000).toFixed(1)}T total`;
+  if(colEl){
+    if(colourEntries.length===0){
+      colEl.innerHTML='<div style="font-size:12px;color:var(--txt2);text-align:center;padding:16px;">No colour data yet — add colour/grade when entering MIS</div>';
+    } else {
+      colEl.innerHTML=colourEntries.map(([colour,kg],i)=>`
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+            <span style="font-size:12px;">${colour}</span>
+            <span style="font-size:12px;font-weight:700;">${Number(kg).toLocaleString('en-IN')} Kg <span style="color:var(--txt2);font-weight:400;">(${totalProd>0?Math.round(kg/totalProd*100):0}%)</span></span>
+          </div>
+          <div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;">
+            <div style="height:100%;width:${totalProd>0?Math.round(kg/totalProd*100):0}%;background:${colourBars[i%colourBars.length]};border-radius:4px;"></div>
+          </div>
+        </div>`).join('');
+    }
+  }
+
+  // Machine uptime bars
   const totalH=mis.length*24;
   const machData=[
     {n:'Washing',dt:mis.reduce((a,r)=>a+(12-Number(r.washing_run_day||0))+(12-Number(r.washing_run_night||0)),0)},
     {n:'Agglo',dt:mis.reduce((a,r)=>a+(12-Number(r.agglo_run_day||0))+(12-Number(r.agglo_run_night||0)),0)},
     {n:'Extruder',dt:mis.reduce((a,r)=>a+(12-Number(r.extruder_run_day||0))+(12-Number(r.extruder_run_night||0)),0)},
   ];
+  const avgRunPerDay=(m)=>{
+    if(!mis.length)return 0;
+    const field={'Washing':'washing_run','Agglo':'agglo_run','Extruder':'extruder_run'};
+    const base=field[m]||'washing_run';
+    return(mis.reduce((a,r)=>a+Number(r[base+'_day']||0)+Number(r[base+'_night']||0),0)/mis.length).toFixed(1);
+  };
   document.getElementById('mfg-dash-machines').innerHTML=machData.map(m=>{
-    const run=totalH>0?Math.round(((totalH-m.dt)/totalH)*100):0;
-    const col=run>=80?'#1D9E75':run>=50?'#d97706':'#dc2626';
-    return`<div class="pbar-row"><div class="pbar-label">${m.n}</div><div class="pbar-outer"><div class="pbar-fill" style="width:${run}%;background:${col};"></div></div><div class="pbar-val">${run}%</div></div>`;
-  }).join('');
+    const avg=avgRunPerDay(m.n);
+    const pct=Math.round(avg/24*100);
+    const col=avg>=20?'#1D9E75':avg>=14?'#d97706':'#dc2626';
+    return`<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:12px;">${m.n}</span>
+        <span style="font-size:12px;font-weight:700;color:${col};">${avg}h/day</span>
+      </div>
+      <div style="height:6px;background:var(--bg3);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:${col};border-radius:4px;"></div>
+      </div>
+    </div>`;
+  }).join('')+'<div style="font-size:10px;color:var(--txt2);margin-top:4px;">Target: 20h per machine per day</div>';
 
-  // Alerts — show P1 tasks + critical breakdowns
-  const alerts=[];
-  DATA.bd.filter(r=>r.status==='Critical').forEach(r=>alerts.push({t:'red',icon:'🔴',m:`${r.machine} — ${r.reason}`}));
-  DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').forEach(r=>alerts.push({t:'amber',icon:'📌',m:`${r.task_description}${r.assigned_to?' — '+r.assigned_to:''}`}));
-  DATA.tasks.filter(r=>r.priority==='P2'&&r.status==='open').slice(0,2).forEach(r=>alerts.push({t:'blue',icon:'📋',m:`${r.task_description}`}));
-  document.getElementById('mfg-dash-alerts').innerHTML=alerts.slice(0,8).map(a=>`<div style="padding:7px 13px;font-size:11px;display:flex;gap:7px;align-items:flex-start;border-bottom:1px solid var(--bdr);background:${a.t==='red'?'#fef2f2':a.t==='blue'?'#eff6ff':'#fffbeb'};color:${a.t==='red'?'#991b1b':a.t==='blue'?'#1e40af':'#92400e'};">${a.icon} ${a.m}</div>`).join('')||'<div style="padding:14px;font-size:12px;color:var(--txt2);">No open tasks ✓</div>';
+  // Tasks panel
+  const allTasks=[...DATA.tasks.filter(r=>r.status==='open')].sort((a,b)=>{const o={P1:1,P2:2,P3:3};return(o[a.priority]||4)-(o[b.priority]||4);});
+  document.getElementById('mfg-dash-alerts').innerHTML=allTasks.slice(0,6).map(r=>{
+    const col=r.priority==='P1'?{bg:'#fef2f2',txt:'#b91c1c',badge:'#fee2e2'}:{bg:'#fffbeb',txt:'#92400e',badge:'#fef3c7'};
+    return`<div style="padding:8px 13px;display:flex;gap:8px;align-items:flex-start;border-bottom:1px solid var(--bdr);background:${col.bg};">
+      <span style="font-size:10px;background:${col.badge};color:${col.txt};padding:2px 6px;border-radius:4px;white-space:nowrap;font-weight:600;">${r.priority}</span>
+      <span style="font-size:12px;color:${col.txt};">${r.task_description}${r.assigned_to?' — '+r.assigned_to:''}</span>
+    </div>`;
+  }).join('')||'<div style="padding:16px;font-size:12px;color:var(--txt2);text-align:center;">No open tasks ✓</div>';
 
   // Stock flow
   const sm=DATA.stock.find(r=>r.month_year===m)||DATA.stock[0];
@@ -1674,44 +1778,55 @@ function renderMfgDashboard(){
     const rmClose=Number(sm.rm_opening_kg)+Number(sm.rm_purchased_kg)-Number(sm.rm_consumed_kg);
     const fgClose=Number(sm.fg_opening_kg)+Number(sm.fg_produced_kg)-Number(sm.fg_dispatched_kg);
     document.getElementById('mfg-dash-stock').innerHTML=`
-      <div style="font-size:10px;color:var(--txt2);margin-bottom:6px;">RM</div>
-      <div class="sf">
-        <div class="sfb"><div class="sl">Opening</div><div class="sv blue">${(Number(sm.rm_opening_kg)/1000).toFixed(1)}T</div></div>
-        <div class="sfa">+</div><div class="sfb"><div class="sl">Purchased</div><div class="sv green">${(Number(sm.rm_purchased_kg)/1000).toFixed(1)}T</div></div>
-        <div class="sfa">−</div><div class="sfb"><div class="sl">Consumed</div><div class="sv amber">${(Number(sm.rm_consumed_kg)/1000).toFixed(1)}T</div></div>
-        <div class="sfa">=</div><div class="sfb" style="background:#dcfce7;"><div class="sl" style="color:#15803d;">Closing</div><div class="sv green">${(rmClose/1000).toFixed(1)}T</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div style="background:#f0fdf4;border-radius:6px;padding:10px;text-align:center;">
+          <div style="font-size:10px;color:#15803d;">RM opening</div>
+          <div style="font-size:16px;font-weight:700;color:#15803d;">${(Number(sm.rm_opening_kg)/1000).toFixed(1)}T</div>
+        </div>
+        <div style="background:#f0fdf4;border-radius:6px;padding:10px;text-align:center;">
+          <div style="font-size:10px;color:#15803d;">RM closing</div>
+          <div style="font-size:16px;font-weight:700;color:#15803d;">${(rmClose/1000).toFixed(1)}T</div>
+        </div>
+        <div style="background:#eff6ff;border-radius:6px;padding:10px;text-align:center;">
+          <div style="font-size:10px;color:#1d4ed8;">FG produced</div>
+          <div style="font-size:16px;font-weight:700;color:#1d4ed8;">${(Number(sm.fg_produced_kg)/1000).toFixed(1)}T</div>
+        </div>
+        <div style="background:#eff6ff;border-radius:6px;padding:10px;text-align:center;">
+          <div style="font-size:10px;color:#1d4ed8;">FG dispatched</div>
+          <div style="font-size:16px;font-weight:700;color:#1d4ed8;">${(Number(sm.fg_dispatched_kg)/1000).toFixed(1)}T</div>
+        </div>
       </div>
-      <div style="font-size:10px;color:var(--txt2);margin:8px 0 6px;">FG</div>
-      <div class="sf">
-        <div class="sfb"><div class="sl">Opening</div><div class="sv blue">${(Number(sm.fg_opening_kg)/1000).toFixed(1)}T</div></div>
-        <div class="sfa">+</div><div class="sfb"><div class="sl">Produced</div><div class="sv green">${(Number(sm.fg_produced_kg)/1000).toFixed(1)}T</div></div>
-        <div class="sfa">−</div><div class="sfb"><div class="sl">Dispatched</div><div class="sv amber">${(Number(sm.fg_dispatched_kg)/1000).toFixed(1)}T</div></div>
-        <div class="sfa">=</div><div class="sfb" style="background:#dcfce7;"><div class="sl" style="color:#15803d;">Closing</div><div class="sv green">${(fgClose/1000).toFixed(1)}T</div></div>
+      <div style="background:var(--bg3);border-radius:6px;padding:10px;text-align:center;">
+        <div style="font-size:11px;color:var(--txt2);">FG in hand</div>
+        <div style="font-size:20px;font-weight:700;">${Number(fgClose).toLocaleString('en-IN')} Kg</div>
       </div>`;
+  } else {
+    document.getElementById('mfg-dash-stock').innerHTML='<div style="padding:14px;font-size:12px;color:var(--txt2);">No stock data — add from Stock Management</div>';
   }
 
-  // Low stock
-  document.getElementById('mfg-dash-inv').innerHTML=DATA.inv.filter(r=>Number(r.current_stock)<Number(r.minimum_stock)).map(r=>`<tr><td>${r.item_name}</td><td>${Number(r.current_stock).toLocaleString('en-IN')} ${r.uom}</td><td>${Number(r.minimum_stock).toLocaleString('en-IN')}</td><td>${badge('Low','red')}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;padding:12px;color:var(--txt2);">All stock levels OK ✓</td></tr>';
+  // Low stock below 50%
+  const lowItems=DATA.inv.filter(r=>{
+    const cs=Number(r.current_stock),ms=Number(r.minimum_stock);
+    return ms>0&&cs<ms*0.5;
+  }).sort((a,b)=>Number(a.current_stock)/Number(a.minimum_stock)-Number(b.current_stock)/Number(b.minimum_stock));
+  document.getElementById('mfg-dash-inv').innerHTML=lowItems.slice(0,5).map(r=>{
+    const pct=Number(r.minimum_stock)>0?Math.round(Number(r.current_stock)/Number(r.minimum_stock)*100):0;
+    const isOut=Number(r.current_stock)===0;
+    return`<div style="padding:10px 13px;border-bottom:1px solid var(--bdr);background:${isOut?'#fef2f2':'#fffbeb'};">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:12px;font-weight:600;">${r.item_name}</span>
+        <span style="font-size:11px;color:${isOut?'#dc2626':'#d97706'};font-weight:600;">${isOut?'Out of stock':pct+'% of min'}</span>
+      </div>
+      <div style="height:4px;background:var(--bg3);border-radius:3px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:${isOut?'#dc2626':'#d97706'};border-radius:3px;"></div>
+      </div>
+    </div>`;
+  }).join('')||'<div style="padding:16px;font-size:12px;color:var(--txt2);text-align:center;">All spare parts above 50% ✓</div>';
 
-  // Charts
+  // Daily production chart
   destroyChart('dashProd');
   const asc=[...mis].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
-  // Avg machine running time chart
-  const avgWash=mis.length>0?(mis.reduce((a,r)=>a+parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0),0)/mis.length).toFixed(1):0;
-  const avgAgglo=mis.length>0?(mis.reduce((a,r)=>a+parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0),0)/mis.length).toFixed(1):0;
-  const avgExt=mis.length>0?(mis.reduce((a,r)=>a+parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0),0)/mis.length).toFixed(1):0;
-  destroyChart('dashMachAvg');
-  if(document.getElementById('dashMachineAvg')){
-    charts.dashMachAvg=new Chart(document.getElementById('dashMachineAvg'),{
-      type:'bar',
-      data:{labels:['Washing','Agglo','Extruder'],datasets:[
-        {label:'Avg run hrs/day',data:[avgWash,avgAgglo,avgExt],backgroundColor:['#3b82f6','#1D9E75','#d97706'],borderRadius:6},
-        {label:'Target (20h)',data:[20,20,20],type:'line',borderColor:'#dc2626',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false}
-      ]},
-      options:{...BO(),plugins:{legend:{display:false}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,min:0,max:24,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}
-    });
-  }
-  charts.dashProd=new Chart(document.getElementById('dashProdChart'),{type:'bar',data:{labels:asc.map(r=>fmtDate(r.entry_date)),datasets:[{label:'Production',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:4},{label:'Target',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,autoSkip:false,maxRotation:0}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
+  charts.dashProd=new Chart(document.getElementById('dashProdChart'),{type:'bar',data:{labels:asc.map(r=>fmtDate(r.entry_date)),datasets:[{label:'Production',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:4},{label:'Target',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,autoSkip:true,maxRotation:0,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
 }
 
 function renderMIS(){
