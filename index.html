@@ -1478,7 +1478,7 @@ function openWA(){
 async function loadAll(){
   document.getElementById('last-sync').textContent='Syncing...';
   try{
-    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm]=await Promise.all([
+    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm,invmov]=await Promise.all([
       sb.from('mis_entries').select('*').order('entry_date',{ascending:false}),
       sb.from('inventory').select('*').order('item_name'),
       sb.from('stock_movements').select('*').order('created_at',{ascending:false}),
@@ -1502,8 +1502,9 @@ async function loadAll(){
     const active=document.querySelector('.page.active')?.id?.replace('page-','');
     if(active)renderPage(active);
   }catch(e){
-    document.getElementById('last-sync').textContent='Connection error';
-    toast('Failed to load data — check connection','err');
+    document.getElementById('last-sync').textContent='Error: '+e.message;
+    toast('Load error: '+e.message,'err');
+    console.error('loadAll error:',e);
   }
 }
 
