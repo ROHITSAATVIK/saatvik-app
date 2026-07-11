@@ -234,7 +234,7 @@ tr:hover td{background:#fafaf9;}
     </div>
   </div>
   <div class="content">
-    <!-- ROW 1: 6 key metrics -->
+    <!-- ROW 1: 4 key metrics -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;" id="mfg-dash-metrics"></div>
 
     <!-- ROW 2: Colour production + Tasks -->
@@ -352,7 +352,7 @@ tr:hover td{background:#fafaf9;}
     <!-- WHATSAPP PASTE BOX -->
     <div class="card" style="margin-bottom:14px;border-left:3px solid #25D366;">
       <div class="card-head">
-        <div class="card-title">📱 Paste Pandey Ji's WhatsApp message — AI updates stock automatically</div>
+        <div class="card-title">📱 Paste WhatsApp inventory message — updates stock automatically</div>
         <button class="btn btn-sm" onclick="toggleWABox()" id="wa-box-toggle">Hide</button>
       </div>
       <div class="card-body" id="wa-box-content">
@@ -942,7 +942,7 @@ tr:hover td{background:#fafaf9;}
         <div class="fg"><label>Consumed</label><input type="number" id="s-rmcon" placeholder="0" oninput="calcStockClose()"></div>
       </div>
       <div class="fg" style="margin-bottom:10px;"><label>Closing RM (auto)</label><input type="number" id="s-rmcl" readonly style="background:var(--bg3);font-weight:700;color:var(--acc);" placeholder="Auto"></div>
-      <div class="sec-label">Finished Goods (Kg) — closing auto-calculated</div>
+      <div class="sec-label">Finished Goods — auto from Production &amp; Dispatch</div>
       <div class="frow-3 frow">
         <div class="fg"><label>Opening</label><input type="number" id="s-fgop" placeholder="0" oninput="calcStockClose()"></div>
         <div class="fg"><label>Produced</label><input type="number" id="s-fgprod" placeholder="0" oninput="calcStockClose()"></div>
@@ -1357,8 +1357,21 @@ function openModal(id,rowId){
   }
   if(id==='stock-modal'){
     document.getElementById('stock-modal-t').textContent=isEdit?'Edit Entry':'Add Stock Movement';
-    if(isEdit){const r=DATA.stock.find(x=>x.id===rowId);if(r){document.getElementById('s-month').value=r.month_year;document.getElementById('s-rmop').value=r.rm_opening_kg;document.getElementById('s-rmbuy').value=r.rm_purchased_kg;document.getElementById('s-rmcon').value=r.rm_consumed_kg;document.getElementById('s-fgop').value=r.fg_opening_kg;document.getElementById('s-fgprod').value=r.fg_produced_kg;document.getElementById('s-fgdis').value=r.fg_dispatched_kg;calcStockClose();}}
-    else{['s-month','s-rmop','s-rmbuy','s-rmcon','s-fgop','s-fgprod','s-fgdis'].forEach(x=>document.getElementById(x).value='');document.getElementById('s-rmcl').value='';document.getElementById('s-fgcl').value='';}
+    if(isEdit){const r=DATA.stock.find(x=>x.id===rowId);if(r){document.getElementById('s-month').value=r.month_year;document.getElementById('s-rmop').value=r.rm_opening_kg;document.getElementById('s-rmbuy').value=r.rm_purchased_kg;document.getElementById('s-rmcon').value=r.rm_consumed_kg;document.getElementById('s-fgop').value=r.fg_opening_kg;
+      const mSt=r.month_year;
+      const autoP=filterByMonth(DATA.mis,'month_year',mSt).reduce((a,x)=>a+Number(x.total_production_kg||0),0);
+      const autoD=DATA.dispatches.filter(x=>x.month_year===mSt).reduce((a,x)=>a+Number(x.qty_kg||0),0);
+      document.getElementById('s-fgprod').value=autoP.toFixed(0);
+      document.getElementById('s-fgdis').value=autoD.toFixed(0);
+      calcStockClose();}}
+    else{['s-month','s-rmop','s-rmbuy','s-rmcon','s-fgop'].forEach(x=>document.getElementById(x).value='');document.getElementById('s-rmcl').value='';document.getElementById('s-fgcl').value='';
+      const mSt2=getMonth('stock-month');
+      const autoP2=filterByMonth(DATA.mis,'month_year',mSt2).reduce((a,x)=>a+Number(x.total_production_kg||0),0);
+      const autoD2=DATA.dispatches.filter(x=>x.month_year===mSt2).reduce((a,x)=>a+Number(x.qty_kg||0),0);
+      document.getElementById('s-fgprod').value=autoP2.toFixed(0);
+      document.getElementById('s-fgdis').value=autoD2.toFixed(0);
+      document.getElementById('s-month').value=mSt2;
+    }
   }
   if(id==='dispatch-modal'){
     document.getElementById('dispatch-modal-t').textContent=isEdit?'Edit Dispatch':'Add Dispatch';
@@ -1851,26 +1864,42 @@ function renderMIS(){
     <div class="mc"><div class="lb">Avg day manpower</div><div class="vl">${avgMPDay}</div><div class="sb">Day shift avg</div></div>
     <div class="mc"><div class="lb">Avg night manpower</div><div class="vl">${avgMPNight}</div><div class="sb">Night shift avg</div></div>`;
 
+  // Calculate running stock balance per day
+  const misAsc=[...sorted].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
+  let runningStock=0;
+  const stockByDate={};
+  const dispByDate={};
+  misAsc.forEach(r=>{
+    const todayDisp=DATA.dispatches.filter(d=>d.dispatch_date===r.entry_date).reduce((a,d)=>a+Number(d.qty_kg||0),0);
+    dispByDate[r.entry_date]=todayDisp;
+    runningStock=runningStock+Number(r.total_production_kg||0)-todayDisp;
+    stockByDate[r.entry_date]=Math.max(0,runningStock);
+  });
+
   document.getElementById('mis-tbody').innerHTML=sorted.map(r=>{
     const e=eff(r.total_production_kg,r.target_kg);
     const wRunTotal=(parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0)).toFixed(1);
     const aRunTotal=(parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0)).toFixed(1);
     const eRunTotal=(parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0)).toFixed(1);
+    const todayDisp=dispByDate[r.entry_date]||0;
+    const closingStock=stockByDate[r.entry_date]||0;
     return`<tr>
       <td>${fmtDate(r.entry_date)}</td>
       <td>${Number(r.target_kg).toLocaleString('en-IN')}</td>
-      <td>${Number(r.total_production_kg).toLocaleString('en-IN')}</td>
+      <td style="font-weight:600;">${Number(r.total_production_kg).toLocaleString('en-IN')}</td>
+      <td>${r.colour||'—'}</td>
       <td>${effBadge(e)}</td>
       <td>${r.manpower_day}</td><td>${r.manpower_night}</td>
       <td>${wRunTotal}h</td><td>${aRunTotal}h</td><td>${eRunTotal}h</td>
+      <td style="color:#d97706;">${todayDisp>0?Number(todayDisp).toLocaleString('en-IN'):'—'}</td>
+      <td style="font-weight:700;color:#1D9E75;">${Number(closingStock).toLocaleString('en-IN')} Kg</td>
       <td>${r.issue_day||'None'}</td><td>${r.issue_night||'None'}</td>
-      <td>${Number(r.dispatched_kg||0).toLocaleString('en-IN')}</td>
-      <td>${Number(r.total_stock_kg||0).toLocaleString('en-IN')}</td>
+      <td>${r.notes||'—'}</td>
       <td style="white-space:nowrap">
         <button class="btn btn-sm" onclick="openModal('mis-modal','${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteRow('mis_entries','${r.id}','entry')">🗑</button>
       </td></tr>`;
-  }).join('')||'<tr><td colspan="14" style="text-align:center;padding:20px;color:var(--txt2);">No entries for '+m+'</td></tr>';
+  }).join('')||'<tr><td colspan="16" style="text-align:center;padding:20px;color:var(--txt2);">No entries for '+m+'</td></tr>';
 
   destroyChart('prod');destroyChart('cumProd');
   const asc=[...sorted].reverse();
@@ -1917,7 +1946,7 @@ function renderInventory(){
       <td>${fmtMoney(r.rate_per_unit)}</td>
       <td>${fmtMoney(cs*Number(r.rate_per_unit||0))}</td>
       <td style="color:${surplus>=0?'#15803d':'#b91c1c'};font-weight:600">${surplus>=0?'+':''}${Number(surplus).toLocaleString('en-IN')}</td>
-      <td>${st}</td>
+      <td>${st2||st}</td>
       <td style="white-space:nowrap">
         <button class="btn btn-sm btn-green" onclick="quickStockUpdate('${r.id}',${r.current_stock},1)" title="Add stock">+</button>
         <button class="btn btn-sm btn-amber" onclick="quickStockUpdate('${r.id}',${r.current_stock},-1)" title="Remove stock">−</button>
@@ -2909,9 +2938,18 @@ function redownloadPDF(id){
 
 // ===== BREAKDOWN PAGE =====
 async function renderBreakdownPage(){
-  // Force reload breakdown data directly
-  const{data:freshBD}=await sb.from('breakdowns').select('*').order('breakdown_date',{ascending:false});
-  if(freshBD)DATA.bd=freshBD;
+  // Show loading
+  const tbody=document.getElementById('bd-full-tbody');
+  if(tbody)tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;"><div class="loading"><div class="spin"></div>Loading...</div></td></tr>';
+  // Always fetch fresh data
+  try{
+    const{data:freshBD,error}=await sb.from('breakdowns').select('*').order('breakdown_date',{ascending:false});
+    if(error)throw error;
+    DATA.bd=freshBD||[];
+  }catch(e){
+    if(tbody)tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;color:#dc2626;">Error loading — '+e.message+'</td></tr>';
+    return;
+  }
   const m=getMonth('bd-month');
   const bd=DATA.bd.filter(r=>{
     if(!m||m==='all')return true;
@@ -3395,6 +3433,32 @@ async function processWAMessage(){
   const text=document.getElementById('wa-inv-text')?.value?.trim();
   if(!text){toast('Paste a message first','err');return;}
   const preview=document.getElementById('wa-preview');
+  if(preview){preview.style.display='block';preview.innerHTML='<div style="padding:10px;background:var(--bg3);border-radius:var(--rad);font-size:12px;color:var(--txt2);">Reading message...</div>';}
+  // Always use manual parser first (reliable), then try AI
+  try{
+    WA_PARSED=parseWAManually(text);
+    if(WA_PARSED.length>0){showWAPreview(WA_PARSED);return;}
+    // If manual parser got nothing, try AI
+    const resp=await fetch(`${SB_URL}/functions/v1/bright-worker`,{
+      method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`},
+      body:JSON.stringify({question:text,context:'Extract inventory movements from this WhatsApp message. Items have IN or OUT direction and quantities. Return ONLY a JSON array: [{"item":"name","direction":"IN or OUT","qty":1,"unit":"pc"}]'})
+    });
+    if(resp.ok){
+      const d=await resp.json();
+      const raw=(d.answer||'[]').replace(/\`\`\`json|\`\`\`/g,'').trim();
+      WA_PARSED=JSON.parse(raw);
+    }
+    if(!WA_PARSED.length)WA_PARSED=parseWAManually(text);
+    showWAPreview(WA_PARSED);
+  }catch(e){
+    WA_PARSED=parseWAManually(text);
+    showWAPreview(WA_PARSED);
+  }
+}
+async function _processWAMessage_old(){
+  const text=document.getElementById('wa-inv-text')?.value?.trim();
+  if(!text){toast('Paste a message first','err');return;}
+  const preview=document.getElementById('wa-preview');
   preview.style.display='block';
   preview.innerHTML='<div style="padding:12px;background:var(--bg3);border-radius:var(--rad);font-size:13px;color:var(--txt2);">🤖 Reading message...</div>';
 
@@ -3549,7 +3613,10 @@ function renderInventory(){
     const cs=Number(r.current_stock),ms=Number(r.minimum_stock);
     const isOut=cs===0;
     const isLow=cs<ms&&cs>0;
-    const bg=isOut?'background:#fef2f2;':isLow?'background:#fffbeb;':'';
+    const pct=ms>0?cs/ms:1;
+    const isBelow50=ms>0&&cs<ms*0.5&&cs>0;
+    const bg=isOut?'background:#fef2f2;':isBelow50?'background:#fef2f2;':isLow?'background:#fff7ed;':'';
+    const st2=isOut?'<span class="badge b-red">Out of stock</span>':isBelow50?'<span class="badge b-red">Below 50%</span>':isLow?'<span class="badge b-amber">Low</span>':'<span class="badge b-green">OK</span>';
     const st=isOut?'<span class="badge b-red">Out of stock</span>':isLow?'<span class="badge b-amber">Low</span>':'<span class="badge b-green">OK</span>';
     const lastU=lastUsed[r.id]?fmtDate(lastUsed[r.id]):'—';
     return`<tr style="${bg}">
