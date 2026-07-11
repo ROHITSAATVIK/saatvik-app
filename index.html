@@ -294,22 +294,6 @@ tr:hover td{background:#fafaf9;}
   </div>
   <div class="content">
     <div class="metrics g4" id="mis-metrics"></div>
-    <div class="g2" style="margin-bottom:14px;">
-      <div class="card">
-        <div class="card-head"><div class="card-title">Production (Kg) vs target</div></div>
-        <div class="card-body"><div style="position:relative;height:150px;"><canvas id="prodChart" role="img" aria-label="Production">Production</canvas></div></div>
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title">Machine running hours — daily</div></div>
-        <div class="card-body"><div style="position:relative;height:150px;"><canvas id="runChart" role="img" aria-label="Running hours">Running hours</canvas></div></div>
-      </div>
-    </div>
-    <div class="card" style="margin-bottom:14px;">
-      <div class="card-head"><div class="card-title">Avg running hours/day this month — Washing / Agglo / Extruder</div></div>
-      <div class="card-body">
-        <div id="mis-avg-running" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;"></div>
-      </div>
-    </div>
     <div class="card">
       <div class="card-head">
         <div class="card-title">MIS entries</div>
@@ -317,8 +301,8 @@ tr:hover td{background:#fafaf9;}
           <button class="btn btn-wa" onclick="generateWAMIS()">📱 WhatsApp MIS</button>
         </div>
       </div>
-      <div class="tw"><table><thead><tr><th>Date</th><th>Target</th><th>Production</th><th>Eff%</th><th>Day MP</th><th>Night MP</th><th>Wash Run</th><th>Agglo Run</th><th>Ext Run</th><th>Issue (D)</th><th>Issue (N)</th><th>Dispatch</th><th>Total Stock</th><th>Actions</th></tr></thead>
-      <tbody id="mis-tbody"><tr><td colspan="14"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody></table></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Target</th><th>Production</th><th>Colour</th><th>Eff%</th><th>Day MP</th><th>Night MP</th><th>Wash Run</th><th>Agglo Run</th><th>Ext Run</th><th>Issue (D)</th><th>Issue (N)</th><th>Dispatch</th><th>Total Stock</th><th>Actions</th></tr></thead>
+      <tbody id="mis-tbody"><tr><td colspan="15"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody></table></div>
     </div>
     <!-- WhatsApp Preview -->
     <div class="card" id="wa-card" style="display:none;">
@@ -372,8 +356,8 @@ tr:hover td{background:#fafaf9;}
     <div class="card" style="margin-bottom:14px;">
       <div class="card-head"><div class="card-title">Stock register</div><div style="font-size:11px;color:var(--txt2);">Red = out of stock · Yellow = low · Green = OK</div></div>
       <div class="tw"><table>
-        <thead><tr><th>Item</th><th>Category</th><th>UOM</th><th>In stock</th><th>Min</th><th>Rate (₹)</th><th>Value</th><th>Last used</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="inv-tbody"><tr><td colspan="10"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+        <thead><tr><th>Item</th><th>Category</th><th>UOM</th><th>Stock level</th><th>Status</th><th>Last used</th><th>Actions</th></tr></thead>
+        <tbody id="inv-tbody"><tr><td colspan="7"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
       </table></div>
     </div>
 
@@ -1679,6 +1663,31 @@ function renderMfgDashboard(){
   const avgEff=totalTgt>0?Math.round((totalProd/totalTgt)*100):0;
   const totalDisp=DATA.dispatches.filter(r=>r.month_year===m).reduce((a,r)=>a+Number(r.qty_kg||0),0);
   const fgStock=Math.max(0,totalProd-totalDisp);
+
+  // Colour-wise FG breakdown
+  const colourProd={};
+  mis.forEach(r=>{
+    if(!r.colour||!r.colour.trim()){
+      colourProd['Untagged']=(colourProd['Untagged']||0)+Number(r.total_production_kg||0);
+    } else {
+      // Handle "Natural+Black" type entries
+      const colours=r.colour.split('+').map(c=>c.trim()).filter(Boolean);
+      colours.forEach(c=>{colourProd[c]=(colourProd[c]||0)+Number(r.total_production_kg||0)/colours.length;});
+    }
+  });
+  const colourDisp={};
+  DATA.dispatches.filter(r=>r.month_year===m).forEach(r=>{
+    // Extract colour from notes field "Colour:Natural | ..."
+    const match=(r.notes||'').match(/Colour:([^|]+)/);
+    const col=match?match[1].trim():'Untagged';
+    colourDisp[col]=(colourDisp[col]||0)+Number(r.qty_kg||0);
+  });
+  const colourFG={};
+  const allCols=new Set([...Object.keys(colourProd),...Object.keys(colourDisp)]);
+  allCols.forEach(c=>{
+    const fg=Math.max(0,(colourProd[c]||0)-(colourDisp[c]||0));
+    if(fg>0)colourFG[c]=fg;
+  });
   const p1=DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').length;
   const p2=DATA.tasks.filter(r=>r.priority==='P2'&&r.status==='open').length;
   const critBD=DATA.bd.filter(r=>r.status==='Critical').length;
@@ -1705,20 +1714,11 @@ function renderMfgDashboard(){
       <div style="font-size:20px;font-weight:700;">${(totalDisp/1000).toFixed(1)}T</div>
       <div style="font-size:10px;color:var(--txt2);margin-top:2px;">this month</div>
     </div>
-    <div style="background:#fff;border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);">
-      <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">FG in hand</div>
-      <div style="font-size:20px;font-weight:700;color:#2563eb;">${Number(fgStock).toLocaleString('en-IN')}</div>
-      <div style="font-size:10px;color:var(--txt2);margin-top:2px;">Kg stock</div>
-    </div>
-    <div style="background:${p1>0?'#fffbeb':'#fff'};border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);${p1>0?'border-left:3px solid #d97706;':''}">
-      <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">Open tasks</div>
-      <div style="font-size:20px;font-weight:700;color:${p1>0?'#d97706':'#1D9E75'};">${p1+p2}</div>
-      <div style="font-size:10px;color:var(--txt2);margin-top:2px;">${p1} P1 · ${p2} P2</div>
-    </div>
-    <div style="background:${critBD>0?'#fef2f2':'#fff'};border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);${critBD>0?'border-left:3px solid #dc2626;':''}">
-      <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">Critical</div>
-      <div style="font-size:20px;font-weight:700;color:${critBD>0?'#dc2626':'#1D9E75'};">${critBD}</div>
-      <div style="font-size:10px;color:var(--txt2);margin-top:2px;">breakdowns</div>
+    <div style="background:#eff6ff;border-radius:var(--rad);padding:12px;border:0.5px solid #bfdbfe;">
+      <div style="font-size:10px;color:#1d4ed8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">FG in hand</div>
+      <div style="font-size:20px;font-weight:700;color:#1d4ed8;">${Number(fgStock).toLocaleString('en-IN')} Kg</div>
+      <div style="font-size:10px;color:#1d4ed8;margin-top:2px;">production − dispatch</div>
+      ${Object.entries(colourFG).length>0?`<div style="margin-top:8px;border-top:1px solid #bfdbfe;padding-top:6px;">${Object.entries(colourFG).map(([c,kg])=>`<div style="display:flex;justify-content:space-between;font-size:10px;color:#1d4ed8;margin-bottom:2px;"><span>${c}</span><span style="font-weight:700;">${Number(kg).toLocaleString('en-IN')} Kg</span></div>`).join('')}</div>`:''}
     </div>`;
 
   // Colour production breakdown
@@ -1886,15 +1886,18 @@ function renderMIS(){
     return`<tr>
       <td>${fmtDate(r.entry_date)}</td>
       <td>${Number(r.target_kg).toLocaleString('en-IN')}</td>
-      <td style="font-weight:600;">${Number(r.total_production_kg).toLocaleString('en-IN')}</td>
+      <td style="font-weight:700;color:${Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'};">${Number(r.total_production_kg).toLocaleString('en-IN')}</td>
       <td>${r.colour||'—'}</td>
       <td>${effBadge(e)}</td>
-      <td>${r.manpower_day}</td><td>${r.manpower_night}</td>
-      <td>${wRunTotal}h</td><td>${aRunTotal}h</td><td>${eRunTotal}h</td>
-      <td style="color:#d97706;">${todayDisp>0?Number(todayDisp).toLocaleString('en-IN'):'—'}</td>
+      <td>${r.manpower_day||'—'}</td>
+      <td>${r.manpower_night||'—'}</td>
+      <td>${wRunTotal}h</td>
+      <td>${aRunTotal}h</td>
+      <td>${eRunTotal}h</td>
+      <td>${r.issue_day||'None'}</td>
+      <td>${r.issue_night||'None'}</td>
+      <td style="color:#d97706;font-weight:600;">${todayDisp>0?Number(todayDisp).toLocaleString('en-IN'):'—'}</td>
       <td style="font-weight:700;color:#1D9E75;">${Number(closingStock).toLocaleString('en-IN')} Kg</td>
-      <td>${r.issue_day||'None'}</td><td>${r.issue_night||'None'}</td>
-      <td>${r.notes||'—'}</td>
       <td style="white-space:nowrap">
         <button class="btn btn-sm" onclick="openModal('mis-modal','${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteRow('mis_entries','${r.id}','entry')">🗑</button>
@@ -1924,44 +1927,83 @@ function renderMIS(){
 }
 
 function renderInventory(){
-  const sorted=[...DATA.inv].sort((a,b)=>a.item_name.localeCompare(b.item_name));
-  const low=sorted.filter(r=>Number(r.current_stock)<Number(r.minimum_stock));
-  const crit=sorted.filter(r=>Number(r.current_stock)<Number(r.minimum_stock)*0.5);
+  const sorted=[...DATA.inv].sort((a,b)=>{
+    // Sort: out of stock first, then low, then ok
+    const ra=Number(a.current_stock)/Math.max(Number(a.minimum_stock),0.01);
+    const rb=Number(b.current_stock)/Math.max(Number(b.minimum_stock),0.01);
+    if(ra===0&&rb>0)return -1; if(rb===0&&ra>0)return 1;
+    if(ra<rb)return -1; if(rb<ra)return 1;
+    return a.item_name.localeCompare(b.item_name);
+  });
+  const outOfStock=sorted.filter(r=>Number(r.current_stock)===0);
+  const below50=sorted.filter(r=>Number(r.current_stock)>0&&Number(r.current_stock)<Number(r.minimum_stock)*0.5);
+  const low=sorted.filter(r=>Number(r.current_stock)>=Number(r.minimum_stock)*0.5&&Number(r.current_stock)<Number(r.minimum_stock));
+  const ok=sorted.filter(r=>Number(r.current_stock)>=Number(r.minimum_stock));
+
   document.getElementById('inv-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Total items</div><div class="vl">${sorted.length}</div></div>
-    <div class="mc"><div class="lb">Low stock</div><div class="vl red">${low.length}</div><div class="sb">Below minimum</div></div>
-    <div class="mc"><div class="lb">Critical</div><div class="vl red">${crit.length}</div><div class="sb">Below 50% of min</div></div>`;
+    <div class="mc" style="border-left:3px solid #1D9E75;"><div class="lb">OK items</div><div class="vl green">${ok.length}</div><div class="sb">Above minimum</div></div>
+    <div class="mc" style="border-left:3px solid #d97706;"><div class="lb">Low stock</div><div class="vl amber">${low.length}</div><div class="sb">Below minimum</div></div>
+    <div class="mc" style="border-left:3px solid #dc2626;"><div class="lb">Below 50%</div><div class="vl red">${below50.length}</div><div class="sb">Order soon</div></div>
+    <div class="mc" style="border-left:3px solid #7c3aed;"><div class="lb">Out of stock</div><div class="vl" style="color:#7c3aed;">${outOfStock.length}</div><div class="sb">Order now</div></div>`;
 
   const searchQ=(document.getElementById('inv-search')?.value||'').toLowerCase();
-  const filtered2=searchQ?sorted.filter(r=>r.item_name.toLowerCase().includes(searchQ)||r.category.toLowerCase().includes(searchQ)):sorted;
-  document.getElementById('inv-tbody').innerHTML=filtered2.map(r=>{
+  const catQ=(document.getElementById('inv-cat-filter')?.value||'all');
+  let filtered=sorted;
+  if(searchQ)filtered=filtered.filter(r=>r.item_name.toLowerCase().includes(searchQ)||(r.category||'').toLowerCase().includes(searchQ));
+  if(catQ!=='all')filtered=filtered.filter(r=>r.category===catQ);
+
+  // Last used date from movements
+  const lastUsed={};
+  (DATA.invMov||[]).filter(m=>m.direction==='OUT').forEach(m=>{
+    if(!lastUsed[m.item_id]||new Date(m.movement_date)>new Date(lastUsed[m.item_id])){lastUsed[m.item_id]=m.movement_date;}
+  });
+
+  document.getElementById('inv-tbody').innerHTML=filtered.map(r=>{
     const cs=Number(r.current_stock),ms=Number(r.minimum_stock);
     const ratio=ms>0?cs/ms:1;
-    const bg=ratio<0.5?'background:#fef2f2;':ratio<1?'background:#fffbeb;':'';
-    const st=ratio>=1?badge('OK','green'):ratio>=0.5?badge('Low','amber'):badge('Critical','red');
-    const surplus=cs-ms;
+    const isOut=cs===0;
+    const isBelow50=cs>0&&cs<ms*0.5;
+    const isLow=cs>=ms*0.5&&cs<ms;
+    const isOk=cs>=ms;
+
+    // Row background
+    const bg=isOut?'background:#fdf2ff;border-left:3px solid #7c3aed;':
+              isBelow50?'background:#fef2f2;border-left:3px solid #dc2626;':
+              isLow?'background:#fffbeb;border-left:3px solid #d97706;':
+              'border-left:3px solid #1D9E75;';
+
+    // Status badge
+    const stColor=isOut?{bg:'#f3e8ff',txt:'#7c3aed',label:'Out of stock'}:
+                  isBelow50?{bg:'#fee2e2',txt:'#b91c1c',label:'Below 50%'}:
+                  isLow?{bg:'#fef3c7',txt:'#92400e',label:'Low stock'}:
+                  {bg:'#dcfce7',txt:'#15803d',label:'OK'};
+
+    // Stock bar
+    const barPct=Math.min(100,Math.round(ratio*100));
+    const barCol=isOut?'#7c3aed':isBelow50?'#dc2626':isLow?'#d97706':'#1D9E75';
+
+    const lastU=lastUsed[r.id]?fmtDate(lastUsed[r.id]):'—';
+
     return`<tr style="${bg}">
-      <td>${r.item_name}</td><td>${r.category}</td><td>${r.uom}</td>
-      <td>${Number(ms).toLocaleString('en-IN')}</td><td>${Number(cs).toLocaleString('en-IN')}</td>
-      <td>${fmtMoney(r.rate_per_unit)}</td>
-      <td>${fmtMoney(cs*Number(r.rate_per_unit||0))}</td>
-      <td style="color:${surplus>=0?'#15803d':'#b91c1c'};font-weight:600">${surplus>=0?'+':''}${Number(surplus).toLocaleString('en-IN')}</td>
-      <td>${st2||st}</td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-sm btn-green" onclick="quickStockUpdate('${r.id}',${r.current_stock},1)" title="Add stock">+</button>
-        <button class="btn btn-sm btn-amber" onclick="quickStockUpdate('${r.id}',${r.current_stock},-1)" title="Remove stock">−</button>
+      <td><strong style="font-size:13px;">${r.item_name}</strong></td>
+      <td style="color:var(--txt2);font-size:12px;">${r.category||'—'}</td>
+      <td style="font-size:12px;">${r.uom||'pc'}</td>
+      <td style="text-align:center;">
+        <div style="font-size:18px;font-weight:700;color:${barCol};">${cs}</div>
+        <div style="height:4px;background:var(--bg3);border-radius:4px;margin-top:3px;overflow:hidden;width:60px;">
+          <div style="height:100%;width:${barPct}%;background:${barCol};border-radius:4px;"></div>
+        </div>
+        <div style="font-size:10px;color:var(--txt2);">min: ${ms}</div>
+      </td>
+      <td><span style="background:${stColor.bg};color:${stColor.txt};font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;white-space:nowrap;">${stColor.label}</span></td>
+      <td style="font-size:12px;color:var(--txt2);">${lastU}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-sm btn-green" onclick="quickStockUpdate('${r.id}',${cs},1,'${r.item_name.replace(/'/g,"\\'")}')">+</button>
+        <button class="btn btn-sm btn-amber" onclick="quickStockUpdate('${r.id}',${cs},-1,'${r.item_name.replace(/'/g,"\\'")}')">−</button>
         <button class="btn btn-sm" onclick="openModal('inv-modal','${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteRow('inventory','${r.id}','item')">🗑</button>
       </td></tr>`;
-  }).join('');
-
-  destroyChart('inv');destroyChart('invPie');
-  const cols=sorted.map(r=>{const ratio=Number(r.current_stock)/Math.max(Number(r.minimum_stock),0.01);return ratio>=1?'#1D9E75':ratio>=0.5?'#d97706':'#dc2626';});
-  charts.inv=new Chart(document.getElementById('invChart'),{type:'bar',data:{labels:sorted.map(r=>r.item_name.split(' ')[0]),datasets:[{data:sorted.map(r=>Number(r.current_stock)),backgroundColor:cols,borderRadius:4},{data:sorted.map(r=>Number(r.minimum_stock)),type:'line',borderColor:DK()?'rgba(255,255,255,0.25)':'rgba(0,0,0,0.18)',borderDash:[3,3],borderWidth:1.2,pointRadius:0,fill:false}]},options:{...BO(),plugins:{legend:{display:false}}}});
-  const okC=sorted.filter(r=>Number(r.current_stock)>=Number(r.minimum_stock)).length;
-  const lwC=low.length-crit.length;
-  charts.invPie=new Chart(document.getElementById('invPie'),{type:'doughnut',data:{labels:['OK','Low','Critical'],datasets:[{data:[okC,lwC,crit.length],backgroundColor:['#1D9E75','#d97706','#dc2626'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'62%'}});
-  document.getElementById('invPieLeg').innerHTML=[['OK',okC,'#1D9E75'],['Low',lwC,'#d97706'],['Critical',crit.length,'#dc2626']].map(([l,v,c])=>`<div style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:2px;background:${c};display:inline-block;"></span>${l}: <strong>${v}</strong></div>`).join('');
+  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txt2);">No items found</td></tr>';
 }
 
 function renderStock(){
@@ -3488,21 +3530,36 @@ function parseWAManually(text){
   let currentDir='OUT';
   for(const line of lines){
     const lower=line.toLowerCase();
-    if(lower.includes('inventory in')||lower==='in'){currentDir='IN';continue;}
-    if(lower.includes('inventory out')||lower==='out'){currentDir='OUT';continue;}
-    // Parse "2 pc Dana roller" or "1pc bearing (6318)"
-    const match=line.match(/^(\d+\.?\d*)\s*(pc|pcs|nos|bag|bags|roll|rolls|kg|ltr|litre|meter|mtr|set)?\s*(.+)/i);
-    if(match){
-      items.push({
-        item:match[3].replace(/^\d+\./,'').trim(),
-        direction:currentDir,
-        qty:parseFloat(match[1]),
-        unit:match[2]||'pc'
-      });
-    } else if(line.match(/^\d+\./)){
-      // numbered list like "1.roller"
-      const itemName=line.replace(/^\d+\./,'').trim();
-      if(itemName)items.push({item:itemName,direction:currentDir,qty:1,unit:'pc'});
+    // Check for direction header lines
+    if(lower==='inventory in'||lower==='in'){currentDir='IN';continue;}
+    if(lower==='inventory out'||lower==='out'){currentDir='OUT';continue;}
+    if(lower.includes('inventory in')&&!lower.match(/\d/)){currentDir='IN';continue;}
+    if(lower.includes('inventory out')&&!lower.match(/\d/)){currentDir='OUT';continue;}
+
+    // Format 1: "BELT B45 IN 1 PC" or "BEARING 6318 OUT 2 NOS"
+    const fmt1=line.match(/^(.+?)\s+(IN|OUT)\s+(\d+\.?\d*)\s*(pc|pcs|nos|bag|bags|roll|rolls|kg|ltr|litre|meter|mtr|set|nos)?$/i);
+    if(fmt1){
+      items.push({item:fmt1[1].trim(),direction:fmt1[2].toUpperCase(),qty:parseFloat(fmt1[3]),unit:fmt1[4]||'pc'});
+      continue;
+    }
+
+    // Format 2: "2 pc Belt B45" or "1pc bearing 6318" (number first)
+    const fmt2=line.match(/^(\d+\.?\d*)\s*(pc|pcs|nos|bag|bags|roll|rolls|kg|ltr|litre|meter|mtr|set)?\s*(.+)/i);
+    if(fmt2){
+      items.push({item:fmt2[3].replace(/^\d+\./,'').trim(),direction:currentDir,qty:parseFloat(fmt2[1]),unit:fmt2[2]||'pc'});
+      continue;
+    }
+
+    // Format 3: numbered list "1.roller" or "1) bearing"
+    const fmt3=line.match(/^\d+[\.\)]\s*(.+)/);
+    if(fmt3){
+      items.push({item:fmt3[1].trim(),direction:currentDir,qty:1,unit:'pc'});
+      continue;
+    }
+
+    // Format 4: plain item name — use current direction, qty 1
+    if(line.length>2&&!line.match(/^\d+$/)){
+      items.push({item:line,direction:currentDir,qty:1,unit:'pc'});
     }
   }
   return items;
