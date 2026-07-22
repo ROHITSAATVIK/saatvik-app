@@ -1402,7 +1402,7 @@ function openWA(){
 async function loadAll(){
   document.getElementById('last-sync').textContent='Syncing...';
   try{
-    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm,invmov]=await Promise.all([
+    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm]=await Promise.all([
       sb.from('mis_entries').select('*').order('entry_date',{ascending:false}),
       sb.from('inventory').select('*').order('item_name'),
       sb.from('stock_movements').select('*').order('created_at',{ascending:false}),
@@ -1412,12 +1412,10 @@ async function loadAll(){
       sb.from('trading_purchases').select('*').order('purchase_date',{ascending:false}),
       sb.from('trading_sales').select('*').order('sale_date',{ascending:false}),
       sb.from('trading_materials').select('*').order('material_name'),
-      sb.from('inventory_movements').select('*').order('movement_date',{ascending:false}),
     ]);
     DATA.mis=mis.data||[];DATA.inv=inv.data||[];DATA.stock=stock.data||[];
     DATA.dispatches=disp.data||[];DATA.bd=bd.data||[];DATA.tasks=tasks.data||[];
     DATA.trdPur=tp.data||[];DATA.trdSal=ts.data||[];DATA.trdMat=tm.data||[];
-    DATA.invMov=invmov.data||[];
     document.getElementById('last-sync').textContent='Synced ✓ '+new Date().toLocaleTimeString('en-IN');
     // Populate colour datalist from production colours + existing MIS entries
     const colours=new Set([...(DATA.mis||[]).map(r=>r.colour).filter(Boolean)]);
