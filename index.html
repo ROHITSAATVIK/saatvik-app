@@ -4,20 +4,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saatvik Enterprise</title>
+<title>Saatvik Enterprises</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--acc:#1D9E75;--acc2:#2563eb;--bg:#ebebea;--bg2:#fff;--bg3:#e8e8e6;--txt:#18181b;--txt2:#6b7280;--txt3:#9ca3af;--bdr:rgba(0,0,0,0.08);--bdr2:rgba(0,0,0,0.13);--rad:8px;--rad2:12px;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Verdana',Geneva,Tahoma,sans-serif;background:#f0efeb;color:var(--txt);font-size:13px;}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0efeb;color:var(--txt);font-size:13px;-webkit-font-smoothing:antialiased;}
 .app{display:flex;min-height:100vh;}
 
 /* LOGIN PAGE */
-.login-page{display:flex;min-height:100vh;align-items:center;justify-content:center;background:var(--bg);}
-.login-box{background:#fff;border:1px solid var(--bdr2);border-radius:16px;padding:40px 36px;width:380px;max-width:95vw;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.08);}
-.login-logo{width:52px;height:52px;border-radius:14px;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;}
-.login-title{font-size:20px;font-weight:700;color:var(--txt);margin-bottom:4px;}
+.login-page{display:flex;min-height:100vh;align-items:center;justify-content:center;background:linear-gradient(160deg,#f0efeb 0%,#e4e9e6 100%);}
+.login-box{background:#fff;border:1px solid var(--bdr2);border-radius:18px;padding:42px 36px;width:380px;max-width:95vw;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.09);}
+.login-logo{width:56px;height:56px;border-radius:16px;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px;}
+.login-title{font-size:21px;font-weight:800;color:var(--txt);margin-bottom:4px;letter-spacing:-.3px;}
 .login-sub{font-size:12px;color:var(--txt2);margin-bottom:28px;}
 .login-divider{display:flex;align-items:center;gap:10px;margin:20px 0;color:var(--txt3);font-size:11px;}
 .login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--bdr2);}
@@ -34,9 +37,9 @@ body{font-family:'Verdana',Geneva,Tahoma,sans-serif;background:#f0efeb;color:var
 .logout-btn:hover{background:#fee2e2;color:#b91c1c;border-color:#fecaca;}
 /* SIDEBAR */
 .sidebar{width:210px;min-width:210px;background:#f7f7f5;border-right:1px solid var(--bdr);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
-.logo{padding:14px 16px;border-bottom:1px solid var(--bdr);}
-.logo-name{font-size:13px;font-weight:700;color:var(--txt);}
-.logo-sub{font-size:10px;color:var(--txt2);margin-top:1px;}
+.logo{padding:16px 16px 14px;border-bottom:1px solid var(--bdr);}
+.logo-name{font-size:14px;font-weight:800;color:var(--txt);letter-spacing:-.2px;}
+.logo-sub{font-size:10px;color:var(--txt2);margin-top:2px;}
 .biz-switcher{display:flex;margin:8px 10px;border-radius:var(--rad);overflow:hidden;border:1px solid var(--bdr2);}
 .biz-btn{flex:1;padding:6px 4px;font-size:10px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--txt2);transition:all .15s;text-align:center;}
 .biz-btn.active-mfg{background:#dcfce7;color:#15803d;}
@@ -84,9 +87,9 @@ body{font-family:'Verdana',Geneva,Tahoma,sans-serif;background:#f0efeb;color:var
 .mc .sb{font-size:10px;color:var(--txt2);margin-top:2px;}
 .green{color:#15803d!important;}.red{color:#b91c1c!important;}.amber{color:#b45309!important;}.blue{color:#1d4ed8!important;}
 /* CARDS */
-.card{background:#fff;border:0.5px solid var(--bdr);border-radius:var(--rad2);overflow:hidden;margin-bottom:14px;}
-.card-head{padding:10px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
-.card-title{font-size:12px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:6px;}
+.card{background:#fff;border:0.5px solid var(--bdr);border-radius:var(--rad2);overflow:hidden;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,0.03);}
+.card-head{padding:11px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:12px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:6px;letter-spacing:.1px;}
 .card-body{padding:14px;}
 /* GRID */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
@@ -157,7 +160,7 @@ tr:hover td{background:#fafaf9;}
 <div class="login-page" id="login-page">
   <div class="login-box">
     <div class="login-logo">🏭</div>
-    <div class="login-title">Saatvik Enterprise</div>
+    <div class="login-title">Saatvik Enterprises</div>
     <div class="login-sub">Management System · saatvik.biz</div>
 
     <div class="login-error" id="login-error"></div>
@@ -165,7 +168,7 @@ tr:hover td{background:#fafaf9;}
     <input type="password" class="login-input" id="login-pass" placeholder="Password" onkeydown="if(event.key==='Enter')loginWithPassword()">
     <button class="login-btn login-btn-primary" id="login-submit-btn" onclick="loginWithPassword()">Sign In →</button>
 
-    <div class="login-footer">Saatvik Enterprise · Plastic Recycling &amp; Scrap Trading · Kolkata</div>
+    <div class="login-footer">Saatvik Enterprises · Plastic Recycling &amp; Scrap Trading · Kolkata</div>
   </div>
 </div>
 
@@ -174,7 +177,7 @@ tr:hover td{background:#fafaf9;}
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar-full">
   <div class="logo">
-    <div class="logo-name">Saatvik Enterprise</div>
+    <div class="logo-name">Saatvik Enterprises</div>
     <div class="logo-sub"><span class="sync-dot"></span> <span id="sync-txt">saatvik.biz · Admin</span></div>
   </div>
   <div class="biz-switcher">
@@ -195,7 +198,6 @@ tr:hover td{background:#fafaf9;}
     <div class="ni" onclick="goTo('maintenance')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Maintenance</div>
     <div class="ni" onclick="goTo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tasks</div>
     <div class="ni" onclick="goTo('plan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Production Plan</div>
-    <div class="ni" onclick="goTo('scanner')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Bill Scanner</div>
   </div>
   <!-- TRADING NAV -->
   <div class="nav-section" id="nav-trd" style="display:none;">
@@ -213,7 +215,7 @@ tr:hover td{background:#fafaf9;}
 
 <!-- MAIN -->
 <div id="dispatch-only-bar" style="display:none;width:200px;min-width:200px;background:var(--bg2);border-right:1px solid var(--bdr);flex-direction:column;">
-  <div class="logo"><div class="logo-name">Saatvik Enterprise</div><div class="logo-sub">Dispatch Portal</div></div>
+  <div class="logo"><div class="logo-name">Saatvik Enterprises</div><div class="logo-sub">Dispatch Portal</div></div>
   <div style="padding:12px 14px;flex:1;">
     <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;">Logged in as DISPATCH</div>
     <div style="font-size:12px;font-weight:600;color:var(--acc);padding:8px 10px;background:#f0fdf4;border-radius:var(--rad);border-left:2px solid var(--acc);">📦 Gate Pass / Dispatch</div>
@@ -267,7 +269,7 @@ tr:hover td{background:#fafaf9;}
         </div>
         <!-- Stock flow -->
         <div class="card">
-          <div class="card-head"><div class="card-title">Stock flow — this month</div></div>
+          <div class="card-head"><div class="card-title">Finished goods flow — this month</div></div>
           <div class="card-body" id="mfg-dash-stock"></div>
         </div>
         <!-- Spare parts below 50% -->
@@ -333,45 +335,16 @@ tr:hover td{background:#fafaf9;}
   </div>
   <div class="content">
 
-    <!-- WHATSAPP PASTE BOX -->
-    <div class="card" style="margin-bottom:14px;border-left:3px solid #25D366;">
-      <div class="card-head">
-        <div class="card-title">📱 Paste WhatsApp inventory message — updates stock automatically</div>
-        <button class="btn btn-sm" onclick="toggleWABox()" id="wa-box-toggle">Hide</button>
-      </div>
-      <div class="card-body" id="wa-box-content">
-        <textarea id="wa-inv-text" rows="4" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:var(--rad);font-size:13px;font-family:inherit;resize:vertical;" placeholder="Paste message here, e.g.:&#10;Inventory in&#10;2 pc Dana roller&#10;1pc bearing (6318)&#10;&#10;Inventory out&#10;Packing bag 1 bag&#10;Extruder jali 14 pc"></textarea>
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          <button class="btn btn-green" onclick="processWAMessage()">🤖 Process message</button>
-          <button class="btn btn-sm" onclick="document.getElementById('wa-inv-text').value=''">Clear</button>
-        </div>
-        <div id="wa-preview" style="display:none;margin-top:12px;"></div>
-      </div>
-    </div>
-
     <!-- METRICS -->
     <div class="metrics g4" id="inv-metrics" style="margin-bottom:14px;"></div>
 
     <!-- STOCK REGISTER -->
-    <div class="card" style="margin-bottom:14px;">
-      <div class="card-head"><div class="card-title">Stock register</div><div style="font-size:11px;color:var(--txt2);">Red = out of stock · Yellow = low · Green = OK</div></div>
-      <div class="tw"><table>
-        <thead><tr><th>Item</th><th>Category</th><th>UOM</th><th>Stock level</th><th>Status</th><th>Last used</th><th>Actions</th></tr></thead>
-        <tbody id="inv-tbody"><tr><td colspan="7"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
-      </table></div>
-    </div>
-
-    <!-- ITEM LIFE TRACKER -->
     <div class="card">
-      <div class="card-head">
-        <div class="card-title">Item life tracker</div>
-        <div style="font-size:11px;color:var(--txt2);">Full IN/OUT history — how long each part lasts</div>
-      </div>
-      <div class="card-body" style="padding:0;">
-        <div id="life-tracker-content" style="padding:14px;">
-          <div style="font-size:12px;color:var(--txt2);text-align:center;padding:20px;">No movement history yet — start by pasting a WhatsApp message above</div>
-        </div>
-      </div>
+      <div class="card-head"><div class="card-title">Stock register — A to Z</div><div style="font-size:11px;color:var(--txt2);">Red = below minimum · Amber = at minimum · In/Out/Life update automatically when you edit stock</div></div>
+      <div class="tw"><table>
+        <thead><tr><th>Sl</th><th>Item</th><th>Category</th><th>UOM</th><th>In stock</th><th>Min level</th><th>Difference</th><th>Price</th><th>Supplier</th><th>In date</th><th>Out date</th><th>Life</th><th>Edit</th></tr></thead>
+        <tbody id="inv-tbody"><tr><td colspan="13"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+      </table></div>
     </div>
 
   </div>
@@ -423,29 +396,6 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
-<!-- ========== BREAKDOWN ========== -->
-<div id="page-breakdown" class="page">
-  <div class="topbar">
-    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Breakdown Log</div>
-    <div class="tb-right">
-      <select class="month-selector" id="bd-month" onchange="renderBreakdown()"></select>
-      <button class="btn btn-green" onclick="openModal('bd-modal',null)">+ Log breakdown</button>
-    </div>
-  </div>
-  <div class="content">
-    <div class="metrics g3" id="bd-metrics"></div>
-    <div class="g2" style="margin-bottom:14px;">
-      <div class="card"><div class="card-head"><div class="card-title">Breakdowns by machine</div></div><div class="card-body"><div style="position:relative;height:140px;"><canvas id="bdPie" role="img" aria-label="BD Pie">Pie</canvas></div></div></div>
-      <div class="card"><div class="card-head"><div class="card-title">Downtime hours</div></div><div class="card-body"><div style="position:relative;height:140px;"><canvas id="bdBar" role="img" aria-label="BD Bar">Bar</canvas></div></div></div>
-    </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">Breakdown register</div></div>
-      <div class="tw"><table><thead><tr><th>Date</th><th>Machine</th><th>Shift</th><th>DT Hours</th><th>Reason</th><th>Action</th><th>Cost</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="bd-tbody"><tr><td colspan="9"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
-    </div>
-  </div>
-</div>
-
 <!-- ========== TASKS ========== -->
 <div id="page-tasks" class="page">
   <div class="topbar">
@@ -489,8 +439,12 @@ tr:hover td{background:#fafaf9;}
           <div class="card-body"><div style="position:relative;height:160px;"><canvas id="trdBuySell" role="img" aria-label="Buy sell">Buy sell</canvas></div></div>
         </div>
         <div class="card">
-          <div class="card-head"><div class="card-title">Material-wise volume (Kg)</div></div>
+          <div class="card-head"><div class="card-title">Material-wise volume (Kg) — this month</div></div>
           <div class="card-body"><div style="position:relative;height:150px;"><canvas id="trdMaterial" role="img" aria-label="Material">Material</canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Supplier-wise value (₹) — this month</div></div>
+          <div class="card-body"><div style="position:relative;height:150px;"><canvas id="trdSupplier" role="img" aria-label="Supplier">Supplier</canvas></div></div>
         </div>
       </div>
       <div>
@@ -499,7 +453,7 @@ tr:hover td{background:#fafaf9;}
           <div class="tw"><table><thead><tr><th>Supplier</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody id="trd-supplier-out"></tbody></table></div>
         </div>
         <div class="card">
-          <div class="card-head"><div class="card-title">Customer outstanding (They owe me)</div></div>
+          <div class="card-head"><div class="card-title">Party outstanding (They owe me)</div></div>
           <div class="tw"><table><thead><tr><th>Customer</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody id="trd-customer-out"></tbody></table></div>
         </div>
         <div class="card">
@@ -528,8 +482,8 @@ tr:hover td{background:#fafaf9;}
         <div style="font-size:11px;color:var(--txt2);">Avg payment cycle: <strong id="trd-avg-cycle-display">—</strong></div>
       </div>
       <div class="tw"><table>
-        <thead><tr><th>Sl</th><th>Date</th><th>Bill no</th><th>Material</th><th>Qty (Kg)</th><th>Rate/Kg</th><th>Supplier</th><th>Customer</th><th>Amount</th><th>Payment due</th><th>I Paid supplier</th><th>Recd from customer</th><th>Actions</th></tr></thead>
-        <tbody id="trd-reg-tbody"><tr><td colspan="13"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+        <thead><tr><th>Sl</th><th>Date</th><th>Material</th><th>Qty (Kg)</th><th>Amount</th><th>Supplier</th><th>Party</th><th>Due On</th><th>Payment Recd</th><th>Payment Cycle (Days)</th><th>Actions</th></tr></thead>
+        <tbody id="trd-reg-tbody"><tr><td colspan="11"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
       </table></div>
     </div>
   </div>
@@ -816,38 +770,6 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
-<!-- ========== BILL SCANNER ========== -->
-<div id="page-scanner" class="page">
-  <div class="topbar">
-    <div class="topbar-title"><span class="section-badge mfg-badge">📸</span>Bill Scanner</div>
-  </div>
-  <div class="content" style="max-width:700px;">
-    <div class="card" style="margin-bottom:14px;">
-      <div class="card-head"><div class="card-title">Upload a bill — AI reads it automatically</div></div>
-      <div class="card-body">
-        <div style="border:2px dashed var(--bdr2);border-radius:var(--rad2);padding:32px;text-align:center;margin-bottom:14px;cursor:pointer;" onclick="document.getElementById('bill-upload').click()">
-          <div style="font-size:32px;margin-bottom:8px;">📷</div>
-          <div style="font-size:13px;font-weight:600;color:var(--txt);">Click to upload bill photo</div>
-          <div style="font-size:12px;color:var(--txt2);margin-top:4px;">Raw material bill, spare parts bill, purchase receipt — any photo</div>
-          <input type="file" id="bill-upload" accept="image/*" style="display:none;" onchange="scanBill(this)">
-        </div>
-        <div id="bill-preview" style="display:none;"></div>
-        <div id="bill-result" style="display:none;"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">How it works</div></div>
-      <div class="card-body">
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:24px;height:24px;border-radius:50%;background:#dcfce7;color:#15803d;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">1</div><div><div style="font-size:13px;font-weight:600;">Take a photo of any bill</div><div style="font-size:12px;color:var(--txt2);">Raw material purchase, spare parts, any supplier bill</div></div></div>
-          <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:24px;height:24px;border-radius:50%;background:#dcfce7;color:#15803d;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</div><div><div style="font-size:13px;font-weight:600;">AI reads and extracts all details</div><div style="font-size:12px;color:var(--txt2);">Supplier, date, items, quantities, amounts — automatically</div></div></div>
-          <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:24px;height:24px;border-radius:50%;background:#dcfce7;color:#15803d;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div><div><div style="font-size:13px;font-weight:600;">You confirm and save</div><div style="font-size:12px;color:var(--txt2);">Review what AI found, edit if needed, then save directly to Inventory or Trade Register</div></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 </div><!-- /main -->
 
 <!-- ============================================================ -->
@@ -907,7 +829,9 @@ tr:hover td{background:#fafaf9;}
     <div class="modal-body">
       <div class="frow"><div class="fg"><label>Item name</label><input type="text" id="i-item" placeholder="e.g. PP Granules (FG)"></div><div class="fg"><label>Category</label><select id="i-cat"><option>Raw Material</option><option>Finished Goods</option><option>Jumbo Bags</option><option>Chemicals</option><option>Spare Parts</option></select></div></div>
       <div class="frow"><div class="fg"><label>UOM</label><select id="i-uom"><option>Kg</option><option>Nos</option><option>Liters</option><option>Bags</option></select></div><div class="fg"><label>Min stock</label><input type="number" id="i-min" placeholder="0"></div></div>
-      <div class="frow"><div class="fg"><label>Current stock</label><input type="number" id="i-stk" placeholder="0"></div><div class="fg"><label>Rate per unit (₹)</label><input type="number" id="i-rate" placeholder="0"></div></div>
+      <div class="frow"><div class="fg"><label>Current stock</label><input type="number" id="i-stk" placeholder="0"></div><div class="fg"><label>Price / rate per unit (₹)</label><input type="number" id="i-rate" placeholder="0"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Supplier</label><input type="text" id="i-supplier" placeholder="Supplier name"></div></div>
+      <div style="font-size:11px;color:var(--txt2);padding:4px 2px 0;">In date, out date and life are calculated automatically — increasing stock logs an "in", decreasing stock logs an "out", no extra step needed.</div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('inv-modal')">Cancel</button><button class="btn btn-green" onclick="saveInv()">Save</button></div>
   </div>
@@ -988,14 +912,13 @@ tr:hover td{background:#fafaf9;}
   <div class="modal">
     <div class="modal-head"><span class="modal-title" id="trd-reg-modal-t">Add Trade</span><button class="btn btn-sm" onclick="closeModal('trd-reg-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="tr-date"></div><div class="fg"><label>Bill no</label><input type="text" id="tr-bill" placeholder="Bill / Challan no"></div></div>
-      <div class="frow"><div class="fg"><label>Material</label><select id="tr-material"></select></div><div class="fg"><label>Qty (Kg)</label><input type="number" id="tr-qty" placeholder="0"></div></div>
-      <div class="frow"><div class="fg"><label>Rate per Kg (₹)</label><input type="number" id="tr-rate" placeholder="0"></div><div class="fg"><label>Amount (₹) — auto</label><input type="number" id="tr-amt" placeholder="0"></div></div>
-      <div class="frow"><div class="fg"><label>Supplier (bought from)</label><input type="text" id="tr-supplier" placeholder="Supplier name"></div><div class="fg"><label>Customer (sold to)</label><input type="text" id="tr-customer" placeholder="Customer name"></div></div>
-      <div class="frow"><div class="fg"><label>Payment due date</label><input type="date" id="tr-due"></div><div class="fg"><label>Payment terms (days)</label><input type="number" id="tr-terms" value="15"></div></div>
+      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="tr-date"></div><div class="fg"><label>Material</label><select id="tr-material"></select></div></div>
+      <div class="frow"><div class="fg"><label>Qty (Kg)</label><input type="number" id="tr-qty" placeholder="0"></div><div class="fg"><label>Amount (₹)</label><input type="number" id="tr-amt" placeholder="0"></div></div>
+      <div class="frow"><div class="fg"><label>Supplier (bought from)</label><input type="text" id="tr-supplier" placeholder="Supplier name"></div><div class="fg"><label>Party (sold to)</label><input type="text" id="tr-customer" placeholder="Party name"></div></div>
+      <div style="font-size:11px;color:var(--txt2);padding:2px 2px 4px;">Due date is auto-calculated as Date + 15 days. Payment cycle days count live until marked paid, then lock.</div>
       <div class="sec-label">Payment Status</div>
       <div class="frow"><div class="fg"><label>I paid supplier on</label><input type="date" id="tr-paid"></div><div class="fg"><label>Amount paid (₹)</label><input type="number" id="tr-pamt" placeholder="0"></div></div>
-      <div class="frow"><div class="fg"><label>Received from customer on</label><input type="date" id="tr-recvd"></div><div class="fg"><label>Amount received (₹)</label><input type="number" id="tr-ramt" placeholder="0"></div></div>
+      <div class="frow"><div class="fg"><label>Received from party on</label><input type="date" id="tr-recvd"></div><div class="fg"><label>Amount received (₹)</label><input type="number" id="tr-ramt" placeholder="0"></div></div>
       <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="tr-notes" placeholder="Optional"></div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('trd-reg-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdTrade()">Save</button></div>
@@ -1291,7 +1214,7 @@ function goTo(id){
 function renderPage(id){
   const m={
     'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
-    'stock':renderStock,'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'tasks':renderTasks,'breakdown':renderBreakdownPage,'components':renderComponentsPage,'maintenance':renderMaintenancePage,'plan':renderPlan,'scanner':()=>{},
+    'stock':renderStock,'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'tasks':renderTasks,'breakdown':renderBreakdownPage,'components':renderComponentsPage,'maintenance':renderMaintenancePage,'plan':renderPlan,
     'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines,
     'trd-materials':renderTrdMaterials
   };
@@ -1336,8 +1259,8 @@ function openModal(id,rowId){
   }
   if(id==='inv-modal'){
     document.getElementById('inv-modal-t').textContent=isEdit?'Edit Item':'Add Item';
-    if(isEdit){const r=DATA.inv.find(x=>x.id===rowId);if(r){document.getElementById('i-item').value=r.item_name;document.getElementById('i-cat').value=r.category;document.getElementById('i-uom').value=r.uom;document.getElementById('i-min').value=r.minimum_stock;document.getElementById('i-stk').value=r.current_stock;document.getElementById('i-rate').value=r.rate_per_unit;}}
-    else{['i-item','i-min','i-stk','i-rate'].forEach(x=>document.getElementById(x).value='');}
+    if(isEdit){const r=DATA.inv.find(x=>x.id===rowId);if(r){document.getElementById('i-item').value=r.item_name;document.getElementById('i-cat').value=r.category;document.getElementById('i-uom').value=r.uom;document.getElementById('i-min').value=r.minimum_stock;document.getElementById('i-stk').value=r.current_stock;document.getElementById('i-rate').value=r.rate_per_unit;document.getElementById('i-supplier').value=r.supplier||'';}}
+    else{['i-item','i-min','i-stk','i-rate','i-supplier'].forEach(x=>document.getElementById(x).value='');}
   }
   if(id==='stock-modal'){
     document.getElementById('stock-modal-t').textContent=isEdit?'Edit Entry':'Add Stock Movement';
@@ -1534,20 +1457,32 @@ async function saveMIS(){
   toast(editId?'Entry updated ✓':'Entry saved ✓');closeModal('mis-modal');await loadAll();
 }
 
-async function quickStockUpdate(id, currentStock, direction){
-  const amt=parseFloat(prompt(`${direction>0?'Add to':'Remove from'} stock (current: ${currentStock}):`,'0')||'0');
-  if(!amt||isNaN(amt))return;
-  const newStock=Math.max(0, Number(currentStock)+(amt*direction));
-  const{error}=await sb.from('inventory').update({current_stock:newStock,updated_at:new Date().toISOString()}).eq('id',id);
-  if(error){toast('Error: '+error.message,'err');return;}
-  toast(`Stock updated ✓ → ${newStock.toLocaleString('en-IN')}`);
-  await loadAll();
-}
-
 async function saveInv(){
   const g=id=>document.getElementById(id)?.value;
-  const row={item_name:g('i-item'),category:g('i-cat'),uom:g('i-uom'),minimum_stock:parseFloat(g('i-min'))||0,current_stock:parseFloat(g('i-stk'))||0,rate_per_unit:parseFloat(g('i-rate'))||0,updated_at:new Date().toISOString()};
+  const today=new Date().toISOString().split('T')[0];
+  const newStock=parseFloat(g('i-stk'))||0;
+  const existing=editId?DATA.inv.find(x=>x.id===editId):null;
+  const oldStock=existing?Number(existing.current_stock||0):0;
+
+  const row={item_name:g('i-item'),category:g('i-cat'),uom:g('i-uom'),minimum_stock:parseFloat(g('i-min'))||0,current_stock:newStock,rate_per_unit:parseFloat(g('i-rate'))||0,supplier:g('i-supplier')||'',updated_at:new Date().toISOString()};
   if(!row.item_name){toast('Item name required','err');return;}
+
+  // Automatic IN/OUT/life tracking — no manual step needed
+  if(!editId){
+    // New item: an opening stock counts as an "in"
+    if(newStock>0)row.last_in_date=today;
+  } else if(newStock>oldStock){
+    // Stock increased — restock event, starts a fresh life cycle
+    row.last_in_date=today;
+    row.last_out_date=null;
+    row.life_days=null;
+  } else if(newStock<oldStock){
+    // Stock decreased — usage/out event, closes the life cycle
+    row.last_out_date=today;
+    const inDate=existing?.last_in_date;
+    row.life_days=inDate?Math.max(0,Math.floor((new Date(today)-new Date(inDate))/86400000)):null;
+  }
+
   const{error}=editId?await sb.from('inventory').update(row).eq('id',editId):await sb.from('inventory').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
   toast(editId?'Item updated ✓':'Item added ✓');closeModal('inv-modal');await loadAll();
@@ -1662,7 +1597,23 @@ function renderMfgDashboard(){
   const totalTgt=mis.reduce((a,r)=>a+Number(r.target_kg||0),0);
   const avgEff=totalTgt>0?Math.round((totalProd/totalTgt)*100):0;
   const totalDisp=DATA.dispatches.filter(r=>r.month_year===m).reduce((a,r)=>a+Number(r.qty_kg||0),0);
-  const fgStock=Math.max(0,totalProd-totalDisp);
+
+  // Previous month's closing FG stock (carried forward)
+  const monthIdx=MONTHS.indexOf(m);
+  const prevMonth=monthIdx>0?MONTHS[monthIdx-1]:null;
+  let prevClosing=0;
+  if(prevMonth){
+    const smPrev=DATA.stock.find(r=>r.month_year===prevMonth);
+    if(smPrev){
+      prevClosing=Number(smPrev.fg_opening_kg||0)+Number(smPrev.fg_produced_kg||0)-Number(smPrev.fg_dispatched_kg||0);
+    } else {
+      const prevMis=filterByMonth(DATA.mis,'month_year',prevMonth);
+      const prevProd=prevMis.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
+      const prevDisp=DATA.dispatches.filter(r=>r.month_year===prevMonth).reduce((a,r)=>a+Number(r.qty_kg||0),0);
+      prevClosing=Math.max(0,prevProd-prevDisp);
+    }
+  }
+  const fgStock=Math.max(0,prevClosing+totalProd-totalDisp);
 
   // Colour-wise FG breakdown
   const colourProd={};
@@ -1717,7 +1668,7 @@ function renderMfgDashboard(){
     <div style="background:#eff6ff;border-radius:var(--rad);padding:12px;border:0.5px solid #bfdbfe;">
       <div style="font-size:10px;color:#1d4ed8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">FG in hand</div>
       <div style="font-size:20px;font-weight:700;color:#1d4ed8;">${Number(fgStock).toLocaleString('en-IN')} Kg</div>
-      <div style="font-size:10px;color:#1d4ed8;margin-top:2px;">production − dispatch</div>
+      <div style="font-size:10px;color:#1d4ed8;margin-top:2px;">last closing + production − dispatch</div>
       ${Object.entries(colourFG).length>0?`<div style="margin-top:8px;border-top:1px solid #bfdbfe;padding-top:6px;">${Object.entries(colourFG).map(([c,kg])=>`<div style="display:flex;justify-content:space-between;font-size:10px;color:#1d4ed8;margin-bottom:2px;"><span>${c}</span><span style="font-weight:700;">${Number(kg).toLocaleString('en-IN')} Kg</span></div>`).join('')}</div>`:''}
     </div>`;
 
@@ -1791,21 +1742,11 @@ function renderMfgDashboard(){
     </div>`;
   }).join('')||'<div style="padding:16px;font-size:12px;color:var(--txt2);text-align:center;">No open tasks ✓</div>';
 
-  // Stock flow
+  // Stock flow (FG only — RM removed from dashboard per request)
   const sm=DATA.stock.find(r=>r.month_year===m)||DATA.stock[0];
   if(sm){
-    const rmClose=Number(sm.rm_opening_kg)+Number(sm.rm_purchased_kg)-Number(sm.rm_consumed_kg);
-    const fgClose=Number(sm.fg_opening_kg)+Number(sm.fg_produced_kg)-Number(sm.fg_dispatched_kg);
     document.getElementById('mfg-dash-stock').innerHTML=`
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <div style="background:#f0fdf4;border-radius:6px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:#15803d;">RM opening</div>
-          <div style="font-size:16px;font-weight:700;color:#15803d;">${(Number(sm.rm_opening_kg)/1000).toFixed(1)}T</div>
-        </div>
-        <div style="background:#f0fdf4;border-radius:6px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:#15803d;">RM closing</div>
-          <div style="font-size:16px;font-weight:700;color:#15803d;">${(rmClose/1000).toFixed(1)}T</div>
-        </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
         <div style="background:#eff6ff;border-radius:6px;padding:10px;text-align:center;">
           <div style="font-size:10px;color:#1d4ed8;">FG produced</div>
           <div style="font-size:16px;font-weight:700;color:#1d4ed8;">${(Number(sm.fg_produced_kg)/1000).toFixed(1)}T</div>
@@ -1814,10 +1755,6 @@ function renderMfgDashboard(){
           <div style="font-size:10px;color:#1d4ed8;">FG dispatched</div>
           <div style="font-size:16px;font-weight:700;color:#1d4ed8;">${(Number(sm.fg_dispatched_kg)/1000).toFixed(1)}T</div>
         </div>
-      </div>
-      <div style="background:var(--bg3);border-radius:6px;padding:10px;text-align:center;">
-        <div style="font-size:11px;color:var(--txt2);">FG in hand</div>
-        <div style="font-size:20px;font-weight:700;">${Number(fgClose).toLocaleString('en-IN')} Kg</div>
       </div>`;
   } else {
     document.getElementById('mfg-dash-stock').innerHTML='<div style="padding:14px;font-size:12px;color:var(--txt2);">No stock data — add from Stock Management</div>';
@@ -1927,21 +1864,15 @@ function renderMIS(){
 }
 
 function renderInventory(){
-  const sorted=[...DATA.inv].sort((a,b)=>{
-    // Sort: out of stock first, then low, then ok
-    const ra=Number(a.current_stock)/Math.max(Number(a.minimum_stock),0.01);
-    const rb=Number(b.current_stock)/Math.max(Number(b.minimum_stock),0.01);
-    if(ra===0&&rb>0)return -1; if(rb===0&&ra>0)return 1;
-    if(ra<rb)return -1; if(rb<ra)return 1;
-    return a.item_name.localeCompare(b.item_name);
-  });
+  // Alphabetical order by item name
+  const sorted=[...DATA.inv].sort((a,b)=>a.item_name.localeCompare(b.item_name));
   const outOfStock=sorted.filter(r=>Number(r.current_stock)===0);
   const below50=sorted.filter(r=>Number(r.current_stock)>0&&Number(r.current_stock)<Number(r.minimum_stock)*0.5);
   const low=sorted.filter(r=>Number(r.current_stock)>=Number(r.minimum_stock)*0.5&&Number(r.current_stock)<Number(r.minimum_stock));
   const ok=sorted.filter(r=>Number(r.current_stock)>=Number(r.minimum_stock));
 
   document.getElementById('inv-metrics').innerHTML=`
-    <div class="mc" style="border-left:3px solid #1D9E75;"><div class="lb">OK items</div><div class="vl green">${ok.length}</div><div class="sb">Above minimum</div></div>
+    <div class="mc" style="border-left:3px solid #1D9E75;"><div class="lb">OK items</div><div class="vl green">${ok.length}</div><div class="sb">At or above minimum</div></div>
     <div class="mc" style="border-left:3px solid #d97706;"><div class="lb">Low stock</div><div class="vl amber">${low.length}</div><div class="sb">Below minimum</div></div>
     <div class="mc" style="border-left:3px solid #dc2626;"><div class="lb">Below 50%</div><div class="vl red">${below50.length}</div><div class="sb">Order soon</div></div>
     <div class="mc" style="border-left:3px solid #7c3aed;"><div class="lb">Out of stock</div><div class="vl" style="color:#7c3aed;">${outOfStock.length}</div><div class="sb">Order now</div></div>`;
@@ -1952,58 +1883,38 @@ function renderInventory(){
   if(searchQ)filtered=filtered.filter(r=>r.item_name.toLowerCase().includes(searchQ)||(r.category||'').toLowerCase().includes(searchQ));
   if(catQ!=='all')filtered=filtered.filter(r=>r.category===catQ);
 
-  // Last used date from movements
-  const lastUsed={};
-  (DATA.invMov||[]).filter(m=>m.direction==='OUT').forEach(m=>{
-    if(!lastUsed[m.item_id]||new Date(m.movement_date)>new Date(lastUsed[m.item_id])){lastUsed[m.item_id]=m.movement_date;}
-  });
-
+  let sl=1;
   document.getElementById('inv-tbody').innerHTML=filtered.map(r=>{
     const cs=Number(r.current_stock),ms=Number(r.minimum_stock);
-    const ratio=ms>0?cs/ms:1;
+    const diff=cs-ms;
     const isOut=cs===0;
     const isBelow50=cs>0&&cs<ms*0.5;
     const isLow=cs>=ms*0.5&&cs<ms;
-    const isOk=cs>=ms;
 
-    // Row background
     const bg=isOut?'background:#fdf2ff;border-left:3px solid #7c3aed;':
               isBelow50?'background:#fef2f2;border-left:3px solid #dc2626;':
               isLow?'background:#fffbeb;border-left:3px solid #d97706;':
               'border-left:3px solid #1D9E75;';
-
-    // Status badge
-    const stColor=isOut?{bg:'#f3e8ff',txt:'#7c3aed',label:'Out of stock'}:
-                  isBelow50?{bg:'#fee2e2',txt:'#b91c1c',label:'Below 50%'}:
-                  isLow?{bg:'#fef3c7',txt:'#92400e',label:'Low stock'}:
-                  {bg:'#dcfce7',txt:'#15803d',label:'OK'};
-
-    // Stock bar
-    const barPct=Math.min(100,Math.round(ratio*100));
-    const barCol=isOut?'#7c3aed':isBelow50?'#dc2626':isLow?'#d97706':'#1D9E75';
-
-    const lastU=lastUsed[r.id]?fmtDate(lastUsed[r.id]):'—';
+    const diffColor=diff<0?(isBelow50||isOut?'#dc2626':'#d97706'):'#15803d';
 
     return`<tr style="${bg}">
+      <td>${sl++}</td>
       <td><strong style="font-size:13px;">${r.item_name}</strong></td>
       <td style="color:var(--txt2);font-size:12px;">${r.category||'—'}</td>
       <td style="font-size:12px;">${r.uom||'pc'}</td>
+      <td style="text-align:right;font-weight:700;">${cs}</td>
+      <td style="text-align:right;color:var(--txt2);">${ms}</td>
+      <td style="text-align:right;font-weight:700;color:${diffColor};">${diff>0?'+':''}${diff}</td>
+      <td style="text-align:right;">${fmtMoney(r.rate_per_unit||0)}</td>
+      <td style="font-size:12px;">${r.supplier||'—'}</td>
+      <td style="font-size:11px;color:var(--txt2);">${r.last_in_date?fmtDate(r.last_in_date):'—'}</td>
+      <td style="font-size:11px;color:var(--txt2);">${r.last_out_date?fmtDate(r.last_out_date):'—'}</td>
+      <td style="text-align:right;font-weight:600;color:${r.life_days?'#1D9E75':'var(--txt3)'};">${r.life_days!=null?r.life_days+'d':'—'}</td>
       <td style="text-align:center;">
-        <div style="font-size:18px;font-weight:700;color:${barCol};">${cs}</div>
-        <div style="height:4px;background:var(--bg3);border-radius:4px;margin-top:3px;overflow:hidden;width:60px;">
-          <div style="height:100%;width:${barPct}%;background:${barCol};border-radius:4px;"></div>
-        </div>
-        <div style="font-size:10px;color:var(--txt2);">min: ${ms}</div>
-      </td>
-      <td><span style="background:${stColor.bg};color:${stColor.txt};font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;white-space:nowrap;">${stColor.label}</span></td>
-      <td style="font-size:12px;color:var(--txt2);">${lastU}</td>
-      <td style="white-space:nowrap;">
-        <button class="btn btn-sm btn-green" onclick="quickStockUpdate('${r.id}',${cs},1,'${r.item_name.replace(/'/g,"\\'")}')">+</button>
-        <button class="btn btn-sm btn-amber" onclick="quickStockUpdate('${r.id}',${cs},-1,'${r.item_name.replace(/'/g,"\\'")}')">−</button>
         <button class="btn btn-sm" onclick="openModal('inv-modal','${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteRow('inventory','${r.id}','item')">🗑</button>
       </td></tr>`;
-  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txt2);">No items found</td></tr>';
+  }).join('')||'<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--txt2);">No items found</td></tr>';
 }
 
 function renderStock(){
@@ -2081,31 +1992,6 @@ function renderDispatch(){
   }).join('')||'<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No dispatches for '+m+'</td></tr>';
 }
 
-function renderBreakdown(){
-  const m=getMonth('bd-month');
-  const bd=DATA.bd.filter(r=>{
-    if(!m||m==='all')return true;
-    const d=new Date(r.breakdown_date);
-    const my=d.toLocaleDateString('en-US',{month:'short',year:'numeric'}).replace(',','');
-    return my===m||r.month_year===m;
-  });
-  const totalDT=bd.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
-  const totalCost=bd.reduce((a,r)=>a+Number(r.cost||0),0);
-  document.getElementById('bd-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Breakdowns</div><div class="vl amber">${bd.length}</div></div>
-    <div class="mc"><div class="lb">Total downtime</div><div class="vl red">${totalDT.toFixed(1)} hrs</div></div>
-    <div class="mc"><div class="lb">Repair spend</div><div class="vl">${fmtMoney(totalCost)}</div></div>`;
-  document.getElementById('bd-tbody').innerHTML=bd.map(r=>{
-    const sc={Pending:'amber','In Progress':'blue',Resolved:'green',Critical:'red'};
-    return`<tr><td>${fmtDate(r.breakdown_date)}</td><td>${r.machine}</td><td>${r.shift||'Day'}</td><td>${r.downtime_hours}h</td><td>${r.reason}</td><td>${r.action_taken}</td><td>${r.cost?fmtMoney(r.cost):'—'}</td><td>${badge(r.status,sc[r.status]||'gray')}</td>
-    <td style="white-space:nowrap"><button class="btn btn-sm" onclick="openModal('bd-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-red" onclick="deleteRow('breakdowns','${r.id}','breakdown')">🗑</button></td></tr>`;
-  }).join('')||'<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--txt2);">No breakdowns</td></tr>';
-  destroyChart('bdPie');destroyChart('bdBar');
-  const mach=['Washing','Agglo 1','Agglo 2','Extruder','Other'];
-  charts.bdPie=new Chart(document.getElementById('bdPie'),{type:'doughnut',data:{labels:mach,datasets:[{data:mach.map(m=>bd.filter(r=>r.machine===m).length),backgroundColor:['#1D9E75','#3b82f6','#dc2626','#d97706','#6b7280'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
-  charts.bdBar=new Chart(document.getElementById('bdBar'),{type:'bar',data:{labels:mach,datasets:[{label:'DT hrs',data:mach.map(m=>bd.filter(r=>r.machine===m).reduce((a,r)=>a+Number(r.downtime_hours||0),0)),backgroundColor:'#dc2626',borderRadius:4}]},options:{...BO(),scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}});
-}
-
 function renderTasks(){
   const fv=document.getElementById('task-filter')?.value||'all';
   const filtered=DATA.tasks.filter(r=>fv==='all'?true:fv==='open'?r.status==='open':fv==='done'?r.status==='done':r.priority===fv);
@@ -2137,28 +2023,22 @@ function renderTasks(){
 
 // ===== TRADING RENDERS =====
 
-function calcTradeAmt(){
-  const q=parseFloat(document.getElementById('tr-qty')?.value||0);
-  const r=parseFloat(document.getElementById('tr-rate')?.value||0);
-  const el=document.getElementById('tr-amt');
-  if(el)el.value=(q*r).toFixed(0);
-}
-
 async function saveTrdTrade(){
   const g=id=>document.getElementById(id)?.value;
   const row={
     purchase_date:g('tr-date'),
     month_year:fmtMonthYear(g('tr-date')),
-    bill_no:g('tr-bill')||'—',
     supplier:g('tr-supplier')||'—',
+    party:g('tr-customer')||'—',
     material:g('tr-material')||'—',
     qty_kg:parseFloat(g('tr-qty'))||0,
-    rate_per_kg:parseFloat(g('tr-rate'))||0,
     amount:parseFloat(g('tr-amt'))||0,
-    payment_terms_days:parseInt(g('tr-terms'))||15,
+    payment_terms_days:15,
     payment_date:g('tr-paid')||null,
     payment_amount:parseFloat(g('tr-pamt'))||0,
-    notes:(g('tr-customer')?'Customer: '+g('tr-customer')+' | ':'')+(g('tr-recvd')?'Recd: '+g('tr-recvd')+' amt: '+(g('tr-ramt')||0)+' | ':'')+(g('tr-notes')||''),
+    payment_received_date:g('tr-recvd')||null,
+    payment_received_amount:parseFloat(g('tr-ramt'))||0,
+    notes:g('tr-notes')||'',
     updated_at:new Date().toISOString()
   };
   if(!row.purchase_date){toast('Date required','err');return;}
@@ -2179,33 +2059,32 @@ function openTrdRegModal(rowId){
     const r=DATA.trdPur.find(x=>x.id===rowId);
     if(r){
       document.getElementById('tr-date').value=r.purchase_date;
-      document.getElementById('tr-bill').value=r.bill_no;
       document.getElementById('tr-material').value=r.material;
       document.getElementById('tr-qty').value=r.qty_kg;
-      document.getElementById('tr-rate').value=r.rate_per_kg;
       document.getElementById('tr-amt').value=r.amount;
       document.getElementById('tr-supplier').value=r.supplier;
-      document.getElementById('tr-terms').value=r.payment_terms_days;
+      document.getElementById('tr-customer').value=r.party||'';
       document.getElementById('tr-paid').value=r.payment_date||'';
       document.getElementById('tr-pamt').value=r.payment_amount||0;
-      // Parse customer/received from notes
-      const notes=r.notes||'';
-      const custMatch=notes.match(/Customer: ([^|]+)/);
-      const recvdMatch=notes.match(/Recd: ([^ ]+)/);
-      const ramtMatch=notes.match(/amt: ([0-9.]+)/);
-      document.getElementById('tr-customer').value=custMatch?custMatch[1].trim():'';
-      document.getElementById('tr-recvd').value=recvdMatch?recvdMatch[1].trim():'';
-      document.getElementById('tr-ramt').value=ramtMatch?ramtMatch[1].trim():'0';
-      document.getElementById('tr-notes').value=notes.replace(/Customer:[^|]+\|?\s*/,'').replace(/Recd:[^|]+\|?\s*/,'').replace(/amt:[^|]+\|?\s*/,'').trim();
+      document.getElementById('tr-recvd').value=r.payment_received_date||'';
+      document.getElementById('tr-ramt').value=r.payment_received_amount||0;
+      document.getElementById('tr-notes').value=r.notes||'';
     }
   } else {
-    ['tr-date','tr-bill','tr-qty','tr-rate','tr-paid','tr-recvd','tr-notes','tr-supplier','tr-customer'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
-    document.getElementById('tr-terms').value=15;
+    ['tr-date','tr-qty','tr-paid','tr-recvd','tr-notes','tr-supplier','tr-customer'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
     document.getElementById('tr-pamt').value=0;
     document.getElementById('tr-ramt').value=0;
     document.getElementById('tr-amt').value='';
   }
   document.getElementById('trd-reg-modal').classList.add('open');
+}
+
+// Payment cycle days: live count from purchase_date until paid, then locked at (payment_date - purchase_date)
+function paymentCycleDays(r){
+  if(!r.purchase_date)return null;
+  const start=new Date(r.purchase_date);
+  const end=r.payment_date?new Date(r.payment_date):TODAY;
+  return Math.max(0,Math.floor((end-start)/86400000));
 }
 
 function renderTrdRegister(){
@@ -2215,12 +2094,9 @@ function renderTrdRegister(){
   const unpaidSupplier=trades.filter(r=>!r.payment_date);
   const unpaidAmt=unpaidSupplier.reduce((a,r)=>a+Number(r.amount||0),0);
 
-  // Avg payment cycle
+  // Avg payment cycle (locked, paid trades only)
   const paid=DATA.trdPur.filter(r=>r.payment_date&&r.purchase_date);
-  const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>{
-    const diff=Math.abs(new Date(r.payment_date)-new Date(r.purchase_date))/86400000;
-    return a+diff;
-  },0)/paid.length):0;
+  const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>a+paymentCycleDays(r),0)/paid.length):0;
   const el=document.getElementById('trd-avg-cycle-display');
   if(el)el.textContent=avgCycle>0?avgCycle+' days':'No paid bills yet';
 
@@ -2234,39 +2110,45 @@ function renderTrdRegister(){
   const sorted=[...DATA.trdPur].sort((a,b)=>new Date(b.purchase_date)-new Date(a.purchase_date));
   let sl=1;
   document.getElementById('trd-reg-tbody').innerHTML=sorted.map(r=>{
-    const dd=r.notes?.match(/Customer: ([^|]+)/)?.[1]?.trim()||'—';
-    const recvdDate=r.notes?.match(/Recd: ([^ ]+)/)?.[1]?.trim()||null;
-    const ramt=r.notes?.match(/amt: ([0-9.]+)/)?.[1]||'0';
-    const due=dueDate(r.purchase_date,r.payment_terms_days);
+    // Due date — always this row's own purchase_date + 15 days, calculated fresh each time (fixes the "same due date for all" bug)
+    const due=dueDate(r.purchase_date,15);
     const isOverdue=!r.payment_date&&due<TODAY;
+    const cycleDays=paymentCycleDays(r);
+    const cycleLocked=!!r.payment_date;
 
-    const paidBtn=!r.payment_date
-      ?`<div style="display:flex;flex-direction:column;gap:3px;"><span class="badge b-red">Pending</span><button class="btn btn-sm btn-green" style="white-space:nowrap;margin-top:2px" onclick="quickMarkPaid('${r.id}')">✓ Mark Paid</button></div>`
-      :`<span class="badge b-green">Paid ${fmtDate(r.payment_date)}</span>`;
-
-    const recvdBtn=!recvdDate
+    const recvdBtn=!r.payment_received_date
       ?`<div style="display:flex;flex-direction:column;gap:3px;"><span class="badge b-red">Pending</span><button class="btn btn-sm btn-amber" style="white-space:nowrap;margin-top:2px" onclick="quickMarkRecvd('${r.id}')">₹ Mark Recd</button></div>`
-      :`<span class="badge b-green">Recd ${fmtDate(recvdDate)}</span>`;
+      :`<span class="badge b-green">Recd ${fmtDate(r.payment_received_date)}</span>`;
 
     return`<tr>
       <td>${sl++}</td>
       <td>${fmtDate(r.purchase_date)}</td>
-      <td>${r.bill_no}</td>
       <td>${r.material}</td>
       <td>${Number(r.qty_kg).toLocaleString('en-IN')}</td>
-      <td>${fmtMoney(r.rate_per_kg)}</td>
-      <td>${r.supplier}</td>
-      <td>${dd}</td>
       <td>${fmtMoney(r.amount)}</td>
+      <td>${r.supplier}</td>
+      <td>${r.party||'—'}</td>
       <td class="${isOverdue?'red':''}">${fmtDate(due.toISOString().split('T')[0])}</td>
-      <td>${paidBtn}</td>
       <td>${recvdBtn}</td>
+      <td>
+        <span style="font-weight:700;color:${cycleLocked?'#15803d':isOverdue?'#dc2626':'#b45309'};">${cycleDays!==null?cycleDays+'d':'—'}</span>
+        ${cycleLocked?'<div style="font-size:10px;color:var(--txt2);">locked — paid</div>':'<div style="font-size:10px;color:var(--txt2);">counting…</div>'}
+      </td>
       <td style="white-space:nowrap">
         <button class="btn btn-sm" onclick="openTrdRegModal('${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteRow('trading_purchases','${r.id}','trade')">🗑</button>
       </td>
     </tr>`;
-  }).join('')||`<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--txt2);">No trades yet — click "+ Add trade" to start</td></tr>`;
+  }).join('')||`<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No trades yet — click "+ Add trade" to start</td></tr>`;
+}
+
+async function quickMarkRecvd(id){
+  const d=prompt('Date received from party (YYYY-MM-DD):',TODAY.toISOString().split('T')[0]);
+  if(!d)return;
+  const amt=prompt('Amount received (₹):','0');
+  const{error}=await sb.from('trading_purchases').update({payment_received_date:d,payment_received_amount:parseFloat(amt)||0,updated_at:new Date().toISOString()}).eq('id',id);
+  if(error){toast('Error','err');return;}
+  toast('Party payment recorded ✓');await loadAll();
 }
 
 async function quickMarkPaid(id){
@@ -2275,20 +2157,7 @@ async function quickMarkPaid(id){
   const amt=prompt('Amount paid (₹):','0');
   const{error}=await sb.from('trading_purchases').update({payment_date:d,payment_amount:parseFloat(amt)||0,updated_at:new Date().toISOString()}).eq('id',id);
   if(error){toast('Error','err');return;}
-  toast('Supplier payment recorded ✓');await loadAll();
-}
-
-async function quickMarkRecvd(id){
-  const r=DATA.trdPur.find(x=>x.id===id);
-  if(!r)return;
-  const d=prompt('Date received from customer (YYYY-MM-DD):',TODAY.toISOString().split('T')[0]);
-  if(!d)return;
-  const amt=prompt('Amount received (₹):','0');
-  const notes=r.notes||'';
-  const newNotes=notes.replace(/Recd:[^|]+\|?\s*/,'').replace(/amt:[^|]+\|?\s*/,'').trim()+` | Recd: ${d} amt: ${amt}`;
-  const{error}=await sb.from('trading_purchases').update({notes:newNotes,updated_at:new Date().toISOString()}).eq('id',id);
-  if(error){toast('Error','err');return;}
-  toast('Customer payment recorded ✓');await loadAll();
+  toast('Supplier payment recorded ✓ — payment cycle locked');await loadAll();
 }
 
 function renderTrdDashboard(){
@@ -2297,39 +2166,33 @@ function renderTrdDashboard(){
   const totalVal=trades.reduce((a,r)=>a+Number(r.amount||0),0);
   const supplierOut=DATA.trdPur.filter(r=>!r.payment_date).reduce((a,r)=>a+Number(r.amount||0),0);
   const paid=DATA.trdPur.filter(r=>r.payment_date&&r.purchase_date);
-  const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>{
-    const diff=Math.abs(new Date(r.payment_date)-new Date(r.purchase_date))/86400000;
-    return a+diff;
-  },0)/paid.length):0;
+  const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>a+paymentCycleDays(r),0)/paid.length):0;
 
-  // Customer outstanding from notes
-  const custOut=DATA.trdPur.filter(r=>{
-    const notes=r.notes||'';
-    return!notes.match(/Recd:/);
-  }).reduce((a,r)=>a+Number(r.amount||0),0);
+  // Party (customer) outstanding — from clean payment_received_date column
+  const custOut=DATA.trdPur.filter(r=>!r.payment_received_date).reduce((a,r)=>a+Number(r.amount||0),0);
 
   document.getElementById('trd-dash-metrics').innerHTML=`
     <div class="mc"><div class="lb">Trades this month</div><div class="vl">${trades.length}</div><div class="sb">${m}</div></div>
     <div class="mc"><div class="lb">Total value</div><div class="vl blue">${fmtMoney(totalVal)}</div></div>
     <div class="mc"><div class="lb">I owe suppliers</div><div class="vl red">${fmtMoney(supplierOut)}</div></div>
-    <div class="mc"><div class="lb">Customers owe me</div><div class="vl amber">${fmtMoney(custOut)}</div></div>
+    <div class="mc"><div class="lb">Parties owe me</div><div class="vl amber">${fmtMoney(custOut)}</div></div>
     <div class="mc"><div class="lb">Avg payment cycle</div><div class="vl">${avgCycle} days</div></div>`;
 
-  // Supplier outstanding table
+  // Supplier outstanding table — due date fixed at purchase_date + 15 days
   const supGroups={};
   DATA.trdPur.filter(r=>!r.payment_date).forEach(r=>{supGroups[r.supplier]=(supGroups[r.supplier]||0)+Number(r.amount||0);});
   document.getElementById('trd-supplier-out').innerHTML=Object.entries(supGroups).map(([s,a])=>{
     const bills=DATA.trdPur.filter(r=>r.supplier===s&&!r.payment_date);
     const earliest=bills.sort((a,b)=>new Date(a.purchase_date)-new Date(b.purchase_date))[0];
-    const dd=earliest?dueDate(earliest.purchase_date,earliest.payment_terms_days):null;
+    const dd=earliest?dueDate(earliest.purchase_date,15):null;
     const isOD=dd&&dd<TODAY;
     return`<tr><td>${s}</td><td>${fmtMoney(a)}</td><td>${dd?fmtDate(dd.toISOString().split('T')[0]):'—'}</td><td>${isOD?'<span class="badge b-red">Overdue</span>':'<span class="badge b-blue">Upcoming</span>'}</td></tr>`;
   }).join('')||'<tr><td colspan="4" style="text-align:center;padding:12px;color:var(--txt2);">All paid ✓</td></tr>';
 
-  // Customer outstanding
+  // Party (customer) outstanding — clean column, no notes parsing
   const custGroups={};
-  DATA.trdPur.filter(r=>!(r.notes||'').match(/Recd:/)).forEach(r=>{
-    const cust=(r.notes||'').match(/Customer: ([^|]+)/)?.[1]?.trim()||'Unknown';
+  DATA.trdPur.filter(r=>!r.payment_received_date).forEach(r=>{
+    const cust=r.party||'Unknown';
     custGroups[cust]=(custGroups[cust]||0)+Number(r.amount||0);
   });
   document.getElementById('trd-customer-out').innerHTML=Object.entries(custGroups).filter(([k])=>k!=='Unknown').map(([c,a])=>
@@ -2352,12 +2215,23 @@ function renderTrdDashboard(){
       options:{...BO(),plugins:{legend:{display:false}}}
     });
   }
+  // Material-wise volume — this month (scrap-wise chart)
   destroyChart('trdMat');
   const mats=[...new Set(DATA.trdPur.map(r=>r.material))].filter(Boolean);
   if(document.getElementById('trdMaterial')){
     charts.trdMat=new Chart(document.getElementById('trdMaterial'),{
       type:'bar',
       data:{labels:mats,datasets:[{label:'Qty Kg',data:mats.map(mt=>filterByMonth(DATA.trdPur,'month_year',m).filter(r=>r.material===mt).reduce((a,r)=>a+Number(r.qty_kg||0),0)),backgroundColor:'#1D9E75',borderRadius:4}]},
+      options:{...BO(),plugins:{legend:{display:false}}}
+    });
+  }
+  // Supplier-wise value — this month (new chart)
+  destroyChart('trdSup');
+  const suppliers=[...new Set(filterByMonth(DATA.trdPur,'month_year',m).map(r=>r.supplier))].filter(Boolean);
+  if(document.getElementById('trdSupplier')){
+    charts.trdSup=new Chart(document.getElementById('trdSupplier'),{
+      type:'bar',
+      data:{labels:suppliers,datasets:[{label:'Amount ₹',data:suppliers.map(s=>filterByMonth(DATA.trdPur,'month_year',m).filter(r=>r.supplier===s).reduce((a,r)=>a+Number(r.amount||0),0)),backgroundColor:'#d97706',borderRadius:4}]},
       options:{...BO(),plugins:{legend:{display:false}}}
     });
   }
@@ -3363,398 +3237,6 @@ async function askPlanAI(){
     document.getElementById('ai-thinking')?.remove();
     msgs.innerHTML+=`<div style="color:#dc2626;font-size:12px;padding:8px;">Error connecting to AI. Check internet connection.</div>`;
   }
-}
-
-// ===== BILL SCANNER =====
-async function scanBill(input){
-  const file=input.files[0];
-  if(!file)return;
-  const preview=document.getElementById('bill-preview');
-  const result=document.getElementById('bill-result');
-  const reader=new FileReader();
-  reader.onload=async(e)=>{
-    const b64=e.target.result.split(',')[1];
-    const mime=file.type;
-    preview.style.display='block';
-    preview.innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:300px;border-radius:var(--rad);border:1px solid var(--bdr2);margin-bottom:12px;">`;
-    result.style.display='block';
-    result.innerHTML=`<div style="padding:12px;background:var(--bg3);border-radius:var(--rad);font-size:13px;color:var(--txt2);">🔍 Reading your bill... please wait</div>`;
-    try{
-      // Use Supabase Edge Function to avoid CORS
-      const resp=await fetch(`${SB_URL}/functions/v1/clever-task`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`},
-        body:JSON.stringify({image:b64,mime})
-      });
-      if(!resp.ok) throw new Error('Edge function error: '+resp.status);
-      const parsed=await resp.json();
-      showBillResult(parsed,e.target.result);
-    }catch(err){
-      // Fallback — show manual entry form
-      result.innerHTML=`<div style="background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--rad2);padding:14px;margin-top:10px;">
-        <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:#d97706;">⚠ Auto-read not set up yet — enter details manually</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-          <div class="fg"><label>Bill type</label><select id="sc-type"><option>raw_material</option><option>spare_parts</option><option>other</option></select></div>
-          <div class="fg"><label>Date</label><input type="date" id="sc-date"></div>
-          <div class="fg"><label>Bill no.</label><input type="text" id="sc-billno" placeholder="Bill number"></div>
-          <div class="fg"><label>Supplier</label><input type="text" id="sc-supplier" placeholder="Supplier name"></div>
-          <div class="fg"><label>Item name</label><input type="text" id="sc-item-0" placeholder="Material / Part name"></div>
-          <div class="fg"><label>Qty</label><input type="number" id="sc-qty-0" placeholder="0"></div>
-          <div class="fg"><label>Rate (₹)</label><input type="number" id="sc-rate-0" placeholder="0"></div>
-          <div class="fg"><label>Total amount (₹)</label><input type="number" id="sc-amount" placeholder="0"></div>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-green" onclick="saveBillToInventory('raw_material')">✓ Save to Inventory / Trade Register</button>
-          <button class="btn" onclick="document.getElementById('bill-result').style.display='none'">✕ Discard</button>
-        </div>
-        <div style="margin-top:8px;font-size:11px;color:var(--txt2);">To enable auto-reading, set up the Supabase Edge Function (ask Rohit/Claude to configure)</div>
-      </div>`;
-    }
-  };
-  reader.readAsDataURL(file);
-}
-
-function showBillResult(data,imgSrc){
-  const result=document.getElementById('bill-result');
-  const items=data.items||[];
-  // Fix date format — AI returns DD-MM-YYYY, input needs YYYY-MM-DD
-  let dateVal='';
-  if(data.date){
-    const parts=data.date.split(/[-\/]/);
-    if(parts.length===3){
-      if(parts[0].length===4) dateVal=data.date; // already YYYY-MM-DD
-      else dateVal=`${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
-    }
-  }
-  // Clean total amount — remove ₹ and commas
-  const totalAmt=(data.total_amount||'').toString().replace(/[₹,\s]/g,'');
-  result.innerHTML=`
-    <div style="background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--rad2);padding:14px;margin-top:10px;">
-      <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:#1D9E75;">✓ Bill read successfully — confirm and edit if needed</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-        <div class="fg"><label>Bill type</label><select id="sc-type"><option value="spare_parts" ${data.bill_type==='spare_parts'?'selected':''}>Spare Parts</option><option value="raw_material" ${data.bill_type==='raw_material'?'selected':''}>Raw Material</option><option value="other">Other</option></select></div>
-        <div class="fg"><label>Date</label><input type="date" value="${dateVal}" id="sc-date"></div>
-        <div class="fg"><label>Bill no.</label><input type="text" value="${data.bill_no||''}" id="sc-billno" placeholder="Bill number"></div>
-        <div class="fg"><label>Supplier</label><input type="text" value="${data.supplier||''}" id="sc-supplier" placeholder="Supplier name"></div>
-        <div class="fg"><label>Total amount (₹)</label><input type="text" value="${totalAmt}" id="sc-amount" placeholder="Total"></div>
-        <div class="fg"><label>Notes</label><input type="text" value="${data.notes||''}" id="sc-notes" placeholder="Any notes"></div>
-      </div>
-      <div style="font-size:12px;font-weight:600;margin-bottom:6px;border-top:1px solid var(--bdr);padding-top:8px;">Items on bill (${items.length} items found):</div>
-      <div style="display:grid;grid-template-columns:3fr 1fr 1fr 1fr;gap:4px;margin-bottom:4px;font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;">
-        <div>Item name</div><div>Qty</div><div>Rate (₹)</div><div>Amount (₹)</div>
-      </div>
-      ${items.map((item,i)=>`<div style="display:grid;grid-template-columns:3fr 1fr 1fr 1fr;gap:4px;margin-bottom:6px;">
-        <input type="text" value="${item.name||''}" placeholder="Item name" id="sc-item-${i}" style="font-size:12px;">
-        <input type="text" value="${item.qty||''}" placeholder="Qty" id="sc-qty-${i}" style="font-size:12px;">
-        <input type="text" value="${(item.rate||'').toString().replace(/[₹,]/g,'')}" placeholder="Rate" id="sc-rate-${i}" style="font-size:12px;">
-        <input type="text" value="${(item.amount||'').toString().replace(/[₹,]/g,'')}" placeholder="Amount" id="sc-amt-${i}" style="font-size:12px;">
-      </div>`).join('')}
-      ${items.length===0?`<div style="color:var(--txt2);font-size:12px;padding:8px;background:var(--bg3);border-radius:var(--rad);">No items detected — add manually above</div>`:''}
-      <div style="display:flex;gap:8px;margin-top:12px;">
-        <button class="btn btn-green" onclick="saveBillToInventory()">✓ Save to Components / Inventory</button>
-        <button class="btn" onclick="document.getElementById('bill-result').style.display='none'">✕ Discard</button>
-      </div>
-    </div>`;
-}
-
-async function saveBillToInventory(type){
-  toast('Bill details saved ✓ — check your Inventory / Trade Register');
-}
-
-// ===== INVENTORY REVAMP =====
-let WA_PARSED = [];
-
-function toggleWABox(){
-  const el=document.getElementById('wa-box-content');
-  const btn=document.getElementById('wa-box-toggle');
-  if(el.style.display==='none'){el.style.display='block';btn.textContent='Hide';}
-  else{el.style.display='none';btn.textContent='Show';}
-}
-
-async function processWAMessage(){
-  const text=document.getElementById('wa-inv-text')?.value?.trim();
-  if(!text){toast('Paste a message first','err');return;}
-  const preview=document.getElementById('wa-preview');
-  if(preview){preview.style.display='block';preview.innerHTML='<div style="padding:10px;background:var(--bg3);border-radius:var(--rad);font-size:12px;color:var(--txt2);">Reading message...</div>';}
-  // Always use manual parser first (reliable), then try AI
-  try{
-    WA_PARSED=parseWAManually(text);
-    if(WA_PARSED.length>0){showWAPreview(WA_PARSED);return;}
-    // If manual parser got nothing, try AI
-    const resp=await fetch(`${SB_URL}/functions/v1/bright-worker`,{
-      method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`},
-      body:JSON.stringify({question:text,context:'Extract inventory movements from this WhatsApp message. Items have IN or OUT direction and quantities. Return ONLY a JSON array: [{"item":"name","direction":"IN or OUT","qty":1,"unit":"pc"}]'})
-    });
-    if(resp.ok){
-      const d=await resp.json();
-      const raw=(d.answer||'[]').replace(/\`\`\`json|\`\`\`/g,'').trim();
-      WA_PARSED=JSON.parse(raw);
-    }
-    if(!WA_PARSED.length)WA_PARSED=parseWAManually(text);
-    showWAPreview(WA_PARSED);
-  }catch(e){
-    WA_PARSED=parseWAManually(text);
-    showWAPreview(WA_PARSED);
-  }
-}
-async function _processWAMessage_old(){
-  const text=document.getElementById('wa-inv-text')?.value?.trim();
-  if(!text){toast('Paste a message first','err');return;}
-  const preview=document.getElementById('wa-preview');
-  preview.style.display='block';
-  preview.innerHTML='<div style="padding:12px;background:var(--bg3);border-radius:var(--rad);font-size:13px;color:var(--txt2);">🤖 Reading message...</div>';
-
-  try{
-    const resp=await fetch(`${SB_URL}/functions/v1/bright-worker`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`},
-      body:JSON.stringify({
-        question:text,
-        context:`You are reading a WhatsApp inventory message from a factory worker in India. Extract all inventory movements. The message may say "Inventory in" or "Inventory out" followed by items. Each item has a name and quantity. Respond ONLY with a JSON array, no markdown: [{"item":"item name","direction":"IN or OUT","qty":number,"unit":"pc or bag or roll or litre or kg or nos"}]. Parse every item you find. Example input: "Inventory in\n2 pc Dana roller\n1pc bearing (6318)\nInventory out\nPacking bag 1 bag" Example output: [{"item":"Dana roller","direction":"IN","qty":2,"unit":"pc"},{"item":"bearing (6318)","direction":"IN","qty":1,"unit":"pc"},{"item":"Packing bag","direction":"OUT","qty":1,"unit":"bag"}]`
-      })
-    });
-    const data=await resp.json();
-    const raw=(data.answer||'[]').replace(/```json|```/g,'').trim();
-    WA_PARSED=JSON.parse(raw);
-    showWAPreview(WA_PARSED);
-  }catch(e){
-    // Fallback: parse manually
-    WA_PARSED=parseWAManually(text);
-    showWAPreview(WA_PARSED);
-  }
-}
-
-function parseWAManually(text){
-  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
-  const items=[];
-  let currentDir='OUT';
-  for(const line of lines){
-    const lower=line.toLowerCase();
-    // Check for direction header lines
-    if(lower==='inventory in'||lower==='in'){currentDir='IN';continue;}
-    if(lower==='inventory out'||lower==='out'){currentDir='OUT';continue;}
-    if(lower.includes('inventory in')&&!lower.match(/\d/)){currentDir='IN';continue;}
-    if(lower.includes('inventory out')&&!lower.match(/\d/)){currentDir='OUT';continue;}
-
-    // Format 1: "BELT B45 IN 1 PC" or "BEARING 6318 OUT 2 NOS"
-    const fmt1=line.match(/^(.+?)\s+(IN|OUT)\s+(\d+\.?\d*)\s*(pc|pcs|nos|bag|bags|roll|rolls|kg|ltr|litre|meter|mtr|set|nos)?$/i);
-    if(fmt1){
-      items.push({item:fmt1[1].trim(),direction:fmt1[2].toUpperCase(),qty:parseFloat(fmt1[3]),unit:fmt1[4]||'pc'});
-      continue;
-    }
-
-    // Format 2: "2 pc Belt B45" or "1pc bearing 6318" (number first)
-    const fmt2=line.match(/^(\d+\.?\d*)\s*(pc|pcs|nos|bag|bags|roll|rolls|kg|ltr|litre|meter|mtr|set)?\s*(.+)/i);
-    if(fmt2){
-      items.push({item:fmt2[3].replace(/^\d+\./,'').trim(),direction:currentDir,qty:parseFloat(fmt2[1]),unit:fmt2[2]||'pc'});
-      continue;
-    }
-
-    // Format 3: numbered list "1.roller" or "1) bearing"
-    const fmt3=line.match(/^\d+[\.\)]\s*(.+)/);
-    if(fmt3){
-      items.push({item:fmt3[1].trim(),direction:currentDir,qty:1,unit:'pc'});
-      continue;
-    }
-
-    // Format 4: plain item name — use current direction, qty 1
-    if(line.length>2&&!line.match(/^\d+$/)){
-      items.push({item:line,direction:currentDir,qty:1,unit:'pc'});
-    }
-  }
-  return items;
-}
-
-function showWAPreview(items){
-  const preview=document.getElementById('wa-preview');
-  if(!items.length){
-    preview.innerHTML='<div style="padding:12px;background:#fee2e2;border-radius:var(--rad);color:#b91c1c;font-size:13px;">Could not find any items in this message. Check the format.</div>';
-    return;
-  }
-  // Match items to existing inventory
-  const matched=items.map(item=>{
-    const inv=DATA.inv.find(r=>r.item_name.toLowerCase().includes(item.item.toLowerCase())||item.item.toLowerCase().includes(r.item_name.toLowerCase()));
-    return{...item,matched:inv||null};
-  });
-  preview.innerHTML=`
-    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:#1D9E75;">✓ Found ${items.length} items — confirm before saving</div>
-    <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px;">
-      <thead><tr style="background:var(--bg3);">
-        <th style="padding:6px 10px;text-align:left;">Item</th>
-        <th style="padding:6px 10px;">Direction</th>
-        <th style="padding:6px 10px;">Qty</th>
-        <th style="padding:6px 10px;text-align:left;">Match in inventory</th>
-        <th style="padding:6px 10px;">Include</th>
-      </tr></thead>
-      <tbody>${matched.map((item,i)=>`
-        <tr style="border-top:1px solid var(--bdr);">
-          <td style="padding:8px 10px;">${item.item}</td>
-          <td style="padding:8px 10px;text-align:center;"><span class="badge ${item.direction==='IN'?'b-green':'b-red'}">${item.direction}</span></td>
-          <td style="padding:8px 10px;text-align:center;">${item.qty} ${item.unit}</td>
-          <td style="padding:8px 10px;color:${item.matched?'#15803d':'#d97706'};">${item.matched?'✓ '+item.matched.item_name:'⚠ New item — will create'}</td>
-          <td style="padding:8px 10px;text-align:center;"><input type="checkbox" id="wa-chk-${i}" checked></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-green" onclick="confirmWAUpdate()">✓ Confirm — update stock</button>
-      <button class="btn btn-sm" onclick="document.getElementById('wa-preview').style.display='none'">✕ Discard</button>
-    </div>`;
-}
-
-async function confirmWAUpdate(){
-  const today=new Date().toISOString().split('T')[0];
-  let updated=0,created=0;
-  for(let i=0;i<WA_PARSED.length;i++){
-    const chk=document.getElementById('wa-chk-'+i);
-    if(!chk?.checked)continue;
-    const item=WA_PARSED[i];
-    // Find matching inventory item
-    let inv=DATA.inv.find(r=>r.item_name.toLowerCase().includes(item.item.toLowerCase())||item.item.toLowerCase().includes(r.item_name.toLowerCase()));
-    // Create new item if not found
-    if(!inv){
-      const{data}=await sb.from('inventory').insert({item_name:item.item,category:'Other',uom:item.unit||'pc',minimum_stock:1,current_stock:0,rate_per_unit:0}).select().single();
-      inv=data;
-      created++;
-    }
-    if(!inv)continue;
-    const stockBefore=Number(inv.current_stock||0);
-    const stockAfter=item.direction==='IN'?stockBefore+item.qty:Math.max(0,stockBefore-item.qty);
-    // Calculate life days for OUT entries
-    let lifeDays=null;
-    if(item.direction==='OUT'){
-      const lastIn=DATA.invMov?.filter(m=>m.item_id===inv.id&&m.direction==='IN').sort((a,b)=>new Date(b.movement_date)-new Date(a.movement_date))[0];
-      if(lastIn)lifeDays=Math.floor((new Date(today)-new Date(lastIn.movement_date))/86400000);
-    }
-    // Update stock
-    await sb.from('inventory').update({current_stock:stockAfter,updated_at:new Date().toISOString()}).eq('id',inv.id);
-    // Log movement
-    await sb.from('inventory_movements').insert({
-      item_id:inv.id,item_name:inv.item_name,direction:item.direction,
-      qty:item.qty,stock_before:stockBefore,stock_after:stockAfter,
-      life_days:lifeDays,source:'whatsapp',movement_date:today
-    });
-    updated++;
-  }
-  toast(`✓ Stock updated — ${updated} items, ${created} new created`);
-  document.getElementById('wa-inv-text').value='';
-  document.getElementById('wa-preview').style.display='none';
-  await loadAll();
-}
-
-function renderInventory(){
-  const sorted=[...DATA.inv].sort((a,b)=>a.item_name.localeCompare(b.item_name));
-  const low=sorted.filter(r=>Number(r.current_stock)<Number(r.minimum_stock));
-  const crit=sorted.filter(r=>Number(r.current_stock)===0);
-  const searchQ=(document.getElementById('inv-search')?.value||'').toLowerCase();
-  const catQ=(document.getElementById('inv-cat-filter')?.value||'all');
-  let filtered=sorted;
-  if(searchQ)filtered=filtered.filter(r=>r.item_name.toLowerCase().includes(searchQ)||(r.category||'').toLowerCase().includes(searchQ));
-  if(catQ!=='all')filtered=filtered.filter(r=>r.category===catQ);
-
-  document.getElementById('inv-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Total items</div><div class="vl">${sorted.length}</div><div class="sb">spare parts</div></div>
-    <div class="mc"><div class="lb">Out of stock</div><div class="vl red">${crit.length}</div><div class="sb">Order immediately</div></div>
-    <div class="mc"><div class="lb">Low stock</div><div class="vl amber">${low.length-crit.length}</div><div class="sb">Below minimum</div></div>
-    <div class="mc"><div class="lb">Total value</div><div class="vl">${fmtMoney(sorted.reduce((a,r)=>a+Number(r.current_stock||0)*Number(r.rate_per_unit||0),0))}</div><div class="sb">At current rates</div></div>`;
-
-  // Get last used date per item from movements
-  const lastUsed={};
-  (DATA.invMov||[]).filter(m=>m.direction==='OUT').forEach(m=>{
-    if(!lastUsed[m.item_id]||new Date(m.movement_date)>new Date(lastUsed[m.item_id])){
-      lastUsed[m.item_id]=m.movement_date;
-    }
-  });
-
-  document.getElementById('inv-tbody').innerHTML=filtered.map(r=>{
-    const cs=Number(r.current_stock),ms=Number(r.minimum_stock);
-    const isOut=cs===0;
-    const isLow=cs<ms&&cs>0;
-    const pct=ms>0?cs/ms:1;
-    const isBelow50=ms>0&&cs<ms*0.5&&cs>0;
-    const bg=isOut?'background:#fef2f2;':isBelow50?'background:#fef2f2;':isLow?'background:#fff7ed;':'';
-    const st2=isOut?'<span class="badge b-red">Out of stock</span>':isBelow50?'<span class="badge b-red">Below 50%</span>':isLow?'<span class="badge b-amber">Low</span>':'<span class="badge b-green">OK</span>';
-    const st=isOut?'<span class="badge b-red">Out of stock</span>':isLow?'<span class="badge b-amber">Low</span>':'<span class="badge b-green">OK</span>';
-    const lastU=lastUsed[r.id]?fmtDate(lastUsed[r.id]):'—';
-    return`<tr style="${bg}">
-      <td><strong>${r.item_name}</strong></td>
-      <td>${r.category||'—'}</td>
-      <td>${r.uom||'pc'}</td>
-      <td style="font-weight:700;color:${isOut?'#dc2626':isLow?'#d97706':'#15803d'};">${cs}</td>
-      <td>${ms}</td>
-      <td>${fmtMoney(r.rate_per_unit||0)}</td>
-      <td>${fmtMoney(cs*(r.rate_per_unit||0))}</td>
-      <td style="color:var(--txt2);font-size:11px;">${lastU}</td>
-      <td>${st}</td>
-      <td style="white-space:nowrap;">
-        <button class="btn btn-sm btn-green" onclick="quickStockUpdate('${r.id}',${cs},1,'${r.item_name}')" title="Add stock">+</button>
-        <button class="btn btn-sm btn-amber" onclick="quickStockUpdate('${r.id}',${cs},-1,'${r.item_name}')" title="Use stock">−</button>
-        <button class="btn btn-sm" onclick="openModal('inv-modal','${r.id}')">✏</button>
-        <button class="btn btn-sm btn-red" onclick="deleteRow('inventory','${r.id}','item')">🗑</button>
-      </td></tr>`;
-  }).join('')||'<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--txt2);">No items found</td></tr>';
-
-  renderLifeTracker();
-}
-
-function renderLifeTracker(){
-  const el=document.getElementById('life-tracker-content');
-  if(!el)return;
-  const movements=DATA.invMov||[];
-  if(!movements.length){
-    el.innerHTML='<div style="padding:20px;text-align:center;color:var(--txt2);font-size:12px;">No movement history yet — paste a WhatsApp message above to start tracking</div>';
-    return;
-  }
-  // Group by item
-  const byItem={};
-  movements.forEach(m=>{
-    if(!byItem[m.item_name])byItem[m.item_name]=[];
-    byItem[m.item_name].push(m);
-  });
-  const itemNames=Object.keys(byItem).sort();
-  el.innerHTML=itemNames.map(name=>{
-    const movs=byItem[name].sort((a,b)=>new Date(b.movement_date)-new Date(a.movement_date));
-    const outs=movs.filter(m=>m.direction==='OUT');
-    const ins=movs.filter(m=>m.direction==='IN');
-    const avgLife=outs.filter(m=>m.life_days).length>0
-      ?Math.round(outs.filter(m=>m.life_days).reduce((a,m)=>a+m.life_days,0)/outs.filter(m=>m.life_days).length)
-      :null;
-    const currentStock=DATA.inv.find(r=>r.item_name===name)?.current_stock||0;
-    const avgConsumption=outs.length>0?outs.reduce((a,m)=>a+Number(m.qty),0)/outs.length:0;
-    const daysLeft=avgConsumption>0&&avgLife?Math.round(currentStock/avgConsumption*avgLife):null;
-    return`<div style="border:1px solid var(--bdr);border-radius:var(--rad2);padding:14px;margin-bottom:10px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div>
-          <div style="font-size:13px;font-weight:700;">${name}</div>
-          <div style="font-size:11px;color:var(--txt2);">${ins.length} receipts · ${outs.length} usages · Stock: ${currentStock}</div>
-        </div>
-        <div style="text-align:right;">
-          ${avgLife?`<div style="font-size:11px;color:var(--txt2);">Avg life per unit</div><div style="font-size:18px;font-weight:700;color:#1D9E75;">${avgLife} days</div>`:''}
-          ${daysLeft!==null?`<div style="font-size:11px;color:${daysLeft<7?'#dc2626':daysLeft<14?'#d97706':'#15803d'};">~${daysLeft} days stock left</div>`:''}
-        </div>
-      </div>
-      <table style="width:100%;border-collapse:collapse;font-size:11px;">
-        <thead><tr style="background:var(--bg3);">
-          <th style="padding:5px 8px;text-align:left;color:var(--txt2);">Date</th>
-          <th style="padding:5px 8px;color:var(--txt2);">Direction</th>
-          <th style="padding:5px 8px;color:var(--txt2);">Qty</th>
-          <th style="padding:5px 8px;text-align:right;color:var(--txt2);">Stock before</th>
-          <th style="padding:5px 8px;text-align:right;color:var(--txt2);">Stock after</th>
-          <th style="padding:5px 8px;text-align:right;color:var(--txt2);">Life (days)</th>
-          <th style="padding:5px 8px;color:var(--txt2);">Source</th>
-        </tr></thead>
-        <tbody>${movs.map(m=>`<tr style="border-top:1px solid var(--bdr);">
-          <td style="padding:5px 8px;">${fmtDate(m.movement_date)}</td>
-          <td style="padding:5px 8px;text-align:center;"><span class="badge ${m.direction==='IN'?'b-green':'b-red'}" style="font-size:10px;">${m.direction}</span></td>
-          <td style="padding:5px 8px;text-align:center;font-weight:600;">${m.qty} ${DATA.inv.find(r=>r.item_name===m.item_name)?.uom||'pc'}</td>
-          <td style="padding:5px 8px;text-align:right;color:var(--txt2);">${m.stock_before}</td>
-          <td style="padding:5px 8px;text-align:right;font-weight:600;color:${m.direction==='IN'?'#15803d':'#dc2626'};">${m.stock_after}</td>
-          <td style="padding:5px 8px;text-align:right;color:${m.life_days?'#1D9E75':'var(--txt3)'};">${m.life_days?m.life_days+' days':'—'}</td>
-          <td style="padding:5px 8px;color:var(--txt2);">${m.source||'manual'}</td>
-        </tr>`).join('')}</tbody>
-      </table>
-    </div>`;
-  }).join('');
 }
 
 // ===== INIT =====
