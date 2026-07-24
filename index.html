@@ -190,6 +190,7 @@ tr:hover td{background:#fafaf9;}
     <div class="ni active" onclick="goTo('mfg-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
     <div class="ni" onclick="goTo('production')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Production / MIS</div>
     <div class="ni" onclick="goTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory</div>
+    <div class="ni" onclick="goTo('life-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Item Life Register</div>
     <div class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Stock Management</div>
     <div class="ni" onclick="goTo('dispatch')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Dispatch</div>
     <div class="ni" onclick="goToDispatch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Gate Pass</div>
@@ -272,6 +273,11 @@ tr:hover td{background:#fafaf9;}
           <div class="card-head"><div class="card-title">Finished goods flow — this month</div></div>
           <div class="card-body" id="mfg-dash-stock"></div>
         </div>
+        <!-- Customer-wise dispatch -->
+        <div class="card">
+          <div class="card-head"><div class="card-title">Customer-wise dispatch — this month</div></div>
+          <div class="card-body" style="padding:0;"><div class="tw"><table><thead><tr><th>#</th><th>Customer</th><th>Qty (Kg)</th><th>Amount</th></tr></thead><tbody id="mfg-dash-customers"></tbody></table></div></div>
+        </div>
         <!-- Spare parts below 50% -->
         <div class="card">
           <div class="card-head">
@@ -347,6 +353,26 @@ tr:hover td{background:#fafaf9;}
       </table></div>
     </div>
 
+  </div>
+</div>
+
+<!-- ========== ITEM LIFE REGISTER ========== -->
+<div id="page-life-register" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">⏱</span>Item Life Register</div>
+    <div class="tb-right">
+      <button class="btn btn-green" onclick="openLifeModal(null)">+ Add entry</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="metrics g4" id="life-metrics" style="margin-bottom:14px;"></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Life register — expected vs actual</div><div style="font-size:11px;color:var(--txt2);">In/Out dates entered manually · Life and Diff calculate automatically</div></div>
+      <div class="tw"><table>
+        <thead><tr><th>Item</th><th>In date</th><th>Out date</th><th>Expected life</th><th>Life (auto)</th><th>Diff</th><th>Notes</th><th>Edit</th></tr></thead>
+        <tbody id="life-tbody"><tr><td colspan="8"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+      </table></div>
+    </div>
   </div>
 </div>
 
@@ -837,6 +863,20 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
+<!-- Item Life Register Modal -->
+<div class="modal-bg" id="life-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="life-modal-t">Add Life Entry</span><button class="btn btn-sm" onclick="closeModal('life-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow frow-1"><div class="fg"><label>Item</label><input type="text" id="lf-item" list="lf-item-list" placeholder="e.g. Starter — pick existing or type new"><datalist id="lf-item-list"></datalist></div></div>
+      <div class="frow"><div class="fg"><label>In date</label><input type="date" id="lf-in"></div><div class="fg"><label>Out date (leave blank if still in use)</label><input type="date" id="lf-out"></div></div>
+      <div class="frow"><div class="fg"><label>Expected life (days)</label><input type="number" id="lf-exp" placeholder="e.g. 90"></div><div class="fg"><label>Notes</label><input type="text" id="lf-notes" placeholder="Optional"></div></div>
+      <div style="font-size:11px;color:var(--txt2);padding:4px 2px 0;">Life and Diff are calculated automatically once you enter an Out date: Life = Out − In. Diff = Life − Expected life.</div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('life-modal')">Cancel</button><button class="btn btn-green" onclick="saveLifeEntry()">Save</button></div>
+  </div>
+</div>
+
 <!-- Stock Modal -->
 <div class="modal-bg" id="stock-modal">
   <div class="modal">
@@ -1213,7 +1253,7 @@ function goTo(id){
 
 function renderPage(id){
   const m={
-    'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
+    'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,'life-register':renderLifeRegister,
     'stock':renderStock,'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'tasks':renderTasks,'breakdown':renderBreakdownPage,'components':renderComponentsPage,'maintenance':renderMaintenancePage,'plan':renderPlan,
     'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines,
     'trd-materials':renderTrdMaterials
@@ -1402,7 +1442,7 @@ function openWA(){
 async function loadAll(){
   document.getElementById('last-sync').textContent='Syncing...';
   try{
-    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm]=await Promise.all([
+    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm,life]=await Promise.all([
       sb.from('mis_entries').select('*').order('entry_date',{ascending:false}),
       sb.from('inventory').select('*').order('item_name'),
       sb.from('stock_movements').select('*').order('created_at',{ascending:false}),
@@ -1412,10 +1452,12 @@ async function loadAll(){
       sb.from('trading_purchases').select('*').order('purchase_date',{ascending:false}),
       sb.from('trading_sales').select('*').order('sale_date',{ascending:false}),
       sb.from('trading_materials').select('*').order('material_name'),
+      sb.from('item_life_log').select('*').order('in_date',{ascending:false}),
     ]);
     DATA.mis=mis.data||[];DATA.inv=inv.data||[];DATA.stock=stock.data||[];
     DATA.dispatches=disp.data||[];DATA.bd=bd.data||[];DATA.tasks=tasks.data||[];
     DATA.trdPur=tp.data||[];DATA.trdSal=ts.data||[];DATA.trdMat=tm.data||[];
+    DATA.lifeLog=life.data||[];
     document.getElementById('last-sync').textContent='Synced ✓ '+new Date().toLocaleTimeString('en-IN');
     // Populate colour datalist from production colours + existing MIS entries
     const colours=new Set([...(DATA.mis||[]).map(r=>r.colour).filter(Boolean)]);
@@ -1758,6 +1800,22 @@ function renderMfgDashboard(){
     document.getElementById('mfg-dash-stock').innerHTML='<div style="padding:14px;font-size:12px;color:var(--txt2);">No stock data — add from Stock Management</div>';
   }
 
+  // Customer-wise dispatch — this month
+  const custDisp=filterByMonth(DATA.dispatches,'month_year',m);
+  const custGroups={};
+  custDisp.forEach(r=>{
+    const c=r.customer||'Unknown';
+    if(!custGroups[c])custGroups[c]={qty:0,amt:0};
+    custGroups[c].qty+=Number(r.qty_kg||0);
+    custGroups[c].amt+=Number(r.amount||0);
+  });
+  const custRows=Object.entries(custGroups).sort((a,b)=>b[1].amt-a[1].amt);
+  const totQty=custRows.reduce((a,[,v])=>a+v.qty,0);
+  const totAmt=custRows.reduce((a,[,v])=>a+v.amt,0);
+  document.getElementById('mfg-dash-customers').innerHTML=custRows.map(([c,v],i)=>
+    `<tr><td>${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td><td>${c}</td><td style="text-align:right;">${v.qty.toLocaleString('en-IN')}</td><td style="text-align:right;">${fmtMoney(v.amt)}</td></tr>`
+  ).join('')+(custRows.length?`<tr style="border-top:2px solid var(--bdr2);font-weight:700;background:var(--bg3);"><td></td><td>Total</td><td style="text-align:right;">${totQty.toLocaleString('en-IN')}</td><td style="text-align:right;">${fmtMoney(totAmt)}</td></tr>`:'<tr><td colspan="4" style="text-align:center;padding:14px;color:var(--txt2);">No dispatches this month</td></tr>');
+
   // Low stock below 50%
   const lowItems=DATA.inv.filter(r=>{
     const cs=Number(r.current_stock),ms=Number(r.minimum_stock);
@@ -1913,6 +1971,81 @@ function renderInventory(){
         <button class="btn btn-sm btn-red" onclick="deleteRow('inventory','${r.id}','item')">🗑</button>
       </td></tr>`;
   }).join('')||'<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--txt2);">No items found</td></tr>';
+}
+
+// ===== ITEM LIFE REGISTER (manual dates, auto life & diff) =====
+function openLifeModal(rowId){
+  editId=rowId;
+  document.getElementById('life-modal-t').textContent=rowId?'Edit Life Entry':'Add Life Entry';
+  const dl=document.getElementById('lf-item-list');
+  if(dl)dl.innerHTML=DATA.inv.map(r=>`<option value="${r.item_name}">`).join('');
+  if(rowId){
+    const r=DATA.lifeLog.find(x=>x.id===rowId);
+    if(r){
+      document.getElementById('lf-item').value=r.item_name;
+      document.getElementById('lf-in').value=r.in_date||'';
+      document.getElementById('lf-out').value=r.out_date||'';
+      document.getElementById('lf-exp').value=r.expected_life_days||'';
+      document.getElementById('lf-notes').value=r.notes||'';
+    }
+  } else {
+    ['lf-item','lf-in','lf-out','lf-exp','lf-notes'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+  }
+  document.getElementById('life-modal').classList.add('open');
+}
+
+async function saveLifeEntry(){
+  const g=id=>document.getElementById(id)?.value;
+  const itemName=(g('lf-item')||'').trim();
+  const inDate=g('lf-in')||null;
+  const outDate=g('lf-out')||null;
+  const expected=parseFloat(g('lf-exp'))||null;
+  if(!itemName){toast('Item name required','err');return;}
+  if(!inDate){toast('In date required','err');return;}
+
+  const lifeDays=outDate?Math.max(0,Math.floor((new Date(outDate)-new Date(inDate))/86400000)):null;
+  const diffDays=(lifeDays!=null&&expected!=null)?lifeDays-expected:null;
+
+  const row={item_name:itemName,in_date:inDate,out_date:outDate,expected_life_days:expected,life_days:lifeDays,diff_days:diffDays,notes:g('lf-notes')||'',updated_at:new Date().toISOString()};
+  const{error}=editId?await sb.from('item_life_log').update(row).eq('id',editId):await sb.from('item_life_log').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast(editId?'Life entry updated ✓':'Life entry added ✓');
+  closeModal('life-modal');
+  await loadAll();
+}
+
+function renderLifeRegister(){
+  const log=DATA.lifeLog||[];
+  const withLife=log.filter(r=>r.life_days!=null&&r.expected_life_days!=null);
+  const under=withLife.filter(r=>r.diff_days<0);
+  const over=withLife.filter(r=>r.diff_days>=0);
+  const avgPct=withLife.length?Math.round(withLife.reduce((a,r)=>a+((r.life_days-r.expected_life_days)/r.expected_life_days*100),0)/withLife.length):0;
+
+  document.getElementById('life-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Items tracked</div><div class="vl">${new Set(log.map(r=>r.item_name)).size}</div><div class="sb">${log.length} entries</div></div>
+    <div class="mc"><div class="lb">Avg life vs expected</div><div class="vl ${avgPct<0?'red':'green'}">${avgPct>0?'+':''}${avgPct}%</div></div>
+    <div class="mc"><div class="lb">Underperforming</div><div class="vl amber">${under.length}</div><div class="sb">wore out early</div></div>
+    <div class="mc"><div class="lb">Outperforming</div><div class="vl green">${over.length}</div><div class="sb">met or beat target</div></div>`;
+
+  const sorted=[...log].sort((a,b)=>new Date(b.in_date)-new Date(a.in_date));
+  document.getElementById('life-tbody').innerHTML=sorted.map(r=>{
+    const diff=r.diff_days;
+    const bg=diff==null?'':diff<0&&Math.abs(diff)>=(r.expected_life_days*0.3)?'background:#fef2f2;':diff<0?'background:#fffbeb;':'background:#f0fdf4;';
+    const diffTxt=diff==null?'—':(diff>0?'+':'')+diff+'d';
+    const diffColor=diff==null?'var(--txt3)':diff<0?'#dc2626':'#15803d';
+    return`<tr style="${bg}">
+      <td><strong>${r.item_name}</strong></td>
+      <td>${fmtDate(r.in_date)}</td>
+      <td>${r.out_date?fmtDate(r.out_date):'<span style="color:var(--txt2);">still in use</span>'}</td>
+      <td style="text-align:right;">${r.expected_life_days!=null?r.expected_life_days+'d':'—'}</td>
+      <td style="text-align:right;font-weight:600;">${r.life_days!=null?r.life_days+'d':'—'}</td>
+      <td style="text-align:right;font-weight:600;color:${diffColor};">${diffTxt}</td>
+      <td style="font-size:12px;color:var(--txt2);">${r.notes||'—'}</td>
+      <td style="text-align:center;white-space:nowrap;">
+        <button class="btn btn-sm" onclick="openLifeModal('${r.id}')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('item_life_log','${r.id}','entry')">🗑</button>
+      </td></tr>`;
+  }).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No entries yet — click "+ Add entry" to start</td></tr>';
 }
 
 function renderStock(){
