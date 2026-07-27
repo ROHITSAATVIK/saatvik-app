@@ -1676,22 +1676,12 @@ function renderMfgDashboard(){
   const avgEff=totalTgt>0?Math.round((totalProd/totalTgt)*100):0;
   const totalDisp=DATA.dispatches.filter(r=>r.month_year===m).reduce((a,r)=>a+Number(r.qty_kg||0),0);
 
-  // Previous month's closing FG stock (carried forward)
-  const monthIdx=MONTHS.indexOf(m);
-  const prevMonth=monthIdx>0?MONTHS[monthIdx-1]:null;
-  let prevClosing=0;
-  if(prevMonth){
-    const smPrev=DATA.stock.find(r=>r.month_year===prevMonth);
-    if(smPrev){
-      prevClosing=Number(smPrev.fg_opening_kg||0)+Number(smPrev.fg_produced_kg||0)-Number(smPrev.fg_dispatched_kg||0);
-    } else {
-      const prevMis=filterByMonth(DATA.mis,'month_year',prevMonth);
-      const prevProd=prevMis.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
-      const prevDisp=DATA.dispatches.filter(r=>r.month_year===prevMonth).reduce((a,r)=>a+Number(r.qty_kg||0),0);
-      prevClosing=Math.max(0,prevProd-prevDisp);
-    }
-  }
-  const fgStock=Math.max(0,prevClosing+totalProd-totalDisp);
+  // FG in hand — uses the same full-history running balance as the Production page,
+  // so it always reflects last closing + this month's production − dispatch correctly,
+  // no matter which month is selected or whether Stock Management has been filled in.
+  const fgRun=computeFgRunning();
+  const misInMonthDesc=[...mis].sort((a,b)=>new Date(b.entry_date)-new Date(a.entry_date));
+  const fgStock=misInMonthDesc.length?fgRun.stockByDate[misInMonthDesc[0].entry_date]:(fgRun.lastValue||0);
 
   // Colour-wise FG breakdown
   const colourProd={};
@@ -1855,6 +1845,22 @@ function renderMfgDashboard(){
   charts.dashProd=new Chart(document.getElementById('dashProdChart'),{type:'bar',data:{labels:asc.map(r=>fmtDate(r.entry_date)),datasets:[{label:'Production',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:4},{label:'Target',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,autoSkip:true,maxRotation:0,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
 }
 
+// Computes FG closing stock per day across the ENTIRE history (never resets at month boundaries),
+// so both the Production table and the Dashboard "FG in hand" box always carry forward correctly.
+function computeFgRunning(){
+  const allAsc=[...DATA.mis].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
+  let running=0;
+  const stockByDate={},dispByDate={};
+  allAsc.forEach(r=>{
+    const d=DATA.dispatches.filter(x=>x.dispatch_date===r.entry_date).reduce((a,x)=>a+Number(x.qty_kg||0),0);
+    dispByDate[r.entry_date]=d;
+    running=running+Number(r.total_production_kg||0)-d;
+    stockByDate[r.entry_date]=Math.max(0,running);
+  });
+  const lastDate=allAsc.length?allAsc[allAsc.length-1].entry_date:null;
+  return{stockByDate,dispByDate,lastValue:lastDate?stockByDate[lastDate]:0};
+}
+
 function renderMIS(){
   const m=getMonth('mis-month');
   const mis=filterByMonth(DATA.mis,'month_year',m);
@@ -1871,17 +1877,11 @@ function renderMIS(){
     <div class="mc"><div class="lb">Avg day manpower</div><div class="vl">${avgMPDay}</div><div class="sb">Day shift avg</div></div>
     <div class="mc"><div class="lb">Avg night manpower</div><div class="vl">${avgMPNight}</div><div class="sb">Night shift avg</div></div>`;
 
-  // Calculate running stock balance per day
-  const misAsc=[...sorted].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
-  let runningStock=0;
-  const stockByDate={};
-  const dispByDate={};
-  misAsc.forEach(r=>{
-    const todayDisp=DATA.dispatches.filter(d=>d.dispatch_date===r.entry_date).reduce((a,d)=>a+Number(d.qty_kg||0),0);
-    dispByDate[r.entry_date]=todayDisp;
-    runningStock=runningStock+Number(r.total_production_kg||0)-todayDisp;
-    stockByDate[r.entry_date]=Math.max(0,runningStock);
-  });
+  // Closing stock per day — uses the full-history running balance so it always carries forward
+  // from the previous month, instead of resetting to 0 every time you switch months.
+  const fgRun=computeFgRunning();
+  const stockByDate=fgRun.stockByDate;
+  const dispByDate=fgRun.dispByDate;
 
   document.getElementById('mis-tbody').innerHTML=sorted.map(r=>{
     const e=eff(r.total_production_kg,r.target_kg);
