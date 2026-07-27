@@ -9,11 +9,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--acc:#1D9E75;--acc2:#2563eb;--bg:#ebebea;--bg2:#fff;--bg3:#e8e8e6;--txt:#18181b;--txt2:#6b7280;--txt3:#9ca3af;--bdr:rgba(0,0,0,0.08);--bdr2:rgba(0,0,0,0.13);--rad:8px;--rad2:12px;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0efeb;color:var(--txt);font-size:13px;-webkit-font-smoothing:antialiased;}
+body{font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f0efeb;color:var(--txt);font-size:13px;-webkit-font-smoothing:antialiased;}
 .app{display:flex;min-height:100vh;}
 
 /* LOGIN PAGE */
@@ -97,7 +97,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .tw{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;}
 th{padding:7px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--txt2);border-bottom:1px solid var(--bdr);background:var(--bg3);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px;}
-td{padding:8px 11px;font-size:12px;color:var(--txt);border-bottom:1px solid var(--bdr);vertical-align:middle;}
+td{padding:8px 11px;font-size:13px;color:var(--txt);border-bottom:1px solid var(--bdr);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:#fafaf9;}
 /* BADGES */
@@ -190,7 +190,6 @@ tr:hover td{background:#fafaf9;}
     <div class="ni active" onclick="goTo('mfg-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
     <div class="ni" onclick="goTo('production')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Production / MIS</div>
     <div class="ni" onclick="goTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory</div>
-    <div class="ni" onclick="goTo('life-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Item Life Register</div>
     <div class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Stock Management</div>
     <div class="ni" onclick="goTo('dispatch')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Dispatch</div>
     <div class="ni" onclick="goToDispatch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Gate Pass</div>
@@ -240,7 +239,7 @@ tr:hover td{background:#fafaf9;}
     <!-- ROW 1: 4 key metrics -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;" id="mfg-dash-metrics"></div>
 
-    <!-- ROW 2: Colour production + Tasks -->
+    <!-- ROW 2: Colour production, customer dispatch, machine hours, daily prod chart, inventory -->
     <div class="g2" style="margin-bottom:0;">
       <div>
         <!-- Colour production breakdown -->
@@ -251,32 +250,22 @@ tr:hover td{background:#fafaf9;}
           </div>
           <div class="card-body" id="dash-colour-breakdown"></div>
         </div>
+        <!-- Customer-wise dispatch -->
+        <div class="card">
+          <div class="card-head"><div class="card-title">Customer-wise dispatch — this month</div></div>
+          <div class="card-body" style="padding:0;"><div class="tw"><table><thead><tr><th>#</th><th>Customer</th><th>Qty (Kg)</th><th>Amount</th></tr></thead><tbody id="mfg-dash-customers"></tbody></table></div></div>
+        </div>
         <!-- Machine uptime -->
         <div class="card">
           <div class="card-head"><div class="card-title">Machine avg running hrs/day</div><div style="font-size:11px;color:var(--txt2);">Target: 20h</div></div>
           <div class="card-body" id="mfg-dash-machines"></div>
         </div>
+      </div>
+      <div>
         <!-- Daily production chart -->
         <div class="card">
           <div class="card-head"><div class="card-title">Daily production vs target</div></div>
           <div class="card-body"><div style="position:relative;height:140px;"><canvas id="dashProdChart" role="img" aria-label="Production chart">Daily production</canvas></div></div>
-        </div>
-      </div>
-      <div>
-        <!-- Tasks -->
-        <div class="card">
-          <div class="card-head"><div class="card-title">Open tasks</div><button class="btn btn-sm" onclick="goTo('tasks')">View all</button></div>
-          <div id="mfg-dash-alerts"></div>
-        </div>
-        <!-- Stock flow -->
-        <div class="card">
-          <div class="card-head"><div class="card-title">Finished goods flow — this month</div></div>
-          <div class="card-body" id="mfg-dash-stock"></div>
-        </div>
-        <!-- Customer-wise dispatch -->
-        <div class="card">
-          <div class="card-head"><div class="card-title">Customer-wise dispatch — this month</div></div>
-          <div class="card-body" style="padding:0;"><div class="tw"><table><thead><tr><th>#</th><th>Customer</th><th>Qty (Kg)</th><th>Amount</th></tr></thead><tbody id="mfg-dash-customers"></tbody></table></div></div>
         </div>
         <!-- Spare parts below 50% -->
         <div class="card">
@@ -346,33 +335,13 @@ tr:hover td{background:#fafaf9;}
 
     <!-- STOCK REGISTER -->
     <div class="card">
-      <div class="card-head"><div class="card-title">Stock register — A to Z</div><div style="font-size:11px;color:var(--txt2);">Red = below minimum · Amber = at minimum · In/Out/Life update automatically when you edit stock</div></div>
+      <div class="card-head"><div class="card-title">Stock register — A to Z</div><div style="font-size:11px;color:var(--txt2);">Red = below minimum · Amber = at minimum · Click an item name for its full in/out history · life cycle logs automatically when you edit stock</div></div>
       <div class="tw"><table>
-        <thead><tr><th>Sl</th><th>Item</th><th>Category</th><th>UOM</th><th>In stock</th><th>Min level</th><th>Difference</th><th>Price</th><th>Supplier</th><th>In date</th><th>Out date</th><th>Life</th><th>Edit</th></tr></thead>
-        <tbody id="inv-tbody"><tr><td colspan="13"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+        <thead><tr><th>Sl</th><th>Item</th><th>Min level</th><th>In stock</th><th>Difference</th><th>Supplier</th><th>Price</th><th>Edit</th></tr></thead>
+        <tbody id="inv-tbody"><tr><td colspan="8"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
       </table></div>
     </div>
 
-  </div>
-</div>
-
-<!-- ========== ITEM LIFE REGISTER ========== -->
-<div id="page-life-register" class="page">
-  <div class="topbar">
-    <div class="topbar-title"><span class="section-badge mfg-badge">⏱</span>Item Life Register</div>
-    <div class="tb-right">
-      <button class="btn btn-green" onclick="openLifeModal(null)">+ Add entry</button>
-    </div>
-  </div>
-  <div class="content">
-    <div class="metrics g4" id="life-metrics" style="margin-bottom:14px;"></div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">Life register — expected vs actual</div><div style="font-size:11px;color:var(--txt2);">In/Out dates entered manually · Life and Diff calculate automatically</div></div>
-      <div class="tw"><table>
-        <thead><tr><th>Item</th><th>In date</th><th>Out date</th><th>Expected life</th><th>Life (auto)</th><th>Diff</th><th>Notes</th><th>Edit</th></tr></thead>
-        <tbody id="life-tbody"><tr><td colspan="8"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
-      </table></div>
-    </div>
   </div>
 </div>
 
@@ -415,9 +384,13 @@ tr:hover td{background:#fafaf9;}
   <div class="content">
     <div class="metrics g4" id="dispatch-metrics"></div>
     <div class="card">
+      <div class="card-head"><div class="card-title">Dispatch by colour — this month</div></div>
+      <div class="card-body" id="dispatch-colour-breakdown"></div>
+    </div>
+    <div class="card">
       <div class="card-head"><div class="card-title">Dispatch log</div></div>
-      <div class="tw"><table><thead><tr><th>Date</th><th>Customer</th><th>Material</th><th>Qty (Kg)</th><th>Rate/Kg</th><th>Amount</th><th>Vehicle</th><th>LR No</th><th>Invoice</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="dispatch-tbody"><tr><td colspan="11"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Customer</th><th>Material</th><th>Colour</th><th>Qty (Kg)</th><th>Rate/Kg</th><th>Amount</th><th>Vehicle</th><th>LR No</th><th>Invoice</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="dispatch-tbody"><tr><td colspan="12"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
     </div>
   </div>
 </div>
@@ -857,16 +830,17 @@ tr:hover td{background:#fafaf9;}
       <div class="frow"><div class="fg"><label>UOM</label><select id="i-uom"><option>Kg</option><option>Nos</option><option>Liters</option><option>Bags</option></select></div><div class="fg"><label>Min stock</label><input type="number" id="i-min" placeholder="0"></div></div>
       <div class="frow"><div class="fg"><label>Current stock</label><input type="number" id="i-stk" placeholder="0"></div><div class="fg"><label>Price / rate per unit (₹)</label><input type="number" id="i-rate" placeholder="0"></div></div>
       <div class="frow frow-1"><div class="fg"><label>Supplier</label><input type="text" id="i-supplier" placeholder="Supplier name"></div></div>
-      <div style="font-size:11px;color:var(--txt2);padding:4px 2px 0;">In date, out date and life are calculated automatically — increasing stock logs an "in", decreasing stock logs an "out", no extra step needed.</div>
+      <div class="frow frow-1"><div class="fg"><label>Expected life (days) — optional, set once per item</label><input type="number" id="i-explife" placeholder="e.g. 90"></div></div>
+      <div style="font-size:11px;color:var(--txt2);padding:4px 2px 0;">In date, out date, life and history are all tracked automatically — increasing stock logs an "in", decreasing stock logs an "out". Click the item's name on the Inventory page anytime to see its full history.</div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('inv-modal')">Cancel</button><button class="btn btn-green" onclick="saveInv()">Save</button></div>
   </div>
 </div>
 
-<!-- Item Life Register Modal -->
+<!-- Item history backfill/edit modal -->
 <div class="modal-bg" id="life-modal">
   <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="life-modal-t">Add Life Entry</span><button class="btn btn-sm" onclick="closeModal('life-modal')">✕</button></div>
+    <div class="modal-head"><span class="modal-title" id="life-modal-t">Backfill history entry</span><button class="btn btn-sm" onclick="closeModal('life-modal')">✕</button></div>
     <div class="modal-body">
       <div class="frow frow-1"><div class="fg"><label>Item</label><input type="text" id="lf-item" list="lf-item-list" placeholder="e.g. Starter — pick existing or type new"><datalist id="lf-item-list"></datalist></div></div>
       <div class="frow"><div class="fg"><label>In date</label><input type="date" id="lf-in"></div><div class="fg"><label>Out date (leave blank if still in use)</label><input type="date" id="lf-out"></div></div>
@@ -874,6 +848,21 @@ tr:hover td{background:#fafaf9;}
       <div style="font-size:11px;color:var(--txt2);padding:4px 2px 0;">Life and Diff are calculated automatically once you enter an Out date: Life = Out − In. Diff = Life − Expected life.</div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('life-modal')">Cancel</button><button class="btn btn-green" onclick="saveLifeEntry()">Save</button></div>
+  </div>
+</div>
+
+<!-- Item History drill-down modal (opened by clicking an item name in Inventory) -->
+<div class="modal-bg" id="item-history-modal">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-head"><span class="modal-title" id="item-history-title">Item history</span><button class="btn btn-sm" onclick="closeModal('item-history-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="metrics g2" id="item-history-metrics" style="margin-bottom:12px;"></div>
+      <div class="tw" style="max-height:360px;overflow:auto;"><table>
+        <thead><tr><th>In date</th><th>Out date</th><th>Expected life</th><th>Life (auto)</th><th>Diff</th><th>Notes</th><th>Edit</th></tr></thead>
+        <tbody id="item-history-tbody"></tbody>
+      </table></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('item-history-modal');openLifeModal(null);">+ Backfill old entry</button><button class="btn btn-green" onclick="closeModal('item-history-modal')">Done</button></div>
   </div>
 </div>
 
@@ -1186,7 +1175,7 @@ function checkSession(){
   } else {showLogin();}
 }
 
-const TODAY=new Date('2026-06-04');
+const TODAY=new Date();
 let DATA={mis:[],inv:[],stock:[],dispatches:[],bd:[],tasks:[],trdPur:[],trdSal:[],trdMat:[]};
 let editId=null, charts={};
 
@@ -1214,16 +1203,31 @@ const GC=()=>DK()?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
 const BO=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC(),font:{size:10}},grid:{color:GC()}},y:{ticks:{color:TC(),font:{size:10}},grid:{color:GC()}}}});
 
 // ===== MONTH SELECTORS =====
-const MONTHS=['Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026'];
+// Business started Jan 2026; range auto-extends to always cover 1 year past today so it never runs stale.
+function currentMonthLabel(){const d=new Date();return MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear();}
+function buildMonthsRange(){
+  const arr=[];
+  const d=new Date(2026,0,1);
+  const end=new Date();
+  end.setFullYear(end.getFullYear()+1);
+  end.setMonth(11,1);
+  while(d<=end){
+    arr.push(MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear());
+    d.setMonth(d.getMonth()+1);
+  }
+  return arr;
+}
+const MONTHS=buildMonthsRange();
 function populateMonthSelectors(){
+  const cur=currentMonthLabel();
   ['mfg-dash-month','mis-month','stock-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','mh-month','plan-month','or-month'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
-    el.innerHTML=MONTHS.map(m=>`<option value="${m}"${m==='Jun 2026'?'selected':''}>${m}</option>`).join('');
+    el.innerHTML=MONTHS.map(m=>`<option value="${m}"${m===cur?'selected':''}>${m}</option>`).join('');
   });
 }
 
-function getMonth(selId){return document.getElementById(selId)?.value||'Jun 2026';}
+function getMonth(selId){return document.getElementById(selId)?.value||currentMonthLabel();}
 
 // ===== BIZ SWITCHER =====
 function switchBiz(biz){
@@ -1253,7 +1257,7 @@ function goTo(id){
 
 function renderPage(id){
   const m={
-    'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,'life-register':renderLifeRegister,
+    'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
     'stock':renderStock,'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'tasks':renderTasks,'breakdown':renderBreakdownPage,'components':renderComponentsPage,'maintenance':renderMaintenancePage,'plan':renderPlan,
     'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines,
     'trd-materials':renderTrdMaterials
@@ -1286,7 +1290,9 @@ function openModal(id,rowId){
         document.getElementById('m-issd').value=r.issue_day||'None';
         document.getElementById('m-issn').value=r.issue_night||'None';
         document.getElementById('m-tprod').value=r.total_production_kg||0;
-        document.getElementById('m-colour').value=r.colour||'';
+        const colParts=(r.colour||'').split('+').map(c=>c.trim());
+        document.getElementById('m-colour').value=colParts[0]||'';
+        document.getElementById('m-colour2').value=colParts[1]||'';
         calcDT();
       }
     } else {
@@ -1295,12 +1301,19 @@ function openModal(id,rowId){
       document.getElementById('m-tprod').value='';
       document.getElementById('m-issd').value='None';
       document.getElementById('m-issn').value='None';
+      document.getElementById('m-colour').value='';
+      document.getElementById('m-colour2').value='';
+      // Auto-carry FG opening stock from the most recent existing entry's closing stock —
+      // previously this was left at 0 for every new entry, which broke the Total Stock figure.
+      const lastEntry=[...(DATA.mis||[])].sort((a,b)=>new Date(b.entry_date)-new Date(a.entry_date))[0];
+      document.getElementById('m-fgop').value=lastEntry?Number(lastEntry.total_stock_kg||0):0;
+      calcMISStock();
     }
   }
   if(id==='inv-modal'){
     document.getElementById('inv-modal-t').textContent=isEdit?'Edit Item':'Add Item';
-    if(isEdit){const r=DATA.inv.find(x=>x.id===rowId);if(r){document.getElementById('i-item').value=r.item_name;document.getElementById('i-cat').value=r.category;document.getElementById('i-uom').value=r.uom;document.getElementById('i-min').value=r.minimum_stock;document.getElementById('i-stk').value=r.current_stock;document.getElementById('i-rate').value=r.rate_per_unit;document.getElementById('i-supplier').value=r.supplier||'';}}
-    else{['i-item','i-min','i-stk','i-rate','i-supplier'].forEach(x=>document.getElementById(x).value='');}
+    if(isEdit){const r=DATA.inv.find(x=>x.id===rowId);if(r){document.getElementById('i-item').value=r.item_name;document.getElementById('i-cat').value=r.category;document.getElementById('i-uom').value=r.uom;document.getElementById('i-min').value=r.minimum_stock;document.getElementById('i-stk').value=r.current_stock;document.getElementById('i-rate').value=r.rate_per_unit;document.getElementById('i-supplier').value=r.supplier||'';document.getElementById('i-explife').value=r.expected_life_days||'';}}
+    else{['i-item','i-min','i-stk','i-rate','i-supplier','i-explife'].forEach(x=>document.getElementById(x).value='');}
   }
   if(id==='stock-modal'){
     document.getElementById('stock-modal-t').textContent=isEdit?'Edit Entry':'Add Stock Movement';
@@ -1322,8 +1335,15 @@ function openModal(id,rowId){
   }
   if(id==='dispatch-modal'){
     document.getElementById('dispatch-modal-t').textContent=isEdit?'Edit Dispatch':'Add Dispatch';
-    if(isEdit){const r=DATA.dispatches.find(x=>x.id===rowId);if(r){document.getElementById('d-date').value=r.dispatch_date;document.getElementById('d-cust').value=r.customer;document.getElementById('d-mat').value=r.material_type;document.getElementById('d-qty').value=r.qty_kg;document.getElementById('d-rate').value=r.rate_per_kg;document.getElementById('d-amt').value=r.amount;document.getElementById('d-veh').value=r.vehicle_no||'';document.getElementById('d-lr').value=r.lr_no||'';document.getElementById('d-inv').value=r.invoice_no||'';document.getElementById('d-dest').value=r.destination||'';document.getElementById('d-status').value=r.status;document.getElementById('d-notes').value=r.notes||'';}}
-    else{['d-date','d-cust','d-qty','d-rate','d-amt','d-veh','d-lr','d-inv','d-dest','d-notes'].forEach(x=>document.getElementById(x).value='');}
+    if(isEdit){const r=DATA.dispatches.find(x=>x.id===rowId);if(r){
+      document.getElementById('d-date').value=r.dispatch_date;document.getElementById('d-cust').value=r.customer;document.getElementById('d-mat').value=r.material_type;document.getElementById('d-qty').value=r.qty_kg;document.getElementById('d-rate').value=r.rate_per_kg;document.getElementById('d-amt').value=r.amount;document.getElementById('d-veh').value=r.vehicle_no||'';document.getElementById('d-lr').value=r.lr_no||'';document.getElementById('d-inv').value=r.invoice_no||'';document.getElementById('d-dest').value=r.destination||'';document.getElementById('d-status').value=r.status;
+      // Colour: prefer the real column; fall back to the old "Colour:X | notes" text pattern for records saved before this fix
+      let notesTxt=r.notes||'';let colourVal=r.colour||'';
+      if(!colourVal){const m=notesTxt.match(/^Colour:([^|]+)\|?\s*/);if(m){colourVal=m[1].trim();notesTxt=notesTxt.replace(/^Colour:[^|]+\|?\s*/,'');}}
+      document.getElementById('d-colour').value=colourVal;
+      document.getElementById('d-notes').value=notesTxt;
+    }}
+    else{['d-date','d-cust','d-qty','d-rate','d-amt','d-veh','d-lr','d-inv','d-dest','d-notes','d-colour'].forEach(x=>document.getElementById(x).value='');}
   }
   if(id==='bd-modal'){
     document.getElementById('bd-modal-t').textContent=isEdit?'Edit Breakdown':'Log Breakdown';
@@ -1459,12 +1479,16 @@ async function loadAll(){
     DATA.trdPur=tp.data||[];DATA.trdSal=ts.data||[];DATA.trdMat=tm.data||[];
     DATA.lifeLog=life.data||[];
     document.getElementById('last-sync').textContent='Synced ✓ '+new Date().toLocaleTimeString('en-IN');
-    // Populate colour datalist from production colours + existing MIS entries
-    const colours=new Set([...(DATA.mis||[]).map(r=>r.colour).filter(Boolean)]);
+    // Populate colour datalist from production AND dispatch colours, so suggestions never fall behind
+    const colours=new Set([
+      ...(DATA.mis||[]).flatMap(r=>(r.colour||'').split('+')).map(c=>c.trim()).filter(Boolean),
+      ...(DATA.dispatches||[]).map(r=>r.colour).filter(Boolean)
+    ]);
     const dl=document.getElementById('colour-list');
     if(dl)dl.innerHTML=[...colours].map(c=>`<option value="${c}">`).join('');
     const active=document.querySelector('.page.active')?.id?.replace('page-','');
     if(active)renderPage(active);
+    if(currentHistoryItem&&document.getElementById('item-history-modal')?.classList.contains('open'))renderItemHistory();
   }catch(e){
     document.getElementById('last-sync').textContent='Sync error';
     toast('Connection issue — retrying...','err');setTimeout(loadAll,3000);
@@ -1503,11 +1527,13 @@ async function saveInv(){
   const newStock=parseFloat(g('i-stk'))||0;
   const existing=editId?DATA.inv.find(x=>x.id===editId):null;
   const oldStock=existing?Number(existing.current_stock||0):0;
+  const expectedLife=parseFloat(g('i-explife'))||null;
 
-  const row={item_name:g('i-item'),category:g('i-cat'),uom:g('i-uom'),minimum_stock:parseFloat(g('i-min'))||0,current_stock:newStock,rate_per_unit:parseFloat(g('i-rate'))||0,supplier:g('i-supplier')||'',updated_at:new Date().toISOString()};
+  const row={item_name:g('i-item'),category:g('i-cat'),uom:g('i-uom'),minimum_stock:parseFloat(g('i-min'))||0,current_stock:newStock,rate_per_unit:parseFloat(g('i-rate'))||0,supplier:g('i-supplier')||'',expected_life_days:expectedLife,updated_at:new Date().toISOString()};
   if(!row.item_name){toast('Item name required','err');return;}
 
   // Automatic IN/OUT/life tracking — no manual step needed
+  let autoLogEntry=null;
   if(!editId){
     // New item: an opening stock counts as an "in"
     if(newStock>0)row.last_in_date=today;
@@ -1521,10 +1547,22 @@ async function saveInv(){
     row.last_out_date=today;
     const inDate=existing?.last_in_date;
     row.life_days=inDate?Math.max(0,Math.floor((new Date(today)-new Date(inDate))/86400000)):null;
+    // Auto-record this cycle in the Item Life Register — same edit, no second entry
+    if(inDate){
+      const lifeDays=row.life_days;
+      const diffDays=(lifeDays!=null&&expectedLife!=null)?lifeDays-expectedLife:null;
+      autoLogEntry={item_name:row.item_name,in_date:inDate,out_date:today,expected_life_days:expectedLife,life_days:lifeDays,diff_days:diffDays,notes:'Auto-logged from Inventory'};
+    }
   }
 
   const{error}=editId?await sb.from('inventory').update(row).eq('id',editId):await sb.from('inventory').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
+
+  if(autoLogEntry){
+    const{error:logErr}=await sb.from('item_life_log').insert(autoLogEntry);
+    if(logErr)console.warn('Life log auto-entry failed:',logErr.message);
+  }
+
   toast(editId?'Item updated ✓':'Item added ✓');closeModal('inv-modal');await loadAll();
 }
 
@@ -1540,7 +1578,7 @@ async function saveStock(){
 async function saveDispatch(){
   const g=id=>document.getElementById(id)?.value;
   const dColour=document.getElementById('d-colour')?.value?.trim()||'';
-  const row={dispatch_date:g('d-date'),month_year:g('d-date')?fmtMonthYear(g('d-date')):'',customer:g('d-cust'),material_type:g('d-mat'),qty_kg:parseFloat(g('d-qty'))||0,rate_per_kg:parseFloat(g('d-rate'))||0,amount:parseFloat(g('d-amt'))||0,vehicle_no:g('d-veh'),lr_no:g('d-lr'),invoice_no:g('d-inv'),destination:g('d-dest'),status:g('d-status'),notes:(dColour?'Colour:'+dColour+(g('d-notes')?' | '+g('d-notes'):''):g('d-notes')),updated_at:new Date().toISOString()};
+  const row={dispatch_date:g('d-date'),month_year:g('d-date')?fmtMonthYear(g('d-date')):'',customer:g('d-cust'),material_type:g('d-mat'),qty_kg:parseFloat(g('d-qty'))||0,rate_per_kg:parseFloat(g('d-rate'))||0,amount:parseFloat(g('d-amt'))||0,vehicle_no:g('d-veh'),lr_no:g('d-lr'),invoice_no:g('d-inv'),destination:g('d-dest'),status:g('d-status'),colour:dColour,notes:g('d-notes'),updated_at:new Date().toISOString()};
   if(!row.dispatch_date||!row.customer){toast('Date and customer required','err');return;}
   const{error}=editId?await sb.from('dispatches').update(row).eq('id',editId):await sb.from('dispatches').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
@@ -1668,9 +1706,10 @@ function renderMfgDashboard(){
   });
   const colourDisp={};
   DATA.dispatches.filter(r=>r.month_year===m).forEach(r=>{
-    // Extract colour from notes field "Colour:Natural | ..."
-    const match=(r.notes||'').match(/Colour:([^|]+)/);
-    const col=match?match[1].trim():'Untagged';
+    // Prefer the real colour column; fall back to legacy notes-embedded pattern for old records
+    let col=r.colour||'';
+    if(!col){const match=(r.notes||'').match(/Colour:([^|]+)/);col=match?match[1].trim():'';}
+    col=col||'Untagged';
     colourDisp[col]=(colourDisp[col]||0)+Number(r.qty_kg||0);
   });
   const colourFG={};
@@ -1772,33 +1811,8 @@ function renderMfgDashboard(){
     </div>`;
   }).join('')+'<div style="font-size:10px;color:var(--txt2);margin-top:4px;">Target: 20h per machine per day</div>';
 
-  // Tasks panel
-  const allTasks=[...DATA.tasks.filter(r=>r.status==='open')].sort((a,b)=>{const o={P1:1,P2:2,P3:3};return(o[a.priority]||4)-(o[b.priority]||4);});
-  document.getElementById('mfg-dash-alerts').innerHTML=allTasks.slice(0,6).map(r=>{
-    const col=r.priority==='P1'?{bg:'#fef2f2',txt:'#b91c1c',badge:'#fee2e2'}:{bg:'#fffbeb',txt:'#92400e',badge:'#fef3c7'};
-    return`<div style="padding:8px 13px;display:flex;gap:8px;align-items:flex-start;border-bottom:1px solid var(--bdr);background:${col.bg};">
-      <span style="font-size:10px;background:${col.badge};color:${col.txt};padding:2px 6px;border-radius:4px;white-space:nowrap;font-weight:600;">${r.priority}</span>
-      <span style="font-size:12px;color:${col.txt};">${r.task_description}${r.assigned_to?' — '+r.assigned_to:''}</span>
-    </div>`;
-  }).join('')||'<div style="padding:16px;font-size:12px;color:var(--txt2);text-align:center;">No open tasks ✓</div>';
-
-  // Stock flow (FG only — RM removed from dashboard per request)
-  const sm=DATA.stock.find(r=>r.month_year===m)||DATA.stock[0];
-  if(sm){
-    document.getElementById('mfg-dash-stock').innerHTML=`
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div style="background:#eff6ff;border-radius:6px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:#1d4ed8;">FG produced</div>
-          <div style="font-size:16px;font-weight:700;color:#1d4ed8;">${(Number(sm.fg_produced_kg)/1000).toFixed(1)}T</div>
-        </div>
-        <div style="background:#eff6ff;border-radius:6px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:#1d4ed8;">FG dispatched</div>
-          <div style="font-size:16px;font-weight:700;color:#1d4ed8;">${(Number(sm.fg_dispatched_kg)/1000).toFixed(1)}T</div>
-        </div>
-      </div>`;
-  } else {
-    document.getElementById('mfg-dash-stock').innerHTML='<div style="padding:14px;font-size:12px;color:var(--txt2);">No stock data — add from Stock Management</div>';
-  }
+  // Note: Open Tasks and Finished Goods Flow cards were removed from the dashboard per request —
+  // that data is still fully available on the Tasks and Stock Management pages respectively.
 
   // Customer-wise dispatch — this month
   const custDisp=filterByMonth(DATA.dispatches,'month_year',m);
@@ -1946,6 +1960,7 @@ function renderInventory(){
     const isOut=cs===0;
     const isBelow50=cs>0&&cs<ms*0.5;
     const isLow=cs>=ms*0.5&&cs<ms;
+    const uom=r.uom||'pc';
 
     const bg=isOut?'background:#fdf2ff;border-left:3px solid #7c3aed;':
               isBelow50?'background:#fef2f2;border-left:3px solid #dc2626;':
@@ -1955,28 +1970,59 @@ function renderInventory(){
 
     return`<tr style="${bg}">
       <td>${sl++}</td>
-      <td><strong style="font-size:13px;">${r.item_name}</strong></td>
-      <td style="color:var(--txt2);font-size:12px;">${r.category||'—'}</td>
-      <td style="font-size:12px;">${r.uom||'pc'}</td>
-      <td style="text-align:right;font-weight:700;">${cs}</td>
-      <td style="text-align:right;color:var(--txt2);">${ms}</td>
+      <td><strong style="font-size:13px;cursor:pointer;color:#2563eb;text-decoration:underline;text-decoration-style:dotted;" onclick="openItemHistory('${r.id}')" title="Click for full in/out history">${r.item_name}</strong></td>
+      <td style="text-align:right;color:var(--txt2);">${ms} ${uom}</td>
+      <td style="text-align:right;font-weight:700;">${cs} ${uom}</td>
       <td style="text-align:right;font-weight:700;color:${diffColor};">${diff>0?'+':''}${diff}</td>
-      <td style="text-align:right;">${fmtMoney(r.rate_per_unit||0)}</td>
       <td style="font-size:12px;">${r.supplier||'—'}</td>
-      <td style="font-size:11px;color:var(--txt2);">${r.last_in_date?fmtDate(r.last_in_date):'—'}</td>
-      <td style="font-size:11px;color:var(--txt2);">${r.last_out_date?fmtDate(r.last_out_date):'—'}</td>
-      <td style="text-align:right;font-weight:600;color:${r.life_days?'#1D9E75':'var(--txt3)'};">${r.life_days!=null?r.life_days+'d':'—'}</td>
+      <td style="text-align:right;">${fmtMoney(r.rate_per_unit||0)}</td>
       <td style="text-align:center;">
         <button class="btn btn-sm" onclick="openModal('inv-modal','${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteRow('inventory','${r.id}','item')">🗑</button>
       </td></tr>`;
-  }).join('')||'<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--txt2);">No items found</td></tr>';
+  }).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No items found</td></tr>';
 }
 
-// ===== ITEM LIFE REGISTER (manual dates, auto life & diff) =====
+// ===== ITEM HISTORY DRILL-DOWN (click an item name in Inventory) =====
+let currentHistoryItem=null;
+function openItemHistory(itemId){
+  const item=DATA.inv.find(x=>x.id===itemId);
+  if(!item)return;
+  currentHistoryItem=item.item_name;
+  document.getElementById('item-history-title').textContent=item.item_name+' — history';
+  renderItemHistory();
+  document.getElementById('item-history-modal').classList.add('open');
+}
+function renderItemHistory(){
+  if(!currentHistoryItem)return;
+  const log=(DATA.lifeLog||[]).filter(r=>r.item_name===currentHistoryItem).sort((a,b)=>new Date(b.in_date)-new Date(a.in_date));
+  const withLife=log.filter(r=>r.life_days!=null&&r.expected_life_days!=null);
+  const avgPct=withLife.length?Math.round(withLife.reduce((a,r)=>a+((r.life_days-r.expected_life_days)/r.expected_life_days*100),0)/withLife.length):null;
+  document.getElementById('item-history-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Cycles logged</div><div class="vl">${log.length}</div></div>
+    <div class="mc"><div class="lb">Avg life vs expected</div><div class="vl ${avgPct==null?'':avgPct<0?'red':'green'}">${avgPct==null?'—':(avgPct>0?'+':'')+avgPct+'%'}</div></div>`;
+  document.getElementById('item-history-tbody').innerHTML=log.map(r=>{
+    const diff=r.diff_days;
+    const diffTxt=diff==null?'—':(diff>0?'+':'')+diff+'d';
+    const diffColor=diff==null?'var(--txt3)':diff<0?'#dc2626':'#15803d';
+    return`<tr>
+      <td>${fmtDate(r.in_date)}</td>
+      <td>${r.out_date?fmtDate(r.out_date):'<span style="color:var(--txt2);">still in use</span>'}</td>
+      <td style="text-align:right;">${r.expected_life_days!=null?r.expected_life_days+'d':'—'}</td>
+      <td style="text-align:right;font-weight:600;">${r.life_days!=null?r.life_days+'d':'—'}</td>
+      <td style="text-align:right;font-weight:600;color:${diffColor};">${diffTxt}</td>
+      <td style="font-size:11px;">${r.notes==='Auto-logged from Inventory'?'<span class="badge b-blue">Auto</span>':(r.notes?'<span style="color:var(--txt2);">'+r.notes+'</span>':'—')}</td>
+      <td style="text-align:center;white-space:nowrap;">
+        <button class="btn btn-sm" onclick="closeModal('item-history-modal');openLifeModal('${r.id}');">✏</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('item_life_log','${r.id}','entry')">🗑</button>
+      </td></tr>`;
+  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txt2);">No history yet — logs automatically when stock goes out, or use "+ Backfill old entry"</td></tr>';
+}
+
+// ===== ITEM HISTORY — backfill / edit a cycle (opened from within the Item History drill-down) =====
 function openLifeModal(rowId){
   editId=rowId;
-  document.getElementById('life-modal-t').textContent=rowId?'Edit Life Entry':'Add Life Entry';
+  document.getElementById('life-modal-t').textContent=rowId?'Edit history entry':'Backfill history entry';
   const dl=document.getElementById('lf-item-list');
   if(dl)dl.innerHTML=DATA.inv.map(r=>`<option value="${r.item_name}">`).join('');
   if(rowId){
@@ -1990,6 +2036,8 @@ function openLifeModal(rowId){
     }
   } else {
     ['lf-item','lf-in','lf-out','lf-exp','lf-notes'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+    // Pre-fill and lock the item name when opened from within that item's history drill-down
+    if(currentHistoryItem)document.getElementById('lf-item').value=currentHistoryItem;
   }
   document.getElementById('life-modal').classList.add('open');
 }
@@ -2009,43 +2057,10 @@ async function saveLifeEntry(){
   const row={item_name:itemName,in_date:inDate,out_date:outDate,expected_life_days:expected,life_days:lifeDays,diff_days:diffDays,notes:g('lf-notes')||'',updated_at:new Date().toISOString()};
   const{error}=editId?await sb.from('item_life_log').update(row).eq('id',editId):await sb.from('item_life_log').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
-  toast(editId?'Life entry updated ✓':'Life entry added ✓');
+  toast(editId?'History entry updated ✓':'History entry added ✓');
   closeModal('life-modal');
   await loadAll();
-}
-
-function renderLifeRegister(){
-  const log=DATA.lifeLog||[];
-  const withLife=log.filter(r=>r.life_days!=null&&r.expected_life_days!=null);
-  const under=withLife.filter(r=>r.diff_days<0);
-  const over=withLife.filter(r=>r.diff_days>=0);
-  const avgPct=withLife.length?Math.round(withLife.reduce((a,r)=>a+((r.life_days-r.expected_life_days)/r.expected_life_days*100),0)/withLife.length):0;
-
-  document.getElementById('life-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Items tracked</div><div class="vl">${new Set(log.map(r=>r.item_name)).size}</div><div class="sb">${log.length} entries</div></div>
-    <div class="mc"><div class="lb">Avg life vs expected</div><div class="vl ${avgPct<0?'red':'green'}">${avgPct>0?'+':''}${avgPct}%</div></div>
-    <div class="mc"><div class="lb">Underperforming</div><div class="vl amber">${under.length}</div><div class="sb">wore out early</div></div>
-    <div class="mc"><div class="lb">Outperforming</div><div class="vl green">${over.length}</div><div class="sb">met or beat target</div></div>`;
-
-  const sorted=[...log].sort((a,b)=>new Date(b.in_date)-new Date(a.in_date));
-  document.getElementById('life-tbody').innerHTML=sorted.map(r=>{
-    const diff=r.diff_days;
-    const bg=diff==null?'':diff<0&&Math.abs(diff)>=(r.expected_life_days*0.3)?'background:#fef2f2;':diff<0?'background:#fffbeb;':'background:#f0fdf4;';
-    const diffTxt=diff==null?'—':(diff>0?'+':'')+diff+'d';
-    const diffColor=diff==null?'var(--txt3)':diff<0?'#dc2626':'#15803d';
-    return`<tr style="${bg}">
-      <td><strong>${r.item_name}</strong></td>
-      <td>${fmtDate(r.in_date)}</td>
-      <td>${r.out_date?fmtDate(r.out_date):'<span style="color:var(--txt2);">still in use</span>'}</td>
-      <td style="text-align:right;">${r.expected_life_days!=null?r.expected_life_days+'d':'—'}</td>
-      <td style="text-align:right;font-weight:600;">${r.life_days!=null?r.life_days+'d':'—'}</td>
-      <td style="text-align:right;font-weight:600;color:${diffColor};">${diffTxt}</td>
-      <td style="font-size:12px;color:var(--txt2);">${r.notes||'—'}</td>
-      <td style="text-align:center;white-space:nowrap;">
-        <button class="btn btn-sm" onclick="openLifeModal('${r.id}')">✏</button>
-        <button class="btn btn-sm btn-red" onclick="deleteRow('item_life_log','${r.id}','entry')">🗑</button>
-      </td></tr>`;
-  }).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No entries yet — click "+ Add entry" to start</td></tr>';
+  if(currentHistoryItem){renderItemHistory();document.getElementById('item-history-modal').classList.add('open');}
 }
 
 function renderStock(){
@@ -2118,9 +2133,32 @@ function renderDispatch(){
     <div class="mc"><div class="lb">Customers</div><div class="vl">${[...new Set(disp.map(r=>r.customer))].length}</div></div>`;
   document.getElementById('dispatch-tbody').innerHTML=[...disp].sort((a,b)=>new Date(b.dispatch_date)-new Date(a.dispatch_date)).map(r=>{
     const sc={Dispatched:'blue','In Transit':'amber',Delivered:'green',Returned:'red'};
-    return`<tr><td>${fmtDate(r.dispatch_date)}</td><td>${r.customer}</td><td>${r.material_type}</td><td>${Number(r.qty_kg).toLocaleString('en-IN')}</td><td>${fmtMoney(r.rate_per_kg)}</td><td>${fmtMoney(r.amount)}</td><td>${r.vehicle_no||'—'}</td><td>${r.lr_no||'—'}</td><td>${r.invoice_no||'—'}</td><td>${badge(r.status,sc[r.status]||'gray')}</td>
+    return`<tr><td>${fmtDate(r.dispatch_date)}</td><td>${r.customer}</td><td>${r.material_type}</td><td>${r.colour||'—'}</td><td>${Number(r.qty_kg).toLocaleString('en-IN')}</td><td>${fmtMoney(r.rate_per_kg)}</td><td>${fmtMoney(r.amount)}</td><td>${r.vehicle_no||'—'}</td><td>${r.lr_no||'—'}</td><td>${r.invoice_no||'—'}</td><td>${badge(r.status,sc[r.status]||'gray')}</td>
     <td style="white-space:nowrap"><button class="btn btn-sm" onclick="openModal('dispatch-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-red" onclick="deleteRow('dispatches','${r.id}','dispatch')">🗑</button></td></tr>`;
-  }).join('')||'<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No dispatches for '+m+'</td></tr>';
+  }).join('')||'<tr><td colspan="12" style="text-align:center;padding:20px;color:var(--txt2);">No dispatches for '+m+'</td></tr>';
+
+  // Colour-wise dispatch breakdown for the month
+  const colMap={};
+  disp.forEach(r=>{const c=r.colour||'Untagged';colMap[c]=(colMap[c]||0)+Number(r.qty_kg||0);});
+  const colEntries=Object.entries(colMap).sort((a,b)=>b[1]-a[1]);
+  const colBars=['#2563eb','#1a1a1a','#9ca3af','#d97706','#1D9E75','#dc2626','#7c3aed','#6b7280'];
+  const cbEl=document.getElementById('dispatch-colour-breakdown');
+  if(cbEl){
+    if(colEntries.length===0){
+      cbEl.innerHTML='<div style="font-size:12px;color:var(--txt2);text-align:center;padding:16px;">No dispatches for '+m+'</div>';
+    } else {
+      cbEl.innerHTML=colEntries.map(([c,kg],i)=>`
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+            <span style="font-size:13px;">${c}</span>
+            <span style="font-size:13px;font-weight:700;">${Number(kg).toLocaleString('en-IN')} Kg <span style="color:var(--txt2);font-weight:400;">(${totalKg>0?Math.round(kg/totalKg*100):0}%)</span></span>
+          </div>
+          <div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;">
+            <div style="height:100%;width:${totalKg>0?Math.round(kg/totalKg*100):0}%;background:${colBars[i%colBars.length]};border-radius:4px;"></div>
+          </div>
+        </div>`).join('');
+    }
+  }
 }
 
 function renderTasks(){
