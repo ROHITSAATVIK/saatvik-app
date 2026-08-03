@@ -298,8 +298,8 @@ tr:hover td{background:#fafaf9;}
           <button class="btn btn-wa" onclick="generateWAMIS()">📱 WhatsApp MIS</button>
         </div>
       </div>
-      <div class="tw"><table><thead><tr><th>Date</th><th>Target</th><th>Production</th><th>Colour</th><th>Eff%</th><th>Day MP</th><th>Night MP</th><th>Wash Run</th><th>Agglo Run</th><th>Ext Run</th><th>Issue (D)</th><th>Issue (N)</th><th>Dispatch</th><th>Total Stock</th><th>Actions</th></tr></thead>
-      <tbody id="mis-tbody"><tr><td colspan="15"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody></table></div>
+      <div class="tw"><table><thead><tr><th>Date</th><th>Target</th><th>Production</th><th>Colour</th><th>Eff%</th><th>Day MP</th><th>Night MP</th><th>Labour ₹</th><th>Labour ₹/Kg</th><th>Wash Run</th><th>Agglo Run</th><th>Ext Run</th><th>Issue (D)</th><th>Issue (N)</th><th>Dispatch</th><th>Total Stock</th><th>Actions</th></tr></thead>
+      <tbody id="mis-tbody"><tr><td colspan="17"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody></table></div>
     </div>
     <!-- WhatsApp Preview -->
     <div class="card" id="wa-card" style="display:none;">
@@ -783,6 +783,7 @@ tr:hover td{background:#fafaf9;}
       <div class="frow"><div class="fg"><label>Date</label><input type="date" id="m-date"></div><div class="fg"><label>Target (Kg)</label><input type="number" id="m-target" value="1500"></div></div>
       <div class="sec-label">Manpower</div>
       <div class="frow"><div class="fg"><label>Day shift workers</label><input type="number" id="m-mpd" placeholder="0"></div><div class="fg"><label>Night shift workers</label><input type="number" id="m-mpn" placeholder="0"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Labour ₹ (total labour cost for the day)</label><input type="number" id="m-labour" placeholder="0" oninput="calcLabourPerKg()"><div class="calc-note" id="m-labour-show">₹/Kg: —</div></div></div>
       <div class="sec-label">Day Shift — Running Hours & Production (12h shift)</div>
       <div class="frow-3 frow">
         <div class="fg"><label>Washing running (h)</label><input type="number" id="m-wrd" step="0.5" placeholder="0–12" max="12" oninput="calcDT()"><div class="calc-note" id="m-wdt-d-show">Downtime: 0h</div></div>
@@ -1276,9 +1277,9 @@ function openModal(id,rowId){
     if(isEdit){
       const r=DATA.mis.find(x=>x.id===rowId);
       if(r){
-        ['m-date','m-target','m-mpd','m-mpn','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>{
+        ['m-date','m-target','m-mpd','m-mpn','m-labour','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>{
           const map={
-            'm-date':'entry_date','m-target':'target_kg','m-mpd':'manpower_day','m-mpn':'manpower_night',
+            'm-date':'entry_date','m-target':'target_kg','m-mpd':'manpower_day','m-mpn':'manpower_night','m-labour':'labour_cost',
             'm-wrd':'washing_run_day','m-ard':'agglo_run_day','m-erd':'extruder_run_day',
             'm-wrn':'washing_run_night','m-arn':'agglo_run_night','m-ern':'extruder_run_night',
             'm-wkg':'washing_kg','m-akg':'agglo_kg','m-ekg':'extruder_kg',
@@ -1294,9 +1295,10 @@ function openModal(id,rowId){
         document.getElementById('m-colour').value=colParts[0]||'';
         document.getElementById('m-colour2').value=colParts[1]||'';
         calcDT();
+        calcLabourPerKg();
       }
     } else {
-      ['m-date','m-mpd','m-mpn','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>document.getElementById(fid).value='');
+      ['m-date','m-mpd','m-mpn','m-labour','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>document.getElementById(fid).value='');
       document.getElementById('m-target').value=1500;
       document.getElementById('m-tprod').value='';
       document.getElementById('m-issd').value='None';
@@ -1308,6 +1310,7 @@ function openModal(id,rowId){
       const lastEntry=[...(DATA.mis||[])].sort((a,b)=>new Date(b.entry_date)-new Date(a.entry_date))[0];
       document.getElementById('m-fgop').value=lastEntry?Number(lastEntry.total_stock_kg||0):0;
       calcMISStock();
+      calcLabourPerKg();
     }
   }
   if(id==='inv-modal'){
@@ -1389,6 +1392,14 @@ function calcTotalProd(){
   const v=parseFloat(document.getElementById('m-ekg')?.value||0);
   document.getElementById('m-tprod').value=v;
   calcMISStock();
+  calcLabourPerKg();
+}
+function calcLabourPerKg(){
+  const labour=parseFloat(document.getElementById('m-labour')?.value||0);
+  const prod=parseFloat(document.getElementById('m-tprod')?.value||0);
+  const el=document.getElementById('m-labour-show');
+  if(!el)return;
+  el.textContent=prod>0?'₹/Kg: '+(labour/prod).toFixed(2):'₹/Kg: —';
 }
 function calcMISStock(){
   const date=document.getElementById('m-date')?.value;
@@ -1501,18 +1512,18 @@ async function saveMIS(){
   const g=id=>document.getElementById(id)?.value;
   const row={
     entry_date:g('m-date'),month_year:g('m-date')?fmtMonthYear(g('m-date')):'',target_kg:parseFloat(g('m-target'))||1500,
-    manpower_day:parseInt(g('m-mpd'))||0,manpower_night:parseInt(g('m-mpn'))||0,
+    manpower_day:parseInt(g('m-mpd'))||0,manpower_night:parseInt(g('m-mpn'))||0,labour_cost:parseFloat(g('m-labour'))||0,
     washing_run_day:parseFloat(g('m-wrd'))||0,agglo_run_day:parseFloat(g('m-ard'))||0,extruder_run_day:parseFloat(g('m-erd'))||0,
     washing_run_night:parseFloat(g('m-wrn'))||0,agglo_run_night:parseFloat(g('m-arn'))||0,extruder_run_night:parseFloat(g('m-ern'))||0,
     washing_kg:parseFloat(g('m-wkg'))||0,agglo_kg:parseFloat(g('m-akg'))||0,extruder_kg:parseFloat(g('m-ekg'))||0,
     total_production_kg:(parseFloat(g('m-tprod'))||0)+(parseFloat(g('m-tprod2'))||0),
     issue_day:g('m-issd'),issue_night:g('m-issn'),
-    raw_stock_opening_kg:0,fg_stock_opening_kg:0,
+    raw_stock_opening_kg:parseFloat(g('m-rmop'))||0,fg_stock_opening_kg:parseFloat(g('m-fgop'))||0,
     dispatched_kg:(()=>{
       const date=g('m-date');
       if(!date||!DATA.dispatches)return 0;
       return DATA.dispatches.filter(r=>r.dispatch_date===date).reduce((a,r)=>a+Number(r.qty_kg||0),0);
-    })(),total_stock_kg:0,
+    })(),total_stock_kg:parseFloat(g('m-tstock'))||0,
     colour:(g('m-colour')||'')+(g('m-colour2')&&g('m-colour2').trim()?'+'+g('m-colour2').trim():''),notes:g('m-notes'),updated_at:new Date().toISOString()
   };
   if(!row.entry_date){toast('Please select a date','err');return;}
@@ -1890,6 +1901,8 @@ function renderMIS(){
     const eRunTotal=(parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0)).toFixed(1);
     const todayDisp=dispByDate[r.entry_date]||0;
     const closingStock=stockByDate[r.entry_date]||0;
+    const labourCost=Number(r.labour_cost||0);
+    const labourPerKg=Number(r.total_production_kg)>0?(labourCost/Number(r.total_production_kg)):null;
     return`<tr>
       <td>${fmtDate(r.entry_date)}</td>
       <td>${Number(r.target_kg).toLocaleString('en-IN')}</td>
@@ -1898,6 +1911,8 @@ function renderMIS(){
       <td>${effBadge(e)}</td>
       <td>${r.manpower_day||'—'}</td>
       <td>${r.manpower_night||'—'}</td>
+      <td>${labourCost>0?'₹'+Number(labourCost).toLocaleString('en-IN'):'—'}</td>
+      <td style="font-weight:600;">${labourPerKg!=null?'₹'+labourPerKg.toFixed(2):'—'}</td>
       <td>${wRunTotal}h</td>
       <td>${aRunTotal}h</td>
       <td>${eRunTotal}h</td>
@@ -1909,7 +1924,7 @@ function renderMIS(){
         <button class="btn btn-sm" onclick="openModal('mis-modal','${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteRow('mis_entries','${r.id}','entry')">🗑</button>
       </td></tr>`;
-  }).join('')||'<tr><td colspan="16" style="text-align:center;padding:20px;color:var(--txt2);">No entries for '+m+'</td></tr>';
+  }).join('')||'<tr><td colspan="17" style="text-align:center;padding:20px;color:var(--txt2);">No entries for '+m+'</td></tr>';
 
   destroyChart('prod');destroyChart('cumProd');
   const asc=[...sorted].reverse();
