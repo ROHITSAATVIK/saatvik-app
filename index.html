@@ -788,7 +788,20 @@ tr:hover td{background:#fafaf9;}
       <div class="frow"><div class="fg"><label>Date</label><input type="date" id="m-date"></div><div class="fg"><label>Target (Kg)</label><input type="number" id="m-target" value="1500"></div></div>
       <div class="sec-label">Manpower</div>
       <div class="frow"><div class="fg"><label>Day shift workers</label><input type="number" id="m-mpd" placeholder="0"></div><div class="fg"><label>Night shift workers</label><input type="number" id="m-mpn" placeholder="0"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Labour ₹ (total labour cost for the day)</label><input type="number" id="m-labour" placeholder="0" oninput="calcLabourPerKg()"><div class="calc-note" id="m-labour-show">₹/Kg: —</div></div></div>
+      <div class="frow frow-1"><div class="fg"><label style="display:flex;justify-content:space-between;align-items:center;">Labour — headcount by role &amp; shift <a href="#" onclick="openLabourRatesModal();return false;" style="font-size:11px;font-weight:400;">Edit rates</a></label></div></div>
+      <div class="frow">
+        <div class="fg"><label>Day · Suman Helper</label><input type="number" id="m-lb-sdh" placeholder="0" oninput="calcLabourPerKg()"></div>
+        <div class="fg"><label>Day · Suman Operator</label><input type="number" id="m-lb-sdo" placeholder="0" oninput="calcLabourPerKg()"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Day · Heera Helper</label><input type="number" id="m-lb-hdh" placeholder="0" oninput="calcLabourPerKg()"></div>
+        <div class="fg"><label>Night · Suman Helper</label><input type="number" id="m-lb-snh" placeholder="0" oninput="calcLabourPerKg()"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Night · Suman Operator</label><input type="number" id="m-lb-sno" placeholder="0" oninput="calcLabourPerKg()"></div>
+        <div class="fg"><label>Night · Heera Helper</label><input type="number" id="m-lb-hnh" placeholder="0" oninput="calcLabourPerKg()"></div>
+      </div>
+      <div class="frow frow-1"><div class="fg"><label>Night · Heera Operator</label><input type="number" id="m-lb-hno" placeholder="0" oninput="calcLabourPerKg()"><div class="calc-note" id="m-labour-show">Labour ₹: 0 · ₹/Kg: —</div></div></div>
       <div class="sec-label">Day Shift — Running Hours & Production (12h shift)</div>
       <div class="frow-3 frow">
         <div class="fg"><label>Washing running (h)</label><input type="number" id="m-wrd" step="0.5" placeholder="0–12" max="12" oninput="calcDT()"><div class="calc-note" id="m-wdt-d-show">Downtime: 0h</div></div>
@@ -840,6 +853,21 @@ tr:hover td{background:#fafaf9;}
       <div style="font-size:11px;color:var(--txt2);padding:4px 2px 0;">In date, out date, life and history are all tracked automatically — increasing stock logs an "in", decreasing stock logs an "out". Click the item's name on the Inventory page anytime to see its full history.</div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('inv-modal')">Cancel</button><button class="btn btn-green" onclick="saveInv()">Save</button></div>
+  </div>
+</div>
+
+<!-- Labour rates settings modal -->
+<div class="modal-bg" id="labour-rates-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Labour rates (₹ per person per shift)</span><button class="btn btn-sm" onclick="closeModal('labour-rates-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:10px;">Changing a rate here only affects entries you save from now on — past entries keep the rate that was active when they were saved.</div>
+      <div class="frow"><div class="fg"><label>Day · Suman Helper</label><input type="number" id="lr-sdh"></div><div class="fg"><label>Day · Suman Operator</label><input type="number" id="lr-sdo"></div></div>
+      <div class="frow"><div class="fg"><label>Day · Heera Helper</label><input type="number" id="lr-hdh"></div><div class="fg"><label>Night · Suman Helper</label><input type="number" id="lr-snh"></div></div>
+      <div class="frow"><div class="fg"><label>Night · Suman Operator</label><input type="number" id="lr-sno"></div><div class="fg"><label>Night · Heera Helper</label><input type="number" id="lr-hnh"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Night · Heera Operator</label><input type="number" id="lr-hno"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('labour-rates-modal')">Cancel</button><button class="btn btn-green" onclick="saveLabourRates()">Save rates</button></div>
   </div>
 </div>
 
@@ -1296,9 +1324,9 @@ function openModal(id,rowId){
     if(isEdit){
       const r=DATA.mis.find(x=>x.id===rowId);
       if(r){
-        ['m-date','m-target','m-mpd','m-mpn','m-labour','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>{
+        ['m-date','m-target','m-mpd','m-mpn','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>{
           const map={
-            'm-date':'entry_date','m-target':'target_kg','m-mpd':'manpower_day','m-mpn':'manpower_night','m-labour':'labour_cost',
+            'm-date':'entry_date','m-target':'target_kg','m-mpd':'manpower_day','m-mpn':'manpower_night',
             'm-wrd':'washing_run_day','m-ard':'agglo_run_day','m-erd':'extruder_run_day',
             'm-wrn':'washing_run_night','m-arn':'agglo_run_night','m-ern':'extruder_run_night',
             'm-wkg':'washing_kg','m-akg':'agglo_kg','m-ekg':'extruder_kg',
@@ -1307,6 +1335,13 @@ function openModal(id,rowId){
           };
           document.getElementById(fid).value=r[map[fid]]||'';
         });
+        document.getElementById('m-lb-sdh').value=r.lb_suman_day_helper||'';
+        document.getElementById('m-lb-sdo').value=r.lb_suman_day_operator||'';
+        document.getElementById('m-lb-hdh').value=r.lb_heera_day_helper||'';
+        document.getElementById('m-lb-snh').value=r.lb_suman_night_helper||'';
+        document.getElementById('m-lb-sno').value=r.lb_suman_night_operator||'';
+        document.getElementById('m-lb-hnh').value=r.lb_heera_night_helper||'';
+        document.getElementById('m-lb-hno').value=r.lb_heera_night_operator||'';
         document.getElementById('m-issd').value=r.issue_day||'None';
         document.getElementById('m-issn').value=r.issue_night||'None';
         document.getElementById('m-tprod').value=r.total_production_kg||0;
@@ -1317,7 +1352,8 @@ function openModal(id,rowId){
         calcLabourPerKg();
       }
     } else {
-      ['m-date','m-mpd','m-mpn','m-labour','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>document.getElementById(fid).value='');
+      ['m-date','m-mpd','m-mpn','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>document.getElementById(fid).value='');
+      ['m-lb-sdh','m-lb-sdo','m-lb-hdh','m-lb-snh','m-lb-sno','m-lb-hnh','m-lb-hno'].forEach(fid=>document.getElementById(fid).value='');
       document.getElementById('m-target').value=1500;
       document.getElementById('m-tprod').value='';
       document.getElementById('m-issd').value='None';
@@ -1413,12 +1449,54 @@ function calcTotalProd(){
   calcMISStock();
   calcLabourPerKg();
 }
+// Maps each headcount field id to its labour_rates column name
+const LABOUR_FIELD_MAP={
+  'm-lb-sdh':'suman_day_helper','m-lb-sdo':'suman_day_operator','m-lb-hdh':'heera_day_helper',
+  'm-lb-snh':'suman_night_helper','m-lb-sno':'suman_night_operator',
+  'm-lb-hnh':'heera_night_helper','m-lb-hno':'heera_night_operator'
+};
+function openLabourRatesModal(){
+  const r=DATA.labourRates||{};
+  document.getElementById('lr-sdh').value=r.suman_day_helper||0;
+  document.getElementById('lr-sdo').value=r.suman_day_operator||0;
+  document.getElementById('lr-hdh').value=r.heera_day_helper||0;
+  document.getElementById('lr-snh').value=r.suman_night_helper||0;
+  document.getElementById('lr-sno').value=r.suman_night_operator||0;
+  document.getElementById('lr-hnh').value=r.heera_night_helper||0;
+  document.getElementById('lr-hno').value=r.heera_night_operator||0;
+  document.getElementById('labour-rates-modal').classList.add('open');
+}
+async function saveLabourRates(){
+  const g=id=>parseFloat(document.getElementById(id)?.value)||0;
+  const row={
+    suman_day_helper:g('lr-sdh'),suman_day_operator:g('lr-sdo'),heera_day_helper:g('lr-hdh'),
+    suman_night_helper:g('lr-snh'),suman_night_operator:g('lr-sno'),
+    heera_night_helper:g('lr-hnh'),heera_night_operator:g('lr-hno'),
+    updated_at:new Date().toISOString()
+  };
+  const existingId=DATA.labourRates&&DATA.labourRates.id;
+  const{error}=existingId?await sb.from('labour_rates').update(row).eq('id',existingId):await sb.from('labour_rates').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Labour rates updated ✓ — applies to entries saved from now on');
+  closeModal('labour-rates-modal');
+  await loadAll();
+  calcLabourPerKg();
+}
+function calcLabourTotal(){
+  const rates=DATA.labourRates||{};
+  let total=0;
+  Object.entries(LABOUR_FIELD_MAP).forEach(([fid,rateKey])=>{
+    const count=parseFloat(document.getElementById(fid)?.value||0);
+    total+=count*Number(rates[rateKey]||0);
+  });
+  return total;
+}
 function calcLabourPerKg(){
-  const labour=parseFloat(document.getElementById('m-labour')?.value||0);
+  const labour=calcLabourTotal();
   const prod=parseFloat(document.getElementById('m-tprod')?.value||0);
   const el=document.getElementById('m-labour-show');
   if(!el)return;
-  el.textContent=prod>0?'₹/Kg: '+(labour/prod).toFixed(2):'₹/Kg: —';
+  el.textContent='Labour ₹: '+labour.toLocaleString('en-IN')+(prod>0?' · ₹/Kg: '+(labour/prod).toFixed(2):' · ₹/Kg: —');
 }
 function calcMISStock(){
   const date=document.getElementById('m-date')?.value;
@@ -1492,7 +1570,7 @@ function openWA(){
 async function loadAll(){
   document.getElementById('last-sync').textContent='Syncing...';
   try{
-    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm,life]=await Promise.all([
+    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm,life,lrates]=await Promise.all([
       sb.from('mis_entries').select('*').order('entry_date',{ascending:false}),
       sb.from('inventory').select('*').order('item_name'),
       sb.from('stock_movements').select('*').order('created_at',{ascending:false}),
@@ -1503,11 +1581,18 @@ async function loadAll(){
       sb.from('trading_sales').select('*').order('sale_date',{ascending:false}),
       sb.from('trading_materials').select('*').order('material_name'),
       sb.from('item_life_log').select('*').order('in_date',{ascending:false}),
+      sb.from('labour_rates').select('*').limit(1),
     ]);
     DATA.mis=mis.data||[];DATA.inv=inv.data||[];DATA.stock=stock.data||[];
     DATA.dispatches=disp.data||[];DATA.bd=bd.data||[];DATA.tasks=tasks.data||[];
     DATA.trdPur=tp.data||[];DATA.trdSal=ts.data||[];DATA.trdMat=tm.data||[];
     DATA.lifeLog=life.data||[];
+    // Labour rates — a single editable row. Falls back to the rates you gave us if the table is empty
+    // (e.g. before the migration/seed row has been run), so the form never breaks.
+    DATA.labourRates=(lrates.data&&lrates.data[0])||{
+      suman_day_helper:500,suman_day_operator:1000,heera_day_helper:420,
+      suman_night_helper:600,suman_night_operator:1000,heera_night_helper:600,heera_night_operator:900
+    };
     document.getElementById('last-sync').textContent='Synced ✓ '+new Date().toLocaleTimeString('en-IN');
     // Populate colour datalist from production AND dispatch colours, so suggestions never fall behind
     const colours=new Set([
@@ -1531,7 +1616,12 @@ async function saveMIS(){
   const g=id=>document.getElementById(id)?.value;
   const row={
     entry_date:g('m-date'),month_year:g('m-date')?fmtMonthYear(g('m-date')):'',target_kg:parseFloat(g('m-target'))||1500,
-    manpower_day:parseInt(g('m-mpd'))||0,manpower_night:parseInt(g('m-mpn'))||0,labour_cost:parseFloat(g('m-labour'))||0,
+    manpower_day:parseInt(g('m-mpd'))||0,manpower_night:parseInt(g('m-mpn'))||0,
+    lb_suman_day_helper:parseFloat(g('m-lb-sdh'))||0,lb_suman_day_operator:parseFloat(g('m-lb-sdo'))||0,
+    lb_heera_day_helper:parseFloat(g('m-lb-hdh'))||0,lb_suman_night_helper:parseFloat(g('m-lb-snh'))||0,
+    lb_suman_night_operator:parseFloat(g('m-lb-sno'))||0,lb_heera_night_helper:parseFloat(g('m-lb-hnh'))||0,
+    lb_heera_night_operator:parseFloat(g('m-lb-hno'))||0,
+    labour_cost:calcLabourTotal(),
     washing_run_day:parseFloat(g('m-wrd'))||0,agglo_run_day:parseFloat(g('m-ard'))||0,extruder_run_day:parseFloat(g('m-erd'))||0,
     washing_run_night:parseFloat(g('m-wrn'))||0,agglo_run_night:parseFloat(g('m-arn'))||0,extruder_run_night:parseFloat(g('m-ern'))||0,
     washing_kg:parseFloat(g('m-wkg'))||0,agglo_kg:parseFloat(g('m-akg'))||0,extruder_kg:parseFloat(g('m-ekg'))||0,
