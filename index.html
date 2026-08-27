@@ -99,6 +99,11 @@ body{font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;background:#FBF9F4;colo
 table{width:100%;border-collapse:collapse;}
 th{padding:7px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--txt2);border-bottom:1px solid var(--bdr);background:var(--bg3);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px;}
 td{padding:8px 11px;font-size:13px;color:var(--txt);border-bottom:1px solid var(--bdr);vertical-align:middle;}
+.excel-table table{border:1px solid var(--bdr2);}
+.excel-table th,.excel-table td{border:1px solid var(--bdr2);}
+.excel-table th.tnum,.excel-table td.tnum{text-align:right;}
+.excel-table tbody tr:nth-child(even){background:rgba(0,0,0,0.015);}
+.excel-table tbody tr:hover{background:rgba(11,92,72,0.05);}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:#fafaf9;}
 /* BADGES */
@@ -474,6 +479,7 @@ tr:hover td{background:#fafaf9;}
     <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Trade Register</div>
     <div class="tb-right">
       <select class="month-selector" id="trd-reg-month" onchange="renderTrdRegister()"></select>
+      <button class="btn" onclick="downloadTrdRegPdf()">⬇ Download PDF</button>
       <button class="btn btn-blue" onclick="openTrdRegModal(null)">+ Add trade</button>
     </div>
   </div>
@@ -484,8 +490,8 @@ tr:hover td{background:#fafaf9;}
         <div class="card-title">Trade register — buy &amp; sell in one line</div>
         <div style="font-size:11px;color:var(--txt2);">Avg payment cycle: <strong id="trd-avg-cycle-display">—</strong></div>
       </div>
-      <div class="tw"><table>
-        <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Material</th><th>Qty (Kg)</th><th>Amount</th><th>Supplier</th><th>Party</th><th>CP</th><th>SP</th><th>Margin</th><th>Profit</th><th>Due On</th><th>Payment Recd</th><th>Payment Cycle (Days)</th><th>Actions</th></tr></thead>
+      <div class="tw excel-table"><table>
+        <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Material</th><th class="tnum">Qty (Kg)</th><th class="tnum">Amount</th><th>Supplier</th><th>Party</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Margin</th><th class="tnum">Profit</th><th>Due On</th><th>Payment</th><th class="tnum">Cycle (Days)</th><th>Actions</th></tr></thead>
         <tbody id="trd-reg-tbody"><tr><td colspan="16"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
         <tfoot id="trd-reg-tfoot"></tfoot>
       </table></div>
@@ -2342,11 +2348,94 @@ function openTrdRegModal(rowId){
 }
 
 // Payment cycle days: live count from purchase_date until paid, then locked at (payment_date - purchase_date)
+// Payment cycle days = trade date to the date you received money from the party — counts live until received, then locks.
+// (Not payment_date, which tracks whether you've paid your supplier — a separate, independent concept.)
 function paymentCycleDays(r){
   if(!r.purchase_date)return null;
   const start=new Date(r.purchase_date);
-  const end=r.payment_date?new Date(r.payment_date):TODAY;
+  const end=r.payment_received_date?new Date(r.payment_received_date):TODAY;
   return Math.max(0,Math.floor((end-start)/86400000));
+}
+
+function downloadTrdRegPdf(){
+  const m=getMonth('trd-reg-month');
+  const rows=[...DATA.trdPur].filter(r=>r.month_year===m).sort((a,b)=>new Date(a.purchase_date)-new Date(b.purchase_date));
+  if(rows.length===0){toast('No trades for '+m,'err');return;}
+
+  const tQty=rows.reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  const tAmt=rows.reduce((a,r)=>a+Number(r.amount||0),0);
+  const withCpSp=rows.filter(r=>r.cost_price||r.sale_price);
+  const avgCp=withCpSp.length?withCpSp.reduce((a,r)=>a+Number(r.cost_price||0),0)/withCpSp.length:0;
+  const avgSp=withCpSp.length?withCpSp.reduce((a,r)=>a+Number(r.sale_price||0),0)/withCpSp.length:0;
+  const avgMargin=withCpSp.length?withCpSp.reduce((a,r)=>a+Number(r.margin||((r.sale_price||0)-(r.cost_price||0))),0)/withCpSp.length:0;
+  const tProfit=rows.reduce((a,r)=>a+Number(r.profit||(((r.sale_price||0)-(r.cost_price||0))*Number(r.qty_kg||0))),0);
+
+  const rowsHtml=rows.map((r,i)=>{
+    const margin=Number(r.margin||((r.sale_price||0)-(r.cost_price||0)));
+    const profit=Number(r.profit||(margin*Number(r.qty_kg||0)));
+    return`<tr>
+      <td>${i+1}</td><td>${fmtDate(r.purchase_date)}</td><td>${r.bill_no||'—'}</td><td>${r.material||'—'}</td>
+      <td style="text-align:right;">${Number(r.qty_kg).toLocaleString('en-IN')}</td>
+      <td style="text-align:right;">${Number(r.amount).toLocaleString('en-IN')}</td>
+      <td>${r.supplier||'—'}</td>
+      <td style="text-align:right;">${r.cost_price?Number(r.cost_price).toLocaleString('en-IN'):'—'}</td>
+      <td style="text-align:right;">${r.sale_price?Number(r.sale_price).toLocaleString('en-IN'):'—'}</td>
+      <td style="text-align:right;">${(r.cost_price||r.sale_price)?margin.toFixed(2):'—'}</td>
+      <td style="text-align:right;">${(r.cost_price||r.sale_price)?profit.toLocaleString('en-IN',{maximumFractionDigits:0}):'—'}</td>
+      <td>${r.payment_received_date?fmtDate(r.payment_received_date):'Pending'}</td>
+    </tr>`;
+  }).join('');
+
+  const html=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+@page{size:A4 landscape;margin:12mm;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
+body{font-size:10px;color:#000;background:#fff;}
+.header{display:flex;align-items:center;gap:14px;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:8px;}
+.logo{width:48px;height:48px;object-fit:contain;}
+.company-info{flex:1;text-align:center;}
+.company-name{font-size:18px;font-weight:bold;letter-spacing:1.5px;}
+.company-addr{font-size:9px;margin-top:2px;}
+.doc-title{text-align:center;font-size:12px;font-weight:bold;text-decoration:underline;margin:6px 0 10px;}
+table{width:100%;border-collapse:collapse;}
+th{background:#f0f0f0;border:1px solid #000;padding:5px 6px;text-align:left;font-size:9px;text-transform:uppercase;}
+td{border:1px solid #000;padding:5px 6px;font-size:9.5px;}
+tfoot td{font-weight:bold;background:#f5f5f5;}
+.footer-note{text-align:center;font-size:9px;margin-top:10px;color:#555;}
+</style></head><body>
+<div class="header">
+  <img class="logo" src="${LOGO_B64}" alt="Saatvik Logo">
+  <div class="company-info">
+    <div class="company-name">SAATVIK ENTERPRISES</div>
+    <div class="company-addr">HO : 42 A Rafi Ahmed Kidwai Road, Kolkata-700016 &nbsp;·&nbsp; Factory : Bamunara Industrial Estate, Bamunara, Durgapur - 713212</div>
+  </div>
+</div>
+<div class="doc-title">Scrap Trade Register — ${m}</div>
+<table>
+  <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Material</th><th style="text-align:right;">Qty (Kg)</th><th style="text-align:right;">Amount (₹)</th><th>Supplier</th><th style="text-align:right;">CP</th><th style="text-align:right;">SP</th><th style="text-align:right;">Margin</th><th style="text-align:right;">Profit (₹)</th><th>Payment Recd</th></tr></thead>
+  <tbody>${rowsHtml}</tbody>
+  <tfoot><tr>
+    <td colspan="4">TOTAL / AVG</td>
+    <td style="text-align:right;">${tQty.toLocaleString('en-IN')}</td>
+    <td style="text-align:right;">${tAmt.toLocaleString('en-IN')}</td>
+    <td></td>
+    <td style="text-align:right;">${withCpSp.length?avgCp.toFixed(2):'—'}</td>
+    <td style="text-align:right;">${withCpSp.length?avgSp.toFixed(2):'—'}</td>
+    <td style="text-align:right;">${withCpSp.length?avgMargin.toFixed(2):'—'}</td>
+    <td style="text-align:right;">${tProfit.toLocaleString('en-IN',{maximumFractionDigits:0})}</td>
+    <td></td>
+  </tr></tfoot>
+</table>
+<div class="footer-note">Generated from Saatvik Enterprises app on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
+</body></html>`;
+
+  const win=window.open('','_blank');
+  if(!win){toast('Please allow popups for saatvik.biz to download PDF','err');return;}
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>win.print(),800);
 }
 
 function renderTrdRegister(){
@@ -2356,8 +2445,8 @@ function renderTrdRegister(){
   const unpaidSupplier=trades.filter(r=>!r.payment_date);
   const unpaidAmt=unpaidSupplier.reduce((a,r)=>a+Number(r.amount||0),0);
 
-  // Avg payment cycle (locked, paid trades only)
-  const paid=DATA.trdPur.filter(r=>r.payment_date&&r.purchase_date);
+  // Avg payment cycle — trade date to money-received-from-party date (locked, received trades only)
+  const paid=DATA.trdPur.filter(r=>r.payment_received_date&&r.purchase_date);
   const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>a+paymentCycleDays(r),0)/paid.length):0;
   const el=document.getElementById('trd-avg-cycle-display');
   if(el)el.textContent=avgCycle>0?avgCycle+' days':'No paid bills yet';
@@ -2377,9 +2466,9 @@ function renderTrdRegister(){
   document.getElementById('trd-reg-tbody').innerHTML=sorted.map(r=>{
     // Due date — always this row's own purchase_date + 15 days, calculated fresh each time (fixes the "same due date for all" bug)
     const due=dueDate(r.purchase_date,15);
-    const isOverdue=!r.payment_date&&due<TODAY;
+    const isOverdue=!r.payment_received_date&&due<TODAY;
     const cycleDays=paymentCycleDays(r);
-    const cycleLocked=!!r.payment_date;
+    const cycleLocked=!!r.payment_received_date;
 
     const recvdBtn=!r.payment_received_date
       ?`<div style="display:flex;flex-direction:column;gap:3px;"><span class="badge b-red">Pending</span><button class="btn btn-sm btn-amber" style="white-space:nowrap;margin-top:2px" onclick="quickMarkRecvd('${r.id}')">₹ Mark Recd</button></div>`
@@ -2404,11 +2493,12 @@ function renderTrdRegister(){
       <td>${recvdBtn}</td>
       <td>
         <span class="tnum" style="font-weight:600;color:${cycleLocked?'#15803d':isOverdue?'#dc2626':'#b45309'};">${cycleDays!==null?cycleDays+'d':'—'}</span>
-        ${cycleLocked?'<div style="font-size:10px;color:var(--txt2);">locked — paid</div>':'<div style="font-size:10px;color:var(--txt2);">counting…</div>'}
+        ${cycleLocked?'<div style="font-size:10px;color:var(--txt2);">locked — received</div>':'<div style="font-size:10px;color:var(--txt2);">counting…</div>'}
       </td>
       <td style="white-space:nowrap">
         <button class="btn btn-sm" onclick="openTrdRegModal('${r.id}')">✏</button>
-        <button class="btn btn-sm btn-red" onclick="deleteRow('trading_purchases','${r.id}','trade')">🗑</button>
+        <button class="btn btn-sm btn-red" onclick="deleteRow('trading_purchases','${r.id}','trade')">🗑</button><br>
+        ${r.payment_date?`<span style="font-size:10px;color:var(--txt2);">Paid supplier ${fmtDate(r.payment_date)}</span>`:`<button class="btn btn-sm" style="margin-top:3px;white-space:nowrap;" onclick="quickMarkPaid('${r.id}')" title="Mark that you've paid the supplier">✓ Mark Paid (Supplier)</button>`}
       </td>
     </tr>`;
   }).join('')||`<tr><td colspan="16" style="text-align:center;padding:20px;color:var(--txt2);">No trades yet — click "+ Add trade" to start</td></tr>`;
@@ -2463,7 +2553,7 @@ function renderTrdDashboard(){
   const trades=filterByMonth(DATA.trdPur,'month_year',m);
   const totalVal=trades.reduce((a,r)=>a+Number(r.amount||0),0);
   const supplierOut=DATA.trdPur.filter(r=>!r.payment_date).reduce((a,r)=>a+Number(r.amount||0),0);
-  const paid=DATA.trdPur.filter(r=>r.payment_date&&r.purchase_date);
+  const paid=DATA.trdPur.filter(r=>r.payment_received_date&&r.purchase_date);
   const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>a+paymentCycleDays(r),0)/paid.length):0;
 
   // Party (customer) outstanding — from clean payment_received_date column
