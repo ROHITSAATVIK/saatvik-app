@@ -100,7 +100,8 @@ table{width:100%;border-collapse:collapse;}
 th{padding:7px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--txt2);border-bottom:1px solid var(--bdr);background:var(--bg3);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px;}
 td{padding:8px 11px;font-size:13px;color:var(--txt);border-bottom:1px solid var(--bdr);vertical-align:middle;}
 .excel-table table{border:1px solid var(--bdr2);}
-.excel-table th,.excel-table td{border:1px solid var(--bdr2);}
+.excel-table th,.excel-table td{border:1px solid var(--bdr2);padding:4px 8px;font-size:11.5px;white-space:nowrap;line-height:1.3;}
+.excel-table th{font-size:9.5px;padding:5px 8px;}
 .excel-table th.tnum,.excel-table td.tnum{text-align:right;}
 .excel-table tbody tr:nth-child(even){background:rgba(0,0,0,0.015);}
 .excel-table tbody tr:hover{background:rgba(11,92,72,0.05);}
@@ -457,10 +458,6 @@ tr:hover td{background:#fafaf9;}
       </div>
       <div>
         <div class="card">
-          <div class="card-head"><div class="card-title">Supplier outstanding (I owe)</div></div>
-          <div class="tw"><table><thead><tr><th>Supplier</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody id="trd-supplier-out"></tbody></table></div>
-        </div>
-        <div class="card">
           <div class="card-head"><div class="card-title">Party outstanding (They owe me)</div></div>
           <div class="tw"><table><thead><tr><th>Customer</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody id="trd-customer-out"></tbody></table></div>
         </div>
@@ -491,8 +488,8 @@ tr:hover td{background:#fafaf9;}
         <div style="font-size:11px;color:var(--txt2);">Avg payment cycle: <strong id="trd-avg-cycle-display">—</strong></div>
       </div>
       <div class="tw excel-table"><table>
-        <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Material</th><th class="tnum">Qty (Kg)</th><th class="tnum">Amount</th><th>Supplier</th><th>Party</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Margin</th><th class="tnum">Profit</th><th>Due On</th><th>Payment</th><th class="tnum">Cycle (Days)</th><th>Actions</th></tr></thead>
-        <tbody id="trd-reg-tbody"><tr><td colspan="16"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+        <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Customer</th><th>Material</th><th class="tnum">Qty</th><th class="tnum">Amount</th><th>Due On</th><th class="tnum">Outstanding Days</th><th>Recd</th><th class="tnum">Days</th><th>Suppliers</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Margin</th><th class="tnum">Profit</th><th>Actions</th></tr></thead>
+        <tbody id="trd-reg-tbody"><tr><td colspan="17"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
         <tfoot id="trd-reg-tfoot"></tfoot>
       </table></div>
     </div>
@@ -987,10 +984,10 @@ tr:hover td{background:#fafaf9;}
       <div class="sec-label">Margin</div>
       <div class="frow"><div class="fg"><label>CP — cost price (₹/Kg)</label><input type="number" id="tr-cp" placeholder="0" oninput="calcTrdMargin()"></div><div class="fg"><label>SP — sale price (₹/Kg)</label><input type="number" id="tr-sp" placeholder="0" oninput="calcTrdMargin()"></div></div>
       <div class="frow frow-1"><div class="fg"><div class="calc-note" id="tr-margin-show">Margin: — · Profit: —</div></div></div>
-      <div style="font-size:11px;color:var(--txt2);padding:2px 2px 4px;">Due date is auto-calculated as Date + 15 days. Payment cycle days count live until marked paid, then lock.</div>
+      <div style="font-size:11px;color:var(--txt2);padding:2px 2px 4px;">Due date is auto-calculated as Date + 15 days. Outstanding/Cycle days count from Date until you mark it received.</div>
       <div class="sec-label">Payment Status</div>
-      <div class="frow"><div class="fg"><label>I paid supplier on</label><input type="date" id="tr-paid"></div><div class="fg"><label>Amount paid (₹)</label><input type="number" id="tr-pamt" placeholder="0"></div></div>
-      <div class="frow"><div class="fg"><label>Received from party on</label><input type="date" id="tr-recvd"></div><div class="fg"><label>Amount received (₹)</label><input type="number" id="tr-ramt" placeholder="0"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Received from party on</label><input type="date" id="tr-recvd"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Amount received (₹)</label><input type="number" id="tr-ramt" placeholder="0"></div></div>
       <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="tr-notes" placeholder="Optional"></div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('trd-reg-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdTrade()">Save</button></div>
@@ -2289,8 +2286,6 @@ async function saveTrdTrade(){
     amount:parseFloat(g('tr-amt'))||0,
     cost_price:cp,sale_price:sp,margin:sp-cp,profit:(sp-cp)*qty,
     payment_terms_days:15,
-    payment_date:g('tr-paid')||null,
-    payment_amount:parseFloat(g('tr-pamt'))||0,
     payment_received_date:g('tr-recvd')||null,
     payment_received_amount:parseFloat(g('tr-ramt'))||0,
     notes:g('tr-notes')||'',
@@ -2331,15 +2326,12 @@ function openTrdRegModal(rowId){
       document.getElementById('tr-sp').value=r.sale_price||'';
       document.getElementById('tr-supplier').value=r.supplier;
       document.getElementById('tr-customer').value=r.party||'';
-      document.getElementById('tr-paid').value=r.payment_date||'';
-      document.getElementById('tr-pamt').value=r.payment_amount||0;
       document.getElementById('tr-recvd').value=r.payment_received_date||'';
       document.getElementById('tr-ramt').value=r.payment_received_amount||0;
       document.getElementById('tr-notes').value=r.notes||'';
     }
   } else {
-    ['tr-date','tr-bill','tr-qty','tr-cp','tr-sp','tr-paid','tr-recvd','tr-notes','tr-supplier','tr-customer'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
-    document.getElementById('tr-pamt').value=0;
+    ['tr-date','tr-bill','tr-qty','tr-cp','tr-sp','tr-recvd','tr-notes','tr-supplier','tr-customer'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
     document.getElementById('tr-ramt').value=0;
     document.getElementById('tr-amt').value='';
   }
@@ -2373,36 +2365,41 @@ function downloadTrdRegPdf(){
   const rowsHtml=rows.map((r,i)=>{
     const margin=Number(r.margin||((r.sale_price||0)-(r.cost_price||0)));
     const profit=Number(r.profit||(margin*Number(r.qty_kg||0)));
+    const cycleDays=paymentCycleDays(r);
+    const received=!!r.payment_received_date;
     return`<tr>
-      <td>${i+1}</td><td>${fmtDate(r.purchase_date)}</td><td>${r.bill_no||'—'}</td><td>${r.material||'—'}</td>
+      <td>${i+1}</td><td>${fmtDate(r.purchase_date)}</td><td>${r.bill_no||'—'}</td><td>${r.party||'—'}</td><td>${r.material||'—'}</td>
       <td style="text-align:right;">${Number(r.qty_kg).toLocaleString('en-IN')}</td>
       <td style="text-align:right;">${Number(r.amount).toLocaleString('en-IN')}</td>
+      <td>${fmtDate(dueDate(r.purchase_date,15).toISOString().split('T')[0])}</td>
+      <td style="text-align:right;">${!received&&cycleDays!==null?cycleDays+'d':'—'}</td>
+      <td>${received?fmtDate(r.payment_received_date):'Pending'}</td>
+      <td style="text-align:right;">${received&&cycleDays!==null?cycleDays+'d':'—'}</td>
       <td>${r.supplier||'—'}</td>
       <td style="text-align:right;">${r.cost_price?Number(r.cost_price).toLocaleString('en-IN'):'—'}</td>
       <td style="text-align:right;">${r.sale_price?Number(r.sale_price).toLocaleString('en-IN'):'—'}</td>
       <td style="text-align:right;">${(r.cost_price||r.sale_price)?margin.toFixed(2):'—'}</td>
       <td style="text-align:right;">${(r.cost_price||r.sale_price)?profit.toLocaleString('en-IN',{maximumFractionDigits:0}):'—'}</td>
-      <td>${r.payment_received_date?fmtDate(r.payment_received_date):'Pending'}</td>
     </tr>`;
   }).join('');
 
   const html=`<!DOCTYPE html>
 <html><head><meta charset="UTF-8">
 <style>
-@page{size:A4 landscape;margin:12mm;}
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
-body{font-size:10px;color:#000;background:#fff;}
-.header{display:flex;align-items:center;gap:14px;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:8px;}
-.logo{width:48px;height:48px;object-fit:contain;}
+@page{size:A4 landscape;margin:10mm;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Verdana,Geneva,sans-serif;}
+body{font-size:9px;color:#000;background:#fff;}
+.header{display:flex;align-items:center;gap:14px;border-bottom:2px solid #000;padding-bottom:6px;margin-bottom:6px;}
+.logo{width:42px;height:42px;object-fit:contain;}
 .company-info{flex:1;text-align:center;}
-.company-name{font-size:18px;font-weight:bold;letter-spacing:1.5px;}
-.company-addr{font-size:9px;margin-top:2px;}
-.doc-title{text-align:center;font-size:12px;font-weight:bold;text-decoration:underline;margin:6px 0 10px;}
+.company-name{font-size:16px;font-weight:bold;letter-spacing:1.5px;}
+.company-addr{font-size:8px;margin-top:2px;}
+.doc-title{text-align:center;font-size:11px;font-weight:bold;text-decoration:underline;margin:5px 0 8px;}
 table{width:100%;border-collapse:collapse;}
-th{background:#f0f0f0;border:1px solid #000;padding:5px 6px;text-align:left;font-size:9px;text-transform:uppercase;}
-td{border:1px solid #000;padding:5px 6px;font-size:9.5px;}
+th{background:#f0f0f0;border:1px solid #000;padding:3px 5px;text-align:left;font-size:7.5px;text-transform:uppercase;white-space:nowrap;}
+td{border:1px solid #000;padding:3px 5px;font-size:8.5px;white-space:nowrap;}
 tfoot td{font-weight:bold;background:#f5f5f5;}
-.footer-note{text-align:center;font-size:9px;margin-top:10px;color:#555;}
+.footer-note{text-align:center;font-size:8px;margin-top:8px;color:#555;}
 </style></head><body>
 <div class="header">
   <img class="logo" src="${LOGO_B64}" alt="Saatvik Logo">
@@ -2413,18 +2410,18 @@ tfoot td{font-weight:bold;background:#f5f5f5;}
 </div>
 <div class="doc-title">Scrap Trade Register — ${m}</div>
 <table>
-  <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Material</th><th style="text-align:right;">Qty (Kg)</th><th style="text-align:right;">Amount (₹)</th><th>Supplier</th><th style="text-align:right;">CP</th><th style="text-align:right;">SP</th><th style="text-align:right;">Margin</th><th style="text-align:right;">Profit (₹)</th><th>Payment Recd</th></tr></thead>
+  <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Customer</th><th>Material</th><th style="text-align:right;">Qty</th><th style="text-align:right;">Amount</th><th>Due On</th><th style="text-align:right;">Outstanding Days</th><th>Recd</th><th style="text-align:right;">Days</th><th>Suppliers</th><th style="text-align:right;">CP</th><th style="text-align:right;">SP</th><th style="text-align:right;">Margin</th><th style="text-align:right;">Profit</th></tr></thead>
   <tbody>${rowsHtml}</tbody>
   <tfoot><tr>
-    <td colspan="4">TOTAL / AVG</td>
+    <td colspan="5">TOTAL / AVG</td>
     <td style="text-align:right;">${tQty.toLocaleString('en-IN')}</td>
     <td style="text-align:right;">${tAmt.toLocaleString('en-IN')}</td>
+    <td colspan="4"></td>
     <td></td>
     <td style="text-align:right;">${withCpSp.length?avgCp.toFixed(2):'—'}</td>
     <td style="text-align:right;">${withCpSp.length?avgSp.toFixed(2):'—'}</td>
     <td style="text-align:right;">${withCpSp.length?avgMargin.toFixed(2):'—'}</td>
     <td style="text-align:right;">${tProfit.toLocaleString('en-IN',{maximumFractionDigits:0})}</td>
-    <td></td>
   </tr></tfoot>
 </table>
 <div class="footer-note">Generated from Saatvik Enterprises app on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
@@ -2442,14 +2439,14 @@ function renderTrdRegister(){
   const m=getMonth('trd-reg-month');
   const trades=filterByMonth(DATA.trdPur,'month_year',m);
   const totalAmt=trades.reduce((a,r)=>a+Number(r.amount||0),0);
-  const unpaidSupplier=trades.filter(r=>!r.payment_date);
-  const unpaidAmt=unpaidSupplier.reduce((a,r)=>a+Number(r.amount||0),0);
+  const notRecd=trades.filter(r=>!r.payment_received_date);
+  const notRecdAmt=notRecd.reduce((a,r)=>a+Number(r.amount||0),0);
 
   // Avg payment cycle — trade date to money-received-from-party date (locked, received trades only)
   const paid=DATA.trdPur.filter(r=>r.payment_received_date&&r.purchase_date);
   const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>a+paymentCycleDays(r),0)/paid.length):0;
   const el=document.getElementById('trd-avg-cycle-display');
-  if(el)el.textContent=avgCycle>0?avgCycle+' days':'No paid bills yet';
+  if(el)el.textContent=avgCycle>0?avgCycle+' days':'No received bills yet';
 
   const tradesWithMargin=trades.filter(r=>r.cost_price||r.sale_price);
   const monthProfit=trades.reduce((a,r)=>a+Number(r.profit||(((r.sale_price||0)-(r.cost_price||0))*Number(r.qty_kg||0))),0);
@@ -2458,21 +2455,18 @@ function renderTrdRegister(){
     <div class="mc"><div class="lb">Total trades</div><div class="vl tnum">${trades.length}</div><div class="sb">${m}</div></div>
     <div class="mc"><div class="lb">Total value</div><div class="vl tnum blue">${fmtMoney(totalAmt)}</div></div>
     <div class="mc"><div class="lb">Profit</div><div class="vl tnum ${monthProfit>=0?'green':'red'}">${fmtMoney(monthProfit)}</div><div class="sb">${tradesWithMargin.length} trades with CP/SP</div></div>
-    <div class="mc"><div class="lb">Supplier outstanding</div><div class="vl tnum red">${fmtMoney(unpaidAmt)}</div><div class="sb">${unpaidSupplier.length} unpaid</div></div>
+    <div class="mc"><div class="lb">Outstanding (not recd)</div><div class="vl tnum red">${fmtMoney(notRecdAmt)}</div><div class="sb">${notRecd.length} pending</div></div>
     <div class="mc"><div class="lb">Avg payment cycle</div><div class="vl tnum amber">${avgCycle} days</div></div>`;
 
-  const sorted=[...DATA.trdPur].sort((a,b)=>new Date(b.purchase_date)-new Date(a.purchase_date));
+  // Oldest first — first entry on top, matching your sheet
+  const sorted=[...DATA.trdPur].sort((a,b)=>new Date(a.purchase_date)-new Date(b.purchase_date));
   let sl=1;
   document.getElementById('trd-reg-tbody').innerHTML=sorted.map(r=>{
-    // Due date — always this row's own purchase_date + 15 days, calculated fresh each time (fixes the "same due date for all" bug)
+    // Due date — always this row's own purchase_date + 15 days, calculated fresh each time
     const due=dueDate(r.purchase_date,15);
-    const isOverdue=!r.payment_received_date&&due<TODAY;
+    const received=!!r.payment_received_date;
+    const isOverdue=!received&&due<TODAY;
     const cycleDays=paymentCycleDays(r);
-    const cycleLocked=!!r.payment_received_date;
-
-    const recvdBtn=!r.payment_received_date
-      ?`<div style="display:flex;flex-direction:column;gap:3px;"><span class="badge b-red">Pending</span><button class="btn btn-sm btn-amber" style="white-space:nowrap;margin-top:2px" onclick="quickMarkRecvd('${r.id}')">₹ Mark Recd</button></div>`
-      :`<span class="badge b-green">Recd ${fmtDate(r.payment_received_date)}</span>`;
 
     const margin=Number(r.margin||((r.sale_price||0)-(r.cost_price||0)));
     const profit=Number(r.profit||(margin*Number(r.qty_kg||0)));
@@ -2480,28 +2474,25 @@ function renderTrdRegister(){
       <td>${sl++}</td>
       <td>${fmtDate(r.purchase_date)}</td>
       <td>${r.bill_no||'—'}</td>
-      <td>${r.material}</td>
+      <td>${r.party&&r.party!=='—'?r.party:'—'}</td>
+      <td>${r.material||'—'}</td>
       <td class="tnum">${Number(r.qty_kg).toLocaleString('en-IN')}</td>
       <td class="tnum">${fmtMoney(r.amount)}</td>
-      <td>${r.supplier}</td>
-      <td>${r.party||'—'}</td>
+      <td class="${isOverdue?'red':''}">${fmtDate(due.toISOString().split('T')[0])}</td>
+      <td class="tnum" style="color:${isOverdue?'#dc2626':'#b45309'};">${!received&&cycleDays!==null?cycleDays+'d':'—'}</td>
+      <td>${received?`<span class="badge b-green">${fmtDate(r.payment_received_date)}</span>`:`<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;"><span class="badge b-red">Pending</span><button class="btn btn-sm btn-amber" onclick="quickMarkRecvd('${r.id}')">₹ Mark Recd</button></div>`}</td>
+      <td class="tnum" style="color:#15803d;font-weight:600;">${received&&cycleDays!==null?cycleDays+'d':'—'}</td>
+      <td>${r.supplier||'—'}</td>
       <td class="tnum">${r.cost_price?fmtMoney(r.cost_price):'—'}</td>
       <td class="tnum">${r.sale_price?fmtMoney(r.sale_price):'—'}</td>
       <td class="tnum" style="color:${margin>=0?'#15803d':'#dc2626'};">${(r.cost_price||r.sale_price)?fmtMoney(margin):'—'}</td>
       <td class="tnum" style="font-weight:600;color:${profit>=0?'#15803d':'#dc2626'};">${(r.cost_price||r.sale_price)?fmtMoney(profit):'—'}</td>
-      <td class="tnum ${isOverdue?'red':''}">${fmtDate(due.toISOString().split('T')[0])}</td>
-      <td>${recvdBtn}</td>
       <td>
-        <span class="tnum" style="font-weight:600;color:${cycleLocked?'#15803d':isOverdue?'#dc2626':'#b45309'};">${cycleDays!==null?cycleDays+'d':'—'}</span>
-        ${cycleLocked?'<div style="font-size:10px;color:var(--txt2);">locked — received</div>':'<div style="font-size:10px;color:var(--txt2);">counting…</div>'}
-      </td>
-      <td style="white-space:nowrap">
         <button class="btn btn-sm" onclick="openTrdRegModal('${r.id}')">✏</button>
-        <button class="btn btn-sm btn-red" onclick="deleteRow('trading_purchases','${r.id}','trade')">🗑</button><br>
-        ${r.payment_date?`<span style="font-size:10px;color:var(--txt2);">Paid supplier ${fmtDate(r.payment_date)}</span>`:`<button class="btn btn-sm" style="margin-top:3px;white-space:nowrap;" onclick="quickMarkPaid('${r.id}')" title="Mark that you've paid the supplier">✓ Mark Paid (Supplier)</button>`}
+        <button class="btn btn-sm btn-red" onclick="deleteRow('trading_purchases','${r.id}','trade')">🗑</button>
       </td>
     </tr>`;
-  }).join('')||`<tr><td colspan="16" style="text-align:center;padding:20px;color:var(--txt2);">No trades yet — click "+ Add trade" to start</td></tr>`;
+  }).join('')||`<tr><td colspan="17" style="text-align:center;padding:20px;color:var(--txt2);">No trades yet — click "+ Add trade" to start</td></tr>`;
 
   // Totals row — mirrors your Excel sheet's bottom summary line
   const tf=document.getElementById('trd-reg-tfoot');
@@ -2516,15 +2507,15 @@ function renderTrdRegister(){
       const avgMargin=withCpSp.length?withCpSp.reduce((a,r)=>a+Number(r.margin||((r.sale_price||0)-(r.cost_price||0))),0)/withCpSp.length:0;
       const tProfit=sorted.reduce((a,r)=>a+Number(r.profit||(((r.sale_price||0)-(r.cost_price||0))*Number(r.qty_kg||0))),0);
       tf.innerHTML=`<tr style="font-weight:700;background:var(--bg3);border-top:2px solid var(--bdr2);">
-        <td colspan="4">TOTAL / AVG</td>
+        <td colspan="5">TOTAL / AVG</td>
         <td class="tnum">${tQty.toLocaleString('en-IN')}</td>
         <td class="tnum">${fmtMoney(tAmt)}</td>
-        <td colspan="2"></td>
+        <td colspan="4"></td>
         <td class="tnum">${withCpSp.length?fmtMoney(avgCp):'—'}</td>
         <td class="tnum">${withCpSp.length?fmtMoney(avgSp):'—'}</td>
         <td class="tnum">${withCpSp.length?fmtMoney(avgMargin):'—'}</td>
         <td class="tnum" style="color:${tProfit>=0?'#15803d':'#dc2626'};">${fmtMoney(tProfit)}</td>
-        <td colspan="4"></td>
+        <td></td>
       </tr>`;
     }
   }
@@ -2539,43 +2530,24 @@ async function quickMarkRecvd(id){
   toast('Party payment recorded ✓');await loadAll();
 }
 
-async function quickMarkPaid(id){
-  const d=prompt('Date I paid supplier (YYYY-MM-DD):',TODAY.toISOString().split('T')[0]);
-  if(!d)return;
-  const amt=prompt('Amount paid (₹):','0');
-  const{error}=await sb.from('trading_purchases').update({payment_date:d,payment_amount:parseFloat(amt)||0,updated_at:new Date().toISOString()}).eq('id',id);
-  if(error){toast('Error','err');return;}
-  toast('Supplier payment recorded ✓ — payment cycle locked');await loadAll();
-}
 
 function renderTrdDashboard(){
   const m=getMonth('trd-dash-month');
   const trades=filterByMonth(DATA.trdPur,'month_year',m);
   const totalVal=trades.reduce((a,r)=>a+Number(r.amount||0),0);
-  const supplierOut=DATA.trdPur.filter(r=>!r.payment_date).reduce((a,r)=>a+Number(r.amount||0),0);
   const paid=DATA.trdPur.filter(r=>r.payment_received_date&&r.purchase_date);
   const avgCycle=paid.length>0?Math.round(paid.reduce((a,r)=>a+paymentCycleDays(r),0)/paid.length):0;
 
   // Party (customer) outstanding — from clean payment_received_date column
   const custOut=DATA.trdPur.filter(r=>!r.payment_received_date).reduce((a,r)=>a+Number(r.amount||0),0);
+  const monthProfit=trades.reduce((a,r)=>a+Number(r.profit||(((r.sale_price||0)-(r.cost_price||0))*Number(r.qty_kg||0))),0);
 
   document.getElementById('trd-dash-metrics').innerHTML=`
     <div class="mc"><div class="lb">Trades this month</div><div class="vl tnum">${trades.length}</div><div class="sb">${m}</div></div>
     <div class="mc"><div class="lb">Total value</div><div class="vl tnum blue">${fmtMoney(totalVal)}</div></div>
-    <div class="mc"><div class="lb">I owe suppliers</div><div class="vl tnum red">${fmtMoney(supplierOut)}</div></div>
+    <div class="mc"><div class="lb">Profit</div><div class="vl tnum ${monthProfit>=0?'green':'red'}">${fmtMoney(monthProfit)}</div></div>
     <div class="mc"><div class="lb">Parties owe me</div><div class="vl tnum amber">${fmtMoney(custOut)}</div></div>
     <div class="mc"><div class="lb">Avg payment cycle</div><div class="vl tnum">${avgCycle} days</div></div>`;
-
-  // Supplier outstanding table — due date fixed at purchase_date + 15 days
-  const supGroups={};
-  DATA.trdPur.filter(r=>!r.payment_date).forEach(r=>{supGroups[r.supplier]=(supGroups[r.supplier]||0)+Number(r.amount||0);});
-  document.getElementById('trd-supplier-out').innerHTML=Object.entries(supGroups).map(([s,a])=>{
-    const bills=DATA.trdPur.filter(r=>r.supplier===s&&!r.payment_date);
-    const earliest=bills.sort((a,b)=>new Date(a.purchase_date)-new Date(b.purchase_date))[0];
-    const dd=earliest?dueDate(earliest.purchase_date,15):null;
-    const isOD=dd&&dd<TODAY;
-    return`<tr><td>${s}</td><td class="tnum">${fmtMoney(a)}</td><td>${dd?fmtDate(dd.toISOString().split('T')[0]):'—'}</td><td>${isOD?'<span class="badge b-red">Overdue</span>':'<span class="badge b-blue">Upcoming</span>'}</td></tr>`;
-  }).join('')||'<tr><td colspan="4" style="text-align:center;padding:12px;color:var(--txt2);">All paid ✓</td></tr>';
 
   // Party (customer) outstanding — clean column, no notes parsing
   const custGroups={};
