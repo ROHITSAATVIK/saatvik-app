@@ -10,18 +10,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--acc:#0B5C48;--acc2:#A34A2C;--bg:#EDEAE3;--bg2:#fff;--bg3:#E4E0D6;--txt:#1C1B18;--txt2:#6b7280;--txt3:#9ca3af;--bdr:rgba(0,0,0,0.08);--bdr2:rgba(0,0,0,0.13);--rad:8px;--rad2:12px;--font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Consolas,monospace;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#FBF9F4;color:var(--txt);font-size:13px;-webkit-font-smoothing:antialiased;}
+body{font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;background:#FBF9F4;color:var(--txt);font-size:13px;-webkit-font-smoothing:antialiased;}
 .app{display:flex;min-height:100vh;}
 .tnum{font-family:var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:-.2px;}
 
 /* LOGIN PAGE */
 .login-page{display:flex;min-height:100vh;align-items:center;justify-content:center;background:linear-gradient(160deg,#FBF9F4 0%,#EDEAE3 100%);}
 .login-box{background:#fff;border:1px solid var(--bdr2);border-radius:18px;padding:42px 36px;width:380px;max-width:95vw;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.09);}
-.login-logo{width:56px;height:56px;border-radius:16px;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px;}
 .login-title{font-size:21px;font-weight:800;color:var(--txt);margin-bottom:4px;letter-spacing:-.3px;}
 .login-sub{font-size:12px;color:var(--txt2);margin-bottom:28px;}
 .login-divider{display:flex;align-items:center;gap:10px;margin:20px 0;color:var(--txt3);font-size:11px;}
@@ -44,8 +43,8 @@ body{font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans
 .logo-sub{font-size:10px;color:var(--txt2);margin-top:2px;}
 .biz-switcher{display:flex;margin:8px 10px;border-radius:var(--rad);overflow:hidden;border:1px solid var(--bdr2);}
 .biz-btn{flex:1;padding:6px 4px;font-size:10px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--txt2);transition:all .15s;text-align:center;}
-.biz-btn.active-mfg{background:#dcfce7;color:#15803d;}
-.biz-btn.active-trd{background:#dbeafe;color:#1d4ed8;}
+.biz-btn.active-mfg{background:#E1F0EA;color:#0B5C48;}
+.biz-btn.active-trd{background:#F6E9E2;color:#7A3820;}
 .nav-section{padding:4px 0;}
 .nav-label{font-size:9px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:6px 16px 3px;}
 .ni{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;color:var(--txt2);border-left:2px solid transparent;font-size:12px;transition:all .12s;}
@@ -69,8 +68,8 @@ body{font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans
 .btn:active{transform:scale(.98);}
 .btn-green{background:var(--acc);border-color:var(--acc);color:#fff;}
 .btn-green:hover{background:#0F6E56;}
-.btn-blue{background:#2563eb;border-color:#2563eb;color:#fff;}
-.btn-blue:hover{background:#1d4ed8;}
+.btn-blue{background:var(--acc2);border-color:var(--acc2);color:#fff;}
+.btn-blue:hover{background:#7A3820;}
 .btn-red{background:#fef2f2;border-color:#fecaca;color:#b91c1c;}
 .btn-red:hover{background:#fee2e2;}
 .btn-amber{background:#fffbeb;border-color:#fde68a;color:#92400e;}
@@ -151,8 +150,8 @@ tr:hover td{background:#fafaf9;}
 /* BIZ DIVIDER */
 .biz-divider{height:3px;background:linear-gradient(90deg,#1D9E75,#2563eb);margin:0;}
 .section-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
-.mfg-badge{background:#dcfce7;color:#15803d;}
-.trd-badge{background:#dbeafe;color:#1d4ed8;}
+.mfg-badge{background:#E1F0EA;color:#0B5C48;}
+.trd-badge{background:#F6E9E2;color:#7A3820;}
 </style>
 </head>
 <body>
@@ -201,7 +200,7 @@ tr:hover td{background:#fafaf9;}
     <div class="ni" onclick="goTo('breakdown')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Breakdown Log</div>
     <div class="ni" onclick="goTo('components')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Components & Parts</div>
     <div class="ni" onclick="goTo('maintenance')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Maintenance</div>
-    <div class="ni" onclick="goTo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tasks</div>
+    <div class="ni" onclick="goTo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="M13 6h8M13 12h8M13 18h8"/><rect x="3" y="15" width="6" height="6" rx="1"/></svg>Tasks</div>
     <div class="ni" onclick="goTo('plan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Production Plan</div>
   </div>
   <!-- TRADING NAV -->
@@ -223,7 +222,7 @@ tr:hover td{background:#fafaf9;}
   <div class="logo" style="display:flex;align-items:center;gap:8px;"><img class="app-logo-img" alt="Saatvik Enterprises" style="width:26px;height:26px;object-fit:contain;flex-shrink:0;"><div><div class="logo-name">Saatvik Enterprises</div><div class="logo-sub">Dispatch Portal</div></div></div>
   <div style="padding:12px 14px;flex:1;">
     <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;">Logged in as DISPATCH</div>
-    <div style="font-size:12px;font-weight:600;color:var(--acc);padding:8px 10px;background:#f0fdf4;border-radius:var(--rad);border-left:2px solid var(--acc);">📦 Gate Pass / Dispatch</div>
+    <div style="font-size:12px;font-weight:600;color:var(--acc);padding:8px 10px;background:#E1F0EA;border-radius:var(--rad);border-left:2px solid var(--acc);">📦 Gate Pass / Dispatch</div>
   </div>
   <div style="padding:10px 14px;border-top:1px solid var(--bdr);">
     <button class="logout-btn" style="width:100%;" onclick="logout()">Sign out</button>
@@ -486,14 +485,15 @@ tr:hover td{background:#fafaf9;}
         <div style="font-size:11px;color:var(--txt2);">Avg payment cycle: <strong id="trd-avg-cycle-display">—</strong></div>
       </div>
       <div class="tw"><table>
-        <thead><tr><th>Sl</th><th>Date</th><th>Material</th><th>Qty (Kg)</th><th>Amount</th><th>Supplier</th><th>Party</th><th>Due On</th><th>Payment Recd</th><th>Payment Cycle (Days)</th><th>Actions</th></tr></thead>
-        <tbody id="trd-reg-tbody"><tr><td colspan="11"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+        <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Material</th><th>Qty (Kg)</th><th>Amount</th><th>Supplier</th><th>Party</th><th>CP</th><th>SP</th><th>Margin</th><th>Profit</th><th>Due On</th><th>Payment Recd</th><th>Payment Cycle (Days)</th><th>Actions</th></tr></thead>
+        <tbody id="trd-reg-tbody"><tr><td colspan="16"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+        <tfoot id="trd-reg-tfoot"></tfoot>
       </table></div>
     </div>
   </div>
 </div>
 
-<!-- ========== TRADING MATERIALS ========== --><!-- ========== TRADING MATERIALS ========== -->
+<!-- ========== TRADING MATERIALS ========== -->
 <div id="page-trd-materials" class="page">
   <div class="topbar">
     <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Materials</div>
@@ -831,7 +831,6 @@ tr:hover td{background:#fafaf9;}
         <div class="fg"><label>Colour 2 — if 2 colours today</label><input type="text" id="m-colour2" list="colour-list" placeholder="Optional 2nd colour"></div>
       </div>
       <input type="hidden" id="m-disp" value="0">
-      <input type="hidden" id="m-rmop" value="0">
       <input type="hidden" id="m-fgop" value="0">
       <input type="hidden" id="m-tstock" value="0">
       <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="m-notes" placeholder="Any notes..."></div></div>
@@ -975,9 +974,13 @@ tr:hover td{background:#fafaf9;}
   <div class="modal">
     <div class="modal-head"><span class="modal-title" id="trd-reg-modal-t">Add Trade</span><button class="btn btn-sm" onclick="closeModal('trd-reg-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="tr-date"></div><div class="fg"><label>Material</label><select id="tr-material"></select></div></div>
-      <div class="frow"><div class="fg"><label>Qty (Kg)</label><input type="number" id="tr-qty" placeholder="0"></div><div class="fg"><label>Amount (₹)</label><input type="number" id="tr-amt" placeholder="0"></div></div>
+      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="tr-date"></div><div class="fg"><label>Bill No</label><input type="text" id="tr-bill" placeholder="e.g. SE/26-27/003"></div></div>
+      <div class="frow"><div class="fg"><label>Material</label><select id="tr-material"></select></div><div class="fg"><label>Qty (Kg)</label><input type="number" id="tr-qty" placeholder="0" oninput="calcTrdMargin()"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Amount (₹)</label><input type="number" id="tr-amt" placeholder="0"></div></div>
       <div class="frow"><div class="fg"><label>Supplier (bought from)</label><input type="text" id="tr-supplier" placeholder="Supplier name"></div><div class="fg"><label>Party (sold to)</label><input type="text" id="tr-customer" placeholder="Party name"></div></div>
+      <div class="sec-label">Margin</div>
+      <div class="frow"><div class="fg"><label>CP — cost price (₹/Kg)</label><input type="number" id="tr-cp" placeholder="0" oninput="calcTrdMargin()"></div><div class="fg"><label>SP — sale price (₹/Kg)</label><input type="number" id="tr-sp" placeholder="0" oninput="calcTrdMargin()"></div></div>
+      <div class="frow frow-1"><div class="fg"><div class="calc-note" id="tr-margin-show">Margin: — · Profit: —</div></div></div>
       <div style="font-size:11px;color:var(--txt2);padding:2px 2px 4px;">Due date is auto-calculated as Date + 15 days. Payment cycle days count live until marked paid, then lock.</div>
       <div class="sec-label">Payment Status</div>
       <div class="frow"><div class="fg"><label>I paid supplier on</label><input type="date" id="tr-paid"></div><div class="fg"><label>Amount paid (₹)</label><input type="number" id="tr-pamt" placeholder="0"></div></div>
@@ -994,76 +997,6 @@ tr:hover td{background:#fafaf9;}
     <div class="modal-head"><span class="modal-title" id="comp-modal-t">Add Component</span><button class="btn btn-sm" onclick="closeModal('comp-modal')">✕</button></div>
     <div class="modal-body">
       <div class="frow"><div class="fg"><label>Machine</label><select id="cp-machine"><option value="">Select machine</option><option>Jumbo Cutter</option><option>Grinder</option><option>Washing Line</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option></select></div><div class="fg"><label>Component / Part name</label><input type="text" id="cp-name" placeholder="e.g. Blade Set, Motor, Gearbox, Belt..."></div></div>
-      <div class="frow"><div class="fg"><label>Last replaced date</label><input type="date" id="cp-date"></div><div class="fg"><label>Expected life (days)</label><input type="number" id="cp-life" placeholder="e.g. 90"></div></div>
-      <div class="frow"><div class="fg"><label>Current condition</label><select id="cp-cond"><option>Good</option><option>Warning</option><option>Critical</option><option>Just Replaced</option></select></div><div class="fg"><label>Unit cost (₹)</label><input type="number" id="cp-cost" placeholder="0"></div></div>
-      <div class="frow"><div class="fg"><label>Qty in stock</label><input type="number" id="cp-qty" placeholder="0"></div><div class="fg"><label>Reorder level</label><input type="number" id="cp-reorder" placeholder="1"></div></div>
-      <div class="frow"><div class="fg"><label>Supplier</label><input type="text" id="cp-supplier" placeholder="Supplier name"></div><div class="fg"><label>Notes</label><input type="text" id="cp-notes" placeholder="Any details..."></div></div>
-    </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('comp-modal')">Cancel</button><button class="btn btn-green" onclick="saveComponent()">Save</button></div>
-  </div>
-</div>
-
-<!-- Maintenance Modal -->
-<div class="modal-bg" id="maint-modal">
-  <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="maint-modal-t">Add Maintenance Check</span><button class="btn btn-sm" onclick="closeModal('maint-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="frow frow-1"><div class="fg"><label>Machine</label><select id="mt-machine"><option value="">Select machine</option><option>Jumbo Cutter</option><option>Grinder</option><option>Washing Line</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option></select></div></div>
-      <div class="frow"><div class="fg"><label>Machine</label><select id="mt-machine"><option value="">Select machine</option><option>Jumbo Cutter</option><option>Grinder</option><option>Washing Line</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option></select></div><div class="fg"><label>Check description</label><input type="text" id="mt-name" placeholder="e.g. Check blade sharpness, Lubricate gearbox..."></div></div>
-      <div class="frow"><div class="fg"><label>Frequency</label><select id="mt-freq"><option>Daily</option><option>Weekly</option><option>Monthly</option><option>Quarterly</option></select></div><div class="fg"><label>Last done date</label><input type="date" id="mt-date"></div></div>
-      <div class="frow"><div class="fg"><label>Done by</label><input type="text" id="mt-by" placeholder="e.g. Zakir Ji"></div><div class="fg"><label>Notes</label><input type="text" id="mt-notes" placeholder="Optional"></div></div>
-    </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('maint-modal')">Cancel</button><button class="btn btn-green" onclick="saveMaintenance()">Save</button></div>
-  </div>
-</div>
-
-<!-- Spare Parts Modal -->
-<div class="modal-bg" id="spare-modal">
-  <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="spare-modal-t">Add Spare Part</span><button class="btn btn-sm" onclick="closeModal('spare-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="frow frow-1"><div class="fg"><label>Part name</label><input type="text" id="sp-name" placeholder="e.g. Blade, Belt, Bearing, Heater Band..."></div></div>
-      <div class="frow"><div class="fg"><label>Qty in stock</label><input type="number" id="sp-qty" placeholder="0"></div><div class="fg"><label>Reorder level</label><input type="number" id="sp-reorder" placeholder="1"></div></div>
-      <div class="frow"><div class="fg"><label>Unit cost (₹)</label><input type="number" id="sp-cost" placeholder="0"></div><div class="fg"><label>Supplier</label><input type="text" id="sp-supplier" placeholder="Supplier name"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="sp-notes" placeholder="Optional"></div></div>
-    </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('spare-modal')">Cancel</button><button class="btn btn-green" onclick="saveSparePart()">Save</button></div>
-  </div>
-</div>
-
-<!-- Order Modal -->
-<div class="modal-bg" id="order-modal">
-  <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="order-modal-t">Add Order</span><button class="btn btn-sm" onclick="closeModal('order-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="frow"><div class="fg"><label>Order type</label><select id="or-type"><option value="confirmed">Confirmed order</option><option value="stock">Stock production</option></select></div><div class="fg"><label>Month</label><select id="or-month" class="month-selector"></select></div></div>
-      <div class="frow"><div class="fg"><label>Customer</label><input type="text" id="or-customer" placeholder="Customer name (blank for stock)"></div><div class="fg"><label>Material</label><select id="or-material"><option>PP Granules</option><option>HDPE Granules</option><option>LDPE Granules</option><option>Mixed Granules</option></select></div></div>
-      <div class="frow"><div class="fg"><label>Ordered qty (Kg)</label><input type="number" id="or-qty" placeholder="0"></div><div class="fg"><label>Due date</label><input type="date" id="or-due"></div></div>
-      <div class="frow"><div class="fg"><label>Produced so far (Kg)</label><input type="number" id="or-produced" placeholder="0"></div><div class="fg"><label>Dispatched so far (Kg)</label><input type="number" id="or-dispatched" placeholder="0"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="or-notes" placeholder="Optional"></div></div>
-    </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('order-modal')">Cancel</button><button class="btn btn-green" onclick="saveOrder()">Save</button></div>
-  </div>
-</div>
-
-<!-- Daily Target Modal -->
-<div class="modal-bg" id="daily-target-modal">
-  <div class="modal">
-    <div class="modal-head"><span class="modal-title">Set daily targets for this week</span><button class="btn btn-sm" onclick="closeModal('daily-target-modal')">✕</button></div>
-    <div class="modal-body">
-      <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;">Default is 1,500 Kg/day. Change individual days if needed.</div>
-      <div id="daily-target-inputs"></div>
-    </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('daily-target-modal')">Cancel</button><button class="btn btn-green" onclick="saveDailyTargets()">Save targets</button></div>
-  </div>
-</div>
-
-<!-- Trading Material Modal --><!-- Component Modal -->
-<div class="modal-bg" id="comp-modal">
-  <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="comp-modal-t">Add Component</span><button class="btn btn-sm" onclick="closeModal('comp-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="frow frow-1"><div class="fg"><label>Component / Part name</label><input type="text" id="cp-name" placeholder="e.g. Blade Set, Motor, Gearbox, Belt, Bearing..."></div></div>
       <div class="frow"><div class="fg"><label>Last replaced date</label><input type="date" id="cp-date"></div><div class="fg"><label>Expected life (days)</label><input type="number" id="cp-life" placeholder="e.g. 90"></div></div>
       <div class="frow"><div class="fg"><label>Current condition</label><select id="cp-cond"><option>Good</option><option>Warning</option><option>Critical</option><option>Just Replaced</option></select></div><div class="fg"><label>Unit cost (₹)</label><input type="number" id="cp-cost" placeholder="0"></div></div>
       <div class="frow"><div class="fg"><label>Qty in stock</label><input type="number" id="cp-qty" placeholder="0"></div><div class="fg"><label>Reorder level</label><input type="number" id="cp-reorder" placeholder="1"></div></div>
@@ -1324,13 +1257,13 @@ function openModal(id,rowId){
     if(isEdit){
       const r=DATA.mis.find(x=>x.id===rowId);
       if(r){
-        ['m-date','m-target','m-mpd','m-mpn','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>{
+        ['m-date','m-target','m-mpd','m-mpn','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>{
           const map={
             'm-date':'entry_date','m-target':'target_kg','m-mpd':'manpower_day','m-mpn':'manpower_night',
             'm-wrd':'washing_run_day','m-ard':'agglo_run_day','m-erd':'extruder_run_day',
             'm-wrn':'washing_run_night','m-arn':'agglo_run_night','m-ern':'extruder_run_night',
             'm-wkg':'washing_kg','m-akg':'agglo_kg','m-ekg':'extruder_kg',
-            'm-rmop':'raw_stock_opening_kg','m-fgop':'fg_stock_opening_kg','m-disp':'dispatched_kg',
+            'm-fgop':'fg_stock_opening_kg','m-disp':'dispatched_kg',
             'm-tstock':'total_stock_kg','m-notes':'notes'
           };
           document.getElementById(fid).value=r[map[fid]]||'';
@@ -1352,7 +1285,7 @@ function openModal(id,rowId){
         calcLabourPerKg();
       }
     } else {
-      ['m-date','m-mpd','m-mpn','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-rmop','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>document.getElementById(fid).value='');
+      ['m-date','m-mpd','m-mpn','m-wrd','m-ard','m-erd','m-wrn','m-arn','m-ern','m-wkg','m-akg','m-ekg','m-fgop','m-disp','m-tstock','m-notes'].forEach(fid=>document.getElementById(fid).value='');
       ['m-lb-sdh','m-lb-sdo','m-lb-hdh','m-lb-snh','m-lb-sno','m-lb-hnh','m-lb-hno'].forEach(fid=>document.getElementById(fid).value='');
       document.getElementById('m-target').value=1500;
       document.getElementById('m-tprod').value='';
@@ -1627,7 +1560,7 @@ async function saveMIS(){
     washing_kg:parseFloat(g('m-wkg'))||0,agglo_kg:parseFloat(g('m-akg'))||0,extruder_kg:parseFloat(g('m-ekg'))||0,
     total_production_kg:(parseFloat(g('m-tprod'))||0)+(parseFloat(g('m-tprod2'))||0),
     issue_day:g('m-issd'),issue_night:g('m-issn'),
-    raw_stock_opening_kg:parseFloat(g('m-rmop'))||0,fg_stock_opening_kg:parseFloat(g('m-fgop'))||0,
+    fg_stock_opening_kg:parseFloat(g('m-fgop'))||0,
     dispatched_kg:(()=>{
       const date=g('m-date');
       if(!date||!DATA.dispatches)return 0;
@@ -2336,14 +2269,19 @@ function renderTasks(){
 
 async function saveTrdTrade(){
   const g=id=>document.getElementById(id)?.value;
+  const cp=parseFloat(g('tr-cp'))||0;
+  const sp=parseFloat(g('tr-sp'))||0;
+  const qty=parseFloat(g('tr-qty'))||0;
   const row={
     purchase_date:g('tr-date'),
     month_year:fmtMonthYear(g('tr-date')),
+    bill_no:g('tr-bill')||'',
     supplier:g('tr-supplier')||'—',
     party:g('tr-customer')||'—',
     material:g('tr-material')||'—',
-    qty_kg:parseFloat(g('tr-qty'))||0,
+    qty_kg:qty,
     amount:parseFloat(g('tr-amt'))||0,
+    cost_price:cp,sale_price:sp,margin:sp-cp,profit:(sp-cp)*qty,
     payment_terms_days:15,
     payment_date:g('tr-paid')||null,
     payment_amount:parseFloat(g('tr-pamt'))||0,
@@ -2361,6 +2299,15 @@ async function saveTrdTrade(){
   closeModal('trd-reg-modal');
   await loadAll();
 }
+function calcTrdMargin(){
+  const cp=parseFloat(document.getElementById('tr-cp')?.value||0);
+  const sp=parseFloat(document.getElementById('tr-sp')?.value||0);
+  const qty=parseFloat(document.getElementById('tr-qty')?.value||0);
+  const margin=sp-cp;
+  const el=document.getElementById('tr-margin-show');
+  if(!el)return;
+  el.textContent='Margin: ₹'+margin.toFixed(2)+'/Kg · Profit: '+fmtMoney(margin*qty);
+}
 
 function openTrdRegModal(rowId){
   editId=rowId;
@@ -2370,9 +2317,12 @@ function openTrdRegModal(rowId){
     const r=DATA.trdPur.find(x=>x.id===rowId);
     if(r){
       document.getElementById('tr-date').value=r.purchase_date;
+      document.getElementById('tr-bill').value=r.bill_no||'';
       document.getElementById('tr-material').value=r.material;
       document.getElementById('tr-qty').value=r.qty_kg;
       document.getElementById('tr-amt').value=r.amount;
+      document.getElementById('tr-cp').value=r.cost_price||'';
+      document.getElementById('tr-sp').value=r.sale_price||'';
       document.getElementById('tr-supplier').value=r.supplier;
       document.getElementById('tr-customer').value=r.party||'';
       document.getElementById('tr-paid').value=r.payment_date||'';
@@ -2382,11 +2332,12 @@ function openTrdRegModal(rowId){
       document.getElementById('tr-notes').value=r.notes||'';
     }
   } else {
-    ['tr-date','tr-qty','tr-paid','tr-recvd','tr-notes','tr-supplier','tr-customer'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+    ['tr-date','tr-bill','tr-qty','tr-cp','tr-sp','tr-paid','tr-recvd','tr-notes','tr-supplier','tr-customer'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
     document.getElementById('tr-pamt').value=0;
     document.getElementById('tr-ramt').value=0;
     document.getElementById('tr-amt').value='';
   }
+  calcTrdMargin();
   document.getElementById('trd-reg-modal').classList.add('open');
 }
 
@@ -2411,12 +2362,15 @@ function renderTrdRegister(){
   const el=document.getElementById('trd-avg-cycle-display');
   if(el)el.textContent=avgCycle>0?avgCycle+' days':'No paid bills yet';
 
+  const tradesWithMargin=trades.filter(r=>r.cost_price||r.sale_price);
+  const monthProfit=trades.reduce((a,r)=>a+Number(r.profit||(((r.sale_price||0)-(r.cost_price||0))*Number(r.qty_kg||0))),0);
+
   document.getElementById('trd-reg-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Total trades</div><div class="vl">${trades.length}</div><div class="sb">${m}</div></div>
-    <div class="mc"><div class="lb">Total value</div><div class="vl blue">${fmtMoney(totalAmt)}</div></div>
-    <div class="mc"><div class="lb">Supplier outstanding</div><div class="vl red">${fmtMoney(unpaidAmt)}</div><div class="sb">${unpaidSupplier.length} unpaid</div></div>
-    <div class="mc"><div class="lb">Avg payment cycle</div><div class="vl amber">${avgCycle} days</div></div>
-    <div class="mc"><div class="lb">Materials traded</div><div class="vl">${[...new Set(trades.map(r=>r.material))].length}</div></div>`;
+    <div class="mc"><div class="lb">Total trades</div><div class="vl tnum">${trades.length}</div><div class="sb">${m}</div></div>
+    <div class="mc"><div class="lb">Total value</div><div class="vl tnum blue">${fmtMoney(totalAmt)}</div></div>
+    <div class="mc"><div class="lb">Profit</div><div class="vl tnum ${monthProfit>=0?'green':'red'}">${fmtMoney(monthProfit)}</div><div class="sb">${tradesWithMargin.length} trades with CP/SP</div></div>
+    <div class="mc"><div class="lb">Supplier outstanding</div><div class="vl tnum red">${fmtMoney(unpaidAmt)}</div><div class="sb">${unpaidSupplier.length} unpaid</div></div>
+    <div class="mc"><div class="lb">Avg payment cycle</div><div class="vl tnum amber">${avgCycle} days</div></div>`;
 
   const sorted=[...DATA.trdPur].sort((a,b)=>new Date(b.purchase_date)-new Date(a.purchase_date));
   let sl=1;
@@ -2431,18 +2385,25 @@ function renderTrdRegister(){
       ?`<div style="display:flex;flex-direction:column;gap:3px;"><span class="badge b-red">Pending</span><button class="btn btn-sm btn-amber" style="white-space:nowrap;margin-top:2px" onclick="quickMarkRecvd('${r.id}')">₹ Mark Recd</button></div>`
       :`<span class="badge b-green">Recd ${fmtDate(r.payment_received_date)}</span>`;
 
+    const margin=Number(r.margin||((r.sale_price||0)-(r.cost_price||0)));
+    const profit=Number(r.profit||(margin*Number(r.qty_kg||0)));
     return`<tr>
       <td>${sl++}</td>
       <td>${fmtDate(r.purchase_date)}</td>
+      <td>${r.bill_no||'—'}</td>
       <td>${r.material}</td>
-      <td>${Number(r.qty_kg).toLocaleString('en-IN')}</td>
-      <td>${fmtMoney(r.amount)}</td>
+      <td class="tnum">${Number(r.qty_kg).toLocaleString('en-IN')}</td>
+      <td class="tnum">${fmtMoney(r.amount)}</td>
       <td>${r.supplier}</td>
       <td>${r.party||'—'}</td>
-      <td class="${isOverdue?'red':''}">${fmtDate(due.toISOString().split('T')[0])}</td>
+      <td class="tnum">${r.cost_price?fmtMoney(r.cost_price):'—'}</td>
+      <td class="tnum">${r.sale_price?fmtMoney(r.sale_price):'—'}</td>
+      <td class="tnum" style="color:${margin>=0?'#15803d':'#dc2626'};">${(r.cost_price||r.sale_price)?fmtMoney(margin):'—'}</td>
+      <td class="tnum" style="font-weight:600;color:${profit>=0?'#15803d':'#dc2626'};">${(r.cost_price||r.sale_price)?fmtMoney(profit):'—'}</td>
+      <td class="tnum ${isOverdue?'red':''}">${fmtDate(due.toISOString().split('T')[0])}</td>
       <td>${recvdBtn}</td>
       <td>
-        <span style="font-weight:700;color:${cycleLocked?'#15803d':isOverdue?'#dc2626':'#b45309'};">${cycleDays!==null?cycleDays+'d':'—'}</span>
+        <span class="tnum" style="font-weight:600;color:${cycleLocked?'#15803d':isOverdue?'#dc2626':'#b45309'};">${cycleDays!==null?cycleDays+'d':'—'}</span>
         ${cycleLocked?'<div style="font-size:10px;color:var(--txt2);">locked — paid</div>':'<div style="font-size:10px;color:var(--txt2);">counting…</div>'}
       </td>
       <td style="white-space:nowrap">
@@ -2450,7 +2411,33 @@ function renderTrdRegister(){
         <button class="btn btn-sm btn-red" onclick="deleteRow('trading_purchases','${r.id}','trade')">🗑</button>
       </td>
     </tr>`;
-  }).join('')||`<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No trades yet — click "+ Add trade" to start</td></tr>`;
+  }).join('')||`<tr><td colspan="16" style="text-align:center;padding:20px;color:var(--txt2);">No trades yet — click "+ Add trade" to start</td></tr>`;
+
+  // Totals row — mirrors your Excel sheet's bottom summary line
+  const tf=document.getElementById('trd-reg-tfoot');
+  if(tf){
+    if(sorted.length===0){tf.innerHTML='';}
+    else{
+      const tQty=sorted.reduce((a,r)=>a+Number(r.qty_kg||0),0);
+      const tAmt=sorted.reduce((a,r)=>a+Number(r.amount||0),0);
+      const withCpSp=sorted.filter(r=>r.cost_price||r.sale_price);
+      const avgCp=withCpSp.length?withCpSp.reduce((a,r)=>a+Number(r.cost_price||0),0)/withCpSp.length:0;
+      const avgSp=withCpSp.length?withCpSp.reduce((a,r)=>a+Number(r.sale_price||0),0)/withCpSp.length:0;
+      const avgMargin=withCpSp.length?withCpSp.reduce((a,r)=>a+Number(r.margin||((r.sale_price||0)-(r.cost_price||0))),0)/withCpSp.length:0;
+      const tProfit=sorted.reduce((a,r)=>a+Number(r.profit||(((r.sale_price||0)-(r.cost_price||0))*Number(r.qty_kg||0))),0);
+      tf.innerHTML=`<tr style="font-weight:700;background:var(--bg3);border-top:2px solid var(--bdr2);">
+        <td colspan="4">TOTAL / AVG</td>
+        <td class="tnum">${tQty.toLocaleString('en-IN')}</td>
+        <td class="tnum">${fmtMoney(tAmt)}</td>
+        <td colspan="2"></td>
+        <td class="tnum">${withCpSp.length?fmtMoney(avgCp):'—'}</td>
+        <td class="tnum">${withCpSp.length?fmtMoney(avgSp):'—'}</td>
+        <td class="tnum">${withCpSp.length?fmtMoney(avgMargin):'—'}</td>
+        <td class="tnum" style="color:${tProfit>=0?'#15803d':'#dc2626'};">${fmtMoney(tProfit)}</td>
+        <td colspan="4"></td>
+      </tr>`;
+    }
+  }
 }
 
 async function quickMarkRecvd(id){
@@ -2483,11 +2470,11 @@ function renderTrdDashboard(){
   const custOut=DATA.trdPur.filter(r=>!r.payment_received_date).reduce((a,r)=>a+Number(r.amount||0),0);
 
   document.getElementById('trd-dash-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Trades this month</div><div class="vl">${trades.length}</div><div class="sb">${m}</div></div>
-    <div class="mc"><div class="lb">Total value</div><div class="vl blue">${fmtMoney(totalVal)}</div></div>
-    <div class="mc"><div class="lb">I owe suppliers</div><div class="vl red">${fmtMoney(supplierOut)}</div></div>
-    <div class="mc"><div class="lb">Parties owe me</div><div class="vl amber">${fmtMoney(custOut)}</div></div>
-    <div class="mc"><div class="lb">Avg payment cycle</div><div class="vl">${avgCycle} days</div></div>`;
+    <div class="mc"><div class="lb">Trades this month</div><div class="vl tnum">${trades.length}</div><div class="sb">${m}</div></div>
+    <div class="mc"><div class="lb">Total value</div><div class="vl tnum blue">${fmtMoney(totalVal)}</div></div>
+    <div class="mc"><div class="lb">I owe suppliers</div><div class="vl tnum red">${fmtMoney(supplierOut)}</div></div>
+    <div class="mc"><div class="lb">Parties owe me</div><div class="vl tnum amber">${fmtMoney(custOut)}</div></div>
+    <div class="mc"><div class="lb">Avg payment cycle</div><div class="vl tnum">${avgCycle} days</div></div>`;
 
   // Supplier outstanding table — due date fixed at purchase_date + 15 days
   const supGroups={};
@@ -2497,7 +2484,7 @@ function renderTrdDashboard(){
     const earliest=bills.sort((a,b)=>new Date(a.purchase_date)-new Date(b.purchase_date))[0];
     const dd=earliest?dueDate(earliest.purchase_date,15):null;
     const isOD=dd&&dd<TODAY;
-    return`<tr><td>${s}</td><td>${fmtMoney(a)}</td><td>${dd?fmtDate(dd.toISOString().split('T')[0]):'—'}</td><td>${isOD?'<span class="badge b-red">Overdue</span>':'<span class="badge b-blue">Upcoming</span>'}</td></tr>`;
+    return`<tr><td>${s}</td><td class="tnum">${fmtMoney(a)}</td><td>${dd?fmtDate(dd.toISOString().split('T')[0]):'—'}</td><td>${isOD?'<span class="badge b-red">Overdue</span>':'<span class="badge b-blue">Upcoming</span>'}</td></tr>`;
   }).join('')||'<tr><td colspan="4" style="text-align:center;padding:12px;color:var(--txt2);">All paid ✓</td></tr>';
 
   // Party (customer) outstanding — clean column, no notes parsing
@@ -2507,13 +2494,13 @@ function renderTrdDashboard(){
     custGroups[cust]=(custGroups[cust]||0)+Number(r.amount||0);
   });
   document.getElementById('trd-customer-out').innerHTML=Object.entries(custGroups).filter(([k])=>k!=='Unknown').map(([c,a])=>
-    `<tr><td>${c}</td><td>${fmtMoney(a)}</td><td>—</td><td><span class="badge b-amber">Pending</span></td></tr>`
+    `<tr><td>${c}</td><td class="tnum">${fmtMoney(a)}</td><td>—</td><td><span class="badge b-amber">Pending</span></td></tr>`
   ).join('')||'<tr><td colspan="4" style="text-align:center;padding:12px;color:var(--txt2);">All received ✓</td></tr>';
 
   document.getElementById('trd-avg-cycles').innerHTML=`
     <div style="display:flex;gap:12px;">
-      <div class="mc" style="flex:1;"><div class="lb">Avg days to pay supplier</div><div class="vl amber">${avgCycle} days</div></div>
-      <div class="mc" style="flex:1;"><div class="lb">Total trades all time</div><div class="vl blue">${DATA.trdPur.length}</div></div>
+      <div class="mc" style="flex:1;"><div class="lb">Avg days to pay supplier</div><div class="vl tnum amber">${avgCycle} days</div></div>
+      <div class="mc" style="flex:1;"><div class="lb">Total trades all time</div><div class="vl tnum blue">${DATA.trdPur.length}</div></div>
     </div>`;
 
   // Monthly chart
@@ -2522,7 +2509,7 @@ function renderTrdDashboard(){
   if(document.getElementById('trdBuySell')){
     charts.trdBS=new Chart(document.getElementById('trdBuySell'),{
       type:'bar',
-      data:{labels:allMonths,datasets:[{label:'Trade value',data:allMonths.map(mo=>DATA.trdPur.filter(r=>r.month_year===mo).reduce((a,r)=>a+Number(r.amount||0),0)),backgroundColor:'#2563eb',borderRadius:4}]},
+      data:{labels:allMonths,datasets:[{label:'Trade value',data:allMonths.map(mo=>DATA.trdPur.filter(r=>r.month_year===mo).reduce((a,r)=>a+Number(r.amount||0),0)),backgroundColor:'#A34A2C',borderRadius:4}]},
       options:{...BO(),plugins:{legend:{display:false}}}
     });
   }
@@ -2532,7 +2519,7 @@ function renderTrdDashboard(){
   if(document.getElementById('trdMaterial')){
     charts.trdMat=new Chart(document.getElementById('trdMaterial'),{
       type:'bar',
-      data:{labels:mats,datasets:[{label:'Qty Kg',data:mats.map(mt=>filterByMonth(DATA.trdPur,'month_year',m).filter(r=>r.material===mt).reduce((a,r)=>a+Number(r.qty_kg||0),0)),backgroundColor:'#1D9E75',borderRadius:4}]},
+      data:{labels:mats,datasets:[{label:'Qty Kg',data:mats.map(mt=>filterByMonth(DATA.trdPur,'month_year',m).filter(r=>r.material===mt).reduce((a,r)=>a+Number(r.qty_kg||0),0)),backgroundColor:'#0B5C48',borderRadius:4}]},
       options:{...BO(),plugins:{legend:{display:false}}}
     });
   }
