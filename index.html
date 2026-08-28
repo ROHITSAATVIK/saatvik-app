@@ -368,14 +368,14 @@ Grey: 3600"></textarea></div></div>
   <div class="content">
 
     <!-- METRICS -->
-    <div class="metrics g4" id="inv-metrics" style="margin-bottom:14px;"></div>
+    <div class="metrics g3" id="inv-metrics" style="margin-bottom:14px;"></div>
 
     <!-- STOCK REGISTER -->
     <div class="card">
-      <div class="card-head"><div class="card-title">Stock register — A to Z</div><div style="font-size:11px;color:var(--txt2);">Red = below minimum · Amber = at minimum · Click an item name for its full in/out history · life cycle logs automatically when you edit stock</div></div>
-      <div class="tw"><table>
-        <thead><tr><th>Sl</th><th>Item</th><th>Min level</th><th>In stock</th><th>Difference</th><th>Supplier</th><th>Price</th><th>Edit</th></tr></thead>
-        <tbody id="inv-tbody"><tr><td colspan="8"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+      <div class="card-head"><div class="card-title">Stock register — A to Z</div><div style="font-size:11px;color:var(--txt2);">Red = out of stock · Orange = below minimum · Days running = today − last issue date</div></div>
+      <div class="tw excel-table"><table>
+        <thead><tr><th>Sl</th><th>Item</th><th class="tnum">Min level</th><th class="tnum">In stock</th><th class="tnum">Difference</th><th>Supplier</th><th class="tnum">Price</th><th>Last issue</th><th class="tnum">Days running</th><th>Edit</th></tr></thead>
+        <tbody id="inv-tbody"><tr><td colspan="10"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
       </table></div>
     </div>
 
@@ -1155,6 +1155,9 @@ function checkSession(){
 const TODAY=new Date();
 let DATA={mis:[],inv:[],stock:[],dispatches:[],bd:[],tasks:[],trdPur:[],trdSal:[],trdMat:[],fgAnchor:null,fgOverrides:[]};
 let editId=null, charts={};
+// Chart.js draws onto a <canvas> and does not inherit the page's CSS font-family, so without this
+// every chart (dashboard, production, trading) falls back to Chart.js's own default font instead of Verdana.
+if(typeof Chart!=='undefined')Chart.defaults.font.family="Verdana, Geneva, Tahoma, sans-serif";
 
 // ===== UTILS =====
 const MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1722,8 +1725,8 @@ function renderMfgDashboard(){
   document.getElementById('mfg-dash-metrics').innerHTML=`
     <div style="background:#fff;border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);">
       <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">Production</div>
-      <div class="tnum" style="font-size:20px;font-weight:600;color:var(--acc);">${(totalProd/1000).toFixed(1)}T</div>
-      <div style="font-size:10px;color:var(--txt2);margin-top:2px;">of ${(monthlyTarget/1000).toFixed(0)}T target</div>
+      <div class="tnum" style="font-size:20px;font-weight:600;color:var(--acc);">${Number(totalProd).toLocaleString('en-IN')} Kg</div>
+      <div style="font-size:10px;color:var(--txt2);margin-top:2px;">of ${Number(monthlyTarget).toLocaleString('en-IN')} Kg target</div>
       <div style="height:3px;background:var(--bg3);border-radius:3px;margin-top:6px;overflow:hidden;"><div style="height:100%;width:${Math.min(100,Math.round(totalProd/monthlyTarget*100))}%;background:var(--acc);"></div></div>
     </div>
     <div style="background:#fff;border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);">
@@ -1734,7 +1737,7 @@ function renderMfgDashboard(){
     </div>
     <div style="background:#fff;border-radius:var(--rad);padding:12px;border:0.5px solid var(--bdr);">
       <div style="font-size:10px;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">Dispatched</div>
-      <div class="tnum" style="font-size:20px;font-weight:600;color:var(--acc2);">${(totalDisp/1000).toFixed(1)}T</div>
+      <div class="tnum" style="font-size:20px;font-weight:600;color:var(--acc2);">${Number(totalDisp).toLocaleString('en-IN')} Kg</div>
       <div style="font-size:10px;color:var(--txt2);margin-top:2px;">this month</div>
     </div>
     <div style="background:#F6E9E2;border-radius:var(--rad);padding:12px;border:0.5px solid #E3C9B8;">
@@ -1760,7 +1763,7 @@ function renderMfgDashboard(){
   const colourEntries=Object.entries(colourMap).sort((a,b)=>b[1]-a[1]);
   const colEl=document.getElementById('dash-colour-breakdown');
   const totEl=document.getElementById('dash-colour-total');
-  if(totEl)totEl.textContent=`${(totalProd/1000).toFixed(1)}T total`;
+  if(totEl)totEl.textContent=`${Number(totalProd).toLocaleString('en-IN')} Kg total`;
   if(colEl){
     if(colourEntries.length===0){
       colEl.innerHTML='<div style="font-size:12px;color:var(--txt2);text-align:center;padding:16px;">No colour data yet — add colour/grade when entering MIS</div>';
@@ -1849,7 +1852,7 @@ function renderMfgDashboard(){
   // Daily production chart
   destroyChart('dashProd');
   const asc=[...mis].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
-  charts.dashProd=new Chart(document.getElementById('dashProdChart'),{type:'bar',data:{labels:asc.map(r=>fmtDate(r.entry_date)),datasets:[{label:'Production',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:4},{label:'Target',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,autoSkip:true,maxRotation:0,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
+  charts.dashProd=new Chart(document.getElementById('dashProdChart'),{type:'bar',data:{labels:asc.map(r=>fmtDate(r.entry_date)),datasets:[{label:'Production',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:4},{label:'Target',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,autoSkip:true,maxRotation:0,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>Number(v).toLocaleString('en-IN')}}}}});
 
   // Month-on-month production vs target, last 6 months up to and including the selected month
   destroyChart('dashMom');
@@ -1859,7 +1862,7 @@ function renderMfgDashboard(){
     charts.dashMom=new Chart(document.getElementById('dashMomChart'),{type:'bar',data:{labels:momMonths,datasets:[
       {label:'Production',data:momMonths.map(mo=>filterByMonth(DATA.mis,'month_year',mo).reduce((a,r)=>a+Number(r.total_production_kg||0),0)),backgroundColor:'#0B5C48',borderRadius:4},
       {label:'Target',data:momMonths.map(mo=>filterByMonth(DATA.mis,'month_year',mo).reduce((a,r)=>a+Number(r.target_kg||0),0)),type:'line',borderColor:'#A34A2C',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false}
-    ]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
+    ]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>Number(v).toLocaleString('en-IN')}}}}});
   }
 }
 
@@ -1912,7 +1915,27 @@ function computeFgRunning(){
   // effect is already baked into the anchor figure — so the balance never double-counts old history.
   const anchor=DATA.fgAnchor||{};
   const anchorDate=anchor.anchor_date||null;
-  const anchorColours=anchor.colours||{};
+
+  // Colour names get typed slightly differently in Production ("Grey") vs Dispatch ("grey", or with
+  // extra spaces) — without normalizing, those become two different buckets and dispatch never
+  // actually reduces the colour it was meant to. We key everything by a trimmed, lowercased form
+  // internally, but keep the first properly-cased spelling we see (preferring the anchor's spelling)
+  // for display.
+  const dispLabel={};
+  const keyOf=c=>{
+    const norm=(c||'').trim();
+    const k=norm.toLowerCase();
+    if(k&&!dispLabel[k])dispLabel[k]=norm;
+    return k;
+  };
+  const labelize=colMap=>{
+    const out={};
+    Object.entries(colMap||{}).forEach(([k,v])=>{out[dispLabel[k]||k]=v;});
+    return out;
+  };
+
+  const anchorColours={};
+  Object.entries(anchor.colours||{}).forEach(([c,v])=>{const k=keyOf(c);anchorColours[k]=(anchorColours[k]||0)+Number(v||0);});
   const anchorTotal=Object.values(anchorColours).reduce((a,v)=>a+Number(v||0),0);
 
   const prodByDate={},prodColourByDate={};
@@ -1923,9 +1946,10 @@ function computeFgRunning(){
     if(!prodColourByDate[r.entry_date])prodColourByDate[r.entry_date]={};
     if(r.colour&&r.colour.trim()){
       const cols=r.colour.split('+').map(c=>c.trim()).filter(Boolean);
-      cols.forEach(c=>{prodColourByDate[r.entry_date][c]=(prodColourByDate[r.entry_date][c]||0)+kg/cols.length;});
+      cols.forEach(c=>{const k=keyOf(c);prodColourByDate[r.entry_date][k]=(prodColourByDate[r.entry_date][k]||0)+kg/cols.length;});
     } else {
-      prodColourByDate[r.entry_date]['Untagged']=(prodColourByDate[r.entry_date]['Untagged']||0)+kg;
+      const k=keyOf('Untagged');
+      prodColourByDate[r.entry_date][k]=(prodColourByDate[r.entry_date][k]||0)+kg;
     }
   });
   const dispByDate={},dispColourByDate={};
@@ -1936,8 +1960,8 @@ function computeFgRunning(){
     if(!dispColourByDate[r.dispatch_date])dispColourByDate[r.dispatch_date]={};
     let col=r.colour||'';
     if(!col){const match=(r.notes||'').match(/Colour:([^|]+)/);col=match?match[1].trim():'';}
-    col=col||'Untagged';
-    dispColourByDate[r.dispatch_date][col]=(dispColourByDate[r.dispatch_date][col]||0)+kg;
+    const k=keyOf(col||'Untagged');
+    dispColourByDate[r.dispatch_date][k]=(dispColourByDate[r.dispatch_date][k]||0)+kg;
   });
 
   const allDates=[...new Set([...Object.keys(prodByDate),...Object.keys(dispByDate)])].sort((a,b)=>new Date(a)-new Date(b));
@@ -1959,8 +1983,8 @@ function computeFgRunning(){
     stockByDate,dispByDate,allDates,
     lastValue:lastDate?stockByDate[lastDate]:anchorTotal,
     stockColourByDate,
-    lastColours:lastDate?stockColourByDate[lastDate]:anchorColours,
-    anchorDate,anchorTotal,anchorColours
+    lastColours:labelize(lastDate?stockColourByDate[lastDate]:anchorColours),
+    anchorDate,anchorTotal,anchorColours,labelize
   };
 }
 
@@ -1986,9 +2010,9 @@ function fgColourClosingAsOfMonth(m,fgRun){
   const endStr=new Date(parseInt(yr),monIdx+1,0).toISOString().split('T')[0];
   if(fgRun.anchorDate&&endStr<fgRun.anchorDate)return{};
   for(let i=fgRun.allDates.length-1;i>=0;i--){
-    if(fgRun.allDates[i]<=endStr)return fgRun.stockColourByDate[fgRun.allDates[i]];
+    if(fgRun.allDates[i]<=endStr)return fgRun.labelize(fgRun.stockColourByDate[fgRun.allDates[i]]);
   }
-  return fgRun.anchorColours||{};
+  return fgRun.labelize(fgRun.anchorColours);
 }
 
 // Manual per-month FG override, if you've set one on the dashboard. Falls back to the calculated figure.
@@ -2057,7 +2081,7 @@ function renderMIS(){
   const asc=sorted;
   const labels=asc.map(r=>fmtDate(r.entry_date));
   // Daily production vs target chart
-  charts.prod=new Chart(document.getElementById('prodChart'),{type:'bar',data:{labels,datasets:[{label:'Prod',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:3},{label:'Tgt',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.4,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
+  charts.prod=new Chart(document.getElementById('prodChart'),{type:'bar',data:{labels,datasets:[{label:'Prod',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:3},{label:'Tgt',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.4,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>Number(v).toLocaleString('en-IN')}}}}});
   // Cumulative production vs target chart
   let cumP=0,cumT=0;
   const cumPData=asc.map(r=>{cumP+=Number(r.total_production_kg||0);return cumP;});
@@ -2070,7 +2094,7 @@ function renderMIS(){
         {label:'Cumulative production',data:cumPData,borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.08)',fill:true,tension:0.3,pointRadius:2,borderWidth:2},
         {label:'Cumulative target',data:cumTData,borderColor:'#2563eb',borderDash:[5,4],fill:false,tension:0,pointRadius:0,borderWidth:1.5}
       ]},
-      options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:10},color:TC(),boxWidth:10}}},scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,maxTicksLimit:10}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}
+      options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:10},color:TC(),boxWidth:10}}},scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,maxTicksLimit:10}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>Number(v).toLocaleString('en-IN')}}}}
     });
   }
 }
@@ -2079,15 +2103,13 @@ function renderInventory(){
   // Alphabetical order by item name
   const sorted=[...DATA.inv].sort((a,b)=>a.item_name.localeCompare(b.item_name));
   const outOfStock=sorted.filter(r=>Number(r.current_stock)===0);
-  const below50=sorted.filter(r=>Number(r.current_stock)>0&&Number(r.current_stock)<Number(r.minimum_stock)*0.5);
-  const low=sorted.filter(r=>Number(r.current_stock)>=Number(r.minimum_stock)*0.5&&Number(r.current_stock)<Number(r.minimum_stock));
+  const low=sorted.filter(r=>Number(r.current_stock)>0&&Number(r.current_stock)<Number(r.minimum_stock));
   const ok=sorted.filter(r=>Number(r.current_stock)>=Number(r.minimum_stock));
 
   document.getElementById('inv-metrics').innerHTML=`
-    <div class="mc" style="border-left:3px solid #1D9E75;"><div class="lb">OK items</div><div class="vl green">${ok.length}</div><div class="sb">At or above minimum</div></div>
-    <div class="mc" style="border-left:3px solid #d97706;"><div class="lb">Low stock</div><div class="vl amber">${low.length}</div><div class="sb">Below minimum</div></div>
-    <div class="mc" style="border-left:3px solid #dc2626;"><div class="lb">Below 50%</div><div class="vl red">${below50.length}</div><div class="sb">Order soon</div></div>
-    <div class="mc" style="border-left:3px solid #7c3aed;"><div class="lb">Out of stock</div><div class="vl" style="color:#7c3aed;">${outOfStock.length}</div><div class="sb">Order now</div></div>`;
+    <div class="mc" style="border-left:3px solid var(--acc);"><div class="lb">OK items</div><div class="vl tnum green">${ok.length}</div><div class="sb">At or above minimum</div></div>
+    <div class="mc" style="border-left:3px solid #d97706;"><div class="lb">Below minimum</div><div class="vl tnum amber">${low.length}</div><div class="sb">Order soon</div></div>
+    <div class="mc" style="border-left:3px solid #dc2626;"><div class="lb">Out of stock</div><div class="vl tnum red">${outOfStock.length}</div><div class="sb">Order now</div></div>`;
 
   const searchQ=(document.getElementById('inv-search')?.value||'').toLowerCase();
   const catQ=(document.getElementById('inv-cat-filter')?.value||'all');
@@ -2100,29 +2122,35 @@ function renderInventory(){
     const cs=Number(r.current_stock),ms=Number(r.minimum_stock);
     const diff=cs-ms;
     const isOut=cs===0;
-    const isBelow50=cs>0&&cs<ms*0.5;
-    const isLow=cs>=ms*0.5&&cs<ms;
+    const isLow=cs>0&&cs<ms;
     const uom=r.uom||'pc';
 
-    const bg=isOut?'background:#fdf2ff;border-left:3px solid #7c3aed;':
-              isBelow50?'background:#fef2f2;border-left:3px solid #dc2626;':
-              isLow?'background:#fffbeb;border-left:3px solid #d97706;':
-              'border-left:3px solid var(--acc);';
-    const diffColor=diff<0?(isBelow50||isOut?'#dc2626':'#d97706'):'#15803d';
+    // Last issue date + days running — pulled straight from the item's own last_out_date, the
+    // same field that's already set automatically whenever you reduce stock on this item, so this
+    // needs no click-through and no separate history lookup.
+    const lastIssue=r.last_out_date||null;
+    const daysRunning=lastIssue?Math.floor((TODAY-new Date(lastIssue))/86400000):null;
+    const overLife=daysRunning!=null&&r.expected_life_days&&daysRunning>Number(r.expected_life_days);
+
+    const bg=isOut?'background:#fef2f2;':isLow?'background:#fff7ed;':'';
+    const diffColor=diff<0?(isOut?'#dc2626':'#d97706'):'#15803d';
+    const stBadge=isOut?'<span class="badge b-red">Out of stock</span>':isLow?'<span class="badge b-amber">Below min</span>':'<span class="badge b-green">OK</span>';
 
     return`<tr style="${bg}">
       <td>${sl++}</td>
-      <td><strong style="font-size:13px;cursor:pointer;color:var(--acc);text-decoration:underline;text-decoration-style:dotted;" onclick="openItemHistory('${r.id}')" title="Click for full in/out history">${r.item_name}</strong></td>
-      <td class="tnum" style="text-align:right;color:var(--txt2);">${ms} ${uom}</td>
-      <td class="tnum" style="text-align:right;font-weight:600;">${cs} ${uom}</td>
-      <td class="tnum" style="text-align:right;font-weight:600;color:${diffColor};">${diff>0?'+':''}${diff}</td>
-      <td style="font-size:12px;">${r.supplier||'—'}</td>
-      <td class="tnum" style="text-align:right;">${fmtMoney(r.rate_per_unit||0)}</td>
-      <td style="text-align:center;">
+      <td><strong style="font-size:12px;cursor:pointer;" onclick="openItemHistory('${r.id}')" title="Click for full in/out history">${r.item_name}</strong></td>
+      <td class="tnum" style="color:var(--txt2);">${ms} ${uom}</td>
+      <td class="tnum" style="font-weight:600;">${cs} ${uom}</td>
+      <td class="tnum" style="font-weight:600;color:${diffColor};">${diff>0?'+':''}${diff}</td>
+      <td>${r.supplier||'—'}</td>
+      <td class="tnum">${fmtMoney(r.rate_per_unit||0)}</td>
+      <td>${lastIssue?fmtDate(lastIssue):'—'}</td>
+      <td class="tnum" style="font-weight:600;color:${overLife?'#dc2626':'var(--txt)'};">${daysRunning!=null?daysRunning+'d':'—'}${overLife?' ⚠':''}</td>
+      <td style="text-align:center;white-space:nowrap;">
         <button class="btn btn-sm" onclick="openModal('inv-modal','${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteRow('inventory','${r.id}','item')">🗑</button>
       </td></tr>`;
-  }).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No items found</td></tr>';
+  }).join('')||'<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--txt2);">No items found</td></tr>';
 }
 
 // ===== ITEM HISTORY DRILL-DOWN (click an item name in Inventory) =====
