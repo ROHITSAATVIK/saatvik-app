@@ -8,6 +8,8 @@
 <link rel="icon" id="app-favicon" type="image/png" href="">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
 <script src="https://jsuites.net/v4/jsuites.js"></script>
 <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jspreadsheet.css" type="text/css" />
@@ -205,20 +207,16 @@ tr:hover td{background:#fafaf9;}
     <div class="ni active" onclick="goTo('mfg-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
     <div class="ni" onclick="goTo('production')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Production / MIS</div>
     <div class="ni" onclick="goTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory</div>
-    <div class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Stock Management</div>
     <div class="ni" onclick="goTo('dispatch')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Dispatch</div>
     <div class="ni" onclick="goToDispatch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Gate Pass</div>
     <div class="ni" onclick="goTo('breakdown')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Breakdown Log</div>
-    <div class="ni" onclick="goTo('components')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Components & Parts</div>
-    <div class="ni" onclick="goTo('maintenance')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Maintenance</div>
-    <div class="ni" onclick="goTo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="M13 6h8M13 12h8M13 18h8"/><rect x="3" y="15" width="6" height="6" rx="1"/></svg>Tasks</div>
-    <div class="ni" onclick="goTo('plan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Production Plan</div>
   </div>
   <!-- TRADING NAV -->
   <div class="nav-section" id="nav-trd" style="display:none;">
     <div class="nav-label">Trading (Scrap)</div>
     <div class="ni" onclick="goTo('trd-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
     <div class="ni" onclick="goTo('trd-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Trade Register</div>
+    <div class="ni" onclick="goTo('trd-orders')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Trading Orders</div>
 
   </div>
   <!-- GENERAL — always visible regardless of Mfg/Trading toggle -->
@@ -367,10 +365,8 @@ Grey: 3600"></textarea></div></div>
     <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Spare Parts Inventory</div>
     <div class="tb-right">
       <input type="text" id="inv-search" placeholder="Search items..." oninput="renderInventory()" style="padding:6px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);font-size:12px;width:180px;">
-      <select id="inv-cat-filter" onchange="renderInventory()" style="padding:6px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);font-size:12px;background:var(--bg2);color:var(--txt);">
-        <option value="all">All categories</option>
-        <option>Bearings</option><option>Belts</option><option>Machine Parts</option><option>Consumables</option><option>Electrical</option><option>Other</option>
-      </select>
+      <button class="btn" onclick="downloadInventoryPdf()">⬇ PDF</button>
+      <button class="btn" onclick="downloadInventoryExcel()">⬇ Excel</button>
       <button class="btn btn-green" onclick="openModal('inv-modal',null)">+ Add item</button>
     </div>
   </div>
@@ -388,33 +384,23 @@ Grey: 3600"></textarea></div></div>
       </table></div>
     </div>
 
-  </div>
-</div>
+    <!-- MONTHLY REPORT -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Monthly report — opening, in/out, closing</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <select class="month-selector" id="inv-report-month" onchange="renderInventory()"></select>
+          <button class="btn btn-sm" onclick="downloadInvReportPdf()">⬇ PDF</button>
+          <button class="btn btn-sm" onclick="downloadInvReportExcel()">⬇ Excel</button>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--txt2);padding:8px 14px 0;">Tracked from the day this report was added — items won't show in/out movement for months before that, only the current opening figure.</div>
+      <div class="tw excel-table"><table>
+        <thead><tr><th>Item</th><th class="tnum">Opening</th><th class="tnum">In</th><th class="tnum">Out</th><th class="tnum">Closing</th></tr></thead>
+        <tbody id="inv-report-tbody"></tbody>
+      </table></div>
+    </div>
 
-<!-- ========== STOCK MANAGEMENT ========== -->
-<div id="page-stock" class="page">
-  <div class="topbar">
-    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Stock Management</div>
-    <div class="tb-right">
-      <select class="month-selector" id="stock-month" onchange="renderStock()"></select>
-      <button class="btn btn-green" onclick="openModal('stock-modal',null)">+ Add month</button>
-    </div>
-  </div>
-  <div class="content">
-    <div class="metrics g4" id="stock-metrics"></div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">Stock flow — closing auto-calculated</div></div>
-      <div class="card-body" id="stock-flow-display"><div class="loading"><div class="spin"></div></div></div>
-    </div>
-    <div class="g2" style="margin-bottom:14px;">
-      <div class="card"><div class="card-head"><div class="card-title">Raw material trend</div></div><div class="card-body"><div style="position:relative;height:140px;"><canvas id="rmChart" role="img" aria-label="RM">RM</canvas></div></div></div>
-      <div class="card"><div class="card-head"><div class="card-title">Finished goods trend</div></div><div class="card-body"><div style="position:relative;height:140px;"><canvas id="fgChart" role="img" aria-label="FG">FG</canvas></div></div></div>
-    </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">Monthly stock history</div></div>
-      <div class="tw"><table><thead><tr><th>Month</th><th>RM Open</th><th>RM Purchased</th><th>RM Consumed</th><th>RM Closing (Auto)</th><th>FG Open</th><th>FG Produced</th><th>FG Dispatched</th><th>FG Closing (Auto)</th><th>Actions</th></tr></thead>
-      <tbody id="stock-tbody"><tr><td colspan="10"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
-    </div>
   </div>
 </div>
 
@@ -424,6 +410,8 @@ Grey: 3600"></textarea></div></div>
     <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Dispatch</div>
     <div class="tb-right">
       <select class="month-selector" id="dispatch-month" onchange="renderDispatch()"></select>
+      <button class="btn" onclick="downloadDispatchPdf()">⬇ PDF</button>
+      <button class="btn" onclick="downloadDispatchExcel()">⬇ Excel</button>
       <button class="btn btn-green" onclick="openModal('dispatch-modal',null)">+ Add dispatch</button>
     </div>
   </div>
@@ -435,33 +423,8 @@ Grey: 3600"></textarea></div></div>
     </div>
     <div class="card">
       <div class="card-head"><div class="card-title">Dispatch log</div></div>
-      <div class="tw"><table><thead><tr><th>Date</th><th>Customer</th><th>Material</th><th>Colour</th><th>Qty (Kg)</th><th>Rate/Kg</th><th>Amount</th><th>Vehicle</th><th>LR No</th><th>Invoice</th><th>Status</th><th>Actions</th></tr></thead>
+      <div class="tw excel-table"><table><thead><tr><th>Date</th><th>Customer</th><th>Material</th><th>Colour</th><th class="tnum">Qty (Kg)</th><th class="tnum">Rate/Kg</th><th class="tnum">Amount</th><th>Vehicle</th><th>LR No</th><th>Invoice</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody id="dispatch-tbody"><tr><td colspan="12"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
-    </div>
-  </div>
-</div>
-
-<!-- ========== TASKS ========== -->
-<div id="page-tasks" class="page">
-  <div class="topbar">
-    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Tasks</div>
-    <div class="tb-right">
-      <select class="month-selector" id="task-filter" onchange="renderTasks()" style="min-width:120px;">
-        <option value="all">All tasks</option><option value="P1">P1</option><option value="P2">P2</option><option value="P3">P3</option><option value="open">Open</option><option value="done">Done</option>
-      </select>
-      <button class="btn btn-green" onclick="openModal('task-modal',null)">+ Add task</button>
-    </div>
-  </div>
-  <div class="content">
-    <div class="metrics g4" id="task-metrics"></div>
-    <div class="g2" style="margin-bottom:14px;">
-      <div class="card"><div class="card-head"><div class="card-title">By priority</div></div><div class="card-body"><div style="position:relative;height:130px;"><canvas id="taskPie" role="img" aria-label="Task pie">Pie</canvas></div></div></div>
-      <div class="card"><div class="card-head"><div class="card-title">By category</div></div><div class="card-body"><div style="position:relative;height:130px;"><canvas id="taskCat" role="img" aria-label="Task cat">Cat</canvas></div></div></div>
-    </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">Task list</div></div>
-      <div class="tw"><table><thead><tr><th>#</th><th>Task</th><th>Owner</th><th>Priority</th><th>Category</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="task-tbody"><tr><td colspan="8"><div class="loading"><div class="spin"></div></div></td></tr></tbody></table></div>
     </div>
   </div>
 </div>
@@ -532,6 +495,34 @@ Grey: 3600"></textarea></div></div>
         <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Customer</th><th>Material</th><th class="tnum">Qty</th><th class="tnum">Amount</th><th>Due On</th><th class="tnum">Days</th><th>Recd</th><th class="tnum">Days</th><th>Suppliers</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Margin</th><th class="tnum">Profit</th><th>Actions</th></tr></thead>
         <tbody id="trd-reg-tbody"><tr><td colspan="17"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
         <tfoot id="trd-reg-tfoot"></tfoot>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== TRADING ORDERS (tools & electrodes) ========== -->
+<div id="page-trd-orders" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Trading Orders</div>
+    <div class="tb-right">
+      <select class="month-selector" id="trd-orders-month" onchange="renderTrdOrders()"></select>
+      <button class="btn" onclick="downloadTrdOrdersPdf()">⬇ PDF</button>
+      <button class="btn" onclick="downloadTrdOrdersExcel()">⬇ Excel</button>
+      <button class="btn btn-blue" onclick="openTrdOrderModal(null)">+ Add order</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="metrics g6" id="trd-orders-metrics"></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Supplier-wise — this month</div></div>
+      <div class="card-body" style="padding:0;"><div class="tw excel-table"><table><thead><tr><th>Supplier</th><th class="tnum">Orders</th><th class="tnum">Qty</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th></tr></thead><tbody id="trd-orders-supplier-tbody"></tbody></table></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Order register — tools &amp; electrodes</div></div>
+      <div class="tw excel-table"><table>
+        <thead><tr><th>Sl</th><th>Order date</th><th>Order no</th><th>Supplier</th><th>Customer</th><th>Item</th><th class="tnum">Qty</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="trd-orders-tbody"><tr><td colspan="14"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
       </table></div>
     </div>
   </div>
@@ -686,9 +677,16 @@ Grey: 3600"></textarea></div></div>
 
     <!-- Recent gate passes -->
     <div class="card">
-      <div class="card-head"><div class="card-title">All gate passes</div><div id="gp-total" style="font-size:12px;color:var(--txt2);"></div></div>
-      <div class="tw"><table>
-        <thead><tr><th>GP No.</th><th>Date</th><th>Party</th><th>Material</th><th>Qty (Kg)</th><th>Bill no.</th><th>E-way bill</th><th>Actions</th></tr></thead>
+      <div class="card-head">
+        <div class="card-title">All gate passes</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div id="gp-total" style="font-size:12px;color:var(--txt2);"></div>
+          <button class="btn btn-sm" onclick="downloadGpRegisterPdf()">⬇ PDF</button>
+          <button class="btn btn-sm" onclick="downloadGpRegisterExcel()">⬇ Excel</button>
+        </div>
+      </div>
+      <div class="tw excel-table"><table>
+        <thead><tr><th>GP No.</th><th>Date</th><th>Party</th><th>Material</th><th class="tnum">Qty (Kg)</th><th>Bill no.</th><th>E-way bill</th><th>Actions</th></tr></thead>
         <tbody id="gp-tbody"></tbody>
       </table></div>
     </div>
@@ -701,6 +699,8 @@ Grey: 3600"></textarea></div></div>
     <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Breakdown Log</div>
     <div class="tb-right">
       <select class="month-selector" id="bd-month" onchange="renderBreakdownPage()"></select>
+      <button class="btn" onclick="downloadBreakdownPdf()">⬇ PDF</button>
+      <button class="btn" onclick="downloadBreakdownExcel()">⬇ Excel</button>
       <button class="btn btn-green" onclick="openModal('bd-modal',null)">+ Log breakdown</button>
     </div>
   </div>
@@ -712,116 +712,12 @@ Grey: 3600"></textarea></div></div>
     </div>
     <div class="card">
       <div class="card-head"><div class="card-title">All breakdowns — all machines</div></div>
-      <div class="tw"><table><thead><tr><th>Date</th><th>Machine</th><th>Shift</th><th>Downtime</th><th>Reason</th><th>Action taken</th><th>Cost</th><th>Status</th><th>Actions</th></tr></thead>
+      <div class="tw excel-table"><table><thead><tr><th>Date</th><th>Machine</th><th>Shift</th><th class="tnum">Downtime</th><th>Reason</th><th>Action taken</th><th class="tnum">Cost</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody id="bd-full-tbody"></tbody></table></div>
     </div>
   </div>
 </div>
 
-<!-- ========== COMPONENTS & PARTS (standalone) ========== -->
-<div id="page-components" class="page">
-  <div class="topbar">
-    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Components & Parts</div>
-    <div class="tb-right">
-      <select id="comp-machine-filter" onchange="renderComponentsPage()" style="padding:5px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);background:var(--bg2);color:var(--txt);font-size:12px;">
-        <option value="all">All machines</option>
-        <option>Jumbo Cutter</option><option>Grinder</option><option>Washing Line</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option>
-      </select>
-      <button class="btn btn-green" onclick="openModal('comp-modal',null);currentMachine=document.getElementById('comp-machine-filter').value==='all'?'':document.getElementById('comp-machine-filter').value;">+ Add component</button>
-    </div>
-  </div>
-  <div class="content">
-    <div class="metrics g4" id="comp-metrics"></div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">All components & spare parts</div><div style="font-size:11px;color:var(--txt2);">Red = Critical condition or low stock</div></div>
-      <div class="tw"><table><thead><tr><th>Machine</th><th>Component / Part</th><th>Last replaced</th><th>Life remaining</th><th>Condition</th><th>Qty stock</th><th>Reorder at</th><th>Unit cost</th><th>Supplier</th><th>Notes</th><th>Actions</th></tr></thead>
-      <tbody id="comp-full-tbody"></tbody></table></div>
-    </div>
-  </div>
-</div>
-
-<!-- ========== MAINTENANCE CHECKLIST (standalone) ========== -->
-<div id="page-maintenance" class="page">
-  <div class="topbar">
-    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Maintenance Checklist</div>
-    <div class="tb-right">
-      <select id="maint-machine-filter" onchange="renderMaintenancePage()" style="padding:5px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);background:var(--bg2);color:var(--txt);font-size:12px;">
-        <option value="all">All machines</option>
-        <option>Jumbo Cutter</option><option>Grinder</option><option>Washing Line</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option>
-      </select>
-      <select id="maint-freq-filter" onchange="renderMaintenancePage()" style="padding:5px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);background:var(--bg2);color:var(--txt);font-size:12px;">
-        <option value="all">All frequencies</option>
-        <option>Daily</option><option>Weekly</option><option>Monthly</option><option>Quarterly</option>
-      </select>
-      <button class="btn btn-green" onclick="openModal('maint-modal',null)">+ Add check</button>
-    </div>
-  </div>
-  <div class="content">
-    <div class="metrics g4" id="maint-metrics"></div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">All maintenance checks</div><div style="font-size:11px;color:var(--txt2);">Overdue checks highlighted in red</div></div>
-      <div class="tw"><table><thead><tr><th>Machine</th><th>Check</th><th>Frequency</th><th>Last done</th><th>Days ago</th><th>Done by</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="maint-full-tbody"></tbody></table></div>
-    </div>
-  </div>
-</div>
-
-<!-- ========== PRODUCTION PLAN ========== -->
-<div id="page-plan" class="page">
-  <div class="topbar">
-    <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Production Plan</div>
-    <div class="tb-right">
-      <select class="month-selector" id="plan-month" onchange="renderPlan()"></select>
-      <button class="btn btn-green" onclick="openModal('order-modal',null)">+ Add order</button>
-      <button class="btn btn-blue" onclick="openPlanAI()">🤖 Ask AI</button>
-    </div>
-  </div>
-  <div class="content">
-    <!-- Monthly target -->
-    <div class="metrics g4" id="plan-metrics"></div>
-
-    <!-- AI Assistant panel -->
-    <div id="plan-ai-panel" style="display:none;margin-bottom:14px;">
-      <div class="card">
-        <div class="card-head"><div class="card-title">🤖 Production AI assistant</div><button class="btn btn-sm" onclick="document.getElementById('plan-ai-panel').style.display='none'">✕</button></div>
-        <div class="card-body">
-          <div id="plan-ai-messages" style="min-height:80px;max-height:300px;overflow-y:auto;margin-bottom:10px;font-size:13px;"></div>
-          <div style="display:flex;gap:8px;">
-            <input type="text" id="plan-ai-input" placeholder="e.g. What should my target be this week? How does my efficiency compare?" style="flex:1;padding:8px;border:1px solid var(--bdr2);border-radius:var(--rad);font-size:13px;font-family:inherit;">
-            <button class="btn btn-blue" onclick="askPlanAI()">Ask →</button>
-          </div>
-          <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;" id="plan-ai-suggestions"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Weekly plan -->
-    <div class="card" style="margin-bottom:14px;">
-      <div class="card-head">
-        <div class="card-title" id="week-label">Weekly plan</div>
-        <div style="display:flex;gap:6px;">
-          <button class="btn btn-sm" onclick="changeWeek(-1)">← Prev</button>
-          <button class="btn btn-sm" onclick="changeWeek(1)">Next →</button>
-          <button class="btn btn-sm btn-green" onclick="openModal('daily-target-modal',null)">Set daily target</button>
-        </div>
-      </div>
-      <div id="weekly-grid" style="overflow-x:auto;"></div>
-    </div>
-
-    <!-- Benchmarks -->
-    <div class="card" style="margin-bottom:14px;">
-      <div class="card-head"><div class="card-title">Industry benchmarks — plastic recycling</div><div style="font-size:11px;color:var(--txt2);">Best practice targets for your line</div></div>
-      <div class="card-body" id="benchmarks-content"></div>
-    </div>
-
-    <!-- Order book -->
-    <div class="card">
-      <div class="card-head"><div class="card-title">Order book</div><div id="order-summary" style="font-size:12px;color:var(--txt2);"></div></div>
-      <div class="tw"><table><thead><tr><th>Type</th><th>Customer</th><th>Material</th><th>Ordered (Kg)</th><th>Produced (Kg)</th><th>Dispatched (Kg)</th><th>Balance</th><th>Due date</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="order-tbody"></tbody></table></div>
-    </div>
-  </div>
-</div>
 
 </div><!-- /main -->
 
@@ -893,7 +789,7 @@ Grey: 3600"></textarea></div></div>
   <div class="modal">
     <div class="modal-head"><span class="modal-title" id="inv-modal-t">Add Item</span><button class="btn btn-sm" onclick="closeModal('inv-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow"><div class="fg"><label>Item name</label><input type="text" id="i-item" placeholder="e.g. PP Granules (FG)"></div><div class="fg"><label>Category</label><select id="i-cat"><option>Raw Material</option><option>Finished Goods</option><option>Jumbo Bags</option><option>Chemicals</option><option>Spare Parts</option></select></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Item name</label><input type="text" id="i-item" placeholder="e.g. PP Granules (FG)"></div></div>
       <div class="frow"><div class="fg"><label>UOM</label><select id="i-uom"><option>Kg</option><option>Nos</option><option>Liters</option><option>Bags</option></select></div><div class="fg"><label>Min stock</label><input type="number" id="i-min" placeholder="0"></div></div>
       <div class="frow"><div class="fg"><label>Current stock</label><input type="number" id="i-stk" placeholder="0"></div><div class="fg"><label>Price / rate per unit (₹)</label><input type="number" id="i-rate" placeholder="0"></div></div>
       <div class="frow frow-1"><div class="fg"><label>Supplier</label><input type="text" id="i-supplier" placeholder="Supplier name"></div></div>
@@ -948,31 +844,6 @@ Grey: 3600"></textarea></div></div>
   </div>
 </div>
 
-<!-- Stock Modal -->
-<div class="modal-bg" id="stock-modal">
-  <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="stock-modal-t">Add Stock Movement</span><button class="btn btn-sm" onclick="closeModal('stock-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="frow frow-1"><div class="fg"><label>Month / Year (e.g. June 2026)</label><input type="text" id="s-month" placeholder="June 2026"></div></div>
-      <div class="sec-label">Raw Material (Kg) — closing auto-calculated</div>
-      <div class="frow-3 frow">
-        <div class="fg"><label>Opening</label><input type="number" id="s-rmop" placeholder="0" oninput="calcStockClose()"></div>
-        <div class="fg"><label>Purchased</label><input type="number" id="s-rmbuy" placeholder="0" oninput="calcStockClose()"></div>
-        <div class="fg"><label>Consumed</label><input type="number" id="s-rmcon" placeholder="0" oninput="calcStockClose()"></div>
-      </div>
-      <div class="fg" style="margin-bottom:10px;"><label>Closing RM (auto)</label><input type="number" id="s-rmcl" readonly style="background:var(--bg3);font-weight:700;color:var(--acc);" placeholder="Auto"></div>
-      <div class="sec-label">Finished Goods — auto from Production &amp; Dispatch</div>
-      <div class="frow-3 frow">
-        <div class="fg"><label>Opening</label><input type="number" id="s-fgop" placeholder="0" oninput="calcStockClose()"></div>
-        <div class="fg"><label>Produced</label><input type="number" id="s-fgprod" placeholder="0" oninput="calcStockClose()"></div>
-        <div class="fg"><label>Dispatched</label><input type="number" id="s-fgdis" placeholder="0" oninput="calcStockClose()"></div>
-      </div>
-      <div class="fg"><label>Closing FG (auto)</label><input type="number" id="s-fgcl" readonly style="background:var(--bg3);font-weight:700;color:var(--acc);" placeholder="Auto"></div>
-    </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('stock-modal')">Cancel</button><button class="btn btn-green" onclick="saveStock()">Save</button></div>
-  </div>
-</div>
-
 <!-- Dispatch Modal -->
 <div class="modal-bg" id="dispatch-modal">
   <div class="modal">
@@ -1004,20 +875,6 @@ Grey: 3600"></textarea></div></div>
   </div>
 </div>
 
-<!-- Task Modal -->
-<div class="modal-bg" id="task-modal">
-  <div class="modal">
-    <div class="modal-head"><span class="modal-title" id="task-modal-t">Add Task</span><button class="btn btn-sm" onclick="closeModal('task-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="frow frow-1"><div class="fg"><label>Task description</label><input type="text" id="t-task" placeholder="Describe the task"></div></div>
-      <div class="frow"><div class="fg"><label>Assigned to</label><input type="text" id="t-owner" placeholder="e.g. Dalmia Ji"></div><div class="fg"><label>Priority</label><select id="t-priority"><option>P1</option><option>P2</option><option>P3</option></select></div></div>
-      <div class="frow"><div class="fg"><label>Category</label><select id="t-cat"><option>Payment</option><option>Operations</option><option>Purchase</option><option>Maintenance</option><option>Sales</option><option>Admin</option><option>Other</option></select></div><div class="fg"><label>Due date</label><input type="date" id="t-due"></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Notes</label><textarea id="t-notes" placeholder="Details..."></textarea></div></div>
-    </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal('task-modal')">Cancel</button><button class="btn btn-green" onclick="saveTask()">Add Task</button></div>
-  </div>
-</div>
-
 <!-- Trading Register Modal -->
 <div class="modal-bg" id="trd-reg-modal">
   <div class="modal">
@@ -1036,6 +893,23 @@ Grey: 3600"></textarea></div></div>
       <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="tr-notes" placeholder="Optional"></div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('trd-reg-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdTrade()">Save</button></div>
+  </div>
+</div>
+
+<!-- Trading Order Modal (tools & electrodes) -->
+<div class="modal-bg" id="trd-order-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="trd-order-modal-t">Add Order</span><button class="btn btn-sm" onclick="closeModal('trd-order-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow"><div class="fg"><label>Order date</label><input type="date" id="to-date"></div><div class="fg"><label>Order no</label><input type="text" id="to-orderno" placeholder="e.g. ORD/26-27/014"></div></div>
+      <div class="frow"><div class="fg"><label>Supplier</label><input type="text" id="to-supplier" placeholder="Supplier name" list="trd-order-supplier-list"><datalist id="trd-order-supplier-list"></datalist></div><div class="fg"><label>Customer</label><input type="text" id="to-customer" placeholder="Customer name"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Item</label><input type="text" id="to-item" placeholder="e.g. Welding Electrode 3.15mm"></div></div>
+      <div class="frow"><div class="fg"><label>Qty</label><input type="number" id="to-qty" placeholder="0" oninput="calcTrdOrderValues()"></div><div class="fg"><label>Status</label><select id="to-status"><option>Pending</option><option>Ordered</option><option>Delivered</option><option>Billed</option><option>Paid</option><option>Cancelled</option></select></div></div>
+      <div class="frow"><div class="fg"><label>CP — cost price (₹/unit)</label><input type="number" id="to-cp" placeholder="0" oninput="calcTrdOrderValues()"></div><div class="fg"><label>SP — sale price (₹/unit)</label><input type="number" id="to-sp" placeholder="0" oninput="calcTrdOrderValues()"></div></div>
+      <div class="frow frow-1"><div class="fg"><div class="calc-note" id="to-calc-show">Cost value: — · Sale value: — · Profit: —</div></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="to-notes" placeholder="Optional"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('trd-order-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdOrder()">Save</button></div>
   </div>
 </div>
 
@@ -1181,11 +1055,29 @@ function checkSession(){
 }
 
 const TODAY=new Date();
-let DATA={mis:[],inv:[],stock:[],dispatches:[],bd:[],tasks:[],trdPur:[],trdSal:[],trdMat:[],fgAnchor:null,fgOverrides:[],sheets:[]};
+let DATA={mis:[],inv:[],dispatches:[],bd:[],trdPur:[],trdSal:[],trdMat:[],fgAnchor:null,fgOverrides:[],sheets:[],trdOrders:[],invMoves:[]};
 let editId=null, charts={};
 // Chart.js draws onto a <canvas> and does not inherit the page's CSS font-family, so without this
 // every chart (dashboard, production, trading) falls back to Chart.js's own default font instead of Verdana.
 if(typeof Chart!=='undefined')Chart.defaults.font.family="Verdana, Geneva, Tahoma, sans-serif";
+// Data labels visible on every chart by default (not just on hover) — registered once, globally,
+// so individual chart calls don't each need their own config.
+if(typeof Chart!=='undefined'&&typeof ChartDataLabels!=='undefined'){
+  Chart.register(ChartDataLabels);
+  Chart.defaults.set('plugins.datalabels',{
+    display:true,
+    color:'#1C1B18',
+    backgroundColor:'rgba(255,255,255,0.75)',
+    borderRadius:3,
+    padding:{top:1,bottom:1,left:4,right:4},
+    font:{size:9,weight:'600',family:'Verdana, Geneva, Tahoma, sans-serif'},
+    anchor:'end',align:'end',offset:2,clamp:true,
+    formatter:v=>{
+      if(typeof v!=='number')return v;
+      return Number.isInteger(v)?v.toLocaleString('en-IN'):Number(v).toFixed(1);
+    }
+  });
+}
 
 // ===== UTILS =====
 const MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1213,6 +1105,62 @@ function colourChip(name){
 }
 const daysSince=d=>Math.floor((TODAY-new Date(d))/86400000);
 const dueDate=(d,t)=>{const dt=new Date(d);dt.setDate(dt.getDate()+(parseInt(t)||15));return dt;};
+
+// ===== SHARED EXPORT HELPERS (used by every downloadable register page) =====
+// columns: [{label, align?}]  rows: array of arrays, already formatted as display strings.
+function exportTablePdf(title,columns,rows,opts){
+  opts=opts||{};
+  if(!rows||!rows.length){toast('Nothing to download for this period','err');return;}
+  const theadCells=columns.map(c=>`<th style="text-align:${c.align||'left'};">${c.label}</th>`).join('');
+  const bodyRows=rows.map(r=>`<tr>${r.map((v,i)=>`<td style="text-align:${columns[i]&&columns[i].align||'left'};">${v}</td>`).join('')}</tr>`).join('');
+  const footNote=opts.footNote||'';
+  const html=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+@page{size:A4 ${opts.orientation||'landscape'};margin:6mm;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Verdana,Geneva,Tahoma,sans-serif;}
+body{font-size:9.5px;color:#000;background:#fff;}
+.header{display:flex;align-items:center;gap:14px;border-bottom:2.5px solid #000;padding-bottom:7px;margin-bottom:7px;}
+.logo{width:52px;height:52px;object-fit:contain;}
+.company-info{flex:1;text-align:center;}
+.company-name{font-size:19px;font-weight:bold;letter-spacing:2px;}
+.company-addr{font-size:8.5px;margin-top:2px;}
+.doc-title{text-align:center;font-size:13px;font-weight:bold;text-decoration:underline;margin:6px 0 10px;}
+table{width:100%;border-collapse:collapse;}
+th{background:#eeeeee;border:1px solid #000;padding:4px 5px;font-size:8px;text-transform:uppercase;}
+td{border:1px solid #000;padding:4px 5px;font-size:9px;}
+.footer-note{text-align:center;font-size:8.5px;margin-top:10px;color:#555;}
+</style></head><body>
+<div class="header">
+  <img class="logo" src="${LOGO_B64}" alt="Saatvik Logo">
+  <div class="company-info">
+    <div class="company-name">SAATVIK ENTERPRISES</div>
+    <div class="company-addr">HO : 42 A Rafi Ahmed Kidwai Road, Kolkata-700016 &nbsp;·&nbsp; Factory : Bamunara Industrial Estate, Bamunara, Durgapur - 713212</div>
+  </div>
+</div>
+<div class="doc-title">${title}</div>
+<table><thead><tr>${theadCells}</tr></thead><tbody>${bodyRows}</tbody></table>
+<div class="footer-note">${footNote?footNote+' &nbsp;·&nbsp; ':''}Generated from Saatvik Enterprises app on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
+</body></html>`;
+  const win=window.open('','_blank');
+  if(!win){toast('Please allow popups for saatvik.biz to download PDF','err');return;}
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>win.print(),800);
+}
+
+// columns: [{label}]  rows: array of arrays (raw values, not pre-formatted strings — Excel keeps numbers as numbers)
+function exportTableExcel(filename,sheetName,columns,rows){
+  if(typeof XLSX==='undefined'){toast('Excel export library did not load — check your connection','err');return;}
+  if(!rows||!rows.length){toast('Nothing to download for this period','err');return;}
+  const data=[columns.map(c=>c.label),...rows];
+  const ws=XLSX.utils.aoa_to_sheet(data);
+  ws['!cols']=columns.map(()=>({wch:16}));
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,(sheetName||'Sheet1').substring(0,31));
+  XLSX.writeFile(wb,filename);
+}
 const eff=(a,t)=>t>0?Math.round((a/t)*100):0;
 const badge=(t,c)=>`<span class="badge b-${c}">${t}</span>`;
 const prioBadge=p=>badge(p,p==='P1'?'red':p==='P2'?'amber':'green');
@@ -1242,7 +1190,7 @@ function buildMonthsRange(){
 const MONTHS=buildMonthsRange();
 function populateMonthSelectors(){
   const cur=currentMonthLabel();
-  ['mfg-dash-month','mis-month','stock-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','mh-month','plan-month','or-month'].forEach(id=>{
+  ['mfg-dash-month','mis-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','inv-report-month','trd-orders-month'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
     el.innerHTML=MONTHS.map(m=>`<option value="${m}"${m===cur?'selected':''}>${m}</option>`).join('');
@@ -1267,7 +1215,7 @@ function goTo(id){
   // highlight nav
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   const allNi=document.querySelectorAll('.ni');
-  const pages=['mfg-dashboard','production','inventory','stock','dispatch','breakdown','tasks','trd-dashboard','trd-register'];
+  const pages=['mfg-dashboard','production','inventory','dispatch','__gatepass__','breakdown','trd-dashboard','trd-register','trd-orders','__sheets__'];
   const idx=pages.indexOf(id);
   if(idx>=0&&allNi[idx])allNi[idx].classList.add('active');
   renderPage(id);
@@ -1276,8 +1224,8 @@ function goTo(id){
 function renderPage(id){
   const m={
     'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
-    'stock':renderStock,'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'tasks':renderTasks,'breakdown':renderBreakdownPage,'components':renderComponentsPage,'maintenance':renderMaintenancePage,'plan':renderPlan,
-    'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines
+    'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'breakdown':renderBreakdownPage,
+    'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'trd-orders':renderTrdOrders,'machines':renderMachines
   };
   if(m[id])m[id]();
 }
@@ -1339,26 +1287,8 @@ function openModal(id,rowId){
   }
   if(id==='inv-modal'){
     document.getElementById('inv-modal-t').textContent=isEdit?'Edit Item':'Add Item';
-    if(isEdit){const r=DATA.inv.find(x=>x.id===rowId);if(r){document.getElementById('i-item').value=r.item_name;document.getElementById('i-cat').value=r.category;document.getElementById('i-uom').value=r.uom;document.getElementById('i-min').value=r.minimum_stock;document.getElementById('i-stk').value=r.current_stock;document.getElementById('i-rate').value=r.rate_per_unit;document.getElementById('i-supplier').value=r.supplier||'';document.getElementById('i-explife').value=r.expected_life_days||'';}}
+    if(isEdit){const r=DATA.inv.find(x=>x.id===rowId);if(r){document.getElementById('i-item').value=r.item_name;document.getElementById('i-uom').value=r.uom;document.getElementById('i-min').value=r.minimum_stock;document.getElementById('i-stk').value=r.current_stock;document.getElementById('i-rate').value=r.rate_per_unit;document.getElementById('i-supplier').value=r.supplier||'';document.getElementById('i-explife').value=r.expected_life_days||'';}}
     else{['i-item','i-min','i-stk','i-rate','i-supplier','i-explife'].forEach(x=>document.getElementById(x).value='');}
-  }
-  if(id==='stock-modal'){
-    document.getElementById('stock-modal-t').textContent=isEdit?'Edit Entry':'Add Stock Movement';
-    if(isEdit){const r=DATA.stock.find(x=>x.id===rowId);if(r){document.getElementById('s-month').value=r.month_year;document.getElementById('s-rmop').value=r.rm_opening_kg;document.getElementById('s-rmbuy').value=r.rm_purchased_kg;document.getElementById('s-rmcon').value=r.rm_consumed_kg;document.getElementById('s-fgop').value=r.fg_opening_kg;
-      const mSt=r.month_year;
-      const autoP=filterByMonth(DATA.mis,'month_year',mSt).reduce((a,x)=>a+Number(x.total_production_kg||0),0);
-      const autoD=DATA.dispatches.filter(x=>x.month_year===mSt).reduce((a,x)=>a+Number(x.qty_kg||0),0);
-      document.getElementById('s-fgprod').value=autoP.toFixed(0);
-      document.getElementById('s-fgdis').value=autoD.toFixed(0);
-      calcStockClose();}}
-    else{['s-month','s-rmop','s-rmbuy','s-rmcon','s-fgop'].forEach(x=>document.getElementById(x).value='');document.getElementById('s-rmcl').value='';document.getElementById('s-fgcl').value='';
-      const mSt2=getMonth('stock-month');
-      const autoP2=filterByMonth(DATA.mis,'month_year',mSt2).reduce((a,x)=>a+Number(x.total_production_kg||0),0);
-      const autoD2=DATA.dispatches.filter(x=>x.month_year===mSt2).reduce((a,x)=>a+Number(x.qty_kg||0),0);
-      document.getElementById('s-fgprod').value=autoP2.toFixed(0);
-      document.getElementById('s-fgdis').value=autoD2.toFixed(0);
-      document.getElementById('s-month').value=mSt2;
-    }
   }
   if(id==='dispatch-modal'){
     document.getElementById('dispatch-modal-t').textContent=isEdit?'Edit Dispatch':'Add Dispatch';
@@ -1376,11 +1306,6 @@ function openModal(id,rowId){
     document.getElementById('bd-modal-t').textContent=isEdit?'Edit Breakdown':'Log Breakdown';
     if(isEdit){const r=DATA.bd.find(x=>x.id===rowId);if(r){document.getElementById('b-date').value=r.breakdown_date;document.getElementById('b-machine').value=r.machine;document.getElementById('b-shift').value=r.shift||'Day';document.getElementById('b-hours').value=r.downtime_hours;document.getElementById('b-reason').value=r.reason;document.getElementById('b-action').value=r.action_taken;document.getElementById('b-cost').value=r.cost;document.getElementById('b-status').value=r.status;}}
     else{['b-date','b-hours','b-reason','b-action','b-cost'].forEach(x=>document.getElementById(x).value='');document.getElementById('b-status').value='Pending';}
-  }
-  if(id==='task-modal'){
-    document.getElementById('task-modal-t').textContent=isEdit?'Edit Task':'Add Task';
-    if(isEdit){const r=DATA.tasks.find(x=>x.id===rowId);if(r){document.getElementById('t-task').value=r.task_description;document.getElementById('t-owner').value=r.assigned_to||'';document.getElementById('t-priority').value=r.priority;document.getElementById('t-cat').value=r.category||'Other';document.getElementById('t-due').value=r.due_date||'';document.getElementById('t-notes').value=r.notes||'';}}
-    else{['t-task','t-owner','t-due','t-notes'].forEach(x=>document.getElementById(x).value='');document.getElementById('t-priority').value='P1';}
   }
 }
 
@@ -1463,11 +1388,6 @@ function calcMISStock(){
   const el=document.getElementById('m-tstock');
   if(el)el.value=totalStock.toFixed(0);
 }
-function calcStockClose(){
-  const g=id=>parseFloat(document.getElementById(id)?.value||0);
-  document.getElementById('s-rmcl').value=(g('s-rmop')+g('s-rmbuy')-g('s-rmcon')).toFixed(0);
-  document.getElementById('s-fgcl').value=(g('s-fgop')+g('s-fgprod')-g('s-fgdis')).toFixed(0);
-}
 function calcDispatchAmt(){
   const q=parseFloat(document.getElementById('d-qty')?.value||0);
   const r=parseFloat(document.getElementById('d-rate')?.value||0);
@@ -1522,13 +1442,11 @@ function openWA(){
 async function loadAll(){
   document.getElementById('last-sync').textContent='Syncing...';
   try{
-    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm,life,lrates,fganc,fgovr,wbs]=await Promise.all([
+    const [mis,inv,disp,bd,tp,ts,tm,life,lrates,fganc,fgovr,wbs,torders,invmov]=await Promise.all([
       sb.from('mis_entries').select('*').order('entry_date',{ascending:false}),
       sb.from('inventory').select('*').order('item_name'),
-      sb.from('stock_movements').select('*').order('created_at',{ascending:false}),
       sb.from('dispatches').select('*').order('dispatch_date',{ascending:false}),
       sb.from('breakdowns').select('*').order('breakdown_date',{ascending:false}),
-      sb.from('tasks').select('*').order('priority').order('created_at'),
       sb.from('trading_purchases').select('*').order('purchase_date',{ascending:false}),
       sb.from('trading_sales').select('*').order('sale_date',{ascending:false}),
       sb.from('trading_materials').select('*').order('material_name'),
@@ -1537,12 +1455,16 @@ async function loadAll(){
       sb.from('fg_stock_settings').select('*').limit(1),
       sb.from('fg_overrides').select('*'),
       sb.from('workbook_sheets').select('*').order('sort_order'),
+      sb.from('trading_orders').select('*').order('order_date',{ascending:false}),
+      sb.from('inventory_movements').select('*').order('movement_date',{ascending:false}),
     ]);
-    DATA.mis=mis.data||[];DATA.inv=inv.data||[];DATA.stock=stock.data||[];
-    DATA.dispatches=disp.data||[];DATA.bd=bd.data||[];DATA.tasks=tasks.data||[];
+    DATA.mis=mis.data||[];DATA.inv=inv.data||[];
+    DATA.dispatches=disp.data||[];DATA.bd=bd.data||[];
     DATA.trdPur=tp.data||[];DATA.trdSal=ts.data||[];DATA.trdMat=tm.data||[];
     DATA.lifeLog=life.data||[];
     DATA.sheets=wbs.data||[];
+    DATA.trdOrders=torders.data||[];
+    DATA.invMoves=invmov.data||[];
     // Labour rates — a single editable row. Falls back to the rates you gave us if the table is empty
     // (e.g. before the migration/seed row has been run), so the form never breaks.
     DATA.labourRates=(lrates.data&&lrates.data[0])||{
@@ -1613,11 +1535,12 @@ async function saveInv(){
   const oldStock=existing?Number(existing.current_stock||0):0;
   const expectedLife=parseFloat(g('i-explife'))||null;
 
-  const row={item_name:g('i-item'),category:g('i-cat'),uom:g('i-uom'),minimum_stock:parseFloat(g('i-min'))||0,current_stock:newStock,rate_per_unit:parseFloat(g('i-rate'))||0,supplier:g('i-supplier')||'',expected_life_days:expectedLife,updated_at:new Date().toISOString()};
+  const row={item_name:g('i-item'),uom:g('i-uom'),minimum_stock:parseFloat(g('i-min'))||0,current_stock:newStock,rate_per_unit:parseFloat(g('i-rate'))||0,supplier:g('i-supplier')||'',expected_life_days:expectedLife,updated_at:new Date().toISOString()};
   if(!row.item_name){toast('Item name required','err');return;}
 
   // Automatic IN/OUT/life tracking — no manual step needed
   let autoLogEntry=null;
+  let moveEntry=null;
   if(!editId){
     // New item: an opening stock counts as an "in"
     if(newStock>0)row.last_in_date=today;
@@ -1626,11 +1549,13 @@ async function saveInv(){
     row.last_in_date=today;
     row.last_out_date=null;
     row.life_days=null;
+    moveEntry={item_name:row.item_name,direction:'IN',qty:newStock-oldStock,movement_date:today,stock_before:oldStock,stock_after:newStock};
   } else if(newStock<oldStock){
     // Stock decreased — usage/out event, closes the life cycle
     row.last_out_date=today;
     const inDate=existing?.last_in_date;
     row.life_days=inDate?Math.max(0,Math.floor((new Date(today)-new Date(inDate))/86400000)):null;
+    moveEntry={item_name:row.item_name,direction:'OUT',qty:oldStock-newStock,movement_date:today,stock_before:oldStock,stock_after:newStock};
     // Auto-record this cycle in the Item Life Register — same edit, no second entry
     if(inDate){
       const lifeDays=row.life_days;
@@ -1639,24 +1564,20 @@ async function saveInv(){
     }
   }
 
-  const{error}=editId?await sb.from('inventory').update(row).eq('id',editId):await sb.from('inventory').insert(row);
+  const{data:savedRows,error}=editId?await sb.from('inventory').update(row).eq('id',editId).select():await sb.from('inventory').insert(row).select();
   if(error){toast('Error: '+error.message,'err');return;}
 
   if(autoLogEntry){
     const{error:logErr}=await sb.from('item_life_log').insert(autoLogEntry);
     if(logErr)console.warn('Life log auto-entry failed:',logErr.message);
   }
+  if(moveEntry){
+    const itemId=(savedRows&&savedRows[0]&&savedRows[0].id)||editId;
+    const{error:movErr}=await sb.from('inventory_movements').insert({...moveEntry,item_id:itemId});
+    if(movErr)console.warn('Movement log failed (run the inventory_movements migration if you have not yet):',movErr.message);
+  }
 
   toast(editId?'Item updated ✓':'Item added ✓');closeModal('inv-modal');await loadAll();
-}
-
-async function saveStock(){
-  const g=id=>document.getElementById(id)?.value;
-  const row={month_year:g('s-month'),rm_opening_kg:parseFloat(g('s-rmop'))||0,rm_purchased_kg:parseFloat(g('s-rmbuy'))||0,rm_consumed_kg:parseFloat(g('s-rmcon'))||0,fg_opening_kg:parseFloat(g('s-fgop'))||0,fg_produced_kg:parseFloat(g('s-fgprod'))||0,fg_dispatched_kg:parseFloat(g('s-fgdis'))||0,updated_at:new Date().toISOString()};
-  if(!row.month_year){toast('Month required','err');return;}
-  const{error}=editId?await sb.from('stock_movements').update(row).eq('id',editId):await sb.from('stock_movements').insert(row);
-  if(error){toast('Error: '+error.message,'err');return;}
-  toast('Saved ✓');closeModal('stock-modal');await loadAll();
 }
 
 async function saveDispatch(){
@@ -1676,15 +1597,6 @@ async function saveBD(){
   const{error}=editId?await sb.from('breakdowns').update(row).eq('id',editId):await sb.from('breakdowns').insert(row);
   if(error){toast('Error: '+error.message,'err');return;}
   toast('Breakdown logged ✓');closeModal('bd-modal');await loadAll();
-}
-
-async function saveTask(){
-  const g=id=>document.getElementById(id)?.value;
-  const row={task_description:g('t-task'),assigned_to:g('t-owner'),priority:g('t-priority'),category:g('t-cat'),due_date:g('t-due')||null,notes:g('t-notes'),updated_at:new Date().toISOString()};
-  if(!row.task_description){toast('Task description required','err');return;}
-  const{error}=editId?await sb.from('tasks').update(row).eq('id',editId):await sb.from('tasks').insert({...row,status:'open'});
-  if(error){toast('Error: '+error.message,'err');return;}
-  toast(editId?'Task updated ✓':'Task added ✓');closeModal('task-modal');await loadAll();
 }
 
 async function deleteRow(table,id,label){
@@ -1714,12 +1626,6 @@ async function markRecvd(id){
   toast('Payment received recorded ✓');await loadAll();
 }
 
-async function toggleTaskDone(id,cur){
-  const ns=cur==='done'?'open':'done';
-  await sb.from('tasks').update({status:ns,updated_at:new Date().toISOString()}).eq('id',id);
-  toast(ns==='done'?'Task done ✓':'Task reopened');await loadAll();
-}
-
 // ===== RENDER FUNCTIONS =====
 function filterByMonth(arr,field,monthVal){
   if(!monthVal||monthVal==='all')return arr;
@@ -1744,8 +1650,6 @@ function renderMfgDashboard(){
   const fgStock=(fgOverride&&fgOverride.override_kg!=null)?Number(fgOverride.override_kg):fgCalc;
   const colourFG=(fgOverride&&fgOverride.override_colours)?fgOverride.override_colours:fgColourClosingAsOfMonth(m,fgRun);
   const isFgOverridden=!!(fgOverride&&(fgOverride.override_kg!=null||fgOverride.override_colours));
-  const p1=DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').length;
-  const p2=DATA.tasks.filter(r=>r.priority==='P2'&&r.status==='open').length;
   const critBD=DATA.bd.filter(r=>r.status==='Critical').length;
   const daysInMonth=30;
   const dayOfMonth=new Date().getDate();
@@ -2252,10 +2156,8 @@ function renderInventory(){
     <div class="mc" style="border-left:3px solid #dc2626;"><div class="lb">Out of stock</div><div class="vl tnum red">${outOfStock.length}</div><div class="sb">Order now</div></div>`;
 
   const searchQ=(document.getElementById('inv-search')?.value||'').toLowerCase();
-  const catQ=(document.getElementById('inv-cat-filter')?.value||'all');
   let filtered=sorted;
-  if(searchQ)filtered=filtered.filter(r=>r.item_name.toLowerCase().includes(searchQ)||(r.category||'').toLowerCase().includes(searchQ));
-  if(catQ!=='all')filtered=filtered.filter(r=>r.category===catQ);
+  if(searchQ)filtered=filtered.filter(r=>r.item_name.toLowerCase().includes(searchQ));
 
   let sl=1;
   document.getElementById('inv-tbody').innerHTML=filtered.map(r=>{
@@ -2291,6 +2193,78 @@ function renderInventory(){
         <button class="btn btn-sm btn-red" onclick="deleteRow('inventory','${r.id}','item')">🗑</button>
       </td></tr>`;
   }).join('')||'<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--txt2);">No items found</td></tr>';
+
+  // Monthly report — opening/in/out/closing per item
+  const reportMonth=getMonth('inv-report-month');
+  const report=computeInvMonthlyReport(reportMonth);
+  document.getElementById('inv-report-tbody').innerHTML=report.map(r=>`<tr>
+    <td>${r.name}</td>
+    <td class="tnum">${r.opening.toLocaleString('en-IN')}</td>
+    <td class="tnum" style="color:#15803d;">${r.in>0?'+'+r.in.toLocaleString('en-IN'):'—'}</td>
+    <td class="tnum" style="color:#dc2626;">${r.out>0?'−'+r.out.toLocaleString('en-IN'):'—'}</td>
+    <td class="tnum" style="font-weight:600;">${r.closing.toLocaleString('en-IN')}</td>
+  </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--txt2);">No items</td></tr>';
+}
+
+// Per-item opening/in/out/closing for a given month, worked backward from the item's current known
+// stock (always accurate "today") minus everything that's moved since — so it never needs a manual
+// anchor. Only movements logged from when the inventory_movements table was added are counted, so
+// months before that will show a correct closing/opening figure but no in/out detail.
+function computeInvMonthlyReport(m){
+  const[monShort,yr]=(m||'').split(' ');
+  const monIdx=MONTHS_SHORT.indexOf(monShort);
+  if(monIdx<0||!yr)return[];
+  const monthStart=new Date(parseInt(yr),monIdx,1).toISOString().split('T')[0];
+  const monthEnd=new Date(parseInt(yr),monIdx+1,0).toISOString().split('T')[0];
+  return DATA.inv.map(item=>{
+    const currentStock=Number(item.current_stock||0);
+    const moves=(DATA.invMoves||[]).filter(mv=>(item.id&&mv.item_id===item.id)||mv.item_name===item.item_name);
+    const afterMonth=moves.filter(mv=>mv.movement_date>monthEnd);
+    const netAfter=afterMonth.reduce((a,mv)=>a+(mv.direction==='IN'?Number(mv.qty):-Number(mv.qty)),0);
+    const closing=currentStock-netAfter;
+    const inMonth=moves.filter(mv=>mv.movement_date>=monthStart&&mv.movement_date<=monthEnd&&mv.direction==='IN').reduce((a,mv)=>a+Number(mv.qty),0);
+    const outMonth=moves.filter(mv=>mv.movement_date>=monthStart&&mv.movement_date<=monthEnd&&mv.direction==='OUT').reduce((a,mv)=>a+Number(mv.qty),0);
+    const opening=closing-inMonth+outMonth;
+    return{name:item.item_name,opening,in:inMonth,out:outMonth,closing};
+  }).sort((a,b)=>a.name.localeCompare(b.name));
+}
+
+function downloadInvReportPdf(){
+  const m=getMonth('inv-report-month');
+  const report=computeInvMonthlyReport(m);
+  const columns=[{label:'Item'},{label:'Opening',align:'right'},{label:'In',align:'right'},{label:'Out',align:'right'},{label:'Closing',align:'right'}];
+  const rows=report.map(r=>[r.name,r.opening.toLocaleString('en-IN'),r.in.toLocaleString('en-IN'),r.out.toLocaleString('en-IN'),r.closing.toLocaleString('en-IN')]);
+  exportTablePdf('Inventory Monthly Report — '+m,columns,rows,{orientation:'portrait'});
+}
+function downloadInvReportExcel(){
+  const m=getMonth('inv-report-month');
+  const report=computeInvMonthlyReport(m);
+  const columns=[{label:'Item'},{label:'Opening'},{label:'In'},{label:'Out'},{label:'Closing'}];
+  const rows=report.map(r=>[r.name,r.opening,r.in,r.out,r.closing]);
+  exportTableExcel('Inventory_Report_'+m.replace(' ','_')+'.xlsx','Monthly Report',columns,rows);
+}
+
+function downloadInventoryPdf(){
+  const sorted=[...DATA.inv].sort((a,b)=>a.item_name.localeCompare(b.item_name));
+  const columns=[{label:'Item'},{label:'Min level',align:'right'},{label:'In stock',align:'right'},{label:'Difference',align:'right'},{label:'Supplier'},{label:'Price',align:'right'},{label:'Last issue'},{label:'Days running',align:'right'}];
+  const rows=sorted.map(r=>{
+    const cs=Number(r.current_stock),ms=Number(r.minimum_stock),diff=cs-ms;
+    const lastIssue=r.last_out_date||null;
+    const daysRunning=lastIssue?Math.floor((TODAY-new Date(lastIssue))/86400000):null;
+    return[r.item_name,ms.toLocaleString('en-IN'),cs.toLocaleString('en-IN'),(diff>0?'+':'')+diff,r.supplier||'—',Number(r.rate_per_unit||0).toLocaleString('en-IN'),lastIssue?fmtDate(lastIssue):'—',daysRunning!=null?daysRunning+'d':'—'];
+  });
+  exportTablePdf('Spare Parts Inventory',columns,rows);
+}
+function downloadInventoryExcel(){
+  const sorted=[...DATA.inv].sort((a,b)=>a.item_name.localeCompare(b.item_name));
+  const columns=[{label:'Item'},{label:'Min level'},{label:'In stock'},{label:'Difference'},{label:'Supplier'},{label:'Price'},{label:'Last issue'},{label:'Days running'}];
+  const rows=sorted.map(r=>{
+    const cs=Number(r.current_stock),ms=Number(r.minimum_stock),diff=cs-ms;
+    const lastIssue=r.last_out_date||null;
+    const daysRunning=lastIssue?Math.floor((TODAY-new Date(lastIssue))/86400000):null;
+    return[r.item_name,ms,cs,diff,r.supplier||'',Number(r.rate_per_unit||0),lastIssue?fmtDate(lastIssue):'',daysRunning!=null?daysRunning:''];
+  });
+  exportTableExcel('Inventory.xlsx','Inventory',columns,rows);
 }
 
 // ===== ITEM HISTORY DRILL-DOWN (click an item name in Inventory) =====
@@ -2373,64 +2347,6 @@ async function saveLifeEntry(){
   if(currentHistoryItem){renderItemHistory();document.getElementById('item-history-modal').classList.add('open');}
 }
 
-function renderStock(){
-  const m=getMonth('stock-month');
-  // Auto-calculate FG produced from MIS entries for this month
-  const fgProducedAuto=filterByMonth(DATA.mis,'month_year',m).reduce((a,r)=>a+Number(r.total_production_kg||0),0);
-  // Auto-calculate FG dispatched from dispatch entries for this month
-  const fgDispatchedAuto=DATA.dispatches.filter(r=>r.month_year===m).reduce((a,r)=>a+Number(r.qty_kg||0),0);
-  // Update fg_produced and fg_dispatched silently in DB
-  const sm=DATA.stock.find(r=>r.month_year===m)||DATA.stock[0];
-  if(sm){
-    if(Math.abs(Number(sm.fg_produced_kg)-fgProducedAuto)>0.1||Math.abs(Number(sm.fg_dispatched_kg)-fgDispatchedAuto)>0.1){
-      sb.from('stock_movements').update({fg_produced_kg:fgProducedAuto,fg_dispatched_kg:fgDispatchedAuto,updated_at:new Date().toISOString()}).eq('id',sm.id).then(()=>{});
-    }
-    const rmClose=Number(sm.rm_opening_kg)+Number(sm.rm_purchased_kg)-Number(sm.rm_consumed_kg);
-    const fgClose=Number(sm.fg_opening_kg)+fgProducedAuto-fgDispatchedAuto;
-    document.getElementById('stock-metrics').innerHTML=`
-      <div class="mc"><div class="lb">RM Opening</div><div class="vl blue">${(Number(sm.rm_opening_kg)/1000).toFixed(1)} T</div></div>
-      <div class="mc"><div class="lb">RM Closing (auto)</div><div class="vl green">${(rmClose/1000).toFixed(1)} T</div></div>
-      <div class="mc"><div class="lb">FG Opening</div><div class="vl blue">${(Number(sm.fg_opening_kg)/1000).toFixed(1)} T</div></div>
-      <div class="mc"><div class="lb">FG Closing (auto)</div><div class="vl green">${(fgClose/1000).toFixed(1)} T</div></div>`;
-    document.getElementById('stock-flow-display').innerHTML=`
-      <div style="font-size:10px;color:var(--txt2);font-weight:600;margin-bottom:6px;">${sm.month_year} — Raw Material (Kg)</div>
-      <div class="sf">
-        <div class="sfb"><div class="sl">Opening</div><div class="sv blue">${Number(sm.rm_opening_kg).toLocaleString('en-IN')}</div></div>
-        <div class="sfa">+</div><div class="sfb"><div class="sl">Purchased</div><div class="sv green">${Number(sm.rm_purchased_kg).toLocaleString('en-IN')}</div></div>
-        <div class="sfa">−</div><div class="sfb"><div class="sl">Consumed</div><div class="sv amber">${Number(sm.rm_consumed_kg).toLocaleString('en-IN')}</div></div>
-        <div class="sfa">=</div><div class="sfb" style="background:#dcfce7;"><div class="sl" style="color:#15803d;">Closing (auto)</div><div class="sv green">${rmClose.toLocaleString('en-IN')}</div></div>
-      </div>
-      <div style="font-size:10px;color:var(--txt2);font-weight:600;margin:10px 0 6px;">Finished Goods (Kg)</div>
-      <div class="sf">
-        <div class="sfb"><div class="sl">Opening</div><div class="sv blue">${Number(sm.fg_opening_kg).toLocaleString('en-IN')}</div></div>
-        <div class="sfa">+</div><div class="sfb"><div class="sl">Produced</div><div class="sv green">${Number(sm.fg_produced_kg).toLocaleString('en-IN')}</div></div>
-        <div class="sfa">−</div><div class="sfb"><div class="sl">Dispatched</div><div class="sv amber">${Number(sm.fg_dispatched_kg).toLocaleString('en-IN')}</div></div>
-        <div class="sfa">=</div><div class="sfb" style="background:#dcfce7;"><div class="sl" style="color:#15803d;">Closing (auto)</div><div class="sv green">${fgClose.toLocaleString('en-IN')}</div></div>
-      </div>`;
-  }else{document.getElementById('stock-flow-display').innerHTML='<div style="padding:16px;color:var(--txt2);font-size:12px;">No stock data for this month. Click "+ Add month" to add.</div>';}
-
-  document.getElementById('stock-tbody').innerHTML=DATA.stock.map(r=>{
-    const rc=Number(r.rm_opening_kg)+Number(r.rm_purchased_kg)-Number(r.rm_consumed_kg);
-    const fc=Number(r.fg_opening_kg)+Number(r.fg_produced_kg)-Number(r.fg_dispatched_kg);
-    return`<tr>
-      <td>${r.month_year}</td>
-      <td>${Number(r.rm_opening_kg).toLocaleString('en-IN')}</td><td>${Number(r.rm_purchased_kg).toLocaleString('en-IN')}</td><td>${Number(r.rm_consumed_kg).toLocaleString('en-IN')}</td>
-      <td style="font-weight:700;color:#15803d;">${rc.toLocaleString('en-IN')}</td>
-      <td>${Number(r.fg_opening_kg).toLocaleString('en-IN')}</td><td>${Number(r.fg_produced_kg).toLocaleString('en-IN')}</td><td>${Number(r.fg_dispatched_kg).toLocaleString('en-IN')}</td>
-      <td style="font-weight:700;color:#15803d;">${fc.toLocaleString('en-IN')}</td>
-      <td style="white-space:nowrap"><button class="btn btn-sm" onclick="openModal('stock-modal','${r.id}')">✏</button> <button class="btn btn-sm btn-red" onclick="deleteRow('stock_movements','${r.id}','entry')">🗑</button></td>
-    </tr>`;
-  }).join('')||'<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--txt2);">No stock records yet</td></tr>';
-
-  destroyChart('rm');destroyChart('fg');
-  if(DATA.stock.length>0){
-    const rev=[...DATA.stock].reverse();
-    const labels=rev.map(r=>r.month_year);
-    charts.rm=new Chart(document.getElementById('rmChart'),{type:'bar',data:{labels,datasets:[{label:'Opening',data:rev.map(r=>Number(r.rm_opening_kg)),backgroundColor:'#3b82f6',borderRadius:3},{label:'Purchased',data:rev.map(r=>Number(r.rm_purchased_kg)),backgroundColor:'#1D9E75',borderRadius:3},{label:'Consumed',data:rev.map(r=>Number(r.rm_consumed_kg)),backgroundColor:'#f97316',borderRadius:3}]},options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:9},color:TC(),boxWidth:9}}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(0)+'T':v}}}}});
-    charts.fg=new Chart(document.getElementById('fgChart'),{type:'bar',data:{labels,datasets:[{label:'Opening',data:rev.map(r=>Number(r.fg_opening_kg)),backgroundColor:'#3b82f6',borderRadius:3},{label:'Produced',data:rev.map(r=>Number(r.fg_produced_kg)),backgroundColor:'#1D9E75',borderRadius:3},{label:'Dispatched',data:rev.map(r=>Number(r.fg_dispatched_kg)),backgroundColor:'#f97316',borderRadius:3}]},options:{...BO(),plugins:{legend:{display:true,labels:{font:{size:9},color:TC(),boxWidth:9}}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(0)+'T':v}}}}});
-  }
-}
-
 function renderDispatch(){
   const m=getMonth('dispatch-month');
   const disp=filterByMonth(DATA.dispatches,'month_year',m);
@@ -2472,33 +2388,19 @@ function renderDispatch(){
   }
 }
 
-function renderTasks(){
-  const fv=document.getElementById('task-filter')?.value||'all';
-  const filtered=DATA.tasks.filter(r=>fv==='all'?true:fv==='open'?r.status==='open':fv==='done'?r.status==='done':r.priority===fv);
-  const p1=DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').length;
-  const p2=DATA.tasks.filter(r=>r.priority==='P2'&&r.status==='open').length;
-  const done=DATA.tasks.filter(r=>r.status==='done').length;
-  document.getElementById('task-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Total</div><div class="vl">${DATA.tasks.length}</div></div>
-    <div class="mc"><div class="lb">P1 open</div><div class="vl red">${p1}</div></div>
-    <div class="mc"><div class="lb">P2 open</div><div class="vl amber">${p2}</div></div>
-    <div class="mc"><div class="lb">Done</div><div class="vl green">${done}</div></div>`;
-  document.getElementById('task-tbody').innerHTML=filtered.map((r,i)=>
-    `<tr style="${r.status==='done'?'opacity:.5;text-decoration:line-through;':''}">
-      <td>${i+1}</td><td>${r.task_description}</td><td>${r.assigned_to||'—'}</td>
-      <td>${prioBadge(r.priority)}</td><td>${r.category||'—'}</td>
-      <td>${r.due_date?fmtDate(r.due_date):'—'}</td>
-      <td>${badge(r.status,r.status==='done'?'green':'amber')}</td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-sm ${r.status==='done'?'':'btn-green'}" onclick="toggleTaskDone('${r.id}','${r.status}')">${r.status==='done'?'Reopen':'✓ Done'}</button>
-        <button class="btn btn-sm" onclick="openModal('task-modal','${r.id}')">✏</button>
-        <button class="btn btn-sm btn-red" onclick="deleteRow('tasks','${r.id}','task')">🗑</button>
-      </td></tr>`).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No tasks</td></tr>';
-  destroyChart('taskPie');destroyChart('taskCat');
-  const open=DATA.tasks.filter(r=>r.status==='open');
-  charts.taskPie=new Chart(document.getElementById('taskPie'),{type:'doughnut',data:{labels:['P1','P2','P3'],datasets:[{data:[open.filter(r=>r.priority==='P1').length,open.filter(r=>r.priority==='P2').length,open.filter(r=>r.priority==='P3').length],backgroundColor:['#dc2626','#d97706','#1D9E75'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
-  const cats=['Payment','Operations','Purchase','Maintenance','Sales','Admin','Other'];
-  charts.taskCat=new Chart(document.getElementById('taskCat'),{type:'bar',data:{labels:cats,datasets:[{data:cats.map(c=>open.filter(r=>r.category===c).length),backgroundColor:'#1D9E75',borderRadius:4}]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>Math.round(v)}}}}});
+function downloadDispatchPdf(){
+  const m=getMonth('dispatch-month');
+  const disp=[...filterByMonth(DATA.dispatches,'month_year',m)].sort((a,b)=>new Date(a.dispatch_date)-new Date(b.dispatch_date));
+  const columns=[{label:'Date'},{label:'Customer'},{label:'Material'},{label:'Colour'},{label:'Qty (Kg)',align:'right'},{label:'Rate/Kg',align:'right'},{label:'Amount',align:'right'},{label:'Vehicle'},{label:'LR No'},{label:'Invoice'},{label:'Status'}];
+  const rows=disp.map(r=>[fmtDate(r.dispatch_date),r.customer,r.material_type,r.colour||'—',Number(r.qty_kg).toLocaleString('en-IN'),Number(r.rate_per_kg).toLocaleString('en-IN'),Number(r.amount).toLocaleString('en-IN'),r.vehicle_no||'—',r.lr_no||'—',r.invoice_no||'—',r.status]);
+  exportTablePdf('Dispatch Log — '+m,columns,rows);
+}
+function downloadDispatchExcel(){
+  const m=getMonth('dispatch-month');
+  const disp=[...filterByMonth(DATA.dispatches,'month_year',m)].sort((a,b)=>new Date(a.dispatch_date)-new Date(b.dispatch_date));
+  const columns=[{label:'Date'},{label:'Customer'},{label:'Material'},{label:'Colour'},{label:'Qty (Kg)'},{label:'Rate/Kg'},{label:'Amount'},{label:'Vehicle'},{label:'LR No'},{label:'Invoice'},{label:'Status'}];
+  const rows=disp.map(r=>[fmtDate(r.dispatch_date),r.customer,r.material_type,r.colour||'',Number(r.qty_kg),Number(r.rate_per_kg),Number(r.amount),r.vehicle_no||'',r.lr_no||'',r.invoice_no||'',r.status]);
+  exportTableExcel('Dispatch_'+m.replace(' ','_')+'.xlsx','Dispatch',columns,rows);
 }
 
 // ===== TRADING RENDERS =====
@@ -2543,6 +2445,140 @@ function calcTrdMargin(){
   const el=document.getElementById('tr-margin-show');
   if(!el)return;
   el.textContent='Margin: ₹'+margin.toFixed(2)+'/Kg · Profit: '+fmtMoney(margin*qty);
+}
+
+// ===== TRADING ORDERS (tools & electrodes) =====
+function calcTrdOrderValues(){
+  const qty=parseFloat(document.getElementById('to-qty')?.value||0);
+  const cp=parseFloat(document.getElementById('to-cp')?.value||0);
+  const sp=parseFloat(document.getElementById('to-sp')?.value||0);
+  const costValue=qty*cp,saleValue=qty*sp,profit=saleValue-costValue;
+  const el=document.getElementById('to-calc-show');
+  if(!el)return;
+  el.textContent='Cost value: '+fmtMoney(costValue)+' · Sale value: '+fmtMoney(saleValue)+' · Profit: '+fmtMoney(profit);
+}
+
+function openTrdOrderModal(rowId){
+  editId=rowId;
+  document.getElementById('trd-order-modal-t').textContent=rowId?'Edit Order':'Add Order';
+  const dl=document.getElementById('trd-order-supplier-list');
+  if(dl)dl.innerHTML=[...new Set((DATA.trdOrders||[]).map(r=>r.supplier).filter(Boolean))].map(s=>`<option value="${s}">`).join('');
+  if(rowId){
+    const r=(DATA.trdOrders||[]).find(x=>x.id===rowId);
+    if(r){
+      document.getElementById('to-date').value=r.order_date;
+      document.getElementById('to-orderno').value=r.order_no||'';
+      document.getElementById('to-supplier').value=r.supplier||'';
+      document.getElementById('to-customer').value=r.customer||'';
+      document.getElementById('to-item').value=r.item||'';
+      document.getElementById('to-qty').value=r.qty;
+      document.getElementById('to-cp').value=r.cp||'';
+      document.getElementById('to-sp').value=r.sp||'';
+      document.getElementById('to-status').value=r.status||'Pending';
+      document.getElementById('to-notes').value=r.notes||'';
+    }
+  } else {
+    ['to-date','to-orderno','to-supplier','to-customer','to-item','to-qty','to-cp','to-sp','to-notes'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+    document.getElementById('to-status').value='Pending';
+    document.getElementById('to-date').value=new Date().toISOString().split('T')[0];
+  }
+  calcTrdOrderValues();
+  document.getElementById('trd-order-modal').classList.add('open');
+}
+
+async function saveTrdOrder(){
+  const g=id=>document.getElementById(id)?.value;
+  const qty=parseFloat(g('to-qty'))||0;
+  const cp=parseFloat(g('to-cp'))||0;
+  const sp=parseFloat(g('to-sp'))||0;
+  const row={
+    order_date:g('to-date'),
+    month_year:g('to-date')?fmtMonthYear(g('to-date')):'',
+    order_no:g('to-orderno')||'',
+    supplier:g('to-supplier')||'',
+    customer:g('to-customer')||'',
+    item:g('to-item')||'',
+    qty:qty,cp:cp,sp:sp,
+    cost_value:qty*cp,sale_value:qty*sp,profit:(qty*sp)-(qty*cp),
+    status:g('to-status')||'Pending',
+    notes:g('to-notes')||'',
+    updated_at:new Date().toISOString()
+  };
+  if(!row.order_date||!row.item){toast('Order date and item required','err');return;}
+  const{error}=editId?await sb.from('trading_orders').update(row).eq('id',editId):await sb.from('trading_orders').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast(editId?'Order updated ✓':'Order saved ✓');closeModal('trd-order-modal');await loadAll();
+}
+
+function renderTrdOrders(){
+  const m=getMonth('trd-orders-month');
+  const orders=filterByMonth(DATA.trdOrders||[],'month_year',m);
+  const sorted=[...orders].sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
+
+  const totalQty=sorted.reduce((a,r)=>a+Number(r.qty||0),0);
+  const totalCost=sorted.reduce((a,r)=>a+Number(r.cost_value||0),0);
+  const totalSale=sorted.reduce((a,r)=>a+Number(r.sale_value||0),0);
+  const totalProfit=sorted.reduce((a,r)=>a+Number(r.profit||0),0);
+  const pending=sorted.filter(r=>r.status==='Pending'||r.status==='Ordered').length;
+
+  document.getElementById('trd-orders-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Orders</div><div class="vl tnum">${sorted.length}</div></div>
+    <div class="mc"><div class="lb">Total qty</div><div class="vl tnum">${totalQty.toLocaleString('en-IN')}</div></div>
+    <div class="mc"><div class="lb">Cost value</div><div class="vl tnum blue">${fmtMoney(totalCost)}</div></div>
+    <div class="mc"><div class="lb">Sale value</div><div class="vl tnum">${fmtMoney(totalSale)}</div></div>
+    <div class="mc"><div class="lb">Profit</div><div class="vl tnum ${totalProfit>=0?'green':'red'}">${fmtMoney(totalProfit)}</div></div>
+    <div class="mc"><div class="lb">Pending / Ordered</div><div class="vl tnum amber">${pending}</div></div>`;
+
+  const sc={Pending:'b-amber',Ordered:'b-blue',Delivered:'b-green',Billed:'b-purple',Paid:'b-green',Cancelled:'b-red'};
+  document.getElementById('trd-orders-tbody').innerHTML=sorted.map((r,i)=>`<tr>
+    <td>${i+1}</td>
+    <td>${fmtDate(r.order_date)}</td>
+    <td>${r.order_no||'—'}</td>
+    <td>${r.supplier||'—'}</td>
+    <td>${r.customer||'—'}</td>
+    <td>${r.item}</td>
+    <td class="tnum">${Number(r.qty).toLocaleString('en-IN')}</td>
+    <td class="tnum">${Number(r.cp).toLocaleString('en-IN')}</td>
+    <td class="tnum">${Number(r.sp).toLocaleString('en-IN')}</td>
+    <td class="tnum">${fmtMoney(r.cost_value)}</td>
+    <td class="tnum">${fmtMoney(r.sale_value)}</td>
+    <td class="tnum" style="font-weight:600;color:${Number(r.profit)>=0?'#15803d':'#dc2626'};">${fmtMoney(r.profit)}</td>
+    <td><span class="badge ${sc[r.status]||'b-gray'}">${r.status}</span></td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-sm" onclick="openTrdOrderModal('${r.id}')">✏</button>
+      <button class="btn btn-sm btn-red" onclick="deleteRow('trading_orders','${r.id}','order')">🗑</button>
+    </td></tr>`).join('')||'<tr><td colspan="14" style="text-align:center;padding:20px;color:var(--txt2);">No orders for '+m+'</td></tr>';
+
+  // Supplier-wise breakdown — this month
+  const supGroups={};
+  sorted.forEach(r=>{
+    const s=r.supplier||'Unknown';
+    if(!supGroups[s])supGroups[s]={orders:0,qty:0,cost:0,sale:0,profit:0};
+    supGroups[s].orders++;
+    supGroups[s].qty+=Number(r.qty||0);
+    supGroups[s].cost+=Number(r.cost_value||0);
+    supGroups[s].sale+=Number(r.sale_value||0);
+    supGroups[s].profit+=Number(r.profit||0);
+  });
+  const supRows=Object.entries(supGroups).sort((a,b)=>b[1].sale-a[1].sale);
+  document.getElementById('trd-orders-supplier-tbody').innerHTML=supRows.map(([s,v])=>
+    `<tr><td>${s}</td><td class="tnum">${v.orders}</td><td class="tnum">${v.qty.toLocaleString('en-IN')}</td><td class="tnum">${fmtMoney(v.cost)}</td><td class="tnum">${fmtMoney(v.sale)}</td><td class="tnum" style="font-weight:600;color:${v.profit>=0?'#15803d':'#dc2626'};">${fmtMoney(v.profit)}</td></tr>`
+  ).join('')||'<tr><td colspan="6" style="text-align:center;padding:14px;color:var(--txt2);">No orders this month</td></tr>';
+}
+
+function downloadTrdOrdersPdf(){
+  const m=getMonth('trd-orders-month');
+  const sorted=[...filterByMonth(DATA.trdOrders||[],'month_year',m)].sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
+  const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty',align:'right'},{label:'CP',align:'right'},{label:'SP',align:'right'},{label:'Cost value',align:'right'},{label:'Sale value',align:'right'},{label:'Profit',align:'right'},{label:'Status'}];
+  const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'—',r.supplier||'—',r.customer||'—',r.item,Number(r.qty).toLocaleString('en-IN'),Number(r.cp).toLocaleString('en-IN'),Number(r.sp).toLocaleString('en-IN'),Number(r.cost_value).toLocaleString('en-IN'),Number(r.sale_value).toLocaleString('en-IN'),Number(r.profit).toLocaleString('en-IN'),r.status]);
+  exportTablePdf('Trading Orders — '+m,columns,rows);
+}
+function downloadTrdOrdersExcel(){
+  const m=getMonth('trd-orders-month');
+  const sorted=[...filterByMonth(DATA.trdOrders||[],'month_year',m)].sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
+  const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty'},{label:'CP'},{label:'SP'},{label:'Cost value'},{label:'Sale value'},{label:'Profit'},{label:'Status'}];
+  const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'',r.supplier||'',r.customer||'',r.item,Number(r.qty),Number(r.cp),Number(r.sp),Number(r.cost_value),Number(r.sale_value),Number(r.profit),r.status]);
+  exportTableExcel('Trading_Orders_'+m.replace(' ','_')+'.xlsx','Trading Orders',columns,rows);
 }
 
 function openTrdRegModal(rowId){
@@ -3513,7 +3549,7 @@ function renderGPTable(){
       <td>${fmtDate(r.dispatch_date)}</td>
       <td>${r.customer||'—'}<br><small style="color:var(--txt2)">${addr}</small></td>
       <td>${r.material_type||'—'}</td>
-      <td>${Number(r.qty_kg||0).toLocaleString('en-IN')}</td>
+      <td class="tnum">${Number(r.qty_kg||0).toLocaleString('en-IN')}</td>
       <td>${r.lr_no||'—'}</td>
       <td>${r.vehicle_no||'—'}</td>
       <td style="white-space:nowrap">
@@ -3523,6 +3559,23 @@ function renderGPTable(){
       </td>
     </tr>`;
   }).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No gate passes yet</td></tr>';
+}
+
+function downloadGpRegisterPdf(){
+  const columns=[{label:'GP No.'},{label:'Date'},{label:'Party'},{label:'Material'},{label:'Qty (Kg)',align:'right'},{label:'Bill/LR no.'},{label:'Vehicle'}];
+  const rows=GP_DATA.map(r=>{
+    const gpNo=(r.invoice_no||'').replace('GP2627','GP/26-27/');
+    return[gpNo||r.invoice_no||'—',fmtDate(r.dispatch_date),r.customer||'—',r.material_type||'—',Number(r.qty_kg||0).toLocaleString('en-IN'),r.lr_no||'—',r.vehicle_no||'—'];
+  });
+  exportTablePdf('Gate Pass Register',columns,rows);
+}
+function downloadGpRegisterExcel(){
+  const columns=[{label:'GP No.'},{label:'Date'},{label:'Party'},{label:'Material'},{label:'Qty (Kg)'},{label:'Bill/LR no.'},{label:'Vehicle'}];
+  const rows=GP_DATA.map(r=>{
+    const gpNo=(r.invoice_no||'').replace('GP2627','GP/26-27/');
+    return[gpNo||r.invoice_no||'',fmtDate(r.dispatch_date),r.customer||'',r.material_type||'',Number(r.qty_kg||0),r.lr_no||'',r.vehicle_no||''];
+  });
+  exportTableExcel('Gate_Pass_Register.xlsx','Gate Passes',columns,rows);
 }
 
 async function saveGatePass(){
@@ -3720,8 +3773,8 @@ async function renderBreakdownPage(){
   const sc={Pending:'b-amber','In Progress':'b-blue',Resolved:'b-green',Critical:'b-red'};
   document.getElementById('bd-full-tbody').innerHTML=[...bd].sort((a,b)=>new Date(b.breakdown_date)-new Date(a.breakdown_date)).map(r=>`<tr>
     <td>${fmtDate(r.breakdown_date)}</td><td><strong>${r.machine}</strong></td><td>${r.shift||'Day'}</td>
-    <td>${r.downtime_hours}h</td><td>${r.reason}</td><td>${r.action_taken}</td>
-    <td>${r.cost?fmtMoney(r.cost):'—'}</td>
+    <td class="tnum">${r.downtime_hours}h</td><td>${r.reason}</td><td>${r.action_taken}</td>
+    <td class="tnum">${r.cost?fmtMoney(r.cost):'—'}</td>
     <td><span class="badge ${sc[r.status]||'b-gray'}">${r.status}</span></td>
     <td style="white-space:nowrap">
       <button class="btn btn-sm" onclick="openModal('bd-modal','${r.id}')">✏</button>
@@ -3730,353 +3783,36 @@ async function renderBreakdownPage(){
   destroyChart('bdPie2');destroyChart('bdBar2');
   const mach=['Jumbo Cutter','Grinder','Washing Line','Dryer','Agglo 1','Agglo 2','Extruder','Dana Cutter'];
   if(document.getElementById('bdPie')){
-    charts.bdPie2=new Chart(document.getElementById('bdPie'),{type:'doughnut',data:{labels:mach,datasets:[{data:mach.map(m=>bd.filter(r=>r.machine===m).length),backgroundColor:['#1D9E75','#3b82f6','#dc2626','#d97706','#6b7280','#8b5cf6','#f59e0b','#10b981'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
+    charts.bdPie2=new Chart(document.getElementById('bdPie'),{type:'doughnut',data:{labels:mach,datasets:[{data:mach.map(m=>bd.filter(r=>r.machine===m).length),backgroundColor:['#1D9E75','#3b82f6','#dc2626','#d97706','#6b7280','#8b5cf6','#f59e0b','#10b981'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:ctx=>ctx.dataset.data[ctx.dataIndex]>0}},cutout:'55%'}});
   }
   if(document.getElementById('bdBar')){
-    charts.bdBar2=new Chart(document.getElementById('bdBar'),{type:'bar',data:{labels:mach.map(m=>m.split(' ')[0]),datasets:[{data:mach.map(m=>bd.filter(r=>r.machine===m).reduce((a,r)=>a+Number(r.downtime_hours||0),0)),backgroundColor:'#dc2626',borderRadius:4}]},options:{...BO(),plugins:{legend:{display:false}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}});
+    charts.bdBar2=new Chart(document.getElementById('bdBar'),{type:'bar',data:{labels:mach.map(m=>m.split(' ')[0]),datasets:[{data:mach.map(m=>bd.filter(r=>r.machine===m).reduce((a,r)=>a+Number(r.downtime_hours||0),0)),backgroundColor:'#dc2626',borderRadius:4}]},options:{...BO(),plugins:{legend:{display:false},datalabels:{display:ctx=>ctx.dataset.data[ctx.dataIndex]>0,formatter:v=>v.toFixed(1)+'h'}},scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v+'h'}}}}});
   }
 }
 
-// ===== COMPONENTS PAGE =====
-async function renderComponentsPage(){
-  const mf=document.getElementById('comp-machine-filter')?.value||'all';
-  const{data}=await sb.from('machine_components').select('*').order('machine_name').order('component_name');
-  const all=data||[];
-  const filtered=mf==='all'?all:all.filter(r=>r.machine_name===mf);
-  const critical=filtered.filter(r=>r.condition==='Critical').length;
-  const lowStock=filtered.filter(r=>r.qty_in_stock<=r.reorder_level&&r.reorder_level>0).length;
-  document.getElementById('comp-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Total components</div><div class="vl">${filtered.length}</div></div>
-    <div class="mc"><div class="lb">Critical condition</div><div class="vl red">${critical}</div></div>
-    <div class="mc"><div class="lb">Low stock parts</div><div class="vl amber">${lowStock}</div></div>
-    <div class="mc"><div class="lb">Machines covered</div><div class="vl">${[...new Set(all.map(r=>r.machine_name))].length}</div></div>`;
-  const condCol={Good:'b-green',Warning:'b-amber',Critical:'b-red','Just Replaced':'b-blue'};
-  document.getElementById('comp-full-tbody').innerHTML=filtered.map(r=>{
-    const isLow=r.qty_in_stock<=r.reorder_level&&r.reorder_level>0;
-    const daysLeft=r.last_replaced_date&&r.expected_life_days?r.expected_life_days-Math.floor((new Date()-new Date(r.last_replaced_date))/86400000):null;
-    return`<tr style="${r.condition==='Critical'?'background:#fef2f2;':isLow?'background:#fffbeb;':''}">
-      <td><strong>${r.machine_name}</strong></td>
-      <td>${r.component_name}</td>
-      <td>${r.last_replaced_date?fmtDate(r.last_replaced_date):'—'}</td>
-      <td>${daysLeft!==null?`<span style="color:${daysLeft<10?'#dc2626':'#1D9E75'}">${daysLeft}d left</span>`:'—'}</td>
-      <td><span class="badge ${condCol[r.condition]||'b-gray'}">${r.condition}</span></td>
-      <td style="color:${isLow?'#dc2626':'inherit'};font-weight:${isLow?'700':'400'}">${r.qty_in_stock||0}</td>
-      <td>${r.reorder_level||1}</td>
-      <td>${r.replacement_cost?fmtMoney(r.replacement_cost):'—'}</td>
-      <td>${r.supplier||'—'}</td>
-      <td>${r.notes||'—'}</td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-sm" onclick="editComponentGlobal('${r.id}')">✏</button>
-        <button class="btn btn-sm btn-red" onclick="deleteRow('machine_components','${r.id}','component')">🗑</button>
-      </td></tr>`;
-  }).join('')||'<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--txt2);">No components yet — run the machine knowledge SQL to pre-fill</td></tr>';
+function downloadBreakdownPdf(){
+  const m=getMonth('bd-month');
+  const bd=[...DATA.bd].filter(r=>{
+    if(!m||m==='all')return true;
+    const d=new Date(r.breakdown_date);
+    return(MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear())===m;
+  }).sort((a,b)=>new Date(a.breakdown_date)-new Date(b.breakdown_date));
+  const columns=[{label:'Date'},{label:'Machine'},{label:'Shift'},{label:'Downtime',align:'right'},{label:'Reason'},{label:'Action taken'},{label:'Cost',align:'right'},{label:'Status'}];
+  const rows=bd.map(r=>[fmtDate(r.breakdown_date),r.machine,r.shift||'Day',r.downtime_hours+'h',r.reason,r.action_taken,r.cost?Number(r.cost).toLocaleString('en-IN'):'—',r.status]);
+  exportTablePdf('Breakdown Log — '+(m&&m!=='all'?m:'All time'),columns,rows);
+}
+function downloadBreakdownExcel(){
+  const m=getMonth('bd-month');
+  const bd=[...DATA.bd].filter(r=>{
+    if(!m||m==='all')return true;
+    const d=new Date(r.breakdown_date);
+    return(MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear())===m;
+  }).sort((a,b)=>new Date(a.breakdown_date)-new Date(b.breakdown_date));
+  const columns=[{label:'Date'},{label:'Machine'},{label:'Shift'},{label:'Downtime (h)'},{label:'Reason'},{label:'Action taken'},{label:'Cost'},{label:'Status'}];
+  const rows=bd.map(r=>[fmtDate(r.breakdown_date),r.machine,r.shift||'Day',Number(r.downtime_hours||0),r.reason,r.action_taken,Number(r.cost||0),r.status]);
+  exportTableExcel('Breakdown_Log_'+(m&&m!=='all'?m.replace(' ','_'):'All').replace(' ','_')+'.xlsx','Breakdowns',columns,rows);
 }
 
-async function editComponentGlobal(id){
-  const{data}=await sb.from('machine_components').select('*').eq('id',id).single();
-  if(!data)return;
-  currentMachine=data.machine_name;
-  editId=id;
-  document.getElementById('comp-modal-t').textContent='Edit Component';
-  document.getElementById('cp-machine').value=data.machine_name||'';
-  document.getElementById('cp-name').value=data.component_name;
-  document.getElementById('cp-date').value=data.last_replaced_date||'';
-  document.getElementById('cp-life').value=data.expected_life_days||'';
-  document.getElementById('cp-cond').value=data.condition;
-  document.getElementById('cp-cost').value=data.replacement_cost||'';
-  document.getElementById('cp-qty').value=data.qty_in_stock||0;
-  document.getElementById('cp-reorder').value=data.reorder_level||1;
-  document.getElementById('cp-supplier').value=data.supplier||'';
-  document.getElementById('cp-notes').value=data.notes||'';
-  document.getElementById('comp-modal').classList.add('open');
-}
-
-// ===== MAINTENANCE PAGE =====
-async function renderMaintenancePage(){
-  const mf=document.getElementById('maint-machine-filter')?.value||'all';
-  const ff=document.getElementById('maint-freq-filter')?.value||'all';
-  const{data}=await sb.from('machine_maintenance').select('*').order('machine_name').order('frequency');
-  const all=data||[];
-  let filtered=mf==='all'?all:all.filter(r=>r.machine_name===mf);
-  if(ff!=='all')filtered=filtered.filter(r=>r.frequency===ff);
-  const overdue=filtered.filter(r=>{
-    if(!r.last_done_date)return true;
-    const daysAgo=Math.floor((new Date()-new Date(r.last_done_date))/86400000);
-    const limit={Daily:1,Weekly:7,Monthly:30,Quarterly:90};
-    return daysAgo>(limit[r.frequency]||7);
-  }).length;
-  document.getElementById('maint-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Total checks</div><div class="vl">${filtered.length}</div></div>
-    <div class="mc"><div class="lb">Overdue</div><div class="vl red">${overdue}</div></div>
-    <div class="mc"><div class="lb">Daily checks</div><div class="vl">${filtered.filter(r=>r.frequency==='Daily').length}</div></div>
-    <div class="mc"><div class="lb">Weekly checks</div><div class="vl">${filtered.filter(r=>r.frequency==='Weekly').length}</div></div>`;
-  const freqCol={Daily:'b-blue',Weekly:'b-green',Monthly:'b-amber',Quarterly:'b-purple'};
-  document.getElementById('maint-full-tbody').innerHTML=filtered.map(r=>{
-    const daysAgo=r.last_done_date?Math.floor((new Date()-new Date(r.last_done_date))/86400000):null;
-    const limit={Daily:1,Weekly:7,Monthly:30,Quarterly:90};
-    const isOverdue=daysAgo===null||daysAgo>(limit[r.frequency]||7);
-    return`<tr style="${isOverdue?'background:#fef2f2;':''}">
-      <td><strong>${r.machine_name}</strong></td>
-      <td>${r.check_name}</td>
-      <td><span class="badge ${freqCol[r.frequency]||'b-gray'}">${r.frequency}</span></td>
-      <td>${r.last_done_date?fmtDate(r.last_done_date):'Never'}</td>
-      <td style="color:${isOverdue?'#dc2626':'inherit'}">${daysAgo!==null?daysAgo+'d ago':'—'}</td>
-      <td>${r.done_by||'—'}</td>
-      <td>${isOverdue?'<span class="badge b-red">Overdue</span>':'<span class="badge b-green">OK</span>'}</td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-sm btn-green" onclick="markCheckDoneGlobal('${r.id}')">✓ Done</button>
-        <button class="btn btn-sm btn-red" onclick="deleteRow('machine_maintenance','${r.id}','check')">🗑</button>
-      </td></tr>`;
-  }).join('')||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--txt2);">No maintenance checks yet</td></tr>';
-}
-
-async function markCheckDoneGlobal(id){
-  const today=new Date().toISOString().split('T')[0];
-  const who=prompt('Done by:','');
-  const{error}=await sb.from('machine_maintenance').update({last_done_date:today,done_by:who||'',updated_at:new Date().toISOString()}).eq('id',id);
-  if(error){toast('Error','err');return;}
-  toast('Marked done ✓');renderMaintenancePage();
-}
-
-// ===== PRODUCTION PLAN =====
-let planWeekStart=null;
-let PLAN_ORDERS=[];
-let PLAN_DAILY=[];
-
-function getWeekStart(date){
-  const d=new Date(date);
-  const day=d.getDay();
-  const diff=d.getDate()-day+(day===0?-6:1);
-  d.setDate(diff);d.setHours(0,0,0,0);
-  return d;
-}
-
-async function renderPlan(){
-  const m=getMonth('plan-month');
-  if(!planWeekStart)planWeekStart=getWeekStart(new Date());
-
-  // Load data
-  const[orders,daily]= await Promise.all([
-    sb.from('production_orders').select('*').eq('month_year',m).order('created_at'),
-    sb.from('production_plan_daily').select('*').order('plan_date')
-  ]);
-  PLAN_ORDERS=orders.data||[];
-  PLAN_DAILY=daily.data||[];
-
-  const mis=filterByMonth(DATA.mis,'month_year',m);
-  const totalProd=mis.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
-  const totalTarget=mis.reduce((a,r)=>a+Number(r.target_kg||5000),0);// from MIS
-  const confirmedOrders=PLAN_ORDERS.filter(r=>r.order_type==='confirmed').reduce((a,r)=>a+Number(r.ordered_kg||0),0);
-  const daysInMonth=new Date(new Date().getFullYear(),new Date().getMonth()+1,0).getDate();
-  const remainDays=daysInMonth-new Date().getDate();
-  const monthlyTarget=PLAN_DAILY.length>0?PLAN_DAILY.reduce((a,r)=>a+Number(r.target_kg||1500),0):daysInMonth*1500;
-
-  document.getElementById('plan-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Monthly target</div><div class="vl">${Number(monthlyTarget).toLocaleString('en-IN')} Kg</div><div class="sb">${daysInMonth} days × 1,500 Kg default</div></div>
-    <div class="mc"><div class="lb">Produced so far</div><div class="vl green">${Number(totalProd).toLocaleString('en-IN')} Kg</div><div class="sb">${monthlyTarget>0?Math.round(totalProd/monthlyTarget*100):0}% of target</div></div>
-    <div class="mc"><div class="lb">Confirmed orders</div><div class="vl blue">${Number(confirmedOrders).toLocaleString('en-IN')} Kg</div><div class="sb">${PLAN_ORDERS.filter(r=>r.order_type==='confirmed').length} orders</div></div>
-    <div class="mc"><div class="lb">Balance to produce</div><div class="vl ${monthlyTarget-totalProd>0?'amber':'green'}">${Number(Math.max(0,monthlyTarget-totalProd)).toLocaleString('en-IN')} Kg</div><div class="sb">${remainDays} days remaining</div></div>`;
-
-  renderWeeklyGrid();
-  renderOrderBook();
-  renderBenchmarks();
-
-  // AI suggestions
-  const sug=document.getElementById('plan-ai-suggestions');
-  if(sug)sug.innerHTML=['What should my target be this week?','How is my efficiency compared to last month?','Which machine is hurting my production most?','Am I on track to meet my monthly target?'].map(q=>`<button class="btn btn-sm" onclick="document.getElementById('plan-ai-input').value='${q}';askPlanAI();">${q}</button>`).join('');
-}
-
-function renderWeeklyGrid(){
-  const ws=new Date(planWeekStart);
-  const days=[];
-  for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);days.push(d);}
-  const today=new Date();today.setHours(0,0,0,0);
-
-  document.getElementById('week-label').textContent=`Week — ${days[0].toLocaleDateString('en-IN',{day:'2-digit',month:'short'})} to ${days[6].toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}`;
-
-  const grid=document.getElementById('weekly-grid');
-  const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-
-  let html=`<table style="width:100%;border-collapse:collapse;font-size:12px;">
-    <thead><tr>
-      ${days.map((d,i)=>{
-        const isToday=d.getTime()===today.getTime();
-        return`<th style="padding:8px;border:1px solid var(--bdr);text-align:center;background:${isToday?'#eff6ff':'var(--bg3)'};color:${isToday?'#1d4ed8':'var(--txt2)'};font-size:11px;">${dayNames[i]}<br>${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}</th>`;
-      }).join('')}
-    </tr></thead>
-    <tbody>`;
-
-  // Target row
-  html+=`<tr><td colspan="7" style="padding:4px 8px;font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;border:1px solid var(--bdr);background:var(--bg3);">Daily target</td></tr><tr>`;
-  days.forEach(d=>{
-    const isToday=d.getTime()===today.getTime();
-    const dateStr=d.toISOString().split('T')[0];
-    const plan=PLAN_DAILY.find(r=>r.plan_date===dateStr);
-    const tgt=plan?Number(plan.target_kg):1500;
-    html+=`<td style="padding:10px 8px;border:1px solid var(--bdr);text-align:center;background:${isToday?'#eff6ff':''};"><div style="font-size:14px;font-weight:700;color:#1D9E75;">${tgt.toLocaleString('en-IN')}</div><div style="font-size:10px;color:var(--txt2);">Kg</div>${plan?.notes?`<div style="font-size:10px;color:#d97706;margin-top:2px;">${plan.notes}</div>`:''}</td>`;
-  });
-  html+=`</tr>`;
-
-  // Actual row
-  html+=`<tr><td colspan="7" style="padding:4px 8px;font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;border:1px solid var(--bdr);background:var(--bg3);">Actual production</td></tr><tr>`;
-  days.forEach(d=>{
-    const isToday=d.getTime()===today.getTime();
-    const dateStr=d.toISOString().split('T')[0];
-    const misEntry=DATA.mis.find(r=>r.entry_date===dateStr);
-    const plan=PLAN_DAILY.find(r=>r.plan_date===dateStr);
-    const tgt=plan?Number(plan.target_kg):1500;
-    const isFuture=d>today;
-    if(isFuture){
-      html+=`<td style="padding:10px 8px;border:1px solid var(--bdr);text-align:center;"><div style="font-size:12px;color:var(--txt3);">—</div></td>`;
-    } else if(isToday){
-      html+=`<td style="padding:10px 8px;border:1px solid var(--bdr);text-align:center;background:#eff6ff;"><div style="font-size:12px;color:#1d4ed8;font-weight:600;">${misEntry?Number(misEntry.total_production_kg).toLocaleString('en-IN')+' Kg':'In progress...'}</div></td>`;
-    } else if(misEntry){
-      const actual=Number(misEntry.total_production_kg);
-      const hit=actual>=tgt;
-      html+=`<td style="padding:10px 8px;border:1px solid var(--bdr);text-align:center;background:${hit?'#f0fdf4':'#fef2f2'};"><div style="font-size:14px;font-weight:700;color:${hit?'#15803d':'#dc2626'};">${actual.toLocaleString('en-IN')}</div><div style="font-size:10px;color:${hit?'#15803d':'#dc2626'};">${hit?'✓ Hit':'✗ Missed'}</div></td>`;
-    } else {
-      html+=`<td style="padding:10px 8px;border:1px solid var(--bdr);text-align:center;"><div style="font-size:11px;color:var(--txt3);">No entry</div></td>`;
-    }
-  });
-  html+=`</tr></tbody></table>`;
-  grid.innerHTML=html;
-}
-
-function changeWeek(dir){
-  planWeekStart=new Date(planWeekStart);
-  planWeekStart.setDate(planWeekStart.getDate()+(dir*7));
-  renderWeeklyGrid();
-}
-
-function renderOrderBook(){
-  const tb=document.getElementById('order-tbody');
-  const summary=document.getElementById('order-summary');
-  if(summary)summary.textContent=PLAN_ORDERS.length+' orders · '+PLAN_ORDERS.filter(r=>r.status!=='complete').length+' active';
-  if(!tb)return;
-  tb.innerHTML=PLAN_ORDERS.map(r=>{
-    const balance=Number(r.ordered_kg||0)-Number(r.dispatched_kg||0);
-    const prodShort=Number(r.produced_kg||0)<Number(r.ordered_kg||0);
-    let st,sc;
-    if(Number(r.dispatched_kg)>=Number(r.ordered_kg)){st='Complete';sc='b-green';}
-    else if(prodShort){st='Production short';sc='b-red';}
-    else{st='Dispatch pending';sc='b-amber';}
-    return`<tr>
-      <td><span class="badge ${r.order_type==='confirmed'?'b-blue':'b-gray'}">${r.order_type==='confirmed'?'Order':'Stock'}</span></td>
-      <td>${r.customer||'—'}</td><td>${r.material||'—'}</td>
-      <td>${Number(r.ordered_kg||0).toLocaleString('en-IN')}</td>
-      <td style="color:#1D9E75;">${Number(r.produced_kg||0).toLocaleString('en-IN')}</td>
-      <td>${Number(r.dispatched_kg||0).toLocaleString('en-IN')}</td>
-      <td style="font-weight:700;color:${balance>0?'#d97706':'#15803d'};">${balance.toLocaleString('en-IN')}</td>
-      <td>${r.due_date?fmtDate(r.due_date):'—'}</td>
-      <td><span class="badge ${sc}">${st}</span></td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-sm" onclick="openModal('order-modal','${r.id}')">✏</button>
-        <button class="btn btn-sm btn-red" onclick="deleteRow('production_orders','${r.id}','order')">🗑</button>
-      </td></tr>`;
-  }).join('')||'<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--txt2);">No orders yet — click "+ Add order" to start</td></tr>';
-}
-
-function renderBenchmarks(){
-  const el=document.getElementById('benchmarks-content');
-  if(!el)return;
-  const mis=DATA.mis;
-  const avgEff=mis.length>0?Math.round(mis.reduce((a,r)=>a+Number(r.total_production_kg||0),0)/mis.reduce((a,r)=>a+Number(r.target_kg||5000),0)*100):0;
-  el.innerHTML=`
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">
-      <div style="background:var(--bg3);border-radius:var(--rad);padding:12px;">
-        <div style="font-size:10px;color:var(--txt2);text-transform:uppercase;margin-bottom:4px;">Your avg efficiency</div>
-        <div style="font-size:22px;font-weight:700;color:${avgEff>=80?'#1D9E75':avgEff>=60?'#d97706':'#dc2626'};">${avgEff}%</div>
-        <div style="font-size:10px;color:var(--txt2);margin-top:3px;">Industry good: 80%+</div>
-      </div>
-      <div style="background:#dcfce7;border-radius:var(--rad);padding:12px;">
-        <div style="font-size:10px;color:#15803d;text-transform:uppercase;margin-bottom:4px;">Target efficiency</div>
-        <div style="font-size:22px;font-weight:700;color:#15803d;">85%+</div>
-        <div style="font-size:10px;color:#15803d;margin-top:3px;">World-class recycling plants</div>
-      </div>
-      <div style="background:#dbeafe;border-radius:var(--rad);padding:12px;">
-        <div style="font-size:10px;color:#1d4ed8;text-transform:uppercase;margin-bottom:4px;">Optimal daily target</div>
-        <div style="font-size:22px;font-weight:700;color:#1d4ed8;">1,500+ Kg</div>
-        <div style="font-size:10px;color:#1d4ed8;margin-top:3px;">For your line capacity</div>
-      </div>
-    </div>
-    <div style="font-size:12px;color:var(--txt2);line-height:1.8;">
-      <strong>Key benchmarks for plastic recycling (PP/HDPE/LDPE granules):</strong><br>
-      • <strong>Machine uptime target:</strong> 85%+ per machine. Below 70% on any single machine is a productivity problem.<br>
-      • <strong>Agglo efficiency:</strong> Blade life typically 15–30 days depending on material. Proactive replacement beats emergency shutdowns every time.<br>
-      • <strong>Washing line:</strong> Water quality directly affects granule purity. Change water every 4–6 tonnes processed.<br>
-      • <strong>Extruder output:</strong> 150–200 Kg/hour is a typical range for a mid-size extruder. Below 130 = investigate screw wear or screen pack blockage.<br>
-      • <strong>Manpower efficiency:</strong> Aim for 50–70 Kg per worker per shift. Track this from your MIS data.<br>
-      • <strong>Downtime target:</strong> Total planned + unplanned downtime should be under 15% of available hours.<br>
-      • <strong>Yield rate:</strong> Input raw material to output granules — good plants achieve 85–92% yield. Track RM consumed vs FG produced monthly.
-    </div>`;
-}
-
-async function saveOrder(){
-  const g=id=>document.getElementById(id)?.value||'';
-  const row={month_year:g('or-month'),customer:g('or-customer'),material:g('or-material'),ordered_kg:parseFloat(g('or-qty'))||0,produced_kg:parseFloat(g('or-produced'))||0,dispatched_kg:parseFloat(g('or-dispatched'))||0,due_date:g('or-due')||null,order_type:g('or-type'),notes:g('or-notes'),updated_at:new Date().toISOString()};
-  const{error}=editId?await sb.from('production_orders').update(row).eq('id',editId):await sb.from('production_orders').insert(row);
-  if(error){toast('Error: '+error.message,'err');return;}
-  toast('Order saved ✓');closeModal('order-modal');await renderPlan();editId=null;
-}
-
-async function saveDailyTargets(){
-  const inputs=document.querySelectorAll('.daily-tgt-input');
-  const updates=[];
-  inputs.forEach(inp=>{
-    const date=inp.dataset.date;
-    const tgt=parseFloat(inp.value)||1500;
-    const notes=document.getElementById('notes-'+date)?.value||'';
-    updates.push({plan_date:date,month_year:fmtMonthYear(date),target_kg:tgt,notes,updated_at:new Date().toISOString()});
-  });
-  for(const u of updates){
-    await sb.from('production_plan_daily').upsert(u,{onConflict:'plan_date'});
-  }
-  toast('Daily targets saved ✓');closeModal('daily-target-modal');renderWeeklyGrid();
-}
-
-function openPlanAI(){
-  const panel=document.getElementById('plan-ai-panel');
-  if(panel)panel.style.display=panel.style.display==='none'?'block':'none';
-  if(!document.getElementById('plan-ai-messages').innerHTML){
-    document.getElementById('plan-ai-messages').innerHTML=`<div style="color:var(--txt2);font-size:12px;padding:8px;background:var(--bg3);border-radius:var(--rad);">Hi Rohit! I have access to your MIS data, production history, and machine health. Ask me anything about your production.</div>`;
-  }
-}
-
-async function askPlanAI(){
-  const input=document.getElementById('plan-ai-input');
-  const q=input.value.trim();
-  if(!q)return;
-  const msgs=document.getElementById('plan-ai-messages');
-  msgs.innerHTML+=`<div style="text-align:right;margin:8px 0;"><span style="background:#1D9E75;color:#fff;padding:6px 10px;border-radius:var(--rad);font-size:12px;display:inline-block;">${q}</span></div>`;
-  input.value='';
-  msgs.innerHTML+=`<div id="ai-thinking" style="color:var(--txt2);font-size:12px;padding:8px;">Thinking...</div>`;
-  msgs.scrollTop=msgs.scrollHeight;
-
-  // Build context from real data
-  const mis=DATA.mis.slice(0,10);
-  const totalProd=mis.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
-  const avgEff=mis.length>0?Math.round(totalProd/mis.reduce((a,r)=>a+Number(r.target_kg||5000),0)*100):0;
-  const critBD=DATA.bd.filter(r=>r.status==='Critical').map(r=>r.machine+': '+r.reason).join(', ')||'none';
-
-  const context=`You are a production advisor for Saatvik Enterprises, a plastic recycling factory in Durgapur making PP/HDPE/LDPE granules. Process: FIBC bag cutting → grinding → washing → drying → agglomeration → extrusion → granules. Current data: ${mis.length} MIS entries, avg efficiency ${avgEff}%, total production ${totalProd.toLocaleString()} Kg, critical breakdowns: ${critBD}, open P1 tasks: ${DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').length}. Daily target: 1500 Kg. Give practical, specific advice. Keep answers short and actionable.`;
-
-  try{
-    const resp=await fetch(`${SB_URL}/functions/v1/bright-worker`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`},
-      body:JSON.stringify({question:q,context})
-    });
-    let answer='Could not get response.';
-    if(resp.ok){const data=await resp.json();answer=data.answer||answer;}
-    else{answer='AI assistant not configured yet. Set up the Supabase Edge Function to enable this feature.';}
-    document.getElementById('ai-thinking')?.remove();
-    msgs.innerHTML+=`<div style="background:var(--bg3);border-radius:var(--rad);padding:8px 10px;font-size:12px;margin:4px 0;line-height:1.6;">${answer.replace(/\n/g,'<br>')}</div>`;
-    msgs.scrollTop=msgs.scrollHeight;
-  }catch(e){
-    document.getElementById('ai-thinking')?.remove();
-    msgs.innerHTML+=`<div style="color:#dc2626;font-size:12px;padding:8px;">Error connecting to AI. Check internet connection.</div>`;
-  }
-}
 
 // ===== INIT =====
 checkSession();
