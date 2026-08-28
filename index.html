@@ -8,6 +8,10 @@
 <link rel="icon" id="app-favicon" type="image/png" href="">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
+<script src="https://jsuites.net/v4/jsuites.js"></script>
+<link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jspreadsheet.css" type="text/css" />
+<script src="https://bossanova.uk/jspreadsheet/v4/jspreadsheet.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
@@ -216,6 +220,11 @@ tr:hover td{background:#fafaf9;}
     <div class="ni" onclick="goTo('trd-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
     <div class="ni" onclick="goTo('trd-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Trade Register</div>
 
+  </div>
+  <!-- GENERAL — always visible regardless of Mfg/Trading toggle -->
+  <div class="nav-section">
+    <div class="nav-label">General</div>
+    <div class="ni" id="ni-sheets" onclick="goToSheets()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/><line x1="15" y1="9" x2="15" y2="21"/></svg>Excel Sheet</div>
   </div>
   <div class="sidebar-foot">
     <div style="font-size:10px;color:var(--txt2);" id="logged-in-email">saatvikent2@gmail.com</div>
@@ -525,6 +534,25 @@ Grey: 3600"></textarea></div></div>
         <tfoot id="trd-reg-tfoot"></tfoot>
       </table></div>
     </div>
+  </div>
+</div>
+
+
+<!-- ========== EXCEL SHEET (free-form workbook) ========== -->
+<div id="page-sheets" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">📊</span>Excel Sheet</div>
+    <div class="tb-right">
+      <span id="sheet-save-status" style="font-size:11px;color:var(--txt2);"></span>
+      <button class="btn btn-green" onclick="addSheetTab()">+ New tab</button>
+    </div>
+  </div>
+  <div class="content">
+    <div style="display:flex;gap:3px;margin-bottom:0;flex-wrap:wrap;align-items:flex-end;" id="sheet-tabs"></div>
+    <div class="card" style="border-top-left-radius:0;overflow:auto;padding:0;">
+      <div id="sheet-grid"></div>
+    </div>
+    <div style="font-size:11px;color:var(--txt2);margin-top:8px;">Type into any cell like Excel. Start a cell with = for a formula, e.g. =SUM(A1:A5). Right-click a cell for row/column options. Saves automatically.</div>
   </div>
 </div>
 
@@ -1153,7 +1181,7 @@ function checkSession(){
 }
 
 const TODAY=new Date();
-let DATA={mis:[],inv:[],stock:[],dispatches:[],bd:[],tasks:[],trdPur:[],trdSal:[],trdMat:[],fgAnchor:null,fgOverrides:[]};
+let DATA={mis:[],inv:[],stock:[],dispatches:[],bd:[],tasks:[],trdPur:[],trdSal:[],trdMat:[],fgAnchor:null,fgOverrides:[],sheets:[]};
 let editId=null, charts={};
 // Chart.js draws onto a <canvas> and does not inherit the page's CSS font-family, so without this
 // every chart (dashboard, production, trading) falls back to Chart.js's own default font instead of Verdana.
@@ -1494,7 +1522,7 @@ function openWA(){
 async function loadAll(){
   document.getElementById('last-sync').textContent='Syncing...';
   try{
-    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm,life,lrates,fganc,fgovr]=await Promise.all([
+    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm,life,lrates,fganc,fgovr,wbs]=await Promise.all([
       sb.from('mis_entries').select('*').order('entry_date',{ascending:false}),
       sb.from('inventory').select('*').order('item_name'),
       sb.from('stock_movements').select('*').order('created_at',{ascending:false}),
@@ -1508,11 +1536,13 @@ async function loadAll(){
       sb.from('labour_rates').select('*').limit(1),
       sb.from('fg_stock_settings').select('*').limit(1),
       sb.from('fg_overrides').select('*'),
+      sb.from('workbook_sheets').select('*').order('sort_order'),
     ]);
     DATA.mis=mis.data||[];DATA.inv=inv.data||[];DATA.stock=stock.data||[];
     DATA.dispatches=disp.data||[];DATA.bd=bd.data||[];DATA.tasks=tasks.data||[];
     DATA.trdPur=tp.data||[];DATA.trdSal=ts.data||[];DATA.trdMat=tm.data||[];
     DATA.lifeLog=life.data||[];
+    DATA.sheets=wbs.data||[];
     // Labour rates — a single editable row. Falls back to the rates you gave us if the table is empty
     // (e.g. before the migration/seed row has been run), so the form never breaks.
     DATA.labourRates=(lrates.data&&lrates.data[0])||{
@@ -2018,6 +2048,116 @@ function fgColourClosingAsOfMonth(m,fgRun){
 // Manual per-month FG override, if you've set one on the dashboard. Falls back to the calculated figure.
 function fgOverrideFor(m){
   return(DATA.fgOverrides||[]).find(r=>r.month_year===m)||null;
+}
+
+// ===== EXCEL SHEET (free-form workbook, jspreadsheet-backed) =====
+let sheetInstance=null,activeSheetId=null,sheetSaveTimer=null;
+
+function goToSheets(){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-sheets').classList.add('active');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('ni-sheets').classList.add('active');
+  renderSheetsPage();
+}
+
+function renderSheetsPage(){
+  renderSheetTabs();
+  initSheetGrid();
+}
+
+function renderSheetTabs(){
+  const tabsEl=document.getElementById('sheet-tabs');
+  if(!tabsEl)return;
+  const sheets=[...(DATA.sheets||[])].sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+  if((!activeSheetId||!sheets.find(s=>s.id===activeSheetId))&&sheets.length)activeSheetId=sheets[0].id;
+  tabsEl.innerHTML=sheets.map(s=>`
+    <div onclick="switchSheetTab('${s.id}')" ondblclick="renameSheetTab('${s.id}')" title="Double-click to rename"
+      style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--rad) var(--rad) 0 0;cursor:pointer;font-size:12px;font-weight:600;border:1px solid var(--bdr2);border-bottom:${s.id===activeSheetId?'1px solid #fff':'1px solid var(--bdr2)'};background:${s.id===activeSheetId?'#fff':'var(--bg3)'};color:${s.id===activeSheetId?'var(--acc)':'var(--txt2)'};margin-bottom:-1px;">
+      <span>${s.name}</span>
+      <span onclick="event.stopPropagation();deleteSheetTab('${s.id}')" style="color:var(--txt3);font-weight:400;font-size:11px;">✕</span>
+    </div>`).join('')||'<div style="font-size:12px;color:var(--txt2);padding:8px 2px;">No tabs yet — click "+ New tab" to start</div>';
+}
+
+function initSheetGrid(){
+  const sheets=DATA.sheets||[];
+  const active=sheets.find(s=>s.id===activeSheetId);
+  const el=document.getElementById('sheet-grid');
+  if(!el)return;
+  el.innerHTML='';
+  sheetInstance=null;
+  if(!active)return;
+  const data=(active.data&&active.data.length)?active.data:Array.from({length:40},()=>Array(14).fill(''));
+  const colCount=(data[0]&&data[0].length)?data[0].length:14;
+  sheetInstance=jspreadsheet(el,{
+    data:data,
+    columns:Array.from({length:colCount},()=>({type:'text',width:110})),
+    minDimensions:[14,40],
+    tableOverflow:true,
+    tableWidth:'100%',
+    tableHeight:'560px',
+    toolbar:true,
+    onchange:()=>debouncedSaveSheet()
+  });
+}
+
+function switchSheetTab(id){
+  if(id===activeSheetId)return;
+  activeSheetId=id;
+  renderSheetsPage();
+}
+
+async function addSheetTab(){
+  const name=prompt('Name this tab','Sheet '+((DATA.sheets||[]).length+1));
+  if(!name)return;
+  const row={name,sort_order:(DATA.sheets||[]).length,data:Array.from({length:40},()=>Array(14).fill(''))};
+  const{data,error}=await sb.from('workbook_sheets').insert(row).select();
+  if(error){toast('Could not create tab: '+error.message,'err');return;}
+  DATA.sheets=[...(DATA.sheets||[]),data[0]];
+  activeSheetId=data[0].id;
+  renderSheetsPage();
+}
+
+async function renameSheetTab(id){
+  const s=(DATA.sheets||[]).find(x=>x.id===id);
+  if(!s)return;
+  const name=prompt('Rename tab',s.name);
+  if(!name||name===s.name)return;
+  s.name=name;
+  renderSheetTabs();
+  const{error}=await sb.from('workbook_sheets').update({name}).eq('id',id);
+  if(error)toast('Rename failed: '+error.message,'err');
+}
+
+async function deleteSheetTab(id){
+  if(!confirm('Delete this tab? This cannot be undone.'))return;
+  const{error}=await sb.from('workbook_sheets').delete().eq('id',id);
+  if(error){toast('Delete failed: '+error.message,'err');return;}
+  DATA.sheets=(DATA.sheets||[]).filter(s=>s.id!==id);
+  if(activeSheetId===id)activeSheetId=(DATA.sheets[0]&&DATA.sheets[0].id)||null;
+  renderSheetsPage();
+  toast('Tab deleted');
+}
+
+function debouncedSaveSheet(){
+  const status=document.getElementById('sheet-save-status');
+  if(status)status.textContent='Saving...';
+  clearTimeout(sheetSaveTimer);
+  sheetSaveTimer=setTimeout(saveActiveSheet,900);
+}
+async function saveActiveSheet(){
+  if(!sheetInstance||!activeSheetId)return;
+  const data=sheetInstance.getData();
+  const{error}=await sb.from('workbook_sheets').update({data,updated_at:new Date().toISOString()}).eq('id',activeSheetId);
+  const status=document.getElementById('sheet-save-status');
+  if(status)status.textContent=error?'Save failed':'Saved ✓';
+  if(!error){
+    const s=(DATA.sheets||[]).find(x=>x.id===activeSheetId);
+    if(s)s.data=data;
+  } else {
+    toast('Sheet save failed: '+error.message,'err');
+  }
+  setTimeout(()=>{const el=document.getElementById('sheet-save-status');if(el)el.textContent='';},1500);
 }
 
 function renderMIS(){
