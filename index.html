@@ -480,7 +480,8 @@ Grey: 3600"></textarea></div></div>
     <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Trade Register</div>
     <div class="tb-right">
       <select class="month-selector" id="trd-reg-month" onchange="renderTrdRegister()"></select>
-      <button class="btn" onclick="downloadTrdRegPdf()">⬇ Download PDF</button>
+      <button class="btn" onclick="downloadTrdRegPdf()">⬇ PDF</button>
+      <button class="btn" onclick="downloadTrdRegExcel()">⬇ Excel</button>
       <button class="btn btn-blue" onclick="openTrdRegModal(null)">+ Add trade</button>
     </div>
   </div>
@@ -492,8 +493,8 @@ Grey: 3600"></textarea></div></div>
         <div style="font-size:11px;color:var(--txt2);">Avg payment cycle: <strong id="trd-avg-cycle-display">—</strong></div>
       </div>
       <div class="tw excel-table"><table>
-        <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Customer</th><th>Material</th><th class="tnum">Qty</th><th class="tnum">Amount</th><th>Due On</th><th class="tnum">Days</th><th>Recd</th><th class="tnum">Days</th><th>Suppliers</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Margin</th><th class="tnum">Profit</th><th>Actions</th></tr></thead>
-        <tbody id="trd-reg-tbody"><tr><td colspan="17"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+        <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Customer</th><th>Material</th><th class="tnum">Qty</th><th class="tnum">Amount</th><th>Due On</th><th class="tnum">Days</th><th>Recd</th><th class="tnum">Days</th><th>Suppliers</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Margin</th><th class="tnum">Profit</th><th>Remarks</th><th>Actions</th></tr></thead>
+        <tbody id="trd-reg-tbody"><tr><td colspan="18"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
         <tfoot id="trd-reg-tfoot"></tfoot>
       </table></div>
     </div>
@@ -513,16 +514,20 @@ Grey: 3600"></textarea></div></div>
     </div>
   </div>
   <div class="content">
-    <div class="metrics g6" id="trd-orders-metrics"></div>
+    <div style="display:flex;gap:3px;margin-bottom:0;" id="trd-orders-tabs">
+      <div onclick="switchTrdOrderType('Tools')" id="tot-tab-Tools" style="padding:8px 18px;border-radius:var(--rad) var(--rad) 0 0;cursor:pointer;font-size:13px;font-weight:700;border:1px solid var(--bdr2);border-bottom:1px solid #fff;margin-bottom:-1px;background:#fff;color:var(--acc2);">🔧 Tools</div>
+      <div onclick="switchTrdOrderType('Electrodes')" id="tot-tab-Electrodes" style="padding:8px 18px;border-radius:var(--rad) var(--rad) 0 0;cursor:pointer;font-size:13px;font-weight:700;border:1px solid var(--bdr2);border-bottom:1px solid var(--bdr2);margin-bottom:-1px;background:var(--bg3);color:var(--txt2);">⚡ Electrodes</div>
+    </div>
+    <div class="metrics g6" id="trd-orders-metrics" style="border-top-left-radius:0;"></div>
     <div class="card">
       <div class="card-head"><div class="card-title">Supplier-wise — this month</div></div>
       <div class="card-body" style="padding:0;"><div class="tw excel-table"><table><thead><tr><th>Supplier</th><th class="tnum">Orders</th><th class="tnum">Qty</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th></tr></thead><tbody id="trd-orders-supplier-tbody"></tbody></table></div></div>
     </div>
     <div class="card">
-      <div class="card-head"><div class="card-title">Order register — tools &amp; electrodes</div></div>
+      <div class="card-head"><div class="card-title" id="trd-orders-register-title">Order register</div></div>
       <div class="tw excel-table"><table>
-        <thead><tr><th>Sl</th><th>Order date</th><th>Order no</th><th>Supplier</th><th>Customer</th><th>Item</th><th class="tnum">Qty</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="trd-orders-tbody"><tr><td colspan="14"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+        <thead><tr><th>Sl</th><th>Order date</th><th>Order no</th><th>Supplier</th><th>Customer</th><th>Item</th><th class="tnum">Qty</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th><th>Status</th><th>Remarks</th><th>Actions</th></tr></thead>
+        <tbody id="trd-orders-tbody"><tr><td colspan="15"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
       </table></div>
     </div>
   </div>
@@ -902,12 +907,13 @@ Grey: 3600"></textarea></div></div>
     <div class="modal-head"><span class="modal-title" id="trd-order-modal-t">Add Order</span><button class="btn btn-sm" onclick="closeModal('trd-order-modal')">✕</button></div>
     <div class="modal-body">
       <div class="frow"><div class="fg"><label>Order date</label><input type="date" id="to-date"></div><div class="fg"><label>Order no</label><input type="text" id="to-orderno" placeholder="e.g. ORD/26-27/014"></div></div>
+      <div class="frow"><div class="fg"><label>Category</label><select id="to-type"><option value="Tools">Tools</option><option value="Electrodes">Electrodes</option></select></div><div class="fg"><label>Status</label><select id="to-status"><option>Pending</option><option>Ordered</option><option>Delivered</option><option>Billed</option><option>Paid</option><option>Cancelled</option></select></div></div>
       <div class="frow"><div class="fg"><label>Supplier</label><input type="text" id="to-supplier" placeholder="Supplier name" list="trd-order-supplier-list"><datalist id="trd-order-supplier-list"></datalist></div><div class="fg"><label>Customer</label><input type="text" id="to-customer" placeholder="Customer name"></div></div>
       <div class="frow frow-1"><div class="fg"><label>Item</label><input type="text" id="to-item" placeholder="e.g. Welding Electrode 3.15mm"></div></div>
-      <div class="frow"><div class="fg"><label>Qty</label><input type="number" id="to-qty" placeholder="0" oninput="calcTrdOrderValues()"></div><div class="fg"><label>Status</label><select id="to-status"><option>Pending</option><option>Ordered</option><option>Delivered</option><option>Billed</option><option>Paid</option><option>Cancelled</option></select></div></div>
+      <div class="frow"><div class="fg"><label>Qty</label><input type="number" id="to-qty" placeholder="0" oninput="calcTrdOrderValues()"></div><div class="fg"></div></div>
       <div class="frow"><div class="fg"><label>CP — cost price (₹/unit)</label><input type="number" id="to-cp" placeholder="0" oninput="calcTrdOrderValues()"></div><div class="fg"><label>SP — sale price (₹/unit)</label><input type="number" id="to-sp" placeholder="0" oninput="calcTrdOrderValues()"></div></div>
       <div class="frow frow-1"><div class="fg"><div class="calc-note" id="to-calc-show">Cost value: — · Sale value: — · Profit: —</div></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Notes</label><input type="text" id="to-notes" placeholder="Optional"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Remarks</label><input type="text" id="to-notes" placeholder="Optional"></div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('trd-order-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdOrder()">Save</button></div>
   </div>
@@ -2458,9 +2464,23 @@ function calcTrdOrderValues(){
   el.textContent='Cost value: '+fmtMoney(costValue)+' · Sale value: '+fmtMoney(saleValue)+' · Profit: '+fmtMoney(profit);
 }
 
+let activeTradeOrderType='Tools';
+function switchTrdOrderType(type){
+  activeTradeOrderType=type;
+  ['Tools','Electrodes'].forEach(t=>{
+    const el=document.getElementById('tot-tab-'+t);
+    if(el){
+      el.style.background=t===type?'#fff':'var(--bg3)';
+      el.style.color=t===type?'var(--acc2)':'var(--txt2)';
+      el.style.borderBottom=t===type?'1px solid #fff':'1px solid var(--bdr2)';
+    }
+  });
+  renderTrdOrders();
+}
+
 function openTrdOrderModal(rowId){
   editId=rowId;
-  document.getElementById('trd-order-modal-t').textContent=rowId?'Edit Order':'Add Order';
+  document.getElementById('trd-order-modal-t').textContent=(rowId?'Edit ':'Add ')+activeTradeOrderType+' Order';
   const dl=document.getElementById('trd-order-supplier-list');
   if(dl)dl.innerHTML=[...new Set((DATA.trdOrders||[]).map(r=>r.supplier).filter(Boolean))].map(s=>`<option value="${s}">`).join('');
   if(rowId){
@@ -2468,6 +2488,7 @@ function openTrdOrderModal(rowId){
     if(r){
       document.getElementById('to-date').value=r.order_date;
       document.getElementById('to-orderno').value=r.order_no||'';
+      document.getElementById('to-type').value=r.item_type||'Tools';
       document.getElementById('to-supplier').value=r.supplier||'';
       document.getElementById('to-customer').value=r.customer||'';
       document.getElementById('to-item').value=r.item||'';
@@ -2480,6 +2501,7 @@ function openTrdOrderModal(rowId){
   } else {
     ['to-date','to-orderno','to-supplier','to-customer','to-item','to-qty','to-cp','to-sp','to-notes'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
     document.getElementById('to-status').value='Pending';
+    document.getElementById('to-type').value=activeTradeOrderType;
     document.getElementById('to-date').value=new Date().toISOString().split('T')[0];
   }
   calcTrdOrderValues();
@@ -2495,6 +2517,7 @@ async function saveTrdOrder(){
     order_date:g('to-date'),
     month_year:g('to-date')?fmtMonthYear(g('to-date')):'',
     order_no:g('to-orderno')||'',
+    item_type:g('to-type')||'Tools',
     supplier:g('to-supplier')||'',
     customer:g('to-customer')||'',
     item:g('to-item')||'',
@@ -2512,8 +2535,12 @@ async function saveTrdOrder(){
 
 function renderTrdOrders(){
   const m=getMonth('trd-orders-month');
-  const orders=filterByMonth(DATA.trdOrders||[],'month_year',m);
+  const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===activeTradeOrderType);
+  const orders=filterByMonth(byType,'month_year',m);
   const sorted=[...orders].sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
+
+  const titleEl=document.getElementById('trd-orders-register-title');
+  if(titleEl)titleEl.textContent=activeTradeOrderType+' — order register';
 
   const totalQty=sorted.reduce((a,r)=>a+Number(r.qty||0),0);
   const totalCost=sorted.reduce((a,r)=>a+Number(r.cost_value||0),0);
@@ -2544,12 +2571,13 @@ function renderTrdOrders(){
     <td class="tnum">${fmtMoney(r.sale_value)}</td>
     <td class="tnum" style="font-weight:600;color:${Number(r.profit)>=0?'#15803d':'#dc2626'};">${fmtMoney(r.profit)}</td>
     <td><span class="badge ${sc[r.status]||'b-gray'}">${r.status}</span></td>
+    <td style="color:var(--txt2);">${r.notes||'—'}</td>
     <td style="white-space:nowrap">
       <button class="btn btn-sm" onclick="openTrdOrderModal('${r.id}')">✏</button>
       <button class="btn btn-sm btn-red" onclick="deleteRow('trading_orders','${r.id}','order')">🗑</button>
-    </td></tr>`).join('')||'<tr><td colspan="14" style="text-align:center;padding:20px;color:var(--txt2);">No orders for '+m+'</td></tr>';
+    </td></tr>`).join('')||'<tr><td colspan="15" style="text-align:center;padding:20px;color:var(--txt2);">No '+activeTradeOrderType.toLowerCase()+' orders for '+m+'</td></tr>';
 
-  // Supplier-wise breakdown — this month
+  // Supplier-wise breakdown — this month, this category only
   const supGroups={};
   sorted.forEach(r=>{
     const s=r.supplier||'Unknown';
@@ -2568,17 +2596,19 @@ function renderTrdOrders(){
 
 function downloadTrdOrdersPdf(){
   const m=getMonth('trd-orders-month');
-  const sorted=[...filterByMonth(DATA.trdOrders||[],'month_year',m)].sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
-  const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty',align:'right'},{label:'CP',align:'right'},{label:'SP',align:'right'},{label:'Cost value',align:'right'},{label:'Sale value',align:'right'},{label:'Profit',align:'right'},{label:'Status'}];
-  const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'—',r.supplier||'—',r.customer||'—',r.item,Number(r.qty).toLocaleString('en-IN'),Number(r.cp).toLocaleString('en-IN'),Number(r.sp).toLocaleString('en-IN'),Number(r.cost_value).toLocaleString('en-IN'),Number(r.sale_value).toLocaleString('en-IN'),Number(r.profit).toLocaleString('en-IN'),r.status]);
-  exportTablePdf('Trading Orders — '+m,columns,rows);
+  const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===activeTradeOrderType);
+  const sorted=[...filterByMonth(byType,'month_year',m)].sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
+  const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty',align:'right'},{label:'CP',align:'right'},{label:'SP',align:'right'},{label:'Cost value',align:'right'},{label:'Sale value',align:'right'},{label:'Profit',align:'right'},{label:'Status'},{label:'Remarks'}];
+  const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'—',r.supplier||'—',r.customer||'—',r.item,Number(r.qty).toLocaleString('en-IN'),Number(r.cp).toLocaleString('en-IN'),Number(r.sp).toLocaleString('en-IN'),Number(r.cost_value).toLocaleString('en-IN'),Number(r.sale_value).toLocaleString('en-IN'),Number(r.profit).toLocaleString('en-IN'),r.status,r.notes||'—']);
+  exportTablePdf(activeTradeOrderType+' Orders — '+m,columns,rows);
 }
 function downloadTrdOrdersExcel(){
   const m=getMonth('trd-orders-month');
-  const sorted=[...filterByMonth(DATA.trdOrders||[],'month_year',m)].sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
-  const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty'},{label:'CP'},{label:'SP'},{label:'Cost value'},{label:'Sale value'},{label:'Profit'},{label:'Status'}];
-  const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'',r.supplier||'',r.customer||'',r.item,Number(r.qty),Number(r.cp),Number(r.sp),Number(r.cost_value),Number(r.sale_value),Number(r.profit),r.status]);
-  exportTableExcel('Trading_Orders_'+m.replace(' ','_')+'.xlsx','Trading Orders',columns,rows);
+  const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===activeTradeOrderType);
+  const sorted=[...filterByMonth(byType,'month_year',m)].sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
+  const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty'},{label:'CP'},{label:'SP'},{label:'Cost value'},{label:'Sale value'},{label:'Profit'},{label:'Status'},{label:'Remarks'}];
+  const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'',r.supplier||'',r.customer||'',r.item,Number(r.qty),Number(r.cp),Number(r.sp),Number(r.cost_value),Number(r.sale_value),Number(r.profit),r.status,r.notes||'']);
+  exportTableExcel(activeTradeOrderType+'_Orders_'+m.replace(' ','_')+'.xlsx',activeTradeOrderType,columns,rows);
 }
 
 function openTrdRegModal(rowId){
@@ -2649,6 +2679,7 @@ function downloadTrdRegPdf(){
       <td style="text-align:right;">${r.sale_price?Number(r.sale_price).toLocaleString('en-IN'):'—'}</td>
       <td style="text-align:right;">${(r.cost_price||r.sale_price)?margin.toFixed(2):'—'}</td>
       <td style="text-align:right;">${(r.cost_price||r.sale_price)?profit.toLocaleString('en-IN',{maximumFractionDigits:0}):'—'}</td>
+      <td style="white-space:normal;">${r.notes||'—'}</td>
     </tr>`;
   }).join('');
 
@@ -2679,7 +2710,7 @@ tfoot td{font-weight:bold;background:#f5f5f5;font-size:10.5px;}
 </div>
 <div class="doc-title">Scrap Trade Register — ${m}</div>
 <table>
-  <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Customer</th><th>Material</th><th style="text-align:right;">Qty</th><th style="text-align:right;">Amount</th><th>Due On</th><th style="text-align:right;">Days</th><th>Recd</th><th style="text-align:right;">Days</th><th>Suppliers</th><th style="text-align:right;">CP</th><th style="text-align:right;">SP</th><th style="text-align:right;">Margin</th><th style="text-align:right;">Profit</th></tr></thead>
+  <thead><tr><th>Sl</th><th>Date</th><th>Bill No</th><th>Customer</th><th>Material</th><th style="text-align:right;">Qty</th><th style="text-align:right;">Amount</th><th>Due On</th><th style="text-align:right;">Days</th><th>Recd</th><th style="text-align:right;">Days</th><th>Suppliers</th><th style="text-align:right;">CP</th><th style="text-align:right;">SP</th><th style="text-align:right;">Margin</th><th style="text-align:right;">Profit</th><th>Remarks</th></tr></thead>
   <tbody>${rowsHtml}</tbody>
   <tfoot><tr>
     <td colspan="5">TOTAL / AVG</td>
@@ -2691,6 +2722,7 @@ tfoot td{font-weight:bold;background:#f5f5f5;font-size:10.5px;}
     <td style="text-align:right;">${withCpSp.length?avgSp.toFixed(2):'—'}</td>
     <td style="text-align:right;">${withCpSp.length?avgMargin.toFixed(2):'—'}</td>
     <td style="text-align:right;">${tProfit.toLocaleString('en-IN',{maximumFractionDigits:0})}</td>
+    <td></td>
   </tr></tfoot>
 </table>
 <div class="footer-note">Generated from Saatvik Enterprises app on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
@@ -2702,6 +2734,18 @@ tfoot td{font-weight:bold;background:#f5f5f5;font-size:10.5px;}
   win.document.close();
   win.focus();
   setTimeout(()=>win.print(),800);
+}
+
+function downloadTrdRegExcel(){
+  const m=getMonth('trd-reg-month');
+  const rows=[...DATA.trdPur].filter(r=>r.month_year===m).sort((a,b)=>new Date(a.purchase_date)-new Date(b.purchase_date));
+  const columns=[{label:'Sl'},{label:'Date'},{label:'Bill No'},{label:'Customer'},{label:'Material'},{label:'Qty'},{label:'Amount'},{label:'Due On'},{label:'Supplier'},{label:'CP'},{label:'SP'},{label:'Margin'},{label:'Profit'},{label:'Received'},{label:'Remarks'}];
+  const dataRows=rows.map((r,i)=>{
+    const margin=Number(r.margin||((r.sale_price||0)-(r.cost_price||0)));
+    const profit=Number(r.profit||(margin*Number(r.qty_kg||0)));
+    return[i+1,fmtDate(r.purchase_date),r.bill_no||'',r.party||'',r.material||'',Number(r.qty_kg||0),Number(r.amount||0),fmtDate(dueDate(r.purchase_date,r.payment_terms_days||15).toISOString().split('T')[0]),r.supplier||'',Number(r.cost_price||0),Number(r.sale_price||0),margin,profit,r.payment_received_date?fmtDate(r.payment_received_date):'Pending',r.notes||''];
+  });
+  exportTableExcel('Trade_Register_'+m.replace(' ','_')+'.xlsx','Trade Register',columns,dataRows);
 }
 
 function renderTrdRegister(){
@@ -2758,12 +2802,13 @@ function renderTrdRegister(){
       <td class="tnum">${r.sale_price?fmtMoney(r.sale_price):'—'}</td>
       <td class="tnum" style="color:${margin>=0?'#15803d':'#dc2626'};">${(r.cost_price||r.sale_price)?fmtMoney(margin):'—'}</td>
       <td class="tnum" style="font-weight:600;color:${profit>=0?'#15803d':'#dc2626'};">${(r.cost_price||r.sale_price)?fmtMoney(profit):'—'}</td>
+      <td style="color:var(--txt2);">${r.notes||'—'}</td>
       <td style="white-space:nowrap;">
         <button class="btn btn-sm" onclick="openTrdRegModal('${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteRow('trading_purchases','${r.id}','trade')">🗑</button>
       </td>
     </tr>`;
-  }).join('')||`<tr><td colspan="17" style="text-align:center;padding:20px;color:var(--txt2);">No trades yet — click "+ Add trade" to start</td></tr>`;
+  }).join('')||`<tr><td colspan="18" style="text-align:center;padding:20px;color:var(--txt2);">No trades yet — click "+ Add trade" to start</td></tr>`;
 
   // Totals row — mirrors your Excel sheet's bottom summary line
   const tf=document.getElementById('trd-reg-tfoot');
@@ -2786,6 +2831,7 @@ function renderTrdRegister(){
         <td class="tnum">${withCpSp.length?fmtMoney(avgSp):'—'}</td>
         <td class="tnum">${withCpSp.length?fmtMoney(avgMargin):'—'}</td>
         <td class="tnum" style="color:${tProfit>=0?'#15803d':'#dc2626'};">${fmtMoney(tProfit)}</td>
+        <td></td>
         <td></td>
       </tr>`;
     }
