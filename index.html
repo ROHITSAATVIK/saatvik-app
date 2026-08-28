@@ -243,6 +243,7 @@ tr:hover td{background:#fafaf9;}
     <div class="topbar-title"><span class="section-badge mfg-badge">🏭 Manufacturing</span>Dashboard</div>
     <div class="tb-right">
       <select class="month-selector" id="mfg-dash-month" onchange="renderMfgDashboard()"></select>
+      <button class="btn" onclick="downloadMfgDashPdf()">⬇ Download</button>
       <button class="btn" onclick="loadAll()">↻ Refresh</button>
     </div>
   </div>
@@ -250,7 +251,7 @@ tr:hover td{background:#fafaf9;}
     <!-- ROW 1: 4 key metrics -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;" id="mfg-dash-metrics"></div>
 
-    <!-- ROW 2: Colour production, customer dispatch, machine hours, daily prod chart, inventory -->
+    <!-- ROW 2: Colour production, customer dispatch, machine hours, daily prod chart, MoM, inventory -->
     <div class="g2" style="margin-bottom:0;">
       <div>
         <!-- Colour production breakdown -->
@@ -278,6 +279,11 @@ tr:hover td{background:#fafaf9;}
           <div class="card-head"><div class="card-title">Daily production vs target</div></div>
           <div class="card-body"><div style="position:relative;height:140px;"><canvas id="dashProdChart" role="img" aria-label="Production chart">Daily production</canvas></div></div>
         </div>
+        <!-- Month-on-month production -->
+        <div class="card">
+          <div class="card-head"><div class="card-title">Production — month on month</div></div>
+          <div class="card-body"><div style="position:relative;height:130px;"><canvas id="dashMomChart" role="img" aria-label="Month on month production">Month on month production</canvas></div></div>
+        </div>
         <!-- Spare parts below 50% -->
         <div class="card">
           <div class="card-head">
@@ -291,12 +297,32 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 
+<!-- FG stock manual override -->
+<div class="modal-bg" id="fg-override-modal">
+  <div class="modal" style="width:420px;">
+    <div class="modal-head"><span class="modal-title">Edit FG in hand — <span id="fg-ov-month-label"></span></span><button class="btn btn-sm" onclick="closeFgOverride()">✕</button></div>
+    <div class="modal-body">
+      <div class="frow frow-1"><div class="fg"><label>Total FG (Kg) — leave blank to keep using the calculated figure</label><input type="number" id="fg-ov-total" placeholder="e.g. 5450"></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Colour-wise (one per line, "Colour: Kg")</label><textarea id="fg-ov-colours" rows="5" placeholder="Orange: 325
+Black: 1525
+Grey: 3600"></textarea></div></div>
+      <div style="font-size:11px;color:var(--txt2);">Setting this overrides the calculated FG figure for this month only. Clear it any time to go back to the automatic calculation.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-red" id="fg-ov-clear-btn" onclick="clearFgOverride()" style="display:none;">Clear override</button>
+      <button class="btn" onclick="closeFgOverride()">Cancel</button>
+      <button class="btn btn-green" onclick="saveFgOverride()">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- ========== PRODUCTION / MIS ========== -->
 <div id="page-production" class="page">
   <div class="topbar">
     <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Production / MIS</div>
     <div class="tb-right">
       <select class="month-selector" id="mis-month" onchange="renderMIS()"></select>
+      <button class="btn" onclick="downloadMisPdf()">⬇ Download</button>
       <button class="btn btn-green" onclick="openModal('mis-modal',null)">+ Add entry</button>
     </div>
   </div>
@@ -309,8 +335,8 @@ tr:hover td{background:#fafaf9;}
           <button class="btn btn-wa" onclick="generateWAMIS()">📱 WhatsApp MIS</button>
         </div>
       </div>
-      <div class="tw"><table><thead><tr><th>Date</th><th>Target</th><th>Production</th><th>Colour</th><th>Eff%</th><th>Day MP</th><th>Night MP</th><th>Labour ₹</th><th>Labour ₹/Kg</th><th>Wash Run</th><th>Agglo Run</th><th>Ext Run</th><th>Issue (D)</th><th>Issue (N)</th><th>Dispatch</th><th>Total Stock</th><th>Actions</th></tr></thead>
-      <tbody id="mis-tbody"><tr><td colspan="17"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody></table></div>
+      <div class="tw excel-table"><table><thead><tr><th>Date</th><th class="tnum">Target</th><th class="tnum">Production</th><th>Colour</th><th class="tnum">Eff%</th><th class="tnum">Day MP</th><th class="tnum">Night MP</th><th class="tnum">Labour ₹</th><th class="tnum">Labour ₹/Kg</th><th class="tnum">Wash Run</th><th class="tnum">Agglo Run</th><th class="tnum">Ext Run</th><th>Issue (D)</th><th>Issue (N)</th><th>Remarks</th><th>Actions</th></tr></thead>
+      <tbody id="mis-tbody"><tr><td colspan="16"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody></table></div>
     </div>
     <!-- WhatsApp Preview -->
     <div class="card" id="wa-card" style="display:none;">
@@ -1127,7 +1153,7 @@ function checkSession(){
 }
 
 const TODAY=new Date();
-let DATA={mis:[],inv:[],stock:[],dispatches:[],bd:[],tasks:[],trdPur:[],trdSal:[],trdMat:[]};
+let DATA={mis:[],inv:[],stock:[],dispatches:[],bd:[],tasks:[],trdPur:[],trdSal:[],trdMat:[],fgAnchor:null,fgOverrides:[]};
 let editId=null, charts={};
 
 // ===== UTILS =====
@@ -1465,7 +1491,7 @@ function openWA(){
 async function loadAll(){
   document.getElementById('last-sync').textContent='Syncing...';
   try{
-    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm,life,lrates]=await Promise.all([
+    const [mis,inv,stock,disp,bd,tasks,tp,ts,tm,life,lrates,fganc,fgovr]=await Promise.all([
       sb.from('mis_entries').select('*').order('entry_date',{ascending:false}),
       sb.from('inventory').select('*').order('item_name'),
       sb.from('stock_movements').select('*').order('created_at',{ascending:false}),
@@ -1477,6 +1503,8 @@ async function loadAll(){
       sb.from('trading_materials').select('*').order('material_name'),
       sb.from('item_life_log').select('*').order('in_date',{ascending:false}),
       sb.from('labour_rates').select('*').limit(1),
+      sb.from('fg_stock_settings').select('*').limit(1),
+      sb.from('fg_overrides').select('*'),
     ]);
     DATA.mis=mis.data||[];DATA.inv=inv.data||[];DATA.stock=stock.data||[];
     DATA.dispatches=disp.data||[];DATA.bd=bd.data||[];DATA.tasks=tasks.data||[];
@@ -1488,6 +1516,14 @@ async function loadAll(){
       suman_day_helper:500,suman_day_operator:1000,heera_day_helper:420,
       suman_night_helper:600,suman_night_operator:1000,heera_night_helper:600,heera_night_operator:900
     };
+    // FG opening balance anchor — the running FG-stock calc starts from this date/qty instead of
+    // assuming stock was zero on day one. Falls back to the 1 Aug 2026 figures you gave us if the
+    // migration/seed row hasn't been run yet, so FG-in-hand is never wrong just because the table is empty.
+    DATA.fgAnchor=(fganc.data&&fganc.data[0])||{
+      anchor_date:'2026-08-01',colours:{'Orange':325,'Black':1525,'Grey':3600}
+    };
+    // Manual per-month FG overrides — your fallback if the calculated figure ever looks wrong.
+    DATA.fgOverrides=fgovr.data||[];
     document.getElementById('last-sync').textContent='Synced ✓ '+new Date().toLocaleTimeString('en-IN');
     // Populate colour datalist from production AND dispatch colours, so suggestions never fall behind
     const colours=new Set([
@@ -1665,37 +1701,16 @@ function renderMfgDashboard(){
   const avgEff=totalTgt>0?Math.round((totalProd/totalTgt)*100):0;
   const totalDisp=DATA.dispatches.filter(r=>r.month_year===m).reduce((a,r)=>a+Number(r.qty_kg||0),0);
 
-  // FG in hand — closing balance as of the end of the selected month, walked across the FULL
-  // history of both production AND dispatch dates (so a dispatch with no same-day production
-  // entry still reduces it correctly): previous closing + this month production − this month dispatch.
+  // FG in hand — closing balance as of the end of the selected month, walked from your opening-balance
+  // anchor across the FULL history of both production AND dispatch dates (so a dispatch with no same-day
+  // production entry still reduces it correctly): anchor + all production since − all dispatch since.
+  // A manual override for this month (if you've set one) takes priority over the calculated figure.
   const fgRun=computeFgRunning();
-  const fgStock=fgClosingAsOfMonth(m,fgRun);
-
-  // Colour-wise FG breakdown
-  const colourProd={};
-  mis.forEach(r=>{
-    if(!r.colour||!r.colour.trim()){
-      colourProd['Untagged']=(colourProd['Untagged']||0)+Number(r.total_production_kg||0);
-    } else {
-      // Handle "Natural+Black" type entries
-      const colours=r.colour.split('+').map(c=>c.trim()).filter(Boolean);
-      colours.forEach(c=>{colourProd[c]=(colourProd[c]||0)+Number(r.total_production_kg||0)/colours.length;});
-    }
-  });
-  const colourDisp={};
-  DATA.dispatches.filter(r=>r.month_year===m).forEach(r=>{
-    // Prefer the real colour column; fall back to legacy notes-embedded pattern for old records
-    let col=r.colour||'';
-    if(!col){const match=(r.notes||'').match(/Colour:([^|]+)/);col=match?match[1].trim():'';}
-    col=col||'Untagged';
-    colourDisp[col]=(colourDisp[col]||0)+Number(r.qty_kg||0);
-  });
-  const colourFG={};
-  const allCols=new Set([...Object.keys(colourProd),...Object.keys(colourDisp)]);
-  allCols.forEach(c=>{
-    const fg=Math.max(0,(colourProd[c]||0)-(colourDisp[c]||0));
-    if(fg>0)colourFG[c]=fg;
-  });
+  const fgOverride=fgOverrideFor(m);
+  const fgCalc=fgClosingAsOfMonth(m,fgRun);
+  const fgStock=(fgOverride&&fgOverride.override_kg!=null)?Number(fgOverride.override_kg):fgCalc;
+  const colourFG=(fgOverride&&fgOverride.override_colours)?fgOverride.override_colours:fgColourClosingAsOfMonth(m,fgRun);
+  const isFgOverridden=!!(fgOverride&&(fgOverride.override_kg!=null||fgOverride.override_colours));
   const p1=DATA.tasks.filter(r=>r.priority==='P1'&&r.status==='open').length;
   const p2=DATA.tasks.filter(r=>r.priority==='P2'&&r.status==='open').length;
   const critBD=DATA.bd.filter(r=>r.status==='Critical').length;
@@ -1723,9 +1738,12 @@ function renderMfgDashboard(){
       <div style="font-size:10px;color:var(--txt2);margin-top:2px;">this month</div>
     </div>
     <div style="background:#F6E9E2;border-radius:var(--rad);padding:12px;border:0.5px solid #E3C9B8;">
-      <div style="font-size:10px;color:#7A3820;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">FG in hand</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:10px;color:#7A3820;text-transform:uppercase;letter-spacing:.3px;">FG in hand</div>
+        <button onclick="openFgOverride()" title="Edit FG figure for this month" style="border:none;background:none;cursor:pointer;color:#7A3820;font-size:12px;padding:0;line-height:1;">✏</button>
+      </div>
       <div class="tnum" style="font-size:20px;font-weight:600;color:#7A3820;">${Number(fgStock).toLocaleString('en-IN')} Kg</div>
-      <div style="font-size:10px;color:#7A3820;margin-top:2px;">last closing + production − dispatch</div>
+      <div style="font-size:10px;color:#7A3820;margin-top:2px;">${isFgOverridden?'Manually set — click ✏ to edit or clear':'anchor + production − dispatch'}</div>
       ${Object.entries(colourFG).length>0?`<div style="margin-top:8px;border-top:1px solid #E3C9B8;padding-top:6px;">${Object.entries(colourFG).map(([c,kg])=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#7A3820;margin-bottom:2px;"><span style="display:flex;align-items:center;">${colourChip(c)}${c}</span><span class="tnum" style="font-weight:600;">${Number(kg).toLocaleString('en-IN')} Kg</span></div>`).join('')}</div>`:''}
     </div>`;
 
@@ -1832,25 +1850,118 @@ function renderMfgDashboard(){
   destroyChart('dashProd');
   const asc=[...mis].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
   charts.dashProd=new Chart(document.getElementById('dashProdChart'),{type:'bar',data:{labels:asc.map(r=>fmtDate(r.entry_date)),datasets:[{label:'Production',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:4},{label:'Target',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,autoSkip:true,maxRotation:0,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
+
+  // Month-on-month production vs target, last 6 months up to and including the selected month
+  destroyChart('dashMom');
+  if(document.getElementById('dashMomChart')){
+    const mIdx=MONTHS.indexOf(m);
+    const momMonths=(mIdx>=0?MONTHS.slice(Math.max(0,mIdx-5),mIdx+1):MONTHS.slice(-6));
+    charts.dashMom=new Chart(document.getElementById('dashMomChart'),{type:'bar',data:{labels:momMonths,datasets:[
+      {label:'Production',data:momMonths.map(mo=>filterByMonth(DATA.mis,'month_year',mo).reduce((a,r)=>a+Number(r.total_production_kg||0),0)),backgroundColor:'#0B5C48',borderRadius:4},
+      {label:'Target',data:momMonths.map(mo=>filterByMonth(DATA.mis,'month_year',mo).reduce((a,r)=>a+Number(r.target_kg||0),0)),type:'line',borderColor:'#A34A2C',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false}
+    ]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
+  }
+}
+
+// ===== FG STOCK MANUAL OVERRIDE =====
+let fgOverrideMonth=null;
+function openFgOverride(){
+  const m=getMonth('mfg-dash-month');
+  fgOverrideMonth=m;
+  const ov=fgOverrideFor(m);
+  document.getElementById('fg-ov-month-label').textContent=m;
+  document.getElementById('fg-ov-total').value=(ov&&ov.override_kg!=null)?ov.override_kg:'';
+  document.getElementById('fg-ov-colours').value=(ov&&ov.override_colours)?Object.entries(ov.override_colours).map(([c,v])=>`${c}: ${v}`).join('\n'):'';
+  document.getElementById('fg-ov-clear-btn').style.display=ov?'inline-flex':'none';
+  document.getElementById('fg-override-modal').classList.add('open');
+}
+function closeFgOverride(){document.getElementById('fg-override-modal').classList.remove('open');}
+async function saveFgOverride(){
+  const m=fgOverrideMonth;
+  const totalRaw=document.getElementById('fg-ov-total').value;
+  const total=totalRaw===''?null:parseFloat(totalRaw);
+  const lines=document.getElementById('fg-ov-colours').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  const colours={};
+  lines.forEach(l=>{
+    const idx=l.indexOf(':');
+    if(idx<0)return;
+    const c=l.slice(0,idx).trim();
+    const v=parseFloat(l.slice(idx+1).replace(/[^\d.]/g,''));
+    if(c&&!isNaN(v))colours[c]=v;
+  });
+  if(total===null&&Object.keys(colours).length===0){toast('Enter a total or colour-wise figures','err');return;}
+  const row={month_year:m,override_kg:total,override_colours:Object.keys(colours).length?colours:null,updated_at:new Date().toISOString()};
+  const existing=fgOverrideFor(m);
+  const{error}=existing?await sb.from('fg_overrides').update(row).eq('month_year',m):await sb.from('fg_overrides').insert(row);
+  if(error){toast('Save failed: '+error.message,'err');return;}
+  toast('FG override saved ✓');closeFgOverride();await loadAll();
+}
+async function clearFgOverride(){
+  const m=fgOverrideMonth;
+  const{error}=await sb.from('fg_overrides').delete().eq('month_year',m);
+  if(error){toast('Clear failed: '+error.message,'err');return;}
+  toast('Override cleared ✓');closeFgOverride();await loadAll();
 }
 
 // Computes FG closing stock per day across the ENTIRE history (never resets at month boundaries),
 // walking every date that has EITHER a production entry OR a dispatch — not just days with a
 // production entry — so a dispatch made on a day with no matching MIS entry still reduces stock.
 function computeFgRunning(){
-  const prodByDate={};
-  DATA.mis.forEach(r=>{prodByDate[r.entry_date]=(prodByDate[r.entry_date]||0)+Number(r.total_production_kg||0);});
-  const dispByDate={};
-  DATA.dispatches.forEach(r=>{dispByDate[r.dispatch_date]=(dispByDate[r.dispatch_date]||0)+Number(r.qty_kg||0);});
+  // The running balance starts from your opening-balance anchor (date + colour-wise Kg you gave us)
+  // instead of assuming stock was zero on day one. Entries before the anchor date are ignored — their
+  // effect is already baked into the anchor figure — so the balance never double-counts old history.
+  const anchor=DATA.fgAnchor||{};
+  const anchorDate=anchor.anchor_date||null;
+  const anchorColours=anchor.colours||{};
+  const anchorTotal=Object.values(anchorColours).reduce((a,v)=>a+Number(v||0),0);
+
+  const prodByDate={},prodColourByDate={};
+  DATA.mis.forEach(r=>{
+    if(anchorDate&&r.entry_date<anchorDate)return;
+    const kg=Number(r.total_production_kg||0);
+    prodByDate[r.entry_date]=(prodByDate[r.entry_date]||0)+kg;
+    if(!prodColourByDate[r.entry_date])prodColourByDate[r.entry_date]={};
+    if(r.colour&&r.colour.trim()){
+      const cols=r.colour.split('+').map(c=>c.trim()).filter(Boolean);
+      cols.forEach(c=>{prodColourByDate[r.entry_date][c]=(prodColourByDate[r.entry_date][c]||0)+kg/cols.length;});
+    } else {
+      prodColourByDate[r.entry_date]['Untagged']=(prodColourByDate[r.entry_date]['Untagged']||0)+kg;
+    }
+  });
+  const dispByDate={},dispColourByDate={};
+  DATA.dispatches.forEach(r=>{
+    if(anchorDate&&r.dispatch_date<anchorDate)return;
+    const kg=Number(r.qty_kg||0);
+    dispByDate[r.dispatch_date]=(dispByDate[r.dispatch_date]||0)+kg;
+    if(!dispColourByDate[r.dispatch_date])dispColourByDate[r.dispatch_date]={};
+    let col=r.colour||'';
+    if(!col){const match=(r.notes||'').match(/Colour:([^|]+)/);col=match?match[1].trim():'';}
+    col=col||'Untagged';
+    dispColourByDate[r.dispatch_date][col]=(dispColourByDate[r.dispatch_date][col]||0)+kg;
+  });
+
   const allDates=[...new Set([...Object.keys(prodByDate),...Object.keys(dispByDate)])].sort((a,b)=>new Date(a)-new Date(b));
-  let running=0;
-  const stockByDate={};
+  let running=anchorTotal;
+  let runningColours={...anchorColours};
+  const stockByDate={},stockColourByDate={};
   allDates.forEach(d=>{
     running=running+(prodByDate[d]||0)-(dispByDate[d]||0);
     stockByDate[d]=Math.max(0,running);
+    const pc=prodColourByDate[d]||{},dc=dispColourByDate[d]||{};
+    const cols=new Set([...Object.keys(runningColours),...Object.keys(pc),...Object.keys(dc)]);
+    const next={};
+    cols.forEach(c=>{next[c]=Math.max(0,(runningColours[c]||0)+(pc[c]||0)-(dc[c]||0));});
+    runningColours=next;
+    stockColourByDate[d]={...runningColours};
   });
   const lastDate=allDates.length?allDates[allDates.length-1]:null;
-  return{stockByDate,dispByDate,allDates,lastValue:lastDate?stockByDate[lastDate]:0};
+  return{
+    stockByDate,dispByDate,allDates,
+    lastValue:lastDate?stockByDate[lastDate]:anchorTotal,
+    stockColourByDate,
+    lastColours:lastDate?stockColourByDate[lastDate]:anchorColours,
+    anchorDate,anchorTotal,anchorColours
+  };
 }
 
 // Returns the FG closing stock as of the end of a given "Mon YYYY" month label —
@@ -1860,41 +1971,63 @@ function fgClosingAsOfMonth(m,fgRun){
   const monIdx=MONTHS_SHORT.indexOf(monShort);
   if(monIdx<0||!yr)return fgRun.lastValue||0;
   const endStr=new Date(parseInt(yr),monIdx+1,0).toISOString().split('T')[0];
+  if(fgRun.anchorDate&&endStr<fgRun.anchorDate)return 0;
   for(let i=fgRun.allDates.length-1;i>=0;i--){
     if(fgRun.allDates[i]<=endStr)return fgRun.stockByDate[fgRun.allDates[i]];
   }
-  return 0;
+  return fgRun.anchorTotal||0;
+}
+
+// Same as fgClosingAsOfMonth but returns the colour-wise breakdown {colour: kg}.
+function fgColourClosingAsOfMonth(m,fgRun){
+  const[monShort,yr]=m.split(' ');
+  const monIdx=MONTHS_SHORT.indexOf(monShort);
+  if(monIdx<0||!yr)return fgRun.lastColours||{};
+  const endStr=new Date(parseInt(yr),monIdx+1,0).toISOString().split('T')[0];
+  if(fgRun.anchorDate&&endStr<fgRun.anchorDate)return{};
+  for(let i=fgRun.allDates.length-1;i>=0;i--){
+    if(fgRun.allDates[i]<=endStr)return fgRun.stockColourByDate[fgRun.allDates[i]];
+  }
+  return fgRun.anchorColours||{};
+}
+
+// Manual per-month FG override, if you've set one on the dashboard. Falls back to the calculated figure.
+function fgOverrideFor(m){
+  return(DATA.fgOverrides||[]).find(r=>r.month_year===m)||null;
 }
 
 function renderMIS(){
   const m=getMonth('mis-month');
   const mis=filterByMonth(DATA.mis,'month_year',m);
-  const sorted=[...mis].sort((a,b)=>new Date(b.entry_date)-new Date(a.entry_date));
+  // Oldest at top, latest at the bottom — a ledger, same convention as Trade Register.
+  const sorted=[...mis].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
   const totalProd=sorted.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
   const totalTgt=sorted.reduce((a,r)=>a+Number(r.target_kg||0),0);
   const avgEff=totalTgt>0?Math.round((totalProd/totalTgt)*100):0;
-  const totalDisp=sorted.reduce((a,r)=>a+Number(r.dispatched_kg||0),0);
   const avgMPDay=sorted.length>0?Math.round(sorted.reduce((a,r)=>a+Number(r.manpower_day||0),0)/sorted.length):0;
   const avgMPNight=sorted.length>0?Math.round(sorted.reduce((a,r)=>a+Number(r.manpower_night||0),0)/sorted.length):0;
+  const runHrsRows=sorted.filter(r=>r.washing_run_day!=null||r.agglo_run_day!=null||r.extruder_run_day!=null);
+  const avgRunHrs=runHrsRows.length>0?(runHrsRows.reduce((a,r)=>a+
+    (parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0))+
+    (parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0))+
+    (parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0)),0)/(runHrsRows.length*3)).toFixed(1):'0.0';
+  const labourRows=sorted.filter(r=>Number(r.labour_cost||0)>0&&Number(r.total_production_kg||0)>0);
+  const avgLabourPerKg=labourRows.length>0?(labourRows.reduce((a,r)=>a+Number(r.labour_cost)/Number(r.total_production_kg),0)/labourRows.length):null;
   document.getElementById('mis-metrics').innerHTML=`
-    <div class="mc"><div class="lb">Total production</div><div class="vl green">${Number(totalProd).toLocaleString('en-IN')} Kg</div><div class="sb">Target: ${Number(totalTgt).toLocaleString('en-IN')} Kg</div></div>
-    <div class="mc"><div class="lb">Avg efficiency</div><div class="vl ${avgEff>=90?'green':avgEff>=70?'amber':'red'}">${avgEff}%</div></div>
-    <div class="mc"><div class="lb">Avg day manpower</div><div class="vl">${avgMPDay}</div><div class="sb">Day shift avg</div></div>
-    <div class="mc"><div class="lb">Avg night manpower</div><div class="vl">${avgMPNight}</div><div class="sb">Night shift avg</div></div>`;
+    <div class="mc"><div class="lb">Total production vs target</div><div class="vl tnum green">${Number(totalProd).toLocaleString('en-IN')} <span style="font-size:13px;color:var(--txt2);font-weight:400;">/ ${Number(totalTgt).toLocaleString('en-IN')} Kg</span></div><div class="sb">${avgEff}% efficiency this month</div></div>
+    <div class="mc"><div class="lb">Avg manpower / day</div><div class="vl tnum">${avgMPDay} <span style="font-size:13px;color:var(--txt2);font-weight:400;">day</span> · ${avgMPNight} <span style="font-size:13px;color:var(--txt2);font-weight:400;">night</span></div><div class="sb">across entries this month</div></div>
+    <div class="mc"><div class="lb">Avg running hrs / machine</div><div class="vl tnum">${avgRunHrs}h</div><div class="sb">Wash / Agglo / Ext, day+night</div></div>
+    <div class="mc"><div class="lb">Avg labour ₹/Kg</div><div class="vl tnum">${avgLabourPerKg!=null?'₹'+avgLabourPerKg.toFixed(2):'—'}</div><div class="sb">across entries with labour logged</div></div>`;
 
-  // Closing stock per day — uses the full-history running balance so it always carries forward
-  // from the previous month, instead of resetting to 0 every time you switch months.
+  // Closing stock per day — uses the full-history, anchor-seeded running balance so it always
+  // carries forward from the previous month (and from your opening balance), instead of resetting.
   const fgRun=computeFgRunning();
-  const stockByDate=fgRun.stockByDate;
-  const dispByDate=fgRun.dispByDate;
 
   document.getElementById('mis-tbody').innerHTML=sorted.map(r=>{
     const e=eff(r.total_production_kg,r.target_kg);
     const wRunTotal=(parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0)).toFixed(1);
     const aRunTotal=(parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0)).toFixed(1);
     const eRunTotal=(parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0)).toFixed(1);
-    const todayDisp=dispByDate[r.entry_date]||0;
-    const closingStock=stockByDate[r.entry_date]||0;
     const labourCost=Number(r.labour_cost||0);
     const labourPerKg=Number(r.total_production_kg)>0?(labourCost/Number(r.total_production_kg)):null;
     const colourCell=r.colour?r.colour.split('+').map(c=>`<span style="display:inline-flex;align-items:center;white-space:nowrap;">${colourChip(c)}${c}</span>`).join(' '):'—';
@@ -1903,26 +2036,25 @@ function renderMIS(){
       <td class="tnum">${Number(r.target_kg).toLocaleString('en-IN')}</td>
       <td class="tnum" style="font-weight:600;color:${Number(r.total_production_kg)>=Number(r.target_kg)?'var(--acc)':'#f97316'};">${Number(r.total_production_kg).toLocaleString('en-IN')}</td>
       <td>${colourCell}</td>
-      <td>${effBadge(e)}</td>
-      <td>${r.manpower_day||'—'}</td>
-      <td>${r.manpower_night||'—'}</td>
+      <td class="tnum">${effBadge(e)}</td>
+      <td class="tnum">${r.manpower_day||'—'}</td>
+      <td class="tnum">${r.manpower_night||'—'}</td>
       <td class="tnum">${labourCost>0?'₹'+Number(labourCost).toLocaleString('en-IN'):'—'}</td>
       <td class="tnum" style="font-weight:600;">${labourPerKg!=null?'₹'+labourPerKg.toFixed(2):'—'}</td>
-      <td>${wRunTotal}h</td>
-      <td>${aRunTotal}h</td>
-      <td>${eRunTotal}h</td>
+      <td class="tnum">${wRunTotal}h</td>
+      <td class="tnum">${aRunTotal}h</td>
+      <td class="tnum">${eRunTotal}h</td>
       <td>${r.issue_day||'None'}</td>
       <td>${r.issue_night||'None'}</td>
-      <td class="tnum" style="color:var(--acc2);font-weight:600;">${todayDisp>0?Number(todayDisp).toLocaleString('en-IN'):'—'}</td>
-      <td class="tnum" style="font-weight:600;color:var(--acc);">${Number(closingStock).toLocaleString('en-IN')} Kg</td>
+      <td style="color:var(--txt2);">${r.notes||'—'}</td>
       <td style="white-space:nowrap">
         <button class="btn btn-sm" onclick="openModal('mis-modal','${r.id}')">✏</button>
         <button class="btn btn-sm btn-red" onclick="deleteRow('mis_entries','${r.id}','entry')">🗑</button>
       </td></tr>`;
-  }).join('')||'<tr><td colspan="17" style="text-align:center;padding:20px;color:var(--txt2);">No entries for '+m+'</td></tr>';
+  }).join('')||'<tr><td colspan="16" style="text-align:center;padding:20px;color:var(--txt2);">No entries for '+m+'</td></tr>';
 
   destroyChart('prod');destroyChart('cumProd');
-  const asc=[...sorted].reverse();
+  const asc=sorted;
   const labels=asc.map(r=>fmtDate(r.entry_date));
   // Daily production vs target chart
   charts.prod=new Chart(document.getElementById('prodChart'),{type:'bar',data:{labels,datasets:[{label:'Prod',data:asc.map(r=>Number(r.total_production_kg)),backgroundColor:asc.map(r=>Number(r.total_production_kg)>=Number(r.target_kg)?'#1D9E75':'#f97316'),borderRadius:3},{label:'Tgt',data:asc.map(r=>Number(r.target_kg)),type:'line',borderColor:'#2563eb',borderDash:[4,3],borderWidth:1.4,pointRadius:2,fill:false}]},options:{...BO(),scales:{x:{...BO().scales.x},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>v>=1000?(v/1000).toFixed(1)+'T':v}}}}});
@@ -2538,6 +2670,151 @@ td{border:1px solid #000;padding:5px 6px;font-size:10.5px;}
   <div><div class="sec-title">Outstanding — customers</div><table><thead><tr><th>Customer</th><th style="text-align:right;">₹</th></tr></thead><tbody>${custRows}</tbody></table></div>
 </div>
 <div class="footer-note">Generated from Saatvik Enterprises app on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
+</body></html>`;
+
+  const win=window.open('','_blank');
+  if(!win){toast('Please allow popups for saatvik.biz to download PDF','err');return;}
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>win.print(),800);
+}
+
+function downloadMfgDashPdf(){
+  const m=getMonth('mfg-dash-month');
+  const mis=filterByMonth(DATA.mis,'month_year',m);
+  if(mis.length===0){toast('No production entries for '+m,'err');return;}
+
+  const totalProd=mis.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
+  const totalTgt=mis.reduce((a,r)=>a+Number(r.target_kg||0),0);
+  const avgEff=totalTgt>0?Math.round((totalProd/totalTgt)*100):0;
+  const totalDisp=DATA.dispatches.filter(r=>r.month_year===m).reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  const fgRun=computeFgRunning();
+  const fgOverride=fgOverrideFor(m);
+  const fgStock=(fgOverride&&fgOverride.override_kg!=null)?Number(fgOverride.override_kg):fgClosingAsOfMonth(m,fgRun);
+  const colourFG=(fgOverride&&fgOverride.override_colours)?fgOverride.override_colours:fgColourClosingAsOfMonth(m,fgRun);
+
+  const colourMap={};
+  mis.forEach(r=>{
+    const c=(r.colour&&r.colour.trim())||'Untagged';
+    colourMap[c]=(colourMap[c]||0)+Number(r.total_production_kg||0);
+  });
+  const colourRows=Object.entries(colourMap).sort((a,b)=>b[1]-a[1]).map(([c,kg])=>`<tr><td>${c}</td><td style="text-align:right;">${kg.toLocaleString('en-IN')}</td></tr>`).join('')||'<tr><td colspan="2" style="text-align:center;">—</td></tr>';
+
+  const custGroups={};
+  filterByMonth(DATA.dispatches,'month_year',m).forEach(r=>{const c=r.customer||'Unknown';custGroups[c]=(custGroups[c]||0)+Number(r.qty_kg||0);});
+  const custRows=Object.entries(custGroups).sort((a,b)=>b[1]-a[1]).map(([c,kg])=>`<tr><td>${c}</td><td style="text-align:right;">${kg.toLocaleString('en-IN')}</td></tr>`).join('')||'<tr><td colspan="2" style="text-align:center;">—</td></tr>';
+
+  const fgRows=Object.entries(colourFG).sort((a,b)=>b[1]-a[1]).map(([c,kg])=>`<tr><td>${c}</td><td style="text-align:right;">${Number(kg).toLocaleString('en-IN')}</td></tr>`).join('')||'<tr><td colspan="2" style="text-align:center;">—</td></tr>';
+
+  const html=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+@page{size:A4 landscape;margin:7mm;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Verdana,Geneva,sans-serif;}
+body{font-size:11px;color:#000;background:#fff;}
+.header{display:flex;align-items:center;gap:16px;border-bottom:2.5px solid #000;padding-bottom:8px;margin-bottom:8px;}
+.logo{width:62px;height:62px;object-fit:contain;}
+.company-info{flex:1;text-align:center;}
+.company-name{font-size:23px;font-weight:bold;letter-spacing:2px;}
+.company-addr{font-size:9.5px;margin-top:3px;}
+.doc-title{text-align:center;font-size:15px;font-weight:bold;text-decoration:underline;margin:7px 0 12px;}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.mc{border:1px solid #000;padding:10px 8px;text-align:center;}
+.mc .lb{font-size:9px;text-transform:uppercase;color:#444;margin-bottom:4px;}
+.mc .vl{font-size:17px;font-weight:bold;}
+.cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.sec-title{font-size:12px;font-weight:bold;margin-bottom:5px;border-bottom:1px solid #000;padding-bottom:3px;}
+table{width:100%;border-collapse:collapse;margin-bottom:10px;}
+th{background:#eeeeee;border:1px solid #000;padding:5px 6px;text-align:left;font-size:9.5px;text-transform:uppercase;}
+td{border:1px solid #000;padding:5px 6px;font-size:10.5px;}
+.footer-note{text-align:center;font-size:9px;margin-top:14px;color:#555;}
+</style></head><body>
+<div class="header">
+  <img class="logo" src="${LOGO_B64}" alt="Saatvik Logo">
+  <div class="company-info">
+    <div class="company-name">SAATVIK ENTERPRISES</div>
+    <div class="company-addr">HO : 42 A Rafi Ahmed Kidwai Road, Kolkata-700016 &nbsp;·&nbsp; Factory : Bamunara Industrial Estate, Bamunara, Durgapur - 713212</div>
+  </div>
+</div>
+<div class="doc-title">Manufacturing Dashboard Summary — ${m}</div>
+<div class="metrics">
+  <div class="mc"><div class="lb">Production</div><div class="vl">${totalProd.toLocaleString('en-IN')} Kg</div></div>
+  <div class="mc"><div class="lb">Efficiency</div><div class="vl">${avgEff}%</div></div>
+  <div class="mc"><div class="lb">Dispatched</div><div class="vl">${totalDisp.toLocaleString('en-IN')} Kg</div></div>
+  <div class="mc"><div class="lb">FG in hand</div><div class="vl">${Number(fgStock).toLocaleString('en-IN')} Kg</div></div>
+</div>
+<div class="cols">
+  <div><div class="sec-title">Production by colour</div><table><thead><tr><th>Colour</th><th style="text-align:right;">Kg</th></tr></thead><tbody>${colourRows}</tbody></table></div>
+  <div><div class="sec-title">Customer-wise dispatch</div><table><thead><tr><th>Customer</th><th style="text-align:right;">Kg</th></tr></thead><tbody>${custRows}</tbody></table></div>
+  <div><div class="sec-title">FG in hand — colour wise</div><table><thead><tr><th>Colour</th><th style="text-align:right;">Kg</th></tr></thead><tbody>${fgRows}</tbody></table></div>
+</div>
+<div class="footer-note">Generated from Saatvik Enterprises app on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
+</body></html>`;
+
+  const win=window.open('','_blank');
+  if(!win){toast('Please allow popups for saatvik.biz to download PDF','err');return;}
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>win.print(),800);
+}
+
+function downloadMisPdf(){
+  const m=getMonth('mis-month');
+  const mis=filterByMonth(DATA.mis,'month_year',m);
+  if(mis.length===0){toast('No entries for '+m,'err');return;}
+  const asc=[...mis].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
+  const fgRun=computeFgRunning();
+
+  const rows=asc.map(r=>{
+    const wRunTotal=(parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0)).toFixed(1);
+    const aRunTotal=(parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0)).toFixed(1);
+    const eRunTotal=(parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0)).toFixed(1);
+    const labourCost=Number(r.labour_cost||0);
+    const labourPerKg=Number(r.total_production_kg)>0?(labourCost/Number(r.total_production_kg)):null;
+    return`<tr>
+      <td>${fmtDate(r.entry_date)}</td><td style="text-align:right;">${Number(r.target_kg).toLocaleString('en-IN')}</td>
+      <td style="text-align:right;">${Number(r.total_production_kg).toLocaleString('en-IN')}</td><td>${r.colour||'—'}</td>
+      <td style="text-align:right;">${eff(r.total_production_kg,r.target_kg)}%</td>
+      <td style="text-align:right;">${r.manpower_day||'—'}</td><td style="text-align:right;">${r.manpower_night||'—'}</td>
+      <td style="text-align:right;">${labourCost>0?labourCost.toLocaleString('en-IN'):'—'}</td>
+      <td style="text-align:right;">${labourPerKg!=null?labourPerKg.toFixed(2):'—'}</td>
+      <td style="text-align:right;">${wRunTotal}h</td><td style="text-align:right;">${aRunTotal}h</td><td style="text-align:right;">${eRunTotal}h</td>
+      <td>${r.issue_day||'None'}</td><td>${r.issue_night||'None'}</td><td>${r.notes||'—'}</td></tr>`;
+  }).join('');
+
+  const html=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+@page{size:A4 landscape;margin:6mm;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Verdana,Geneva,sans-serif;}
+body{font-size:9.5px;color:#000;background:#fff;}
+.header{display:flex;align-items:center;gap:14px;border-bottom:2.5px solid #000;padding-bottom:7px;margin-bottom:7px;}
+.logo{width:52px;height:52px;object-fit:contain;}
+.company-info{flex:1;text-align:center;}
+.company-name{font-size:19px;font-weight:bold;letter-spacing:2px;}
+.company-addr{font-size:8.5px;margin-top:2px;}
+.doc-title{text-align:center;font-size:13px;font-weight:bold;text-decoration:underline;margin:6px 0 10px;}
+table{width:100%;border-collapse:collapse;}
+th{background:#eeeeee;border:1px solid #000;padding:4px 5px;text-align:left;font-size:8px;text-transform:uppercase;}
+td{border:1px solid #000;padding:4px 5px;font-size:9px;}
+.footer-note{text-align:center;font-size:8.5px;margin-top:10px;color:#555;}
+</style></head><body>
+<div class="header">
+  <img class="logo" src="${LOGO_B64}" alt="Saatvik Logo">
+  <div class="company-info">
+    <div class="company-name">SAATVIK ENTERPRISES</div>
+    <div class="company-addr">HO : 42 A Rafi Ahmed Kidwai Road, Kolkata-700016 &nbsp;·&nbsp; Factory : Bamunara Industrial Estate, Bamunara, Durgapur - 713212</div>
+  </div>
+</div>
+<div class="doc-title">Production / MIS Register — ${m}</div>
+<table><thead><tr>
+  <th>Date</th><th style="text-align:right;">Target</th><th style="text-align:right;">Production</th><th>Colour</th><th style="text-align:right;">Eff</th>
+  <th style="text-align:right;">Day MP</th><th style="text-align:right;">Night MP</th><th style="text-align:right;">Labour ₹</th><th style="text-align:right;">₹/Kg</th>
+  <th style="text-align:right;">Wash</th><th style="text-align:right;">Agglo</th><th style="text-align:right;">Ext</th><th>Issue D</th><th>Issue N</th><th>Remarks</th>
+</tr></thead><tbody>${rows}</tbody></table>
+<div class="footer-note">FG in hand at end of ${m}: ${Number(fgClosingAsOfMonth(m,fgRun)).toLocaleString('en-IN')} Kg &nbsp;·&nbsp; Generated from Saatvik Enterprises app on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
 </body></html>`;
 
   const win=window.open('','_blank');
