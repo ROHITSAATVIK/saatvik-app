@@ -1541,7 +1541,7 @@ async function saveInv(){
   const oldStock=existing?Number(existing.current_stock||0):0;
   const expectedLife=parseFloat(g('i-explife'))||null;
 
-  const row={item_name:g('i-item'),uom:g('i-uom'),minimum_stock:parseFloat(g('i-min'))||0,current_stock:newStock,rate_per_unit:parseFloat(g('i-rate'))||0,supplier:g('i-supplier')||'',expected_life_days:expectedLife,updated_at:new Date().toISOString()};
+  const row={item_name:g('i-item'),category:'General',uom:g('i-uom'),minimum_stock:parseFloat(g('i-min'))||0,current_stock:newStock,rate_per_unit:parseFloat(g('i-rate'))||0,supplier:g('i-supplier')||'',expected_life_days:expectedLife,updated_at:new Date().toISOString()};
   if(!row.item_name){toast('Item name required','err');return;}
 
   // Automatic IN/OUT/life tracking — no manual step needed
