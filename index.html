@@ -210,6 +210,7 @@ tr:hover td{background:#fafaf9;}
     <div class="ni" onclick="goTo('dispatch')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Dispatch</div>
     <div class="ni" onclick="goToDispatch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Gate Pass</div>
     <div class="ni" onclick="goTo('breakdown')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Breakdown Log</div>
+    <div class="ni" onclick="goTo('machine-breakup')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>Machine Breakup</div>
   </div>
   <!-- TRADING NAV -->
   <div class="nav-section" id="nav-trd" style="display:none;">
@@ -724,6 +725,23 @@ Grey: 3600"></textarea></div></div>
 </div>
 
 
+<!-- ========== MACHINE BREAKUP ========== -->
+<div id="page-machine-breakup" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">⚙️</span>Machine Breakup</div>
+    <div class="tb-right">
+      <select class="month-selector" id="mb-month" onchange="renderMachineBreakup()"></select>
+      <button class="btn" onclick="downloadMachineBreakupPdf()">⬇ PDF</button>
+      <button class="btn" onclick="downloadMachineBreakupExcel()">⬇ Excel</button>
+    </div>
+  </div>
+  <div class="content">
+    <div style="font-size:11px;color:var(--txt2);margin-bottom:10px;">Target: 10h day · 10h night per machine. Red = below target, green = at or above target.</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="mb-cards"></div>
+  </div>
+</div>
+
+
 </div><!-- /main -->
 
 <!-- ============================================================ -->
@@ -1196,7 +1214,7 @@ function buildMonthsRange(){
 const MONTHS=buildMonthsRange();
 function populateMonthSelectors(){
   const cur=currentMonthLabel();
-  ['mfg-dash-month','mis-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','inv-report-month','trd-orders-month'].forEach(id=>{
+  ['mfg-dash-month','mis-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','inv-report-month','trd-orders-month','mb-month'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
     el.innerHTML=MONTHS.map(m=>`<option value="${m}"${m===cur?'selected':''}>${m}</option>`).join('');
@@ -1221,7 +1239,7 @@ function goTo(id){
   // highlight nav
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   const allNi=document.querySelectorAll('.ni');
-  const pages=['mfg-dashboard','production','inventory','dispatch','__gatepass__','breakdown','trd-dashboard','trd-register','trd-orders','__sheets__'];
+  const pages=['mfg-dashboard','production','inventory','dispatch','__gatepass__','breakdown','machine-breakup','trd-dashboard','trd-register','trd-orders','__sheets__'];
   const idx=pages.indexOf(id);
   if(idx>=0&&allNi[idx])allNi[idx].classList.add('active');
   renderPage(id);
@@ -1231,7 +1249,7 @@ function renderPage(id){
   const m={
     'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
     'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'breakdown':renderBreakdownPage,
-    'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'trd-orders':renderTrdOrders,'machines':renderMachines
+    'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'trd-orders':renderTrdOrders,'machines':renderMachines,'machine-breakup':renderMachineBreakup
   };
   if(m[id])m[id]();
 }
@@ -3857,6 +3875,122 @@ function downloadBreakdownExcel(){
   const columns=[{label:'Date'},{label:'Machine'},{label:'Shift'},{label:'Downtime (h)'},{label:'Reason'},{label:'Action taken'},{label:'Cost'},{label:'Status'}];
   const rows=bd.map(r=>[fmtDate(r.breakdown_date),r.machine,r.shift||'Day',Number(r.downtime_hours||0),r.reason,r.action_taken,Number(r.cost||0),r.status]);
   exportTableExcel('Breakdown_Log_'+(m&&m!=='all'?m.replace(' ','_'):'All').replace(' ','_')+'.xlsx','Breakdowns',columns,rows);
+}
+
+// ===== MACHINE BREAKUP =====
+// Day/night running hours per machine, pulled straight from the same Production/MIS entries
+// already logged — no new data entry needed. Target: 10h day, 10h night, judged separately per cell.
+const MB_TARGET=10;
+const MB_MACHINES=[
+  {key:'washing',label:'Washing',dayField:'washing_run_day',nightField:'washing_run_night'},
+  {key:'agglo',label:'Agglo',dayField:'agglo_run_day',nightField:'agglo_run_night'},
+  {key:'extruder',label:'Extruder',dayField:'extruder_run_day',nightField:'extruder_run_night'}
+];
+
+function computeMachineBreakup(machine,m){
+  const mis=filterByMonth(DATA.mis,'month_year',m);
+  const sorted=[...mis].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
+  const rows=sorted.map(r=>({
+    date:r.entry_date,
+    day:parseFloat(r[machine.dayField]||0),
+    night:parseFloat(r[machine.nightField]||0)
+  })).filter(r=>r.day>0||r.night>0);
+  const daysLogged=rows.length;
+  const avgDay=daysLogged?rows.reduce((a,r)=>a+r.day,0)/daysLogged:0;
+  const avgNight=daysLogged?rows.reduce((a,r)=>a+r.night,0)/daysLogged:0;
+  const dayOk=rows.filter(r=>r.day>=MB_TARGET).length;
+  const nightOk=rows.filter(r=>r.night>=MB_TARGET).length;
+  return{rows,daysLogged,avgDay,avgNight,dayOk,dayBad:daysLogged-dayOk,nightOk,nightBad:daysLogged-nightOk};
+}
+
+function renderMachineBreakup(){
+  const m=getMonth('mb-month');
+  document.getElementById('mb-cards').innerHTML=MB_MACHINES.map(machine=>{
+    const d=computeMachineBreakup(machine,m);
+    const rowsHtml=d.rows.map(r=>`<tr>
+      <td>${fmtDate(r.date)}</td>
+      <td class="tnum" style="font-weight:600;color:${r.day>=MB_TARGET?'#15803d':'#dc2626'};background:${r.day>=MB_TARGET?'#f0fdf4':'#fef2f2'};">${r.day.toFixed(1)}</td>
+      <td class="tnum" style="font-weight:600;color:${r.night>=MB_TARGET?'#15803d':'#dc2626'};background:${r.night>=MB_TARGET?'#f0fdf4':'#fef2f2'};">${r.night.toFixed(1)}</td>
+      <td class="tnum" style="font-weight:600;">${(r.day+r.night).toFixed(1)}</td>
+    </tr>`).join('')||`<tr><td colspan="4" style="text-align:center;padding:14px;color:var(--txt2);">No entries for ${m}</td></tr>`;
+    return`<div class="card" style="margin-bottom:0;">
+      <div class="card-head"><div class="card-title">${machine.label}</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bdr2);border-bottom:1px solid var(--bdr2);">
+        <div style="background:#fff;padding:8px 10px;"><div style="font-size:9px;color:var(--txt2);text-transform:uppercase;">Days logged</div><div class="tnum" style="font-size:16px;font-weight:600;">${d.daysLogged}</div></div>
+        <div style="background:#fff;padding:8px 10px;"><div style="font-size:9px;color:var(--txt2);text-transform:uppercase;">Avg day / night</div><div class="tnum" style="font-size:14px;font-weight:600;">${d.avgDay.toFixed(1)}h / ${d.avgNight.toFixed(1)}h</div></div>
+        <div style="background:#fff;padding:8px 10px;"><div style="font-size:9px;color:var(--txt2);text-transform:uppercase;">Day ≥10h</div><div class="tnum" style="font-size:14px;font-weight:600;color:#15803d;">${d.dayOk} <span style="color:var(--txt2);font-weight:400;font-size:11px;">/ ${d.dayBad} below</span></div></div>
+        <div style="background:#fff;padding:8px 10px;"><div style="font-size:9px;color:var(--txt2);text-transform:uppercase;">Night ≥10h</div><div class="tnum" style="font-size:14px;font-weight:600;color:#15803d;">${d.nightOk} <span style="color:var(--txt2);font-weight:400;font-size:11px;">/ ${d.nightBad} below</span></div></div>
+      </div>
+      <div class="tw excel-table" style="max-height:420px;overflow-y:auto;"><table><thead><tr><th>Date</th><th class="tnum">Day</th><th class="tnum">Night</th><th class="tnum">Total</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>
+    </div>`;
+  }).join('');
+}
+
+function downloadMachineBreakupPdf(){
+  const m=getMonth('mb-month');
+  const sections=MB_MACHINES.map(machine=>{
+    const d=computeMachineBreakup(machine,m);
+    const rowsHtml=d.rows.map(r=>`<tr>
+      <td>${fmtDate(r.date)}</td>
+      <td style="text-align:right;color:${r.day>=MB_TARGET?'#15803d':'#dc2626'};font-weight:bold;">${r.day.toFixed(1)}</td>
+      <td style="text-align:right;color:${r.night>=MB_TARGET?'#15803d':'#dc2626'};font-weight:bold;">${r.night.toFixed(1)}</td>
+      <td style="text-align:right;font-weight:bold;">${(r.day+r.night).toFixed(1)}</td>
+    </tr>`).join('')||'<tr><td colspan="4" style="text-align:center;">No entries</td></tr>';
+    return`<div style="margin-bottom:14px;">
+      <div style="font-size:12px;font-weight:bold;margin-bottom:4px;">${machine.label} — Days logged: ${d.daysLogged} · Avg day/night: ${d.avgDay.toFixed(1)}h / ${d.avgNight.toFixed(1)}h · Day ≥10h: ${d.dayOk}/${d.daysLogged} · Night ≥10h: ${d.nightOk}/${d.daysLogged}</div>
+      <table><thead><tr><th>Date</th><th style="text-align:right;">Day (h)</th><th style="text-align:right;">Night (h)</th><th style="text-align:right;">Total (h)</th></tr></thead><tbody>${rowsHtml}</tbody></table>
+    </div>`;
+  }).join('');
+
+  const html=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+@page{size:A4 portrait;margin:8mm;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Verdana,Geneva,Tahoma,sans-serif;}
+body{font-size:9.5px;color:#000;background:#fff;}
+.header{display:flex;align-items:center;gap:14px;border-bottom:2.5px solid #000;padding-bottom:7px;margin-bottom:7px;}
+.logo{width:52px;height:52px;object-fit:contain;}
+.company-info{flex:1;text-align:center;}
+.company-name{font-size:19px;font-weight:bold;letter-spacing:2px;}
+.company-addr{font-size:8.5px;margin-top:2px;}
+.doc-title{text-align:center;font-size:13px;font-weight:bold;text-decoration:underline;margin:6px 0 12px;}
+table{width:100%;border-collapse:collapse;}
+th{background:#eeeeee;border:1px solid #000;padding:4px 5px;font-size:8px;text-transform:uppercase;}
+td{border:1px solid #000;padding:4px 5px;font-size:9px;}
+.footer-note{text-align:center;font-size:8.5px;margin-top:10px;color:#555;}
+</style></head><body>
+<div class="header">
+  <img class="logo" src="${LOGO_B64}" alt="Saatvik Logo">
+  <div class="company-info">
+    <div class="company-name">SAATVIK ENTERPRISES</div>
+    <div class="company-addr">HO : 42 A Rafi Ahmed Kidwai Road, Kolkata-700016 &nbsp;·&nbsp; Factory : Bamunara Industrial Estate, Bamunara, Durgapur - 713212</div>
+  </div>
+</div>
+<div class="doc-title">Machine Breakup — ${m} (Target: 10h day / 10h night)</div>
+${sections}
+<div class="footer-note">Generated from Saatvik Enterprises app on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
+</body></html>`;
+
+  const win=window.open('','_blank');
+  if(!win){toast('Please allow popups for saatvik.biz to download PDF','err');return;}
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>win.print(),800);
+}
+
+function downloadMachineBreakupExcel(){
+  const m=getMonth('mb-month');
+  if(typeof XLSX==='undefined'){toast('Excel export library did not load — check your connection','err');return;}
+  const wb=XLSX.utils.book_new();
+  MB_MACHINES.forEach(machine=>{
+    const d=computeMachineBreakup(machine,m);
+    const data=[['Date','Day (h)','Night (h)','Total (h)'],...d.rows.map(r=>[fmtDate(r.date),r.day,r.night,r.day+r.night])];
+    const ws=XLSX.utils.aoa_to_sheet(data);
+    ws['!cols']=[{wch:14},{wch:10},{wch:10},{wch:10}];
+    XLSX.utils.book_append_sheet(wb,ws,machine.label);
+  });
+  XLSX.writeFile(wb,'Machine_Breakup_'+m.replace(' ','_')+'.xlsx');
 }
 
 
