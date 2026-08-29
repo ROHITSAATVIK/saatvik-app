@@ -197,33 +197,22 @@ tr:hover td{background:#fafaf9;}
       <div class="logo-sub"><span class="sync-dot"></span> <span id="sync-txt">saatvik.biz · Admin</span></div>
     </div>
   </div>
-  <div class="biz-switcher">
-    <button class="biz-btn active-mfg" id="sw-mfg" onclick="switchBiz('mfg')">🏭 Mfg</button>
-    <button class="biz-btn" id="sw-trd" onclick="switchBiz('trd')">♻️ Trading</button>
-  </div>
-  <!-- MFG NAV -->
-  <div class="nav-section" id="nav-mfg">
-    <div class="nav-label">Manufacturing</div>
+  <!-- MAIN NAV — everything in one place, no Mfg/Trading toggle -->
+  <div class="nav-section">
     <div class="ni active" onclick="goTo('mfg-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
     <div class="ni" onclick="goTo('production')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Production / MIS</div>
+    <div class="ni" onclick="goTo('machine-breakup')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>Machine Breakup</div>
+    <div class="ni" onclick="goTo('notifications')" id="ni-notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Notification<span id="notif-badge" style="display:none;margin-left:auto;background:#dc2626;color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;"></span></div>
     <div class="ni" onclick="goTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory</div>
+    <div class="ni" onclick="goTo('breakdown')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Breakdown Log</div>
     <div class="ni" onclick="goTo('dispatch')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Dispatch</div>
     <div class="ni" onclick="goToDispatch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Gate Pass</div>
-    <div class="ni" onclick="goTo('breakdown')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Breakdown Log</div>
-    <div class="ni" onclick="goTo('machine-breakup')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>Machine Breakup</div>
-  </div>
-  <!-- TRADING NAV -->
-  <div class="nav-section" id="nav-trd" style="display:none;">
-    <div class="nav-label">Trading (Scrap)</div>
-    <div class="ni" onclick="goTo('trd-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
-    <div class="ni" onclick="goTo('trd-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Trade Register</div>
-    <div class="ni" onclick="goTo('trd-orders')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Trading Orders</div>
-
-  </div>
-  <!-- GENERAL — always visible regardless of Mfg/Trading toggle -->
-  <div class="nav-section">
-    <div class="nav-label">General</div>
-    <div class="ni" id="ni-sheets" onclick="goToSheets()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/><line x1="15" y1="9" x2="15" y2="21"/></svg>Excel Sheet</div>
+    <div class="ni" onclick="goTo('trd-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Scrap Dashboard</div>
+    <div class="ni" onclick="goTo('trd-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Scrap Register</div>
+    <div class="ni" onclick="goTo('trd-tools-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Tools Dashboard</div>
+    <div class="ni" onclick="goTo('trd-tools-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Tools Register</div>
+    <div class="ni" onclick="goTo('trd-electrodes-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Electrodes Register</div>
+    <div class="ni" id="ni-sheets" onclick="goToSheets()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/><line x1="15" y1="9" x2="15" y2="21"/></svg>Excel</div>
   </div>
   <div class="sidebar-foot">
     <div style="font-size:10px;color:var(--txt2);" id="logged-in-email">saatvikent2@gmail.com</div>
@@ -251,7 +240,8 @@ tr:hover td{background:#fafaf9;}
     <div class="topbar-title"><span class="section-badge mfg-badge">🏭 Manufacturing</span>Dashboard</div>
     <div class="tb-right">
       <select class="month-selector" id="mfg-dash-month" onchange="renderMfgDashboard()"></select>
-      <button class="btn" onclick="downloadMfgDashPdf()">⬇ Download</button>
+      <button class="btn" onclick="downloadMfgDashPdf()">⬇ PDF</button>
+      <button class="btn" onclick="downloadMfgDashExcel()">⬇ Excel</button>
       <button class="btn" onclick="loadAll()">↻ Refresh</button>
     </div>
   </div>
@@ -330,7 +320,8 @@ Grey: 3600"></textarea></div></div>
     <div class="topbar-title"><span class="section-badge mfg-badge">🏭</span>Production / MIS</div>
     <div class="tb-right">
       <select class="month-selector" id="mis-month" onchange="renderMIS()"></select>
-      <button class="btn" onclick="downloadMisPdf()">⬇ Download</button>
+      <button class="btn" onclick="downloadMisPdf()">⬇ PDF</button>
+      <button class="btn" onclick="downloadMisExcel()">⬇ Excel</button>
       <button class="btn btn-green" onclick="openModal('mis-modal',null)">+ Add entry</button>
     </div>
   </div>
@@ -436,7 +427,8 @@ Grey: 3600"></textarea></div></div>
     <div class="topbar-title"><span class="section-badge trd-badge">♻️ Trading</span>Dashboard</div>
     <div class="tb-right">
       <select class="month-selector" id="trd-dash-month" onchange="renderTrdDashboard()"></select>
-      <button class="btn" onclick="downloadTrdDashPdf()">⬇ Download PDF</button>
+      <button class="btn" onclick="downloadTrdDashPdf()">⬇ PDF</button>
+      <button class="btn" onclick="downloadTrdDashExcel()">⬇ Excel</button>
       <button class="btn" onclick="loadAll()">↻ Refresh</button>
     </div>
   </div>
@@ -503,41 +495,130 @@ Grey: 3600"></textarea></div></div>
 </div>
 
 
-<!-- ========== TRADING ORDERS (tools & electrodes) ========== -->
-<div id="page-trd-orders" class="page">
+<!-- ========== TOOLS DASHBOARD ========== -->
+<div id="page-trd-tools-dashboard" class="page">
   <div class="topbar">
-    <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Trading Orders</div>
+    <div class="topbar-title"><span class="section-badge trd-badge">🔧</span>Tools Dashboard</div>
     <div class="tb-right">
-      <select class="month-selector" id="trd-orders-month" onchange="renderTrdOrders()"></select>
-      <button class="btn" onclick="downloadTrdOrdersPdf()">⬇ PDF</button>
-      <button class="btn" onclick="downloadTrdOrdersExcel()">⬇ Excel</button>
-      <button class="btn btn-blue" onclick="openTrdOrderModal(null)">+ Add order</button>
+      <select class="month-selector" id="tot-dash-month" onchange="renderTrdToolsDashboard()"></select>
+      <button class="btn" onclick="downloadTrdOrdersPdf('Tools','tot-dash-month')">⬇ PDF</button>
+      <button class="btn" onclick="downloadTrdOrdersExcel('Tools','tot-dash-month')">⬇ Excel</button>
     </div>
   </div>
   <div class="content">
-    <div style="display:flex;gap:3px;margin-bottom:0;" id="trd-orders-tabs">
-      <div onclick="switchTrdOrderType('Tools')" id="tot-tab-Tools" style="padding:8px 18px;border-radius:var(--rad) var(--rad) 0 0;cursor:pointer;font-size:13px;font-weight:700;border:1px solid var(--bdr2);border-bottom:1px solid #fff;margin-bottom:-1px;background:#fff;color:var(--acc2);">🔧 Tools</div>
-      <div onclick="switchTrdOrderType('Electrodes')" id="tot-tab-Electrodes" style="padding:8px 18px;border-radius:var(--rad) var(--rad) 0 0;cursor:pointer;font-size:13px;font-weight:700;border:1px solid var(--bdr2);border-bottom:1px solid var(--bdr2);margin-bottom:-1px;background:var(--bg3);color:var(--txt2);">⚡ Electrodes</div>
+    <div class="metrics g6" id="tot-dash-metrics"></div>
+    <div class="g2">
+      <div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Order value — month on month</div></div>
+          <div class="card-body"><div style="position:relative;height:150px;"><canvas id="totMoMValue">Value</canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Supplier-wise — this month</div></div>
+          <div class="card-body" style="padding:0;"><div class="tw excel-table"><table><thead><tr><th>Supplier</th><th class="tnum">Orders</th><th class="tnum">Qty</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th></tr></thead><tbody id="tot-dash-supplier-tbody"></tbody></table></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="border-color:#E3C9B8;">
+          <div class="card-head" style="background:#F6E9E2;"><div class="card-title" style="color:#7A3820;">⏳ Pending — all months</div></div>
+          <div class="tw excel-table"><table><thead><tr><th>Order date</th><th class="tnum">Days</th><th>Supplier</th><th>Item</th><th class="tnum">Qty</th></tr></thead><tbody id="tot-dash-pending-tbody"></tbody></table></div>
+        </div>
+      </div>
     </div>
-    <div class="card" style="border-top-left-radius:0;border-color:#E3C9B8;">
+  </div>
+</div>
+
+<!-- ========== TOOLS REGISTER ========== -->
+<div id="page-trd-tools-register" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge trd-badge">🔧</span>Tools Register</div>
+    <div class="tb-right">
+      <select class="month-selector" id="tot-reg-month" onchange="renderTrdToolsRegister()"></select>
+      <button class="btn" onclick="downloadTrdOrdersPdf('Tools','tot-reg-month')">⬇ PDF</button>
+      <button class="btn" onclick="downloadTrdOrdersExcel('Tools','tot-reg-month')">⬇ Excel</button>
+      <button class="btn btn-blue" onclick="openTrdOrderModal(null,'Tools')">+ Add order</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="card" style="border-color:#E3C9B8;">
       <div class="card-head" style="background:#F6E9E2;">
-        <div class="card-title" id="trd-orders-pending-title" style="color:#7A3820;">⏳ Pending — all months</div>
-        <div style="font-size:11px;color:#7A3820;">Not filtered by the month selector above — so nothing from an old month gets missed</div>
+        <div class="card-title" style="color:#7A3820;">⏳ Pending — all months</div>
+        <div style="font-size:11px;color:#7A3820;">Not filtered by the month selector below — so nothing from an old month gets missed</div>
       </div>
       <div class="tw excel-table"><table><thead><tr><th>Order date</th><th class="tnum">Days pending</th><th>Order no</th><th>Supplier</th><th>Customer</th><th>Item</th><th class="tnum">Qty</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="trd-orders-pending-tbody"></tbody></table></div>
+      <tbody id="tot-reg-pending-tbody"></tbody></table></div>
     </div>
-    <div class="metrics g6" id="trd-orders-metrics" style="border-top-left-radius:0;"></div>
+    <div class="metrics g6" id="tot-reg-metrics"></div>
     <div class="card">
       <div class="card-head"><div class="card-title">Supplier-wise — this month</div></div>
-      <div class="card-body" style="padding:0;"><div class="tw excel-table"><table><thead><tr><th>Supplier</th><th class="tnum">Orders</th><th class="tnum">Qty</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th></tr></thead><tbody id="trd-orders-supplier-tbody"></tbody></table></div></div>
+      <div class="card-body" style="padding:0;"><div class="tw excel-table"><table><thead><tr><th>Supplier</th><th class="tnum">Orders</th><th class="tnum">Qty</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th></tr></thead><tbody id="tot-reg-supplier-tbody"></tbody></table></div></div>
     </div>
     <div class="card">
-      <div class="card-head"><div class="card-title" id="trd-orders-register-title">Order register</div></div>
+      <div class="card-head"><div class="card-title">Tools — order register</div></div>
       <div class="tw excel-table"><table>
         <thead><tr><th>Sl</th><th>Order date</th><th>Order no</th><th>Supplier</th><th>Customer</th><th>Item</th><th class="tnum">Qty</th><th>Remarks</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="trd-orders-tbody"><tr><td colspan="15"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+        <tbody id="tot-reg-tbody"><tr><td colspan="15"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
       </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ELECTRODES REGISTER ========== -->
+<div id="page-trd-electrodes-register" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge trd-badge">⚡</span>Electrodes Register</div>
+    <div class="tb-right">
+      <select class="month-selector" id="eot-reg-month" onchange="renderTrdElectrodesRegister()"></select>
+      <button class="btn" onclick="downloadTrdOrdersPdf('Electrodes','eot-reg-month')">⬇ PDF</button>
+      <button class="btn" onclick="downloadTrdOrdersExcel('Electrodes','eot-reg-month')">⬇ Excel</button>
+      <button class="btn btn-blue" onclick="openTrdOrderModal(null,'Electrodes')">+ Add order</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="card" style="border-color:#E3C9B8;">
+      <div class="card-head" style="background:#F6E9E2;">
+        <div class="card-title" style="color:#7A3820;">⏳ Pending — all months</div>
+        <div style="font-size:11px;color:#7A3820;">Not filtered by the month selector below — so nothing from an old month gets missed</div>
+      </div>
+      <div class="tw excel-table"><table><thead><tr><th>Order date</th><th class="tnum">Days pending</th><th>Order no</th><th>Supplier</th><th>Customer</th><th>Item</th><th class="tnum">Qty</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="eot-reg-pending-tbody"></tbody></table></div>
+    </div>
+    <div class="metrics g6" id="eot-reg-metrics"></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Supplier-wise — this month</div></div>
+      <div class="card-body" style="padding:0;"><div class="tw excel-table"><table><thead><tr><th>Supplier</th><th class="tnum">Orders</th><th class="tnum">Qty</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th></tr></thead><tbody id="eot-reg-supplier-tbody"></tbody></table></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Electrodes — order register</div></div>
+      <div class="tw excel-table"><table>
+        <thead><tr><th>Sl</th><th>Order date</th><th>Order no</th><th>Supplier</th><th>Customer</th><th>Item</th><th class="tnum">Qty</th><th>Remarks</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="eot-reg-tbody"><tr><td colspan="15"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== NOTIFICATIONS ========== -->
+<div id="page-notifications" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">🔔</span>Notification</div>
+    <div class="tb-right">
+      <button class="btn" onclick="loadAll()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="content">
+    <div style="font-size:11px;color:var(--txt2);margin-bottom:10px;">Checked every time the app loads or refreshes — not a push notification to your phone, since this is a browser app with no background service. Open this page (or just the app) to see what's active.</div>
+    <div class="card" style="border-color:#F0997B;">
+      <div class="card-head" style="background:#FAECE7;"><div class="card-title" style="color:#4A1B0C;">🚫 Inventory — out of stock</div></div>
+      <div class="tw excel-table"><table><thead><tr><th>Item</th><th class="tnum">Min level</th><th>Supplier</th><th>Last issue</th></tr></thead><tbody id="notif-outofstock-tbody"></tbody></table></div>
+    </div>
+    <div class="card" style="border-color:#FAC775;">
+      <div class="card-head" style="background:#FAEEDA;"><div class="card-title" style="color:#412402;">⚠️ Inventory — below minimum</div></div>
+      <div class="tw excel-table"><table><thead><tr><th>Item</th><th class="tnum">Min level</th><th class="tnum">In stock</th><th>Supplier</th></tr></thead><tbody id="notif-lowstock-tbody"></tbody></table></div>
+    </div>
+    <div class="card" style="border-color:#F09595;">
+      <div class="card-head" style="background:#FCEBEB;"><div class="card-title" style="color:#501313;">⚙️ Machines — below 10h target (most recent logged day)</div></div>
+      <div class="tw excel-table"><table><thead><tr><th>Machine</th><th>Date</th><th class="tnum">Day (h)</th><th class="tnum">Night (h)</th></tr></thead><tbody id="notif-machines-tbody"></tbody></table></div>
     </div>
   </div>
 </div>
@@ -1221,7 +1302,7 @@ function buildMonthsRange(){
 const MONTHS=buildMonthsRange();
 function populateMonthSelectors(){
   const cur=currentMonthLabel();
-  ['mfg-dash-month','mis-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','inv-report-month','trd-orders-month','mb-month'].forEach(id=>{
+  ['mfg-dash-month','mis-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','inv-report-month','mb-month','tot-dash-month','tot-reg-month','eot-reg-month'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
     el.innerHTML=MONTHS.map(m=>`<option value="${m}"${m===cur?'selected':''}>${m}</option>`).join('');
@@ -1231,14 +1312,6 @@ function populateMonthSelectors(){
 function getMonth(selId){return document.getElementById(selId)?.value||currentMonthLabel();}
 
 // ===== BIZ SWITCHER =====
-function switchBiz(biz){
-  document.getElementById('nav-mfg').style.display=biz==='mfg'?'block':'none';
-  document.getElementById('nav-trd').style.display=biz==='trd'?'block':'none';
-  document.getElementById('sw-mfg').className='biz-btn'+(biz==='mfg'?' active-mfg':'');
-  document.getElementById('sw-trd').className='biz-btn'+(biz==='trd'?' active-trd':'');
-  goTo(biz==='mfg'?'mfg-dashboard':'trd-dashboard');
-}
-
 // ===== NAVIGATION =====
 function goTo(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1246,7 +1319,7 @@ function goTo(id){
   // highlight nav
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   const allNi=document.querySelectorAll('.ni');
-  const pages=['mfg-dashboard','production','inventory','dispatch','__gatepass__','breakdown','machine-breakup','trd-dashboard','trd-register','trd-orders','__sheets__'];
+  const pages=['mfg-dashboard','production','machine-breakup','notifications','inventory','breakdown','dispatch','__gatepass__','trd-dashboard','trd-register','trd-tools-dashboard','trd-tools-register','trd-electrodes-register','__sheets__'];
   const idx=pages.indexOf(id);
   if(idx>=0&&allNi[idx])allNi[idx].classList.add('active');
   renderPage(id);
@@ -1256,7 +1329,9 @@ function renderPage(id){
   const m={
     'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
     'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'breakdown':renderBreakdownPage,
-    'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'trd-orders':renderTrdOrders,'machines':renderMachines,'machine-breakup':renderMachineBreakup
+    'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines,'machine-breakup':renderMachineBreakup,
+    'trd-tools-dashboard':renderTrdToolsDashboard,'trd-tools-register':renderTrdToolsRegister,'trd-electrodes-register':renderTrdElectrodesRegister,
+    'notifications':renderNotifications
   };
   if(m[id])m[id]();
 }
@@ -1518,6 +1593,7 @@ async function loadAll(){
     ]);
     const dl=document.getElementById('colour-list');
     if(dl)dl.innerHTML=[...colours].map(c=>`<option value="${c}">`).join('');
+    updateNotifBadge();
     const active=document.querySelector('.page.active')?.id?.replace('page-','');
     if(active)renderPage(active);
     if(currentHistoryItem&&document.getElementById('item-history-modal')?.classList.contains('open'))renderItemHistory();
@@ -2489,23 +2565,10 @@ function calcTrdOrderValues(){
   el.textContent='Cost value: '+fmtMoney(costValue)+' · Sale value: '+fmtMoney(saleValue)+' · Profit: '+fmtMoney(profit);
 }
 
-let activeTradeOrderType='Tools';
-function switchTrdOrderType(type){
-  activeTradeOrderType=type;
-  ['Tools','Electrodes'].forEach(t=>{
-    const el=document.getElementById('tot-tab-'+t);
-    if(el){
-      el.style.background=t===type?'#fff':'var(--bg3)';
-      el.style.color=t===type?'var(--acc2)':'var(--txt2)';
-      el.style.borderBottom=t===type?'1px solid #fff':'1px solid var(--bdr2)';
-    }
-  });
-  renderTrdOrders();
-}
-
-function openTrdOrderModal(rowId){
+function openTrdOrderModal(rowId,defaultType){
   editId=rowId;
-  document.getElementById('trd-order-modal-t').textContent=(rowId?'Edit ':'Add ')+activeTradeOrderType+' Order';
+  const type=rowId?((DATA.trdOrders||[]).find(x=>x.id===rowId)?.item_type||'Tools'):(defaultType||'Tools');
+  document.getElementById('trd-order-modal-t').textContent=(rowId?'Edit ':'Add ')+type+' Order';
   const dl=document.getElementById('trd-order-supplier-list');
   if(dl)dl.innerHTML=[...new Set((DATA.trdOrders||[]).map(r=>r.supplier).filter(Boolean))].map(s=>`<option value="${s}">`).join('');
   if(rowId){
@@ -2526,7 +2589,7 @@ function openTrdOrderModal(rowId){
   } else {
     ['to-date','to-orderno','to-supplier','to-customer','to-item','to-qty','to-cp','to-sp','to-notes'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
     document.getElementById('to-status').value='Pending';
-    document.getElementById('to-type').value=activeTradeOrderType;
+    document.getElementById('to-type').value=type;
     document.getElementById('to-date').value=new Date().toISOString().split('T')[0];
   }
   calcTrdOrderValues();
@@ -2558,9 +2621,11 @@ async function saveTrdOrder(){
   toast(editId?'Order updated ✓':'Order saved ✓');closeModal('trd-order-modal');await loadAll();
 }
 
-function renderTrdOrders(){
-  const m=getMonth('trd-orders-month');
-  const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===activeTradeOrderType);
+// Shared register renderer for both Tools and Electrodes — same layout, just a different item_type
+// and a different set of element-id prefixes so the two pages never collide.
+function renderTradeOrdersRegister(type,prefix){
+  const m=getMonth(prefix+'-month');
+  const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===type);
   const orders=filterByMonth(byType,'month_year',m);
   // Sorted by when it was ENTERED (not by order date), so Sl numbers stay put — editing an order's
   // date, or adding a new one, never reshuffles rows you've already numbered.
@@ -2568,12 +2633,11 @@ function renderTrdOrders(){
 
   // Pending — deliberately ignores the month selector above, so an order from a couple of months
   // back doesn't just fall out of view once you're looking at the current month.
-  const pendingTitleEl=document.getElementById('trd-orders-pending-title');
-  if(pendingTitleEl)pendingTitleEl.textContent='⏳ '+activeTradeOrderType+' pending — all months';
   const allPending=byType.filter(r=>r.status==='Pending'||r.status==='Ordered')
     .sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
   const sc2={Pending:'b-amber',Ordered:'b-blue'};
-  document.getElementById('trd-orders-pending-tbody').innerHTML=allPending.map(r=>{
+  const pendingEl=document.getElementById(prefix+'-pending-tbody');
+  if(pendingEl)pendingEl.innerHTML=allPending.map(r=>{
     const days=Math.floor((TODAY-new Date(r.order_date))/86400000);
     return`<tr style="${days>30?'background:#fef2f2;':''}">
       <td>${fmtDate(r.order_date)}</td>
@@ -2585,12 +2649,9 @@ function renderTrdOrders(){
       <td class="tnum">${Number(r.qty).toLocaleString('en-IN')}</td>
       <td style="color:var(--txt2);">${r.notes||'—'}</td>
       <td><span class="badge ${sc2[r.status]||'b-gray'}">${r.status}</span></td>
-      <td style="white-space:nowrap"><button class="btn btn-sm" onclick="openTrdOrderModal('${r.id}')">✏</button></td>
+      <td style="white-space:nowrap"><button class="btn btn-sm" onclick="openTrdOrderModal('${r.id}','${type}')">✏</button></td>
     </tr>`;
-  }).join('')||`<tr><td colspan="10" style="text-align:center;padding:16px;color:var(--txt2);">No pending ${activeTradeOrderType.toLowerCase()} orders — all caught up</td></tr>`;
-
-  const titleEl=document.getElementById('trd-orders-register-title');
-  if(titleEl)titleEl.textContent=activeTradeOrderType+' — order register';
+  }).join('')||`<tr><td colspan="10" style="text-align:center;padding:16px;color:var(--txt2);">No pending ${type.toLowerCase()} orders — all caught up</td></tr>`;
 
   const totalQty=sorted.reduce((a,r)=>a+Number(r.qty||0),0);
   const totalCost=sorted.reduce((a,r)=>a+Number(r.cost_value||0),0);
@@ -2598,7 +2659,7 @@ function renderTrdOrders(){
   const totalProfit=sorted.reduce((a,r)=>a+Number(r.profit||0),0);
   const pending=sorted.filter(r=>r.status==='Pending'||r.status==='Ordered').length;
 
-  document.getElementById('trd-orders-metrics').innerHTML=`
+  document.getElementById(prefix+'-metrics').innerHTML=`
     <div class="mc"><div class="lb">Orders</div><div class="vl tnum">${sorted.length}</div></div>
     <div class="mc"><div class="lb">Total qty</div><div class="vl tnum">${totalQty.toLocaleString('en-IN')}</div></div>
     <div class="mc"><div class="lb">Cost value</div><div class="vl tnum blue">${fmtMoney(totalCost)}</div></div>
@@ -2607,7 +2668,7 @@ function renderTrdOrders(){
     <div class="mc"><div class="lb">Pending / Ordered</div><div class="vl tnum amber">${pending}</div></div>`;
 
   const sc={Pending:'b-amber',Ordered:'b-blue',Delivered:'b-green',Billed:'b-purple',Paid:'b-green',Cancelled:'b-red'};
-  document.getElementById('trd-orders-tbody').innerHTML=sorted.map((r,i)=>`<tr>
+  document.getElementById(prefix+'-tbody').innerHTML=sorted.map((r,i)=>`<tr>
     <td>${i+1}</td>
     <td>${fmtDate(r.order_date)}</td>
     <td>${r.order_no||'—'}</td>
@@ -2623,11 +2684,10 @@ function renderTrdOrders(){
     <td class="tnum" style="font-weight:600;color:${Number(r.profit)>=0?'#15803d':'#dc2626'};">${fmtMoney(r.profit)}</td>
     <td><span class="badge ${sc[r.status]||'b-gray'}">${r.status}</span></td>
     <td style="white-space:nowrap">
-      <button class="btn btn-sm" onclick="openTrdOrderModal('${r.id}')">✏</button>
+      <button class="btn btn-sm" onclick="openTrdOrderModal('${r.id}','${type}')">✏</button>
       <button class="btn btn-sm btn-red" onclick="deleteRow('trading_orders','${r.id}','order')">🗑</button>
-    </td></tr>`).join('')||'<tr><td colspan="15" style="text-align:center;padding:20px;color:var(--txt2);">No '+activeTradeOrderType.toLowerCase()+' orders for '+m+'</td></tr>';
+    </td></tr>`).join('')||'<tr><td colspan="15" style="text-align:center;padding:20px;color:var(--txt2);">No '+type.toLowerCase()+' orders for '+m+'</td></tr>';
 
-  // Supplier-wise breakdown — this month, this category only
   const supGroups={};
   sorted.forEach(r=>{
     const s=r.supplier||'Unknown';
@@ -2639,26 +2699,82 @@ function renderTrdOrders(){
     supGroups[s].profit+=Number(r.profit||0);
   });
   const supRows=Object.entries(supGroups).sort((a,b)=>b[1].sale-a[1].sale);
-  document.getElementById('trd-orders-supplier-tbody').innerHTML=supRows.map(([s,v])=>
+  document.getElementById(prefix+'-supplier-tbody').innerHTML=supRows.map(([s,v])=>
     `<tr><td>${s}</td><td class="tnum">${v.orders}</td><td class="tnum">${v.qty.toLocaleString('en-IN')}</td><td class="tnum">${fmtMoney(v.cost)}</td><td class="tnum">${fmtMoney(v.sale)}</td><td class="tnum" style="font-weight:600;color:${v.profit>=0?'#15803d':'#dc2626'};">${fmtMoney(v.profit)}</td></tr>`
   ).join('')||'<tr><td colspan="6" style="text-align:center;padding:14px;color:var(--txt2);">No orders this month</td></tr>';
 }
 
-function downloadTrdOrdersPdf(){
-  const m=getMonth('trd-orders-month');
-  const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===activeTradeOrderType);
+function renderTrdToolsRegister(){renderTradeOrdersRegister('Tools','tot-reg');}
+function renderTrdElectrodesRegister(){renderTradeOrdersRegister('Electrodes','eot-reg');}
+
+function renderTrdToolsDashboard(){
+  const m=getMonth('tot-dash-month');
+  const tools=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')==='Tools');
+  const sorted=filterByMonth(tools,'month_year',m);
+
+  const totalQty=sorted.reduce((a,r)=>a+Number(r.qty||0),0);
+  const totalCost=sorted.reduce((a,r)=>a+Number(r.cost_value||0),0);
+  const totalSale=sorted.reduce((a,r)=>a+Number(r.sale_value||0),0);
+  const totalProfit=sorted.reduce((a,r)=>a+Number(r.profit||0),0);
+  // Total pending — across ALL months, not just this one, since that's the whole point of this metric.
+  const totalPending=tools.filter(r=>r.status==='Pending'||r.status==='Ordered').length;
+
+  document.getElementById('tot-dash-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Orders this month</div><div class="vl tnum">${sorted.length}</div></div>
+    <div class="mc"><div class="lb">Total qty</div><div class="vl tnum">${totalQty.toLocaleString('en-IN')}</div></div>
+    <div class="mc"><div class="lb">Cost value</div><div class="vl tnum blue">${fmtMoney(totalCost)}</div></div>
+    <div class="mc"><div class="lb">Sale value</div><div class="vl tnum">${fmtMoney(totalSale)}</div></div>
+    <div class="mc"><div class="lb">Profit</div><div class="vl tnum ${totalProfit>=0?'green':'red'}">${fmtMoney(totalProfit)}</div></div>
+    <div class="mc" style="background:#F6E9E2;border:0.5px solid #E3C9B8;"><div class="lb" style="color:#7A3820;">Total pending orders</div><div class="vl tnum" style="color:#7A3820;">${totalPending}</div><div style="font-size:9px;color:#7A3820;">all months</div></div>`;
+
+  // Month-on-month order value, last 6 months up to the selected one
+  destroyChart('totMoM');
+  if(document.getElementById('totMoMValue')){
+    const mIdx=MONTHS.indexOf(m);
+    const momMonths=(mIdx>=0?MONTHS.slice(Math.max(0,mIdx-5),mIdx+1):MONTHS.slice(-6));
+    charts.totMoM=new Chart(document.getElementById('totMoMValue'),{type:'bar',data:{labels:momMonths,datasets:[
+      {label:'Sale value',data:momMonths.map(mo=>filterByMonth(tools,'month_year',mo).reduce((a,r)=>a+Number(r.sale_value||0),0)),backgroundColor:'#0B5C48',borderRadius:4},
+      {label:'Profit',data:momMonths.map(mo=>filterByMonth(tools,'month_year',mo).reduce((a,r)=>a+Number(r.profit||0),0)),type:'line',borderColor:'#A34A2C',borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false}
+    ]},options:{...BO(),scales:{x:{...BO().scales.x,ticks:{...BO().scales.x.ticks,font:{size:9}}},y:{...BO().scales.y,ticks:{...BO().scales.y.ticks,callback:v=>'₹'+Number(v).toLocaleString('en-IN')}}}}});
+  }
+
+  const supGroups={};
+  sorted.forEach(r=>{
+    const s=r.supplier||'Unknown';
+    if(!supGroups[s])supGroups[s]={orders:0,qty:0,cost:0,sale:0,profit:0};
+    supGroups[s].orders++;
+    supGroups[s].qty+=Number(r.qty||0);
+    supGroups[s].cost+=Number(r.cost_value||0);
+    supGroups[s].sale+=Number(r.sale_value||0);
+    supGroups[s].profit+=Number(r.profit||0);
+  });
+  const supRows=Object.entries(supGroups).sort((a,b)=>b[1].sale-a[1].sale);
+  document.getElementById('tot-dash-supplier-tbody').innerHTML=supRows.map(([s,v])=>
+    `<tr><td>${s}</td><td class="tnum">${v.orders}</td><td class="tnum">${v.qty.toLocaleString('en-IN')}</td><td class="tnum">${fmtMoney(v.cost)}</td><td class="tnum">${fmtMoney(v.sale)}</td><td class="tnum" style="font-weight:600;color:${v.profit>=0?'#15803d':'#dc2626'};">${fmtMoney(v.profit)}</td></tr>`
+  ).join('')||'<tr><td colspan="6" style="text-align:center;padding:14px;color:var(--txt2);">No orders this month</td></tr>';
+
+  const allPending=tools.filter(r=>r.status==='Pending'||r.status==='Ordered').sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
+  document.getElementById('tot-dash-pending-tbody').innerHTML=allPending.map(r=>{
+    const days=Math.floor((TODAY-new Date(r.order_date))/86400000);
+    return`<tr style="${days>30?'background:#fef2f2;':''}"><td>${fmtDate(r.order_date)}</td><td class="tnum" style="font-weight:600;color:${days>30?'#dc2626':'var(--txt)'};">${days}d</td><td>${r.supplier||'—'}</td><td>${r.item}</td><td class="tnum">${Number(r.qty).toLocaleString('en-IN')}</td></tr>`;
+  }).join('')||'<tr><td colspan="5" style="text-align:center;padding:14px;color:var(--txt2);">All caught up</td></tr>';
+}
+
+function downloadTrdOrdersPdf(type,monthSelId){
+  const m=getMonth(monthSelId);
+  const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===type);
   const sorted=[...filterByMonth(byType,'month_year',m)].sort((a,b)=>new Date(a.created_at||a.updated_at)-new Date(b.created_at||b.updated_at));
   const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty',align:'right'},{label:'Remarks'},{label:'CP',align:'right'},{label:'SP',align:'right'},{label:'Cost value',align:'right'},{label:'Sale value',align:'right'},{label:'Profit',align:'right'},{label:'Status'}];
   const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'—',r.supplier||'—',r.customer||'—',r.item,Number(r.qty).toLocaleString('en-IN'),r.notes||'—',Number(r.cp).toLocaleString('en-IN'),Number(r.sp).toLocaleString('en-IN'),Number(r.cost_value).toLocaleString('en-IN'),Number(r.sale_value).toLocaleString('en-IN'),Number(r.profit).toLocaleString('en-IN'),r.status]);
-  exportTablePdf(activeTradeOrderType+' Orders — '+m,columns,rows);
+  exportTablePdf(type+' Orders — '+m,columns,rows);
 }
-function downloadTrdOrdersExcel(){
-  const m=getMonth('trd-orders-month');
-  const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===activeTradeOrderType);
+function downloadTrdOrdersExcel(type,monthSelId){
+  const m=getMonth(monthSelId);
+  const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===type);
   const sorted=[...filterByMonth(byType,'month_year',m)].sort((a,b)=>new Date(a.created_at||a.updated_at)-new Date(b.created_at||b.updated_at));
   const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty'},{label:'Remarks'},{label:'CP'},{label:'SP'},{label:'Cost value'},{label:'Sale value'},{label:'Profit'},{label:'Status'}];
   const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'',r.supplier||'',r.customer||'',r.item,Number(r.qty),r.notes||'',Number(r.cp),Number(r.sp),Number(r.cost_value),Number(r.sale_value),Number(r.profit),r.status]);
-  exportTableExcel(activeTradeOrderType+'_Orders_'+m.replace(' ','_')+'.xlsx',activeTradeOrderType,columns,rows);
+  exportTableExcel(type+'_Orders_'+m.replace(' ','_')+'.xlsx',type,columns,rows);
 }
 
 function openTrdRegModal(rowId){
@@ -2980,6 +3096,34 @@ td{border:1px solid #000;padding:5px 6px;font-size:10.5px;}
   setTimeout(()=>win.print(),800);
 }
 
+function downloadTrdDashExcel(){
+  const m=getMonth('trd-dash-month');
+  const trades=filterByMonth(DATA.trdPur,'month_year',m);
+  if(trades.length===0){toast('No trades for '+m,'err');return;}
+  if(typeof XLSX==='undefined'){toast('Excel export library did not load — check your connection','err');return;}
+
+  const totalVal=trades.reduce((a,r)=>a+Number(r.amount||0),0);
+  const totalQty=trades.reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  const monthProfit=trades.reduce((a,r)=>a+Number(r.profit||(((r.sale_price||0)-(r.cost_price||0))*Number(r.qty_kg||0))),0);
+  const custOut=trades.filter(r=>!r.payment_received_date).reduce((a,r)=>a+Number(r.amount||0),0);
+
+  const matGroups={};
+  trades.forEach(r=>{const k=r.material||'—';matGroups[k]=(matGroups[k]||0)+Number(r.qty_kg||0);});
+  const supGroups={};
+  trades.forEach(r=>{const k=r.supplier||'—';supGroups[k]=(supGroups[k]||0)+Number(r.amount||0);});
+  const custGroups={};
+  trades.filter(r=>!r.payment_received_date).forEach(r=>{const k=r.party||'Unknown';custGroups[k]=(custGroups[k]||0)+Number(r.amount||0);});
+
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
+    ['Metric','Value'],['Trade value (₹)',totalVal],['Qty (Kg)',totalQty],['Profit (₹)',monthProfit],['Outstanding (₹)',custOut]
+  ]),'Summary');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Material','Kg'],...Object.entries(matGroups).sort((a,b)=>b[1]-a[1])]),'Material-wise');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Supplier','₹'],...Object.entries(supGroups).sort((a,b)=>b[1]-a[1])]),'Supplier-wise');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Customer','Outstanding ₹'],...Object.entries(custGroups).sort((a,b)=>b[1]-a[1])]),'Outstanding');
+  XLSX.writeFile(wb,'Trading_Dashboard_'+m.replace(' ','_')+'.xlsx');
+}
+
 function downloadMfgDashPdf(){
   const m=getMonth('mfg-dash-month');
   const mis=filterByMonth(DATA.mis,'month_year',m);
@@ -3060,6 +3204,36 @@ td{border:1px solid #000;padding:5px 6px;font-size:10.5px;}
   setTimeout(()=>win.print(),800);
 }
 
+function downloadMfgDashExcel(){
+  const m=getMonth('mfg-dash-month');
+  const mis=filterByMonth(DATA.mis,'month_year',m);
+  if(mis.length===0){toast('No production entries for '+m,'err');return;}
+  if(typeof XLSX==='undefined'){toast('Excel export library did not load — check your connection','err');return;}
+
+  const totalProd=mis.reduce((a,r)=>a+Number(r.total_production_kg||0),0);
+  const totalTgt=mis.reduce((a,r)=>a+Number(r.target_kg||0),0);
+  const avgEff=totalTgt>0?Math.round((totalProd/totalTgt)*100):0;
+  const totalDisp=DATA.dispatches.filter(r=>r.month_year===m).reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  const fgRun=computeFgRunning();
+  const fgOverride=fgOverrideFor(m);
+  const fgStock=(fgOverride&&fgOverride.override_kg!=null)?Number(fgOverride.override_kg):fgClosingAsOfMonth(m,fgRun);
+  const colourFG=(fgOverride&&fgOverride.override_colours)?fgOverride.override_colours:fgColourClosingAsOfMonth(m,fgRun);
+
+  const colourMap={};
+  mis.forEach(r=>{const c=(r.colour&&r.colour.trim())||'Untagged';colourMap[c]=(colourMap[c]||0)+Number(r.total_production_kg||0);});
+  const custGroups={};
+  filterByMonth(DATA.dispatches,'month_year',m).forEach(r=>{const c=r.customer||'Unknown';custGroups[c]=(custGroups[c]||0)+Number(r.qty_kg||0);});
+
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
+    ['Metric','Value'],['Production (Kg)',totalProd],['Efficiency (%)',avgEff],['Dispatched (Kg)',totalDisp],['FG in hand (Kg)',fgStock]
+  ]),'Summary');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Colour','Kg'],...Object.entries(colourMap).sort((a,b)=>b[1]-a[1])]),'Production by colour');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Customer','Kg'],...Object.entries(custGroups).sort((a,b)=>b[1]-a[1])]),'Customer dispatch');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Colour','Kg'],...Object.entries(colourFG).sort((a,b)=>b[1]-a[1])]),'FG in hand');
+  XLSX.writeFile(wb,'Mfg_Dashboard_'+m.replace(' ','_')+'.xlsx');
+}
+
 function downloadMisPdf(){
   const m=getMonth('mis-month');
   const mis=filterByMonth(DATA.mis,'month_year',m);
@@ -3123,6 +3297,22 @@ td{border:1px solid #000;padding:4px 5px;font-size:9px;}
   win.document.close();
   win.focus();
   setTimeout(()=>win.print(),800);
+}
+
+function downloadMisExcel(){
+  const m=getMonth('mis-month');
+  const mis=filterByMonth(DATA.mis,'month_year',m);
+  const asc=[...mis].sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
+  const columns=[{label:'Date'},{label:'Target'},{label:'Production'},{label:'Colour'},{label:'Eff %'},{label:'Day MP'},{label:'Night MP'},{label:'Labour ₹'},{label:'₹/Kg'},{label:'Wash (h)'},{label:'Agglo (h)'},{label:'Ext (h)'},{label:'Issue D'},{label:'Issue N'},{label:'Remarks'}];
+  const rows=asc.map(r=>{
+    const wRunTotal=parseFloat(r.washing_run_day||0)+parseFloat(r.washing_run_night||0);
+    const aRunTotal=parseFloat(r.agglo_run_day||0)+parseFloat(r.agglo_run_night||0);
+    const eRunTotal=parseFloat(r.extruder_run_day||0)+parseFloat(r.extruder_run_night||0);
+    const labourCost=Number(r.labour_cost||0);
+    const labourPerKg=Number(r.total_production_kg)>0?(labourCost/Number(r.total_production_kg)):0;
+    return[fmtDate(r.entry_date),Number(r.target_kg),Number(r.total_production_kg),r.colour||'',eff(r.total_production_kg,r.target_kg),r.manpower_day||0,r.manpower_night||0,labourCost,Number(labourPerKg.toFixed(2)),wRunTotal,aRunTotal,eRunTotal,r.issue_day||'None',r.issue_night||'None',r.notes||''];
+  });
+  exportTableExcel('Production_MIS_'+m.replace(' ','_')+'.xlsx','Production',columns,rows);
 }
 
 function renderTrdDashboard(){
@@ -4023,6 +4213,54 @@ function downloadMachineBreakupExcel(){
     XLSX.utils.book_append_sheet(wb,ws,machine.label);
   });
   XLSX.writeFile(wb,'Machine_Breakup_'+m.replace(' ','_')+'.xlsx');
+}
+
+// ===== NOTIFICATIONS =====
+// Not a push notification — this is a browser app with no background service, so nothing can ping
+// your phone on its own. What this does instead: checks the same things every time the app loads or
+// refreshes, and keeps a live count on the sidebar so it's impossible to miss once you're in the app.
+function computeNotifications(){
+  const outOfStock=(DATA.inv||[]).filter(r=>Number(r.current_stock)===0);
+  const belowMin=(DATA.inv||[]).filter(r=>Number(r.current_stock)>0&&Number(r.current_stock)<Number(r.minimum_stock));
+  const sortedMis=[...(DATA.mis||[])].sort((a,b)=>new Date(b.entry_date)-new Date(a.entry_date));
+  const latest=sortedMis[0]||null;
+  const machineAlerts=[];
+  if(latest){
+    MB_MACHINES.forEach(m=>{
+      const day=parseFloat(latest[m.dayField]||0);
+      const night=parseFloat(latest[m.nightField]||0);
+      if(day<MB_TARGET||night<MB_TARGET)machineAlerts.push({machine:m.label,date:latest.entry_date,day,night});
+    });
+  }
+  return{outOfStock,belowMin,machineAlerts,latestDate:latest?latest.entry_date:null};
+}
+
+function updateNotifBadge(n){
+  n=n||computeNotifications();
+  const badge=document.getElementById('notif-badge');
+  if(!badge)return;
+  const count=n.outOfStock.length+n.machineAlerts.length;
+  if(count>0){badge.textContent=count;badge.style.display='inline-block';}
+  else{badge.style.display='none';}
+}
+
+function renderNotifications(){
+  const n=computeNotifications();
+  document.getElementById('notif-outofstock-tbody').innerHTML=n.outOfStock.map(r=>
+    `<tr><td><strong>${r.item_name}</strong></td><td class="tnum">${r.minimum_stock}</td><td>${r.supplier||'—'}</td><td>${r.last_out_date?fmtDate(r.last_out_date):'—'}</td></tr>`
+  ).join('')||'<tr><td colspan="4" style="text-align:center;padding:14px;color:var(--txt2);">Nothing out of stock ✓</td></tr>';
+
+  document.getElementById('notif-lowstock-tbody').innerHTML=n.belowMin.map(r=>
+    `<tr><td>${r.item_name}</td><td class="tnum">${r.minimum_stock}</td><td class="tnum" style="font-weight:600;color:#d97706;">${r.current_stock}</td><td>${r.supplier||'—'}</td></tr>`
+  ).join('')||'<tr><td colspan="4" style="text-align:center;padding:14px;color:var(--txt2);">Nothing below minimum ✓</td></tr>';
+
+  document.getElementById('notif-machines-tbody').innerHTML=n.machineAlerts.map(a=>
+    `<tr><td><strong>${a.machine}</strong></td><td>${fmtDate(a.date)}</td>
+      <td class="tnum" style="font-weight:600;color:${a.day<MB_TARGET?'#dc2626':'#15803d'};">${a.day.toFixed(1)}</td>
+      <td class="tnum" style="font-weight:600;color:${a.night<MB_TARGET?'#dc2626':'#15803d'};">${a.night.toFixed(1)}</td></tr>`
+  ).join('')||`<tr><td colspan="4" style="text-align:center;padding:14px;color:var(--txt2);">${n.latestDate?'All machines hit target on '+fmtDate(n.latestDate)+' ✓':'No production entries logged yet'}</td></tr>`;
+
+  updateNotifBadge(n);
 }
 
 
