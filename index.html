@@ -519,6 +519,14 @@ Grey: 3600"></textarea></div></div>
       <div onclick="switchTrdOrderType('Tools')" id="tot-tab-Tools" style="padding:8px 18px;border-radius:var(--rad) var(--rad) 0 0;cursor:pointer;font-size:13px;font-weight:700;border:1px solid var(--bdr2);border-bottom:1px solid #fff;margin-bottom:-1px;background:#fff;color:var(--acc2);">🔧 Tools</div>
       <div onclick="switchTrdOrderType('Electrodes')" id="tot-tab-Electrodes" style="padding:8px 18px;border-radius:var(--rad) var(--rad) 0 0;cursor:pointer;font-size:13px;font-weight:700;border:1px solid var(--bdr2);border-bottom:1px solid var(--bdr2);margin-bottom:-1px;background:var(--bg3);color:var(--txt2);">⚡ Electrodes</div>
     </div>
+    <div class="card" style="border-top-left-radius:0;border-color:#E3C9B8;">
+      <div class="card-head" style="background:#F6E9E2;">
+        <div class="card-title" id="trd-orders-pending-title" style="color:#7A3820;">⏳ Pending — all months</div>
+        <div style="font-size:11px;color:#7A3820;">Not filtered by the month selector above — so nothing from an old month gets missed</div>
+      </div>
+      <div class="tw excel-table"><table><thead><tr><th>Order date</th><th class="tnum">Days pending</th><th>Order no</th><th>Supplier</th><th>Customer</th><th>Item</th><th class="tnum">Qty</th><th>Remarks</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="trd-orders-pending-tbody"></tbody></table></div>
+    </div>
     <div class="metrics g6" id="trd-orders-metrics" style="border-top-left-radius:0;"></div>
     <div class="card">
       <div class="card-head"><div class="card-title">Supplier-wise — this month</div></div>
@@ -527,7 +535,7 @@ Grey: 3600"></textarea></div></div>
     <div class="card">
       <div class="card-head"><div class="card-title" id="trd-orders-register-title">Order register</div></div>
       <div class="tw excel-table"><table>
-        <thead><tr><th>Sl</th><th>Order date</th><th>Order no</th><th>Supplier</th><th>Customer</th><th>Item</th><th class="tnum">Qty</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th><th>Status</th><th>Remarks</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Sl</th><th>Order date</th><th>Order no</th><th>Supplier</th><th>Customer</th><th>Item</th><th class="tnum">Qty</th><th>Remarks</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody id="trd-orders-tbody"><tr><td colspan="15"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
       </table></div>
     </div>
@@ -928,10 +936,9 @@ Grey: 3600"></textarea></div></div>
       <div class="frow"><div class="fg"><label>Category</label><select id="to-type"><option value="Tools">Tools</option><option value="Electrodes">Electrodes</option></select></div><div class="fg"><label>Status</label><select id="to-status"><option>Pending</option><option>Ordered</option><option>Delivered</option><option>Billed</option><option>Paid</option><option>Cancelled</option></select></div></div>
       <div class="frow"><div class="fg"><label>Supplier</label><input type="text" id="to-supplier" placeholder="Supplier name" list="trd-order-supplier-list"><datalist id="trd-order-supplier-list"></datalist></div><div class="fg"><label>Customer</label><input type="text" id="to-customer" placeholder="Customer name"></div></div>
       <div class="frow frow-1"><div class="fg"><label>Item</label><input type="text" id="to-item" placeholder="e.g. Welding Electrode 3.15mm"></div></div>
-      <div class="frow"><div class="fg"><label>Qty</label><input type="number" id="to-qty" placeholder="0" oninput="calcTrdOrderValues()"></div><div class="fg"></div></div>
+      <div class="frow"><div class="fg"><label>Qty</label><input type="number" id="to-qty" placeholder="0" oninput="calcTrdOrderValues()"></div><div class="fg"><label>Remarks</label><input type="text" id="to-notes" placeholder="e.g. 5 delivered, 5 pending"></div></div>
       <div class="frow"><div class="fg"><label>CP — cost price (₹/unit)</label><input type="number" id="to-cp" placeholder="0" oninput="calcTrdOrderValues()"></div><div class="fg"><label>SP — sale price (₹/unit)</label><input type="number" id="to-sp" placeholder="0" oninput="calcTrdOrderValues()"></div></div>
       <div class="frow frow-1"><div class="fg"><div class="calc-note" id="to-calc-show">Cost value: — · Sale value: — · Profit: —</div></div></div>
-      <div class="frow frow-1"><div class="fg"><label>Remarks</label><input type="text" id="to-notes" placeholder="Optional"></div></div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="closeModal('trd-order-modal')">Cancel</button><button class="btn btn-blue" onclick="saveTrdOrder()">Save</button></div>
   </div>
@@ -2555,7 +2562,32 @@ function renderTrdOrders(){
   const m=getMonth('trd-orders-month');
   const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===activeTradeOrderType);
   const orders=filterByMonth(byType,'month_year',m);
-  const sorted=[...orders].sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
+  // Sorted by when it was ENTERED (not by order date), so Sl numbers stay put — editing an order's
+  // date, or adding a new one, never reshuffles rows you've already numbered.
+  const sorted=[...orders].sort((a,b)=>new Date(a.created_at||a.updated_at)-new Date(b.created_at||b.updated_at));
+
+  // Pending — deliberately ignores the month selector above, so an order from a couple of months
+  // back doesn't just fall out of view once you're looking at the current month.
+  const pendingTitleEl=document.getElementById('trd-orders-pending-title');
+  if(pendingTitleEl)pendingTitleEl.textContent='⏳ '+activeTradeOrderType+' pending — all months';
+  const allPending=byType.filter(r=>r.status==='Pending'||r.status==='Ordered')
+    .sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
+  const sc2={Pending:'b-amber',Ordered:'b-blue'};
+  document.getElementById('trd-orders-pending-tbody').innerHTML=allPending.map(r=>{
+    const days=Math.floor((TODAY-new Date(r.order_date))/86400000);
+    return`<tr style="${days>30?'background:#fef2f2;':''}">
+      <td>${fmtDate(r.order_date)}</td>
+      <td class="tnum" style="font-weight:600;color:${days>30?'#dc2626':days>14?'#d97706':'var(--txt)'};">${days}d</td>
+      <td>${r.order_no||'—'}</td>
+      <td>${r.supplier||'—'}</td>
+      <td>${r.customer||'—'}</td>
+      <td>${r.item}</td>
+      <td class="tnum">${Number(r.qty).toLocaleString('en-IN')}</td>
+      <td style="color:var(--txt2);">${r.notes||'—'}</td>
+      <td><span class="badge ${sc2[r.status]||'b-gray'}">${r.status}</span></td>
+      <td style="white-space:nowrap"><button class="btn btn-sm" onclick="openTrdOrderModal('${r.id}')">✏</button></td>
+    </tr>`;
+  }).join('')||`<tr><td colspan="10" style="text-align:center;padding:16px;color:var(--txt2);">No pending ${activeTradeOrderType.toLowerCase()} orders — all caught up</td></tr>`;
 
   const titleEl=document.getElementById('trd-orders-register-title');
   if(titleEl)titleEl.textContent=activeTradeOrderType+' — order register';
@@ -2583,13 +2615,13 @@ function renderTrdOrders(){
     <td>${r.customer||'—'}</td>
     <td>${r.item}</td>
     <td class="tnum">${Number(r.qty).toLocaleString('en-IN')}</td>
+    <td style="color:var(--txt2);">${r.notes||'—'}</td>
     <td class="tnum">${Number(r.cp).toLocaleString('en-IN')}</td>
     <td class="tnum">${Number(r.sp).toLocaleString('en-IN')}</td>
     <td class="tnum">${fmtMoney(r.cost_value)}</td>
     <td class="tnum">${fmtMoney(r.sale_value)}</td>
     <td class="tnum" style="font-weight:600;color:${Number(r.profit)>=0?'#15803d':'#dc2626'};">${fmtMoney(r.profit)}</td>
     <td><span class="badge ${sc[r.status]||'b-gray'}">${r.status}</span></td>
-    <td style="color:var(--txt2);">${r.notes||'—'}</td>
     <td style="white-space:nowrap">
       <button class="btn btn-sm" onclick="openTrdOrderModal('${r.id}')">✏</button>
       <button class="btn btn-sm btn-red" onclick="deleteRow('trading_orders','${r.id}','order')">🗑</button>
@@ -2615,17 +2647,17 @@ function renderTrdOrders(){
 function downloadTrdOrdersPdf(){
   const m=getMonth('trd-orders-month');
   const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===activeTradeOrderType);
-  const sorted=[...filterByMonth(byType,'month_year',m)].sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
-  const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty',align:'right'},{label:'CP',align:'right'},{label:'SP',align:'right'},{label:'Cost value',align:'right'},{label:'Sale value',align:'right'},{label:'Profit',align:'right'},{label:'Status'},{label:'Remarks'}];
-  const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'—',r.supplier||'—',r.customer||'—',r.item,Number(r.qty).toLocaleString('en-IN'),Number(r.cp).toLocaleString('en-IN'),Number(r.sp).toLocaleString('en-IN'),Number(r.cost_value).toLocaleString('en-IN'),Number(r.sale_value).toLocaleString('en-IN'),Number(r.profit).toLocaleString('en-IN'),r.status,r.notes||'—']);
+  const sorted=[...filterByMonth(byType,'month_year',m)].sort((a,b)=>new Date(a.created_at||a.updated_at)-new Date(b.created_at||b.updated_at));
+  const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty',align:'right'},{label:'Remarks'},{label:'CP',align:'right'},{label:'SP',align:'right'},{label:'Cost value',align:'right'},{label:'Sale value',align:'right'},{label:'Profit',align:'right'},{label:'Status'}];
+  const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'—',r.supplier||'—',r.customer||'—',r.item,Number(r.qty).toLocaleString('en-IN'),r.notes||'—',Number(r.cp).toLocaleString('en-IN'),Number(r.sp).toLocaleString('en-IN'),Number(r.cost_value).toLocaleString('en-IN'),Number(r.sale_value).toLocaleString('en-IN'),Number(r.profit).toLocaleString('en-IN'),r.status]);
   exportTablePdf(activeTradeOrderType+' Orders — '+m,columns,rows);
 }
 function downloadTrdOrdersExcel(){
   const m=getMonth('trd-orders-month');
   const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===activeTradeOrderType);
-  const sorted=[...filterByMonth(byType,'month_year',m)].sort((a,b)=>new Date(a.order_date)-new Date(b.order_date));
-  const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty'},{label:'CP'},{label:'SP'},{label:'Cost value'},{label:'Sale value'},{label:'Profit'},{label:'Status'},{label:'Remarks'}];
-  const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'',r.supplier||'',r.customer||'',r.item,Number(r.qty),Number(r.cp),Number(r.sp),Number(r.cost_value),Number(r.sale_value),Number(r.profit),r.status,r.notes||'']);
+  const sorted=[...filterByMonth(byType,'month_year',m)].sort((a,b)=>new Date(a.created_at||a.updated_at)-new Date(b.created_at||b.updated_at));
+  const columns=[{label:'Sl'},{label:'Order date'},{label:'Order no'},{label:'Supplier'},{label:'Customer'},{label:'Item'},{label:'Qty'},{label:'Remarks'},{label:'CP'},{label:'SP'},{label:'Cost value'},{label:'Sale value'},{label:'Profit'},{label:'Status'}];
+  const rows=sorted.map((r,i)=>[i+1,fmtDate(r.order_date),r.order_no||'',r.supplier||'',r.customer||'',r.item,Number(r.qty),r.notes||'',Number(r.cp),Number(r.sp),Number(r.cost_value),Number(r.sale_value),Number(r.profit),r.status]);
   exportTableExcel(activeTradeOrderType+'_Orders_'+m.replace(' ','_')+'.xlsx',activeTradeOrderType,columns,rows);
 }
 
