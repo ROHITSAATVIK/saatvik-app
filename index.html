@@ -10,10 +10,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
-<script src="https://jsuites.net/v4/jsuites.js"></script>
-<link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jspreadsheet.css" type="text/css" />
-<script src="https://bossanova.uk/jspreadsheet/v4/jspreadsheet.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
@@ -212,7 +208,7 @@ tr:hover td{background:#fafaf9;}
     <div class="ni" onclick="goTo('trd-tools-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Tools Dashboard</div>
     <div class="ni" onclick="goTo('trd-tools-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Tools Register</div>
     <div class="ni" onclick="goTo('trd-electrodes-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Electrodes Register</div>
-    <div class="ni" id="ni-sheets" onclick="goToSheets()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/><line x1="15" y1="9" x2="15" y2="21"/></svg>Excel</div>
+    <div class="ni" id="ni-rough" onclick="goTo('rough-sheet')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Rough Sheet</div>
   </div>
   <div class="sidebar-foot">
     <div style="font-size:10px;color:var(--txt2);" id="logged-in-email">saatvikent2@gmail.com</div>
@@ -624,21 +620,34 @@ Grey: 3600"></textarea></div></div>
 </div>
 
 
-<!-- ========== EXCEL SHEET (free-form workbook) ========== -->
-<div id="page-sheets" class="page">
+<!-- ========== ROUGH SHEET ========== -->
+<div id="page-rough-sheet" class="page">
   <div class="topbar">
-    <div class="topbar-title"><span class="section-badge mfg-badge">📊</span>Excel Sheet</div>
+    <div class="topbar-title"><span class="section-badge mfg-badge">📝</span>Rough Sheet</div>
     <div class="tb-right">
-      <span id="sheet-save-status" style="font-size:11px;color:var(--txt2);"></span>
-      <button class="btn btn-green" onclick="addSheetTab()">+ New tab</button>
+      <select class="month-selector" id="rs-month" onchange="renderRoughSheet()"></select>
+      <button class="btn" onclick="downloadRoughSheetPdf()">⬇ PDF</button>
+      <button class="btn" onclick="downloadRoughSheetExcel()">⬇ Excel</button>
+      <button class="btn btn-green" onclick="openRoughModal(null)">+ Add entry</button>
     </div>
   </div>
   <div class="content">
-    <div style="display:flex;gap:3px;margin-bottom:0;flex-wrap:wrap;align-items:flex-end;" id="sheet-tabs"></div>
-    <div class="card" style="border-top-left-radius:0;overflow:auto;padding:0;">
-      <div id="sheet-grid"></div>
+    <div class="metrics g4" id="rs-metrics"></div>
+    <div class="card" style="border-color:#E3C9B8;">
+      <div class="card-head" style="background:#F6E9E2;">
+        <div class="card-title" style="color:#7A3820;">⏳ Open items — all months</div>
+        <div style="font-size:11px;color:#7A3820;">Anything with purchase, delivery, or bill still pending — regardless of month</div>
+      </div>
+      <div class="tw excel-table"><table><thead><tr><th>Date</th><th>Item</th><th>Segment</th><th>Purchase</th><th>Delivery</th><th>Bill</th><th>Issue</th><th>Actions</th></tr></thead>
+      <tbody id="rs-open-tbody"></tbody></table></div>
     </div>
-    <div style="font-size:11px;color:var(--txt2);margin-top:8px;">Type into any cell like Excel. Start a cell with = for a formula, e.g. =SUM(A1:A5). Right-click a cell for row/column options. Saves automatically.</div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Rough sheet — this month</div></div>
+      <div class="tw excel-table"><table>
+        <thead><tr><th>Date</th><th>Item</th><th>Segment</th><th class="tnum">Qty</th><th class="tnum">Cost Price</th><th class="tnum">Selling Price</th><th class="tnum">Profit</th><th>Purchase</th><th>Delivery</th><th>Bill</th><th>Issue</th><th>Actions</th></tr></thead>
+        <tbody id="rs-tbody"><tr><td colspan="12"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+      </table></div>
+    </div>
   </div>
 </div>
 
@@ -1025,6 +1034,23 @@ Grey: 3600"></textarea></div></div>
   </div>
 </div>
 
+<!-- Rough Sheet Modal -->
+<div class="modal-bg" id="rough-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="rough-modal-t">Add Entry</span><button class="btn btn-sm" onclick="closeModal('rough-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="rs-date"></div><div class="fg"><label>Segment</label><select id="rs-segment"><option>Electrodes</option><option>Tools</option><option>Scrap</option><option>Mfg</option><option>Trading</option></select></div></div>
+      <div class="frow frow-1"><div class="fg"><label>Item</label><input type="text" id="rs-item" placeholder="e.g. Welding Electrode 3.15mm"></div></div>
+      <div class="frow"><div class="fg"><label>Qty</label><input type="number" id="rs-qty" placeholder="0" oninput="calcRoughValues()"></div><div class="fg"></div></div>
+      <div class="frow"><div class="fg"><label>Cost Price (₹/unit)</label><input type="number" id="rs-cp" placeholder="0" oninput="calcRoughValues()"></div><div class="fg"><label>Selling Price (₹/unit) — optional</label><input type="number" id="rs-sp" placeholder="0" oninput="calcRoughValues()"></div></div>
+      <div class="frow frow-1"><div class="fg"><div class="calc-note" id="rs-calc-show">Cost value: — · Sale value: — · Profit: —</div></div></div>
+      <div class="frow"><div class="fg"><label>Purchase</label><select id="rs-purchase"><option>Pending</option><option>Received</option></select></div><div class="fg"><label>Delivery</label><select id="rs-delivery"><option>Pending</option><option>Delivered</option></select></div></div>
+      <div class="frow"><div class="fg"><label>Bill</label><select id="rs-bill"><option>Pending</option><option>Given</option><option>N/A</option></select></div><div class="fg"><label>Issue — leave blank if none</label><input type="text" id="rs-issue" placeholder="e.g. 2 boxes short"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal('rough-modal')">Cancel</button><button class="btn btn-green" onclick="saveRoughEntry()">Save</button></div>
+  </div>
+</div>
+
 <!-- Component Modal -->
 <div class="modal-bg" id="comp-modal">
   <div class="modal">
@@ -1167,7 +1193,7 @@ function checkSession(){
 }
 
 const TODAY=new Date();
-let DATA={mis:[],inv:[],dispatches:[],bd:[],trdPur:[],trdSal:[],trdMat:[],fgAnchor:null,fgOverrides:[],sheets:[],trdOrders:[],invMoves:[]};
+let DATA={mis:[],inv:[],dispatches:[],bd:[],trdPur:[],trdSal:[],trdMat:[],fgAnchor:null,fgOverrides:[],trdOrders:[],invMoves:[],roughSheet:[]};
 let editId=null, charts={};
 // Chart.js draws onto a <canvas> and does not inherit the page's CSS font-family, so without this
 // every chart (dashboard, production, trading) falls back to Chart.js's own default font instead of Verdana.
@@ -1302,7 +1328,7 @@ function buildMonthsRange(){
 const MONTHS=buildMonthsRange();
 function populateMonthSelectors(){
   const cur=currentMonthLabel();
-  ['mfg-dash-month','mis-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','inv-report-month','mb-month','tot-dash-month','tot-reg-month','eot-reg-month'].forEach(id=>{
+  ['mfg-dash-month','mis-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','inv-report-month','mb-month','tot-dash-month','tot-reg-month','eot-reg-month','rs-month'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
     el.innerHTML=MONTHS.map(m=>`<option value="${m}"${m===cur?'selected':''}>${m}</option>`).join('');
@@ -1319,7 +1345,7 @@ function goTo(id){
   // highlight nav
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   const allNi=document.querySelectorAll('.ni');
-  const pages=['mfg-dashboard','production','machine-breakup','notifications','inventory','breakdown','dispatch','__gatepass__','trd-dashboard','trd-register','trd-tools-dashboard','trd-tools-register','trd-electrodes-register','__sheets__'];
+  const pages=['mfg-dashboard','production','machine-breakup','notifications','inventory','breakdown','dispatch','__gatepass__','trd-dashboard','trd-register','trd-tools-dashboard','trd-tools-register','trd-electrodes-register','rough-sheet'];
   const idx=pages.indexOf(id);
   if(idx>=0&&allNi[idx])allNi[idx].classList.add('active');
   renderPage(id);
@@ -1331,6 +1357,7 @@ function renderPage(id){
     'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'breakdown':renderBreakdownPage,
     'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines,'machine-breakup':renderMachineBreakup,
     'trd-tools-dashboard':renderTrdToolsDashboard,'trd-tools-register':renderTrdToolsRegister,'trd-electrodes-register':renderTrdElectrodesRegister,
+    'rough-sheet':renderRoughSheet,
     'notifications':renderNotifications
   };
   if(m[id])m[id]();
@@ -1548,7 +1575,7 @@ function openWA(){
 async function loadAll(){
   document.getElementById('last-sync').textContent='Syncing...';
   try{
-    const [mis,inv,disp,bd,tp,ts,tm,life,lrates,fganc,fgovr,wbs,torders,invmov]=await Promise.all([
+    const [mis,inv,disp,bd,tp,ts,tm,life,lrates,fganc,fgovr,rough,torders,invmov]=await Promise.all([
       sb.from('mis_entries').select('*').order('entry_date',{ascending:false}),
       sb.from('inventory').select('*').order('item_name'),
       sb.from('dispatches').select('*').order('dispatch_date',{ascending:false}),
@@ -1560,7 +1587,7 @@ async function loadAll(){
       sb.from('labour_rates').select('*').limit(1),
       sb.from('fg_stock_settings').select('*').limit(1),
       sb.from('fg_overrides').select('*'),
-      sb.from('workbook_sheets').select('*').order('sort_order'),
+      sb.from('rough_sheet').select('*').order('entry_date',{ascending:false}),
       sb.from('trading_orders').select('*').order('order_date',{ascending:false}),
       sb.from('inventory_movements').select('*').order('movement_date',{ascending:false}),
     ]);
@@ -1568,7 +1595,7 @@ async function loadAll(){
     DATA.dispatches=disp.data||[];DATA.bd=bd.data||[];
     DATA.trdPur=tp.data||[];DATA.trdSal=ts.data||[];DATA.trdMat=tm.data||[];
     DATA.lifeLog=life.data||[];
-    DATA.sheets=wbs.data||[];
+    DATA.roughSheet=rough.data||[];
     DATA.trdOrders=torders.data||[];
     DATA.invMoves=invmov.data||[];
     // Labour rates — a single editable row. Falls back to the rates you gave us if the table is empty
@@ -2061,115 +2088,158 @@ function fgOverrideFor(m){
   return(DATA.fgOverrides||[]).find(r=>r.month_year===m)||null;
 }
 
-// ===== EXCEL SHEET (free-form workbook, jspreadsheet-backed) =====
-let sheetInstance=null,activeSheetId=null,sheetSaveTimer=null;
-
-function goToSheets(){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-sheets').classList.add('active');
-  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
-  document.getElementById('ni-sheets').classList.add('active');
-  renderSheetsPage();
-}
-
-function renderSheetsPage(){
-  renderSheetTabs();
-  initSheetGrid();
-}
-
-function renderSheetTabs(){
-  const tabsEl=document.getElementById('sheet-tabs');
-  if(!tabsEl)return;
-  const sheets=[...(DATA.sheets||[])].sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
-  if((!activeSheetId||!sheets.find(s=>s.id===activeSheetId))&&sheets.length)activeSheetId=sheets[0].id;
-  tabsEl.innerHTML=sheets.map(s=>`
-    <div onclick="switchSheetTab('${s.id}')" ondblclick="renameSheetTab('${s.id}')" title="Double-click to rename"
-      style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--rad) var(--rad) 0 0;cursor:pointer;font-size:12px;font-weight:600;border:1px solid var(--bdr2);border-bottom:${s.id===activeSheetId?'1px solid #fff':'1px solid var(--bdr2)'};background:${s.id===activeSheetId?'#fff':'var(--bg3)'};color:${s.id===activeSheetId?'var(--acc)':'var(--txt2)'};margin-bottom:-1px;">
-      <span>${s.name}</span>
-      <span onclick="event.stopPropagation();deleteSheetTab('${s.id}')" style="color:var(--txt3);font-weight:400;font-size:11px;">✕</span>
-    </div>`).join('')||'<div style="font-size:12px;color:var(--txt2);padding:8px 2px;">No tabs yet — click "+ New tab" to start</div>';
-}
-
-function initSheetGrid(){
-  const sheets=DATA.sheets||[];
-  const active=sheets.find(s=>s.id===activeSheetId);
-  const el=document.getElementById('sheet-grid');
+// ===== ROUGH SHEET =====
+function calcRoughValues(){
+  const qty=parseFloat(document.getElementById('rs-qty')?.value||0);
+  const cp=parseFloat(document.getElementById('rs-cp')?.value||0);
+  const sp=parseFloat(document.getElementById('rs-sp')?.value||0);
+  const costValue=qty*cp,saleValue=qty*sp,profit=saleValue-costValue;
+  const el=document.getElementById('rs-calc-show');
   if(!el)return;
-  el.innerHTML='';
-  sheetInstance=null;
-  if(!active)return;
-  const data=(active.data&&active.data.length)?active.data:Array.from({length:40},()=>Array(14).fill(''));
-  const colCount=(data[0]&&data[0].length)?data[0].length:14;
-  sheetInstance=jspreadsheet(el,{
-    data:data,
-    columns:Array.from({length:colCount},()=>({type:'text',width:110})),
-    minDimensions:[14,40],
-    tableOverflow:true,
-    tableWidth:'100%',
-    tableHeight:'560px',
-    toolbar:true,
-    onchange:()=>debouncedSaveSheet()
-  });
+  el.textContent='Cost value: '+fmtMoney(costValue)+' · Sale value: '+(sp>0?fmtMoney(saleValue):'—')+' · Profit: '+(sp>0?fmtMoney(profit):'—');
 }
 
-function switchSheetTab(id){
-  if(id===activeSheetId)return;
-  activeSheetId=id;
-  renderSheetsPage();
-}
-
-async function addSheetTab(){
-  const name=prompt('Name this tab','Sheet '+((DATA.sheets||[]).length+1));
-  if(!name)return;
-  const row={name,sort_order:(DATA.sheets||[]).length,data:Array.from({length:40},()=>Array(14).fill(''))};
-  const{data,error}=await sb.from('workbook_sheets').insert(row).select();
-  if(error){toast('Could not create tab: '+error.message,'err');return;}
-  DATA.sheets=[...(DATA.sheets||[]),data[0]];
-  activeSheetId=data[0].id;
-  renderSheetsPage();
-}
-
-async function renameSheetTab(id){
-  const s=(DATA.sheets||[]).find(x=>x.id===id);
-  if(!s)return;
-  const name=prompt('Rename tab',s.name);
-  if(!name||name===s.name)return;
-  s.name=name;
-  renderSheetTabs();
-  const{error}=await sb.from('workbook_sheets').update({name}).eq('id',id);
-  if(error)toast('Rename failed: '+error.message,'err');
-}
-
-async function deleteSheetTab(id){
-  if(!confirm('Delete this tab? This cannot be undone.'))return;
-  const{error}=await sb.from('workbook_sheets').delete().eq('id',id);
-  if(error){toast('Delete failed: '+error.message,'err');return;}
-  DATA.sheets=(DATA.sheets||[]).filter(s=>s.id!==id);
-  if(activeSheetId===id)activeSheetId=(DATA.sheets[0]&&DATA.sheets[0].id)||null;
-  renderSheetsPage();
-  toast('Tab deleted');
-}
-
-function debouncedSaveSheet(){
-  const status=document.getElementById('sheet-save-status');
-  if(status)status.textContent='Saving...';
-  clearTimeout(sheetSaveTimer);
-  sheetSaveTimer=setTimeout(saveActiveSheet,900);
-}
-async function saveActiveSheet(){
-  if(!sheetInstance||!activeSheetId)return;
-  const data=sheetInstance.getData();
-  const{error}=await sb.from('workbook_sheets').update({data,updated_at:new Date().toISOString()}).eq('id',activeSheetId);
-  const status=document.getElementById('sheet-save-status');
-  if(status)status.textContent=error?'Save failed':'Saved ✓';
-  if(!error){
-    const s=(DATA.sheets||[]).find(x=>x.id===activeSheetId);
-    if(s)s.data=data;
+function openRoughModal(rowId){
+  editId=rowId;
+  document.getElementById('rough-modal-t').textContent=rowId?'Edit Entry':'Add Entry';
+  if(rowId){
+    const r=(DATA.roughSheet||[]).find(x=>x.id===rowId);
+    if(r){
+      document.getElementById('rs-date').value=r.entry_date;
+      document.getElementById('rs-segment').value=r.segment||'Tools';
+      document.getElementById('rs-item').value=r.item||'';
+      document.getElementById('rs-qty').value=r.qty;
+      document.getElementById('rs-cp').value=r.cost_price||'';
+      document.getElementById('rs-sp').value=r.selling_price||'';
+      document.getElementById('rs-purchase').value=r.purchase_status||'Pending';
+      document.getElementById('rs-delivery').value=r.delivery_status||'Pending';
+      document.getElementById('rs-bill').value=r.bill_status||'Pending';
+      document.getElementById('rs-issue').value=r.issue||'';
+    }
   } else {
-    toast('Sheet save failed: '+error.message,'err');
+    ['rs-item','rs-qty','rs-cp','rs-sp','rs-issue'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+    document.getElementById('rs-segment').value='Tools';
+    document.getElementById('rs-purchase').value='Pending';
+    document.getElementById('rs-delivery').value='Pending';
+    document.getElementById('rs-bill').value='Pending';
+    document.getElementById('rs-date').value=new Date().toISOString().split('T')[0];
   }
-  setTimeout(()=>{const el=document.getElementById('sheet-save-status');if(el)el.textContent='';},1500);
+  calcRoughValues();
+  document.getElementById('rough-modal').classList.add('open');
 }
+
+async function saveRoughEntry(){
+  const g=id=>document.getElementById(id)?.value;
+  const qty=parseFloat(g('rs-qty'))||0;
+  const cp=parseFloat(g('rs-cp'))||0;
+  const sp=parseFloat(g('rs-sp'))||0;
+  const row={
+    entry_date:g('rs-date'),
+    month_year:g('rs-date')?fmtMonthYear(g('rs-date')):'',
+    segment:g('rs-segment')||'Tools',
+    item:g('rs-item')||'',
+    qty:qty,cost_price:cp,selling_price:sp,
+    cost_value:qty*cp,sale_value:qty*sp,profit:(qty*sp)-(qty*cp),
+    purchase_status:g('rs-purchase')||'Pending',
+    delivery_status:g('rs-delivery')||'Pending',
+    bill_status:g('rs-bill')||'Pending',
+    issue:g('rs-issue')||'',
+    updated_at:new Date().toISOString()
+  };
+  if(!row.entry_date||!row.item){toast('Date and item required','err');return;}
+  const{error}=editId?await sb.from('rough_sheet').update(row).eq('id',editId):await sb.from('rough_sheet').insert(row);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast(editId?'Entry updated ✓':'Entry saved ✓');closeModal('rough-modal');await loadAll();
+}
+
+// Click a status badge in the table to flip it — no need to open the modal for a quick update.
+async function cycleRoughStatus(id,field){
+  const r=(DATA.roughSheet||[]).find(x=>x.id===id);
+  if(!r)return;
+  const cycles={
+    purchase_status:['Pending','Received'],
+    delivery_status:['Pending','Delivered'],
+    bill_status:['Pending','Given','N/A']
+  };
+  const opts=cycles[field];
+  const cur=r[field]||opts[0];
+  const next=opts[(opts.indexOf(cur)+1)%opts.length];
+  const{error}=await sb.from('rough_sheet').update({[field]:next,updated_at:new Date().toISOString()}).eq('id',id);
+  if(error){toast('Update failed: '+error.message,'err');return;}
+  await loadAll();
+}
+
+function roughStatusBadge(value,color){
+  const styles={green:'background:#dcfce7;color:#15803d;',amber:'background:#fef3c7;color:#92400e;',gray:'background:#f3f4f6;color:#6b7280;'};
+  return`<span style="${styles[color]}font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">${value}</span>`;
+}
+
+function renderRoughSheet(){
+  const m=getMonth('rs-month');
+  const all=DATA.roughSheet||[];
+  const sorted=filterByMonth(all,'month_year',m).sort((a,b)=>new Date(a.created_at||a.entry_date)-new Date(b.created_at||b.entry_date));
+
+  const totalCost=sorted.reduce((a,r)=>a+Number(r.cost_value||0),0);
+  const totalSale=sorted.reduce((a,r)=>a+Number(r.sale_value||0),0);
+  const totalProfit=sorted.reduce((a,r)=>a+Number(r.profit||0),0);
+  const openCount=all.filter(r=>r.purchase_status==='Pending'||r.delivery_status==='Pending'||(r.bill_status==='Pending')).length;
+
+  document.getElementById('rs-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Entries this month</div><div class="vl tnum">${sorted.length}</div></div>
+    <div class="mc"><div class="lb">Cost value</div><div class="vl tnum blue">${fmtMoney(totalCost)}</div></div>
+    <div class="mc"><div class="lb">Sale value</div><div class="vl tnum">${fmtMoney(totalSale)}</div></div>
+    <div class="mc"><div class="lb">Profit</div><div class="vl tnum ${totalProfit>=0?'green':'red'}">${fmtMoney(totalProfit)}</div></div>`;
+
+  const segColors={Electrodes:'#F6E9E2',Tools:'#E8EEF7',Scrap:'#EAF3EE',Mfg:'#EFE9F5',Trading:'#FCEBEB'};
+  const segText={Electrodes:'#7A3820',Tools:'#1E3A5F',Scrap:'#0B5C48',Mfg:'#4C2E73',Trading:'#7A1F1F'};
+  const segChip=seg=>`<span style="background:${segColors[seg]||'#f3f4f6'};color:${segText[seg]||'#374151'};font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">${seg}</span>`;
+
+  document.getElementById('rs-tbody').innerHTML=sorted.map(r=>`<tr>
+    <td>${fmtDate(r.entry_date)}</td>
+    <td>${r.item}</td>
+    <td>${segChip(r.segment)}</td>
+    <td class="tnum">${Number(r.qty).toLocaleString('en-IN')}</td>
+    <td class="tnum">${Number(r.cost_price).toLocaleString('en-IN')}</td>
+    <td class="tnum">${r.selling_price?Number(r.selling_price).toLocaleString('en-IN'):'—'}</td>
+    <td class="tnum" style="font-weight:600;color:${Number(r.profit)>=0?'#15803d':'#dc2626'};">${r.selling_price?fmtMoney(r.profit):'—'}</td>
+    <td style="cursor:pointer;" onclick="cycleRoughStatus('${r.id}','purchase_status')">${roughStatusBadge(r.purchase_status,r.purchase_status==='Received'?'green':'amber')}</td>
+    <td style="cursor:pointer;" onclick="cycleRoughStatus('${r.id}','delivery_status')">${roughStatusBadge(r.delivery_status,r.delivery_status==='Delivered'?'green':'amber')}</td>
+    <td style="cursor:pointer;" onclick="cycleRoughStatus('${r.id}','bill_status')">${roughStatusBadge(r.bill_status,r.bill_status==='Given'?'green':r.bill_status==='N/A'?'gray':'amber')}</td>
+    <td style="color:${r.issue?'#991b1b':'var(--txt2)'};">${r.issue||'—'}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-sm" onclick="openRoughModal('${r.id}')">✏</button>
+      <button class="btn btn-sm btn-red" onclick="deleteRow('rough_sheet','${r.id}','entry')">🗑</button>
+    </td></tr>`).join('')||'<tr><td colspan="12" style="text-align:center;padding:20px;color:var(--txt2);">No entries for '+m+'</td></tr>';
+
+  const open=all.filter(r=>r.purchase_status==='Pending'||r.delivery_status==='Pending'||r.bill_status==='Pending')
+    .sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
+  document.getElementById('rs-open-tbody').innerHTML=open.map(r=>`<tr>
+    <td>${fmtDate(r.entry_date)}</td>
+    <td>${r.item}</td>
+    <td>${segChip(r.segment)}</td>
+    <td style="cursor:pointer;" onclick="cycleRoughStatus('${r.id}','purchase_status')">${roughStatusBadge(r.purchase_status,r.purchase_status==='Received'?'green':'amber')}</td>
+    <td style="cursor:pointer;" onclick="cycleRoughStatus('${r.id}','delivery_status')">${roughStatusBadge(r.delivery_status,r.delivery_status==='Delivered'?'green':'amber')}</td>
+    <td style="cursor:pointer;" onclick="cycleRoughStatus('${r.id}','bill_status')">${roughStatusBadge(r.bill_status,r.bill_status==='Given'?'green':r.bill_status==='N/A'?'gray':'amber')}</td>
+    <td style="color:${r.issue?'#991b1b':'var(--txt2)'};">${r.issue||'—'}</td>
+    <td style="white-space:nowrap"><button class="btn btn-sm" onclick="openRoughModal('${r.id}')">✏</button></td>
+    </tr>`).join('')||'<tr><td colspan="8" style="text-align:center;padding:16px;color:var(--txt2);">Nothing open — all caught up</td></tr>';
+}
+
+function downloadRoughSheetPdf(){
+  const m=getMonth('rs-month');
+  const sorted=filterByMonth(DATA.roughSheet||[],'month_year',m).sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
+  const columns=[{label:'Date'},{label:'Item'},{label:'Segment'},{label:'Qty',align:'right'},{label:'Cost Price',align:'right'},{label:'Selling Price',align:'right'},{label:'Profit',align:'right'},{label:'Purchase'},{label:'Delivery'},{label:'Bill'},{label:'Issue'}];
+  const rows=sorted.map(r=>[fmtDate(r.entry_date),r.item,r.segment,Number(r.qty).toLocaleString('en-IN'),Number(r.cost_price).toLocaleString('en-IN'),r.selling_price?Number(r.selling_price).toLocaleString('en-IN'):'—',r.selling_price?Number(r.profit).toLocaleString('en-IN'):'—',r.purchase_status,r.delivery_status,r.bill_status,r.issue||'—']);
+  exportTablePdf('Rough Sheet — '+m,columns,rows);
+}
+function downloadRoughSheetExcel(){
+  const m=getMonth('rs-month');
+  const sorted=filterByMonth(DATA.roughSheet||[],'month_year',m).sort((a,b)=>new Date(a.entry_date)-new Date(b.entry_date));
+  const columns=[{label:'Date'},{label:'Item'},{label:'Segment'},{label:'Qty'},{label:'Cost Price'},{label:'Selling Price'},{label:'Profit'},{label:'Purchase'},{label:'Delivery'},{label:'Bill'},{label:'Issue'}];
+  const rows=sorted.map(r=>[fmtDate(r.entry_date),r.item,r.segment,Number(r.qty),Number(r.cost_price),Number(r.selling_price||0),Number(r.profit||0),r.purchase_status,r.delivery_status,r.bill_status,r.issue||'']);
+  exportTableExcel('Rough_Sheet_'+m.replace(' ','_')+'.xlsx','Rough Sheet',columns,rows);
+}
+
 
 function renderMIS(){
   const m=getMonth('mis-month');
