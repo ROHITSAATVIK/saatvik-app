@@ -208,6 +208,7 @@ tr:hover td{background:#fafaf9;}
     <div class="ni" onclick="goTo('trd-tools-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Tools Dashboard</div>
     <div class="ni" onclick="goTo('trd-tools-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Tools Register</div>
     <div class="ni" onclick="goTo('trd-electrodes-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Electrodes Register</div>
+    <div class="ni" onclick="goTo('performance')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18.7 8-9 13.72l-2.42-2.42L3 15.36"/></svg>Performance</div>
     <div class="ni" id="ni-rough" onclick="goTo('rough-sheet')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Rough Sheet</div>
   </div>
   <div class="sidebar-foot">
@@ -476,6 +477,15 @@ Grey: 3600"></textarea></div></div>
   </div>
   <div class="content">
     <div class="metrics g6" id="trd-reg-metrics"></div>
+    <div class="card" style="border-color:#F0997B;">
+      <div class="card-head" style="background:#FAECE7;">
+        <div class="card-title" style="color:#4A1B0C;">🔴 Total Outstanding Bills — all months</div>
+        <div style="font-size:11px;color:#4A1B0C;">Not filtered by the month selector — every unpaid bill, regardless of when it was raised</div>
+      </div>
+      <div class="tw excel-table"><table><thead><tr><th>Bill No</th><th>Date</th><th>Customer</th><th class="tnum">Amount</th><th>Due On</th><th class="tnum">Days outstanding</th></tr></thead>
+      <tbody id="trd-outstanding-tbody"></tbody>
+      <tfoot id="trd-outstanding-tfoot"></tfoot></table></div>
+    </div>
     <div class="card">
       <div class="card-head">
         <div class="card-title">Trade register — buy &amp; sell in one line</div>
@@ -616,6 +626,33 @@ Grey: 3600"></textarea></div></div>
       <div class="card-head" style="background:#FCEBEB;"><div class="card-title" style="color:#501313;">⚙️ Machines — below 10h target (most recent logged day)</div></div>
       <div class="tw excel-table"><table><thead><tr><th>Machine</th><th>Date</th><th class="tnum">Day (h)</th><th class="tnum">Night (h)</th></tr></thead><tbody id="notif-machines-tbody"></tbody></table></div>
     </div>
+  </div>
+</div>
+
+
+<!-- ========== PERFORMANCE ========== -->
+<div id="page-performance" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">📈</span>Performance</div>
+    <div class="tb-right">
+      <select id="perf-fy" onchange="renderPerformance()" style="padding:6px 10px;border:1px solid var(--bdr2);border-radius:var(--rad);font-size:12px;background:var(--bg2);color:var(--txt);"><option value="2026-27">FY 2026-27</option></select>
+      <button class="btn" onclick="downloadPerformancePdf()">⬇ PDF</button>
+      <button class="btn" onclick="downloadPerformanceExcel()">⬇ Excel</button>
+    </div>
+  </div>
+  <div class="content">
+    <div style="font-size:11px;color:var(--txt2);margin-bottom:10px;">Every box below is editable — the ERP suggests a starting value where it can (Scrap always; Tools/Electrodes Revenue &amp; Profit where the Register has data), but nothing is locked. Click into any cell, change it, then hit Save for that segment.</div>
+
+    <!-- Current quarter — whole business snapshot -->
+    <div class="card">
+      <div class="card-head"><div class="card-title">Current Quarter (<span id="perf-cur-q-label">Q2</span>) — Whole Business</div></div>
+      <div class="tw excel-table" style="max-width:640px;"><table>
+        <thead><tr><th>Metric</th><th class="tnum">Target</th><th class="tnum">Performance</th><th class="tnum">Difference</th></tr></thead>
+        <tbody id="perf-top-tbody"></tbody>
+      </table></div>
+    </div>
+
+    <div id="perf-segments"></div>
   </div>
 </div>
 
@@ -1193,7 +1230,7 @@ function checkSession(){
 }
 
 const TODAY=new Date();
-let DATA={mis:[],inv:[],dispatches:[],bd:[],trdPur:[],trdSal:[],trdMat:[],fgAnchor:null,fgOverrides:[],trdOrders:[],invMoves:[],roughSheet:[]};
+let DATA={mis:[],inv:[],dispatches:[],bd:[],trdPur:[],trdSal:[],trdMat:[],fgAnchor:null,fgOverrides:[],trdOrders:[],invMoves:[],roughSheet:[],performance:[]};
 let editId=null, charts={};
 // Chart.js draws onto a <canvas> and does not inherit the page's CSS font-family, so without this
 // every chart (dashboard, production, trading) falls back to Chart.js's own default font instead of Verdana.
@@ -1345,7 +1382,7 @@ function goTo(id){
   // highlight nav
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   const allNi=document.querySelectorAll('.ni');
-  const pages=['mfg-dashboard','production','machine-breakup','notifications','inventory','breakdown','dispatch','__gatepass__','trd-dashboard','trd-register','trd-tools-dashboard','trd-tools-register','trd-electrodes-register','rough-sheet'];
+  const pages=['mfg-dashboard','production','machine-breakup','notifications','inventory','breakdown','dispatch','__gatepass__','trd-dashboard','trd-register','trd-tools-dashboard','trd-tools-register','trd-electrodes-register','performance','rough-sheet'];
   const idx=pages.indexOf(id);
   if(idx>=0&&allNi[idx])allNi[idx].classList.add('active');
   renderPage(id);
@@ -1358,6 +1395,7 @@ function renderPage(id){
     'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines,'machine-breakup':renderMachineBreakup,
     'trd-tools-dashboard':renderTrdToolsDashboard,'trd-tools-register':renderTrdToolsRegister,'trd-electrodes-register':renderTrdElectrodesRegister,
     'rough-sheet':renderRoughSheet,
+    'performance':renderPerformance,
     'notifications':renderNotifications
   };
   if(m[id])m[id]();
@@ -1575,7 +1613,7 @@ function openWA(){
 async function loadAll(){
   document.getElementById('last-sync').textContent='Syncing...';
   try{
-    const [mis,inv,disp,bd,tp,ts,tm,life,lrates,fganc,fgovr,rough,torders,invmov]=await Promise.all([
+    const [mis,inv,disp,bd,tp,ts,tm,life,lrates,fganc,fgovr,rough,torders,invmov,perf]=await Promise.all([
       sb.from('mis_entries').select('*').order('entry_date',{ascending:false}),
       sb.from('inventory').select('*').order('item_name'),
       sb.from('dispatches').select('*').order('dispatch_date',{ascending:false}),
@@ -1590,6 +1628,7 @@ async function loadAll(){
       sb.from('rough_sheet').select('*').order('entry_date',{ascending:false}),
       sb.from('trading_orders').select('*').order('order_date',{ascending:false}),
       sb.from('inventory_movements').select('*').order('movement_date',{ascending:false}),
+      sb.from('performance_entries').select('*'),
     ]);
     DATA.mis=mis.data||[];DATA.inv=inv.data||[];
     DATA.dispatches=disp.data||[];DATA.bd=bd.data||[];
@@ -1598,6 +1637,7 @@ async function loadAll(){
     DATA.roughSheet=rough.data||[];
     DATA.trdOrders=torders.data||[];
     DATA.invMoves=invmov.data||[];
+    DATA.performance=perf.data||[];
     // Labour rates — a single editable row. Falls back to the rates you gave us if the table is empty
     // (e.g. before the migration/seed row has been run), so the form never breaks.
     DATA.labourRates=(lrates.data&&lrates.data[0])||{
@@ -3009,6 +3049,25 @@ function renderTrdRegister(){
     <div class="mc"><div class="lb">Outstanding (not recd)</div><div class="vl tnum red">${fmtMoney(notRecdAmt)}</div><div class="sb">${notRecd.length} pending</div></div>
     <div class="mc"><div class="lb">Avg payment cycle</div><div class="vl tnum amber">${avgCycle} days</div></div>`;
 
+  // Total Outstanding Bills — every unpaid bill across all time, not just this month, sorted oldest first
+  // so the longest-overdue bill is always the one at the top.
+  const allOutstanding=[...DATA.trdPur].filter(r=>!r.payment_received_date).sort((a,b)=>new Date(a.purchase_date)-new Date(b.purchase_date));
+  const outstandingTotal=allOutstanding.reduce((a,r)=>a+Number(r.amount||0),0);
+  document.getElementById('trd-outstanding-tbody').innerHTML=allOutstanding.map(r=>{
+    const due=dueDate(r.purchase_date,r.payment_terms_days||15);
+    const isOverdue=due<TODAY;
+    const daysOut=Math.floor((TODAY-new Date(r.purchase_date))/86400000);
+    return`<tr style="${isOverdue?'background:#fef2f2;':''}">
+      <td>${r.bill_no||'—'}</td>
+      <td>${fmtDate(r.purchase_date)}</td>
+      <td>${r.party||'—'}</td>
+      <td class="tnum">${fmtMoney(r.amount)}</td>
+      <td class="${isOverdue?'red':''}">${fmtDate(due.toISOString().split('T')[0])}</td>
+      <td class="tnum" style="font-weight:600;color:${isOverdue?'#dc2626':'#b45309'};">${daysOut}d</td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="6" style="text-align:center;padding:16px;color:var(--txt2);">Nothing outstanding — all bills received ✓</td></tr>';
+  document.getElementById('trd-outstanding-tfoot').innerHTML=allOutstanding.length?`<tr><td colspan="3" style="font-weight:700;">Total outstanding</td><td class="tnum" style="font-weight:700;color:#dc2626;">${fmtMoney(outstandingTotal)}</td><td colspan="2"></td></tr>`:'';
+
   // Oldest first — first entry on top, matching your sheet
   const sorted=[...DATA.trdPur].sort((a,b)=>new Date(a.purchase_date)-new Date(b.purchase_date));
   let sl=1;
@@ -4331,6 +4390,335 @@ function renderNotifications(){
   ).join('')||`<tr><td colspan="4" style="text-align:center;padding:14px;color:var(--txt2);">${n.latestDate?'All machines hit target on '+fmtDate(n.latestDate)+' ✓':'No production entries logged yet'}</td></tr>`;
 
   updateNotifBadge(n);
+}
+
+
+// ===== PERFORMANCE (Quarterly Plan vs Actual, by segment) =====
+const PERF_SEGMENTS=[
+  {key:'Manufacturing',label:'Manufacturing',color:'#7C5EA8',metrics:[
+    {key:'production_tons',label:'Production (tons)',formula:'entered directly'},
+    {key:'revenue',label:'Revenue (₹)',formula:'entered directly'},
+    {key:'cost',label:'Cost (₹)',formula:'entered directly'},
+    {key:'profit',label:'Profit (₹)',formula:'= Revenue − Cost',derive:v=>(v.revenue||0)-(v.cost||0)},
+    {key:'sale_price_kg',label:'Sale price/kg (₹)',formula:'= Revenue ÷ (Production×1000)',derive:v=>v.production_tons?(v.revenue||0)/(v.production_tons*1000):null},
+    {key:'cost_price_kg',label:'Cost price/kg (₹)',formula:'= Cost ÷ (Production×1000)',derive:v=>v.production_tons?(v.cost||0)/(v.production_tons*1000):null},
+    {key:'profit_kg',label:'Profit/kg (₹)',formula:'= Profit ÷ (Production×1000)',derive:v=>v.production_tons?(v.profit||0)/(v.production_tons*1000):null},
+    {key:'margin_roi',label:'Margin ROI %',formula:'= Profit/kg ÷ Cost price/kg × 100',derive:v=>v.cost_price_kg?((v.profit_kg||0)/v.cost_price_kg*100):null}
+  ]},
+  {key:'Scrap',label:'Scrap',color:'#4A9EDB',metrics:[
+    {key:'revenue',label:'Revenue (₹L)',formula:'Σ Sale Value this quarter (auto from Scrap Register)'},
+    {key:'avg_capital',label:'Avg Monthly Capital (₹L)',formula:'money-days method (auto)'},
+    {key:'qty',label:'Quantity (tons)',formula:'Σ Qty this quarter (auto)'},
+    {key:'trucks',label:'Trucks',formula:'entered directly'},
+    {key:'profit',label:'Profit (₹L)',formula:'Σ(Sale−Cost) this quarter (auto)'},
+    {key:'margin_roc',label:'Margin ROC %',formula:'= Profit ÷ Avg Capital × 100',derive:v=>v.avg_capital?((v.profit||0)/v.avg_capital*100):null},
+    {key:'margin_roi',label:'Margin ROI %',formula:'= Profit ÷ Revenue × 100',derive:v=>v.revenue?((v.profit||0)/v.revenue*100):null},
+    {key:'profit_ton',label:'Profit/ton (₹)',formula:'= Profit×1,00,000 ÷ Qty',derive:v=>v.qty?((v.profit||0)*100000/v.qty):null}
+  ]},
+  {key:'Tools',label:'Tools',color:'#F6A83A',metrics:[
+    {key:'revenue',label:'Revenue (₹L)',formula:'suggested from Tools Register — edit if wrong'},
+    {key:'profit',label:'Profit (₹L)',formula:'suggested from Tools Register — edit if wrong'},
+    {key:'margin_roc',label:'Margin ROC %',formula:'= Profit ÷ Avg Capital × 100 (once capital is tracked)'},
+    {key:'margin_roi',label:'Margin ROI %',formula:'= Profit ÷ Revenue × 100',derive:v=>v.revenue?((v.profit||0)/v.revenue*100):null}
+  ]},
+  {key:'Electrodes',label:'Electrodes',color:'#E8637A',metrics:[
+    {key:'revenue',label:'Revenue (₹L)',formula:'suggested from Electrodes Register — edit if wrong'},
+    {key:'profit',label:'Profit (₹L)',formula:'suggested from Electrodes Register — edit if wrong'},
+    {key:'margin_roc',label:'Margin ROC %',formula:'= Profit ÷ Avg Capital × 100 (once capital is tracked)'},
+    {key:'margin_roi',label:'Margin ROI %',formula:'= Profit ÷ Revenue × 100',derive:v=>v.revenue?((v.profit||0)/v.revenue*100):null}
+  ]}
+];
+
+function getCurrentFY(){return document.getElementById('perf-fy')?.value||'2026-27';}
+function getCurrentQuarterLabel(){
+  const m=TODAY.getMonth();
+  if(m>=3&&m<=5)return'Q1';
+  if(m>=6&&m<=8)return'Q2';
+  if(m>=9&&m<=11)return'Q3';
+  return'Q4';
+}
+function perfQuarterDateRange(quarter,fy){
+  fy=fy||getCurrentFY();
+  const y1=parseInt(fy.split('-')[0]),y2=y1+1;
+  const ranges={Q1:[new Date(y1,3,1),new Date(y1,5,30)],Q2:[new Date(y1,6,1),new Date(y1,8,30)],Q3:[new Date(y1,9,1),new Date(y1,11,31)],Q4:[new Date(y2,0,1),new Date(y2,2,31)]};
+  return ranges[quarter];
+}
+function perfGet(segment,quarter,metric,which){
+  const fy=getCurrentFY();
+  const row=(DATA.performance||[]).find(r=>r.segment===segment&&r.quarter===quarter&&r.metric_key===metric&&r.fy_year===fy);
+  return row?row[which+'_value']:null;
+}
+
+// Auto-suggestions — only offered for "actual" cells where the ERP already has real underlying data.
+function computeScrapQuarterActuals(quarter){
+  const[qStart,qEnd]=perfQuarterDateRange(quarter);
+  const inQ=DATA.trdPur.filter(r=>{const d=new Date(r.purchase_date);return d>=qStart&&d<=qEnd;});
+  const revenue=inQ.reduce((a,r)=>a+Number(r.amount||0),0)/100000;
+  const qty=inQ.reduce((a,r)=>a+Number(r.qty_kg||0),0)/1000;
+  const profit=inQ.reduce((a,r)=>{const margin=Number(r.margin||((r.sale_price||0)-(r.cost_price||0)));return a+(margin*Number(r.qty_kg||0));},0)/100000;
+  // Avg capital — money-days method: each day's total outstanding-bill value, averaged across the quarter.
+  const daysInQ=Math.round((qEnd-qStart)/86400000)+1;
+  const allBills=DATA.trdPur.filter(r=>new Date(r.purchase_date)<=qEnd);
+  let capDaySum=0;
+  for(let d=new Date(qStart);d<=qEnd;d.setDate(d.getDate()+1)){
+    const outstanding=allBills.filter(r=>{
+      const billDate=new Date(r.purchase_date);
+      if(billDate>d)return false;
+      if(r.payment_received_date&&new Date(r.payment_received_date)<=d)return false;
+      return true;
+    }).reduce((a,r)=>a+Number(r.amount||0),0);
+    capDaySum+=outstanding;
+  }
+  const avg_capital=(capDaySum/daysInQ)/100000;
+  return{revenue,qty,profit,avg_capital};
+}
+function computeTradingOrdersQuarterActuals(type,quarter){
+  const[qStart,qEnd]=perfQuarterDateRange(quarter);
+  const rows=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===type).filter(r=>{const d=new Date(r.order_date);return d>=qStart&&d<=qEnd;});
+  const revenue=rows.reduce((a,r)=>a+Number(r.sale_value||0),0)/100000;
+  const profit=rows.reduce((a,r)=>a+Number(r.profit||0),0)/100000;
+  return{revenue,profit};
+}
+function computeMfgQuarterActuals(quarter){
+  const[qStart,qEnd]=perfQuarterDateRange(quarter);
+  const misRows=DATA.mis.filter(r=>{const d=new Date(r.entry_date);return d>=qStart&&d<=qEnd;});
+  const production_tons=misRows.reduce((a,r)=>a+Number(r.total_production_kg||0),0)/1000;
+  const dispRows=DATA.dispatches.filter(r=>{const d=new Date(r.dispatch_date);return d>=qStart&&d<=qEnd;});
+  const revenue=dispRows.reduce((a,r)=>a+Number(r.amount||0),0);
+  return{production_tons,revenue};
+}
+function perfCellSuggestion(seg,quarter,metricKey){
+  if(seg.key==='Scrap'){const s=computeScrapQuarterActuals(quarter);return s&&s[metricKey]!=null?s[metricKey]:null;}
+  if((seg.key==='Tools'||seg.key==='Electrodes')&&(metricKey==='revenue'||metricKey==='profit')){const s=computeTradingOrdersQuarterActuals(seg.key,quarter);return s?s[metricKey]:null;}
+  if(seg.key==='Manufacturing'&&(metricKey==='production_tons'||metricKey==='revenue')){const s=computeMfgQuarterActuals(quarter);return s?s[metricKey]:null;}
+  return null;
+}
+
+// Resolves every metric for one (segment, quarter, target|actual) combo: stored value wins; otherwise a
+// base field falls back to an ERP suggestion (actual only), and a derived field is computed from whatever
+// was just resolved for the fields before it in the list.
+function perfResolveQuarter(seg,quarter,which){
+  const vals={};
+  seg.metrics.forEach(metric=>{
+    const stored=perfGet(seg.key,quarter,metric.key,which);
+    if(metric.derive){
+      const computed=metric.derive(vals);
+      vals[metric.key]=stored!=null?stored:(computed!=null&&!isNaN(computed)?Math.round(computed*100)/100:null);
+    } else if(stored!=null){
+      vals[metric.key]=stored;
+    } else if(which==='actual'){
+      const sug=perfCellSuggestion(seg,quarter,metric.key);
+      vals[metric.key]=sug!=null?Math.round(sug*100)/100:null;
+    } else {
+      vals[metric.key]=null;
+    }
+  });
+  return vals;
+}
+
+function renderPerformance(){
+  const curQ=getCurrentQuarterLabel();
+  const curQEl=document.getElementById('perf-cur-q-label');
+  if(curQEl)curQEl.textContent=curQ;
+
+  // Whole-business snapshot for the current quarter — Manufacturing converted from raw ₹ to ₹L to combine.
+  let topTarget={revenue:0,profit:0},topActual={revenue:0,profit:0};
+  let anyTarget=false,anyActual=false;
+  PERF_SEGMENTS.forEach(seg=>{
+    const divisor=seg.key==='Manufacturing'?100000:1;
+    const t=perfResolveQuarter(seg,curQ,'target'),a=perfResolveQuarter(seg,curQ,'actual');
+    if(t.revenue!=null){topTarget.revenue+=t.revenue/divisor;anyTarget=true;}
+    if(t.profit!=null)topTarget.profit+=t.profit/divisor;
+    if(a.revenue!=null){topActual.revenue+=a.revenue/divisor;anyActual=true;}
+    if(a.profit!=null)topActual.profit+=a.profit/divisor;
+  });
+  const topRows=[{label:'Revenue (₹L)',t:anyTarget?topTarget.revenue:null,a:anyActual?topActual.revenue:null},
+                  {label:'Gross Profit (₹L)',t:anyTarget?topTarget.profit:null,a:anyActual?topActual.profit:null}];
+  document.getElementById('perf-top-tbody').innerHTML=topRows.map(r=>{
+    const diff=(r.a!=null&&r.t!=null)?(r.a-r.t):null;
+    return`<tr>
+      <td>${r.label}</td>
+      <td class="tnum">${r.t!=null?r.t.toLocaleString('en-IN',{maximumFractionDigits:2}):'—'}</td>
+      <td class="tnum">${r.a!=null?r.a.toLocaleString('en-IN',{maximumFractionDigits:2}):'—'}</td>
+      <td class="tnum" style="font-weight:600;color:${diff==null?'var(--txt2)':diff>=0?'#15803d':'#dc2626'};">${diff==null?'—':(diff>=0?'+':'')+diff.toLocaleString('en-IN',{maximumFractionDigits:2})}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('perf-segments').innerHTML=PERF_SEGMENTS.map(seg=>renderPerfSegmentBlock(seg)).join('');
+}
+
+function renderPerfSegmentBlock(seg){
+  const q1A=perfResolveQuarter(seg,'Q1','actual');
+  const q2T=perfResolveQuarter(seg,'Q2','target'),q2A=perfResolveQuarter(seg,'Q2','actual');
+  const q3T=perfResolveQuarter(seg,'Q3','target'),q3A=perfResolveQuarter(seg,'Q3','actual');
+  const q4T=perfResolveQuarter(seg,'Q4','target'),q4A=perfResolveQuarter(seg,'Q4','actual');
+
+  const inputCell=(quarter,metric,which,val)=>{
+    const id=`perf-inp-${seg.key}-${quarter}-${metric.key}-${which}`;
+    const v=(val===null||val===undefined)?'':val;
+    return`<td><input type="number" step="any" id="${id}" value="${v}" style="width:72px;text-align:right;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;border:1px solid var(--bdr2);border-radius:4px;padding:3px 4px;background:${which==='target'?'#FFFBEB':'#FAFAF7'};"></td>`;
+  };
+  const diffCell=(a,t)=>{
+    if(a==null||t==null)return`<td class="tnum" style="color:var(--txt2);">—</td>`;
+    const d=a-t;
+    return`<td class="tnum" style="font-weight:600;color:${d>=0?'#15803d':'#dc2626'};">${d>=0?'+':''}${Number(d).toLocaleString('en-IN',{maximumFractionDigits:2})}</td>`;
+  };
+
+  const rows=seg.metrics.map(metric=>`<tr>
+    <td>${metric.label}<div style="font-size:8.5px;color:var(--txt2);font-style:italic;">${metric.formula||''}</div></td>
+    ${inputCell('Q1',metric,'actual',q1A[metric.key])}
+    ${inputCell('Q2',metric,'target',q2T[metric.key])}
+    ${inputCell('Q2',metric,'actual',q2A[metric.key])}
+    ${diffCell(q2A[metric.key],q2T[metric.key])}
+    ${inputCell('Q3',metric,'target',q3T[metric.key])}
+    ${inputCell('Q3',metric,'actual',q3A[metric.key])}
+    ${diffCell(q3A[metric.key],q3T[metric.key])}
+    ${inputCell('Q4',metric,'target',q4T[metric.key])}
+    ${inputCell('Q4',metric,'actual',q4A[metric.key])}
+    ${diffCell(q4A[metric.key],q4T[metric.key])}
+  </tr>`).join('');
+
+  return`<div class="card" style="margin-bottom:14px;">
+    <div class="card-head" style="background:${seg.color};">
+      <div class="card-title" style="color:#fff;">${seg.label}</div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-sm" onclick="recalcPerfSegment('${seg.key}')">↻ Recalculate</button>
+        <button class="btn btn-sm btn-green" onclick="savePerfSegment('${seg.key}')">Save ${seg.label}</button>
+      </div>
+    </div>
+    <div style="font-size:9.5px;color:var(--txt2);padding:5px 12px;background:#fff;">Diff columns refresh after Save. Recalculate reapplies formulas to the boxes below using whatever's currently typed in, without saving.</div>
+    <div class="tw excel-table"><table>
+      <thead><tr>
+        <th>Metric</th>
+        <th class="tnum">Q1<br>Performance</th>
+        <th class="tnum">Q2<br>Target</th>
+        <th class="tnum">Q2<br>Performance</th>
+        <th class="tnum">Q2<br>Diff</th>
+        <th class="tnum">Q3<br>Target</th>
+        <th class="tnum">Q3<br>Performance</th>
+        <th class="tnum">Q3<br>Diff</th>
+        <th class="tnum">Q4<br>Target</th>
+        <th class="tnum">Q4<br>Performance</th>
+        <th class="tnum">Q4<br>Diff</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+  </div>`;
+}
+
+function recalcPerfSegment(segKey){
+  const seg=PERF_SEGMENTS.find(s=>s.key===segKey);
+  if(!seg)return;
+  const combos=[['Q1','actual'],['Q2','target'],['Q2','actual'],['Q3','target'],['Q3','actual'],['Q4','target'],['Q4','actual']];
+  combos.forEach(([quarter,which])=>{
+    const vals={};
+    seg.metrics.forEach(metric=>{
+      const id=`perf-inp-${seg.key}-${quarter}-${metric.key}-${which}`;
+      const el=document.getElementById(id);
+      if(!el)return;
+      if(metric.derive){
+        const computed=metric.derive(vals);
+        vals[metric.key]=computed;
+        if(computed!=null&&!isNaN(computed))el.value=Math.round(computed*100)/100;
+      } else {
+        vals[metric.key]=el.value===''?null:parseFloat(el.value);
+      }
+    });
+  });
+  toast('Formulas reapplied — click Save to keep them ✓');
+}
+
+async function savePerfSegment(segKey){
+  const seg=PERF_SEGMENTS.find(s=>s.key===segKey);
+  if(!seg)return;
+  const fy=getCurrentFY();
+  const combos=[['Q1','actual'],['Q2','target'],['Q2','actual'],['Q3','target'],['Q3','actual'],['Q4','target'],['Q4','actual']];
+  const rows=[];
+  seg.metrics.forEach(metric=>{
+    combos.forEach(([quarter,which])=>{
+      const id=`perf-inp-${seg.key}-${quarter}-${metric.key}-${which}`;
+      const el=document.getElementById(id);
+      if(!el)return;
+      const val=el.value===''?null:parseFloat(el.value);
+      let row=rows.find(r=>r.quarter===quarter&&r.metric_key===metric.key);
+      if(!row){row={segment:seg.key,fy_year:fy,quarter,metric_key:metric.key,target_value:null,actual_value:null,updated_at:new Date().toISOString()};rows.push(row);}
+      row[which+'_value']=val;
+    });
+  });
+  const{error}=await sb.from('performance_entries').upsert(rows,{onConflict:'segment,fy_year,quarter,metric_key'});
+  if(error){toast('Save failed: '+error.message,'err');return;}
+  toast(seg.label+' saved ✓');
+  await loadAll();
+}
+
+function perfFmtNum(v){return v==null?'—':Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});}
+
+function downloadPerformancePdf(){
+  const fy=getCurrentFY();
+  const sections=PERF_SEGMENTS.map(seg=>{
+    const q1A=perfResolveQuarter(seg,'Q1','actual');
+    const q2T=perfResolveQuarter(seg,'Q2','target'),q2A=perfResolveQuarter(seg,'Q2','actual');
+    const q3T=perfResolveQuarter(seg,'Q3','target'),q3A=perfResolveQuarter(seg,'Q3','actual');
+    const q4T=perfResolveQuarter(seg,'Q4','target'),q4A=perfResolveQuarter(seg,'Q4','actual');
+    const rows=seg.metrics.map(m=>`<tr>
+      <td>${m.label}</td>
+      <td style="text-align:right;">${perfFmtNum(q1A[m.key])}</td>
+      <td style="text-align:right;">${perfFmtNum(q2T[m.key])}</td><td style="text-align:right;">${perfFmtNum(q2A[m.key])}</td>
+      <td style="text-align:right;">${perfFmtNum(q3T[m.key])}</td><td style="text-align:right;">${perfFmtNum(q3A[m.key])}</td>
+      <td style="text-align:right;">${perfFmtNum(q4T[m.key])}</td><td style="text-align:right;">${perfFmtNum(q4A[m.key])}</td>
+    </tr>`).join('');
+    return`<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:bold;margin-bottom:4px;">${seg.label}</div>
+    <table><thead><tr><th>Metric</th><th style="text-align:right;">Q1 Perf</th><th style="text-align:right;">Q2 Tgt</th><th style="text-align:right;">Q2 Perf</th><th style="text-align:right;">Q3 Tgt</th><th style="text-align:right;">Q3 Perf</th><th style="text-align:right;">Q4 Tgt</th><th style="text-align:right;">Q4 Perf</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }).join('');
+  const html=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+@page{size:A4 landscape;margin:8mm;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Verdana,Geneva,Tahoma,sans-serif;}
+body{font-size:9.5px;color:#000;background:#fff;}
+.header{display:flex;align-items:center;gap:14px;border-bottom:2.5px solid #000;padding-bottom:7px;margin-bottom:7px;}
+.logo{width:52px;height:52px;object-fit:contain;}
+.company-info{flex:1;text-align:center;}
+.company-name{font-size:19px;font-weight:bold;letter-spacing:2px;}
+.company-addr{font-size:8.5px;margin-top:2px;}
+.doc-title{text-align:center;font-size:13px;font-weight:bold;text-decoration:underline;margin:6px 0 12px;}
+table{width:100%;border-collapse:collapse;}
+th{background:#eeeeee;border:1px solid #000;padding:4px 5px;font-size:8px;text-transform:uppercase;}
+td{border:1px solid #000;padding:4px 5px;font-size:9px;}
+</style></head><body>
+<div class="header">
+  <img class="logo" src="${LOGO_B64}" alt="Saatvik Logo">
+  <div class="company-info">
+    <div class="company-name">SAATVIK ENTERPRISES</div>
+    <div class="company-addr">HO : 42 A Rafi Ahmed Kidwai Road, Kolkata-700016 &nbsp;·&nbsp; Factory : Bamunara Industrial Estate, Bamunara, Durgapur - 713212</div>
+  </div>
+</div>
+<div class="doc-title">Performance — FY ${fy}</div>
+${sections}
+</body></html>`;
+  const win=window.open('','_blank');
+  if(!win){toast('Please allow popups for saatvik.biz to download PDF','err');return;}
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>win.print(),800);
+}
+
+function downloadPerformanceExcel(){
+  if(typeof XLSX==='undefined'){toast('Excel export library did not load — check your connection','err');return;}
+  const fy=getCurrentFY();
+  const wb=XLSX.utils.book_new();
+  PERF_SEGMENTS.forEach(seg=>{
+    const q1A=perfResolveQuarter(seg,'Q1','actual');
+    const q2T=perfResolveQuarter(seg,'Q2','target'),q2A=perfResolveQuarter(seg,'Q2','actual');
+    const q3T=perfResolveQuarter(seg,'Q3','target'),q3A=perfResolveQuarter(seg,'Q3','actual');
+    const q4T=perfResolveQuarter(seg,'Q4','target'),q4A=perfResolveQuarter(seg,'Q4','actual');
+    const data=[['Metric','Q1 Performance','Q2 Target','Q2 Performance','Q3 Target','Q3 Performance','Q4 Target','Q4 Performance'],
+      ...seg.metrics.map(m=>[m.label,q1A[m.key],q2T[m.key],q2A[m.key],q3T[m.key],q3A[m.key],q4T[m.key],q4A[m.key]])];
+    const ws=XLSX.utils.aoa_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb,ws,seg.label);
+  });
+  XLSX.writeFile(wb,'Performance_FY'+fy+'.xlsx');
 }
 
 
