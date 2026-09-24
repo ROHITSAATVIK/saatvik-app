@@ -4396,38 +4396,39 @@ function renderNotifications(){
 // ===== PERFORMANCE (Quarterly Plan vs Actual, by segment) =====
 const PERF_SEGMENTS=[
   {key:'Manufacturing',label:'Manufacturing',color:'#7C5EA8',metrics:[
-    {key:'production_tons',label:'Production (tons)',formula:'entered directly'},
-    {key:'revenue',label:'Revenue (₹)',formula:'entered directly'},
-    {key:'cost',label:'Cost (₹)',formula:'entered directly'},
-    {key:'profit',label:'Profit (₹)',formula:'= Revenue − Cost',derive:v=>(v.revenue||0)-(v.cost||0)},
-    {key:'sale_price_kg',label:'Sale price/kg (₹)',formula:'= Revenue ÷ (Production×1000)',derive:v=>v.production_tons?(v.revenue||0)/(v.production_tons*1000):null},
-    {key:'cost_price_kg',label:'Cost price/kg (₹)',formula:'= Cost ÷ (Production×1000)',derive:v=>v.production_tons?(v.cost||0)/(v.production_tons*1000):null},
-    {key:'profit_kg',label:'Profit/kg (₹)',formula:'= Profit ÷ (Production×1000)',derive:v=>v.production_tons?(v.profit||0)/(v.production_tons*1000):null},
-    {key:'margin_roi',label:'Margin ROI %',formula:'= Profit/kg ÷ Cost price/kg × 100',derive:v=>v.cost_price_kg?((v.profit_kg||0)/v.cost_price_kg*100):null}
+    {key:'production_tons',label:'Production (tons)',fmt:'num',formula:'entered directly'},
+    {key:'revenue',label:'Revenue (₹)',fmt:'money',formula:'entered directly'},
+    {key:'cost',label:'Cost (₹)',fmt:'money',formula:'entered directly'},
+    {key:'profit',label:'Profit (₹)',fmt:'money',formula:'= Revenue − Cost',derive:v=>(v.revenue||0)-(v.cost||0)},
+    {key:'sale_price_kg',label:'Sale price/kg (₹)',fmt:'num2',formula:'= Revenue ÷ (Production×1000)',derive:v=>v.production_tons?(v.revenue||0)/(v.production_tons*1000):null},
+    {key:'cost_price_kg',label:'Cost price/kg (₹)',fmt:'num2',formula:'= Cost ÷ (Production×1000)',derive:v=>v.production_tons?(v.cost||0)/(v.production_tons*1000):null},
+    {key:'profit_kg',label:'Profit/kg (₹)',fmt:'num2',formula:'= Profit ÷ (Production×1000)',derive:v=>v.production_tons?(v.profit||0)/(v.production_tons*1000):null},
+    {key:'margin_roi',label:'Margin ROI %',fmt:'pct',formula:'= Profit/kg ÷ Cost price/kg × 100',derive:v=>v.cost_price_kg?((v.profit_kg||0)/v.cost_price_kg*100):null}
   ]},
   {key:'Scrap',label:'Scrap',color:'#4A9EDB',metrics:[
-    {key:'revenue',label:'Revenue (₹L)',formula:'Σ Sale Value this quarter (auto from Scrap Register)'},
-    {key:'avg_capital',label:'Avg Monthly Capital (₹L)',formula:'money-days method (auto)'},
-    {key:'qty',label:'Quantity (tons)',formula:'Σ Qty this quarter (auto)'},
-    {key:'trucks',label:'Trucks',formula:'entered directly'},
-    {key:'profit',label:'Profit (₹L)',formula:'Σ(Sale−Cost) this quarter (auto)'},
-    {key:'margin_roc',label:'Margin ROC %',formula:'= Profit ÷ Avg Capital × 100',derive:v=>v.avg_capital?((v.profit||0)/v.avg_capital*100):null},
-    {key:'margin_roi',label:'Margin ROI %',formula:'= Profit ÷ Revenue × 100',derive:v=>v.revenue?((v.profit||0)/v.revenue*100):null},
-    {key:'profit_ton',label:'Profit/ton (₹)',formula:'= Profit×1,00,000 ÷ Qty',derive:v=>v.qty?((v.profit||0)*100000/v.qty):null}
+    {key:'revenue',label:'Revenue (₹)',fmt:'money',formula:'Σ Sale Value this quarter (auto from Scrap Register)'},
+    {key:'avg_capital',label:'Avg Monthly Capital (₹)',fmt:'money',formula:'money-days method (auto)'},
+    {key:'qty',label:'Quantity (tons)',fmt:'num',formula:'Σ Qty this quarter (auto)'},
+    {key:'trucks',label:'Trucks',fmt:'num',formula:'entered directly'},
+    {key:'profit',label:'Profit (₹)',fmt:'money',formula:'Σ(Sale−Cost) this quarter (auto)'},
+    {key:'margin_roc',label:'Margin ROC %',fmt:'pct',formula:'= Profit ÷ Avg Capital × 100',derive:v=>v.avg_capital?((v.profit||0)/v.avg_capital*100):null},
+    {key:'margin_roi',label:'Margin ROI %',fmt:'pct',formula:'= Profit ÷ Revenue × 100',derive:v=>v.revenue?((v.profit||0)/v.revenue*100):null},
+    {key:'profit_ton',label:'Profit/ton (₹)',fmt:'money',formula:'= Profit ÷ Qty',derive:v=>v.qty?((v.profit||0)/v.qty):null}
   ]},
   {key:'Tools',label:'Tools',color:'#F6A83A',metrics:[
-    {key:'revenue',label:'Revenue (₹L)',formula:'suggested from Tools Register — edit if wrong'},
-    {key:'profit',label:'Profit (₹L)',formula:'suggested from Tools Register — edit if wrong'},
-    {key:'margin_roc',label:'Margin ROC %',formula:'= Profit ÷ Avg Capital × 100 (once capital is tracked)'},
-    {key:'margin_roi',label:'Margin ROI %',formula:'= Profit ÷ Revenue × 100',derive:v=>v.revenue?((v.profit||0)/v.revenue*100):null}
+    {key:'revenue',label:'Revenue (₹)',fmt:'money',formula:'suggested from Tools Register — edit if wrong'},
+    {key:'profit',label:'Profit (₹)',fmt:'money',formula:'suggested from Tools Register — edit if wrong'},
+    {key:'margin_roc',label:'Margin ROC %',fmt:'pct',formula:'= Profit ÷ Avg Capital × 100 (once capital is tracked)'},
+    {key:'margin_roi',label:'Margin ROI %',fmt:'pct',formula:'= Profit ÷ Revenue × 100',derive:v=>v.revenue?((v.profit||0)/v.revenue*100):null}
   ]},
   {key:'Electrodes',label:'Electrodes',color:'#E8637A',metrics:[
-    {key:'revenue',label:'Revenue (₹L)',formula:'suggested from Electrodes Register — edit if wrong'},
-    {key:'profit',label:'Profit (₹L)',formula:'suggested from Electrodes Register — edit if wrong'},
-    {key:'margin_roc',label:'Margin ROC %',formula:'= Profit ÷ Avg Capital × 100 (once capital is tracked)'},
-    {key:'margin_roi',label:'Margin ROI %',formula:'= Profit ÷ Revenue × 100',derive:v=>v.revenue?((v.profit||0)/v.revenue*100):null}
+    {key:'revenue',label:'Revenue (₹)',fmt:'money',formula:'suggested from Electrodes Register — edit if wrong'},
+    {key:'profit',label:'Profit (₹)',fmt:'money',formula:'suggested from Electrodes Register — edit if wrong'},
+    {key:'margin_roc',label:'Margin ROC %',fmt:'pct',formula:'= Profit ÷ Avg Capital × 100 (once capital is tracked)'},
+    {key:'margin_roi',label:'Margin ROI %',fmt:'pct',formula:'= Profit ÷ Revenue × 100',derive:v=>v.revenue?((v.profit||0)/v.revenue*100):null}
   ]}
 ];
+const PERF_QCOLORS={Q1:'#F9DFCF',Q2:'#D9F0D5',Q3:'#D6E9F7',Q4:'#EBDFF3'};
 
 function getCurrentFY(){return document.getElementById('perf-fy')?.value||'2026-27';}
 function getCurrentQuarterLabel(){
@@ -4450,12 +4451,13 @@ function perfGet(segment,quarter,metric,which){
 }
 
 // Auto-suggestions — only offered for "actual" cells where the ERP already has real underlying data.
+// Every figure here is in whole rupees, matching how everything is now stored and displayed.
 function computeScrapQuarterActuals(quarter){
   const[qStart,qEnd]=perfQuarterDateRange(quarter);
   const inQ=DATA.trdPur.filter(r=>{const d=new Date(r.purchase_date);return d>=qStart&&d<=qEnd;});
-  const revenue=inQ.reduce((a,r)=>a+Number(r.amount||0),0)/100000;
+  const revenue=inQ.reduce((a,r)=>a+Number(r.amount||0),0);
   const qty=inQ.reduce((a,r)=>a+Number(r.qty_kg||0),0)/1000;
-  const profit=inQ.reduce((a,r)=>{const margin=Number(r.margin||((r.sale_price||0)-(r.cost_price||0)));return a+(margin*Number(r.qty_kg||0));},0)/100000;
+  const profit=inQ.reduce((a,r)=>{const margin=Number(r.margin||((r.sale_price||0)-(r.cost_price||0)));return a+(margin*Number(r.qty_kg||0));},0);
   // Avg capital — money-days method: each day's total outstanding-bill value, averaged across the quarter.
   const daysInQ=Math.round((qEnd-qStart)/86400000)+1;
   const allBills=DATA.trdPur.filter(r=>new Date(r.purchase_date)<=qEnd);
@@ -4469,14 +4471,14 @@ function computeScrapQuarterActuals(quarter){
     }).reduce((a,r)=>a+Number(r.amount||0),0);
     capDaySum+=outstanding;
   }
-  const avg_capital=(capDaySum/daysInQ)/100000;
+  const avg_capital=capDaySum/daysInQ;
   return{revenue,qty,profit,avg_capital};
 }
 function computeTradingOrdersQuarterActuals(type,quarter){
   const[qStart,qEnd]=perfQuarterDateRange(quarter);
   const rows=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===type).filter(r=>{const d=new Date(r.order_date);return d>=qStart&&d<=qEnd;});
-  const revenue=rows.reduce((a,r)=>a+Number(r.sale_value||0),0)/100000;
-  const profit=rows.reduce((a,r)=>a+Number(r.profit||0),0)/100000;
+  const revenue=rows.reduce((a,r)=>a+Number(r.sale_value||0),0);
+  const profit=rows.reduce((a,r)=>a+Number(r.profit||0),0);
   return{revenue,profit};
 }
 function computeMfgQuarterActuals(quarter){
@@ -4493,6 +4495,11 @@ function perfCellSuggestion(seg,quarter,metricKey){
   if(seg.key==='Manufacturing'&&(metricKey==='production_tons'||metricKey==='revenue')){const s=computeMfgQuarterActuals(quarter);return s?s[metricKey]:null;}
   return null;
 }
+function perfRoundFor(fmt,n){
+  if(fmt==='money')return Math.round(n);
+  if(fmt==='pct'||fmt==='num2')return Math.round(n*100)/100;
+  return Math.round(n*100)/100;
+}
 
 // Resolves every metric for one (segment, quarter, target|actual) combo: stored value wins; otherwise a
 // base field falls back to an ERP suggestion (actual only), and a derived field is computed from whatever
@@ -4503,12 +4510,12 @@ function perfResolveQuarter(seg,quarter,which){
     const stored=perfGet(seg.key,quarter,metric.key,which);
     if(metric.derive){
       const computed=metric.derive(vals);
-      vals[metric.key]=stored!=null?stored:(computed!=null&&!isNaN(computed)?Math.round(computed*100)/100:null);
+      vals[metric.key]=stored!=null?stored:(computed!=null&&!isNaN(computed)?perfRoundFor(metric.fmt,computed):null);
     } else if(stored!=null){
       vals[metric.key]=stored;
     } else if(which==='actual'){
       const sug=perfCellSuggestion(seg,quarter,metric.key);
-      vals[metric.key]=sug!=null?Math.round(sug*100)/100:null;
+      vals[metric.key]=sug!=null?perfRoundFor(metric.fmt,sug):null;
     } else {
       vals[metric.key]=null;
     }
@@ -4516,31 +4523,42 @@ function perfResolveQuarter(seg,quarter,which){
   return vals;
 }
 
+// Display formatting — money always shows as whole rupees with Indian comma grouping, e.g. ₹86,50,000.
+function perfDisplay(v,fmt){
+  if(v==null||v==='')return'—';
+  const n=Number(v);
+  if(isNaN(n))return'—';
+  if(fmt==='money')return'₹'+Math.round(n).toLocaleString('en-IN');
+  if(fmt==='pct')return n.toFixed(2)+'%';
+  if(fmt==='num2')return n.toFixed(2);
+  return n.toLocaleString('en-IN');
+}
+
 function renderPerformance(){
   const curQ=getCurrentQuarterLabel();
   const curQEl=document.getElementById('perf-cur-q-label');
   if(curQEl)curQEl.textContent=curQ;
 
-  // Whole-business snapshot for the current quarter — Manufacturing converted from raw ₹ to ₹L to combine.
+  // Whole-business snapshot for the current quarter — everything is in whole rupees now, so this is a
+  // straight sum across segments, no unit conversion needed.
   let topTarget={revenue:0,profit:0},topActual={revenue:0,profit:0};
   let anyTarget=false,anyActual=false;
   PERF_SEGMENTS.forEach(seg=>{
-    const divisor=seg.key==='Manufacturing'?100000:1;
     const t=perfResolveQuarter(seg,curQ,'target'),a=perfResolveQuarter(seg,curQ,'actual');
-    if(t.revenue!=null){topTarget.revenue+=t.revenue/divisor;anyTarget=true;}
-    if(t.profit!=null)topTarget.profit+=t.profit/divisor;
-    if(a.revenue!=null){topActual.revenue+=a.revenue/divisor;anyActual=true;}
-    if(a.profit!=null)topActual.profit+=a.profit/divisor;
+    if(t.revenue!=null){topTarget.revenue+=t.revenue;anyTarget=true;}
+    if(t.profit!=null)topTarget.profit+=t.profit;
+    if(a.revenue!=null){topActual.revenue+=a.revenue;anyActual=true;}
+    if(a.profit!=null)topActual.profit+=a.profit;
   });
-  const topRows=[{label:'Revenue (₹L)',t:anyTarget?topTarget.revenue:null,a:anyActual?topActual.revenue:null},
-                  {label:'Gross Profit (₹L)',t:anyTarget?topTarget.profit:null,a:anyActual?topActual.profit:null}];
+  const topRows=[{label:'Revenue (₹)',t:anyTarget?topTarget.revenue:null,a:anyActual?topActual.revenue:null},
+                  {label:'Gross Profit (₹)',t:anyTarget?topTarget.profit:null,a:anyActual?topActual.profit:null}];
   document.getElementById('perf-top-tbody').innerHTML=topRows.map(r=>{
     const diff=(r.a!=null&&r.t!=null)?(r.a-r.t):null;
     return`<tr>
       <td>${r.label}</td>
-      <td class="tnum">${r.t!=null?r.t.toLocaleString('en-IN',{maximumFractionDigits:2}):'—'}</td>
-      <td class="tnum">${r.a!=null?r.a.toLocaleString('en-IN',{maximumFractionDigits:2}):'—'}</td>
-      <td class="tnum" style="font-weight:600;color:${diff==null?'var(--txt2)':diff>=0?'#15803d':'#dc2626'};">${diff==null?'—':(diff>=0?'+':'')+diff.toLocaleString('en-IN',{maximumFractionDigits:2})}</td>
+      <td class="tnum">${perfDisplay(r.t,'money')}</td>
+      <td class="tnum">${perfDisplay(r.a,'money')}</td>
+      <td class="tnum" style="font-weight:600;color:${diff==null?'var(--txt2)':diff>=0?'#15803d':'#dc2626'};">${diff==null?'—':(diff>=0?'+':'')+perfDisplay(Math.abs(diff),'money').replace('₹',diff>=0?'₹':'-₹')}</td>
     </tr>`;
   }).join('');
 
@@ -4556,29 +4574,31 @@ function renderPerfSegmentBlock(seg){
   const inputCell=(quarter,metric,which,val)=>{
     const id=`perf-inp-${seg.key}-${quarter}-${metric.key}-${which}`;
     const v=(val===null||val===undefined)?'':val;
-    return`<td><input type="number" step="any" id="${id}" value="${v}" style="width:72px;text-align:right;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;border:1px solid var(--bdr2);border-radius:4px;padding:3px 4px;background:${which==='target'?'#FFFBEB':'#FAFAF7'};"></td>`;
+    const w=metric.fmt==='money'?'96px':'64px';
+    return`<td style="background:${PERF_QCOLORS[quarter]}22;"><input type="number" step="any" id="${id}" value="${v}" class="tnum" style="width:${w};text-align:right;font-size:11.5px;border:1px solid var(--bdr2);border-radius:4px;padding:4px 5px;background:${which==='target'?'#FFFDF5':'#fff'};"></td>`;
   };
-  const diffCell=(a,t)=>{
+  const diffCell=(a,t,fmt)=>{
     if(a==null||t==null)return`<td class="tnum" style="color:var(--txt2);">—</td>`;
     const d=a-t;
-    return`<td class="tnum" style="font-weight:600;color:${d>=0?'#15803d':'#dc2626'};">${d>=0?'+':''}${Number(d).toLocaleString('en-IN',{maximumFractionDigits:2})}</td>`;
+    const shown=fmt==='money'?perfDisplay(Math.abs(d),'money').replace('₹',d>=0?'+₹':'−₹'):(d>=0?'+':'')+perfDisplay(d,fmt);
+    return`<td class="tnum" style="font-weight:600;color:${d>=0?'#15803d':'#dc2626'};">${shown}</td>`;
   };
 
   const rows=seg.metrics.map(metric=>`<tr>
-    <td>${metric.label}<div style="font-size:8.5px;color:var(--txt2);font-style:italic;">${metric.formula||''}</div></td>
+    <td style="min-width:170px;">${metric.label}<div style="font-size:9px;color:var(--txt2);font-weight:400;margin-top:1px;">${metric.formula||''}</div></td>
     ${inputCell('Q1',metric,'actual',q1A[metric.key])}
     ${inputCell('Q2',metric,'target',q2T[metric.key])}
     ${inputCell('Q2',metric,'actual',q2A[metric.key])}
-    ${diffCell(q2A[metric.key],q2T[metric.key])}
+    ${diffCell(q2A[metric.key],q2T[metric.key],metric.fmt)}
     ${inputCell('Q3',metric,'target',q3T[metric.key])}
     ${inputCell('Q3',metric,'actual',q3A[metric.key])}
-    ${diffCell(q3A[metric.key],q3T[metric.key])}
+    ${diffCell(q3A[metric.key],q3T[metric.key],metric.fmt)}
     ${inputCell('Q4',metric,'target',q4T[metric.key])}
     ${inputCell('Q4',metric,'actual',q4A[metric.key])}
-    ${diffCell(q4A[metric.key],q4T[metric.key])}
+    ${diffCell(q4A[metric.key],q4T[metric.key],metric.fmt)}
   </tr>`).join('');
 
-  return`<div class="card" style="margin-bottom:14px;">
+  return`<div class="card" style="margin-bottom:16px;">
     <div class="card-head" style="background:${seg.color};">
       <div class="card-title" style="color:#fff;">${seg.label}</div>
       <div style="display:flex;gap:6px;">
@@ -4586,21 +4606,29 @@ function renderPerfSegmentBlock(seg){
         <button class="btn btn-sm btn-green" onclick="savePerfSegment('${seg.key}')">Save ${seg.label}</button>
       </div>
     </div>
-    <div style="font-size:9.5px;color:var(--txt2);padding:5px 12px;background:#fff;">Diff columns refresh after Save. Recalculate reapplies formulas to the boxes below using whatever's currently typed in, without saving.</div>
-    <div class="tw excel-table"><table>
-      <thead><tr>
-        <th>Metric</th>
-        <th class="tnum">Q1<br>Performance</th>
-        <th class="tnum">Q2<br>Target</th>
-        <th class="tnum">Q2<br>Performance</th>
-        <th class="tnum">Q2<br>Diff</th>
-        <th class="tnum">Q3<br>Target</th>
-        <th class="tnum">Q3<br>Performance</th>
-        <th class="tnum">Q3<br>Diff</th>
-        <th class="tnum">Q4<br>Target</th>
-        <th class="tnum">Q4<br>Performance</th>
-        <th class="tnum">Q4<br>Diff</th>
-      </tr></thead>
+    <div style="font-size:10px;color:var(--txt2);padding:6px 12px;background:#fff;border-bottom:1px solid var(--bdr);">All amounts in whole rupees (₹). Diff columns refresh after Save. Recalculate reapplies formulas to the boxes below using whatever's currently typed in, without saving.</div>
+    <div class="tw excel-table"><table style="border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th rowspan="2" style="vertical-align:bottom;">Metric</th>
+          <th style="background:${PERF_QCOLORS.Q1};text-align:center;">Q1</th>
+          <th colspan="3" style="background:${PERF_QCOLORS.Q2};text-align:center;">Q2</th>
+          <th colspan="3" style="background:${PERF_QCOLORS.Q3};text-align:center;">Q3</th>
+          <th colspan="3" style="background:${PERF_QCOLORS.Q4};text-align:center;">Q4</th>
+        </tr>
+        <tr>
+          <th class="tnum" style="background:${PERF_QCOLORS.Q1};">Performance</th>
+          <th class="tnum" style="background:${PERF_QCOLORS.Q2};">Target</th>
+          <th class="tnum" style="background:${PERF_QCOLORS.Q2};">Performance</th>
+          <th class="tnum" style="background:${PERF_QCOLORS.Q2};">Diff</th>
+          <th class="tnum" style="background:${PERF_QCOLORS.Q3};">Target</th>
+          <th class="tnum" style="background:${PERF_QCOLORS.Q3};">Performance</th>
+          <th class="tnum" style="background:${PERF_QCOLORS.Q3};">Diff</th>
+          <th class="tnum" style="background:${PERF_QCOLORS.Q4};">Target</th>
+          <th class="tnum" style="background:${PERF_QCOLORS.Q4};">Performance</th>
+          <th class="tnum" style="background:${PERF_QCOLORS.Q4};">Diff</th>
+        </tr>
+      </thead>
       <tbody>${rows}</tbody>
     </table></div>
   </div>`;
@@ -4619,7 +4647,7 @@ function recalcPerfSegment(segKey){
       if(metric.derive){
         const computed=metric.derive(vals);
         vals[metric.key]=computed;
-        if(computed!=null&&!isNaN(computed))el.value=Math.round(computed*100)/100;
+        if(computed!=null&&!isNaN(computed))el.value=perfRoundFor(metric.fmt,computed);
       } else {
         vals[metric.key]=el.value===''?null:parseFloat(el.value);
       }
@@ -4651,8 +4679,6 @@ async function savePerfSegment(segKey){
   await loadAll();
 }
 
-function perfFmtNum(v){return v==null?'—':Number(v).toLocaleString('en-IN',{maximumFractionDigits:2});}
-
 function downloadPerformancePdf(){
   const fy=getCurrentFY();
   const sections=PERF_SEGMENTS.map(seg=>{
@@ -4662,10 +4688,10 @@ function downloadPerformancePdf(){
     const q4T=perfResolveQuarter(seg,'Q4','target'),q4A=perfResolveQuarter(seg,'Q4','actual');
     const rows=seg.metrics.map(m=>`<tr>
       <td>${m.label}</td>
-      <td style="text-align:right;">${perfFmtNum(q1A[m.key])}</td>
-      <td style="text-align:right;">${perfFmtNum(q2T[m.key])}</td><td style="text-align:right;">${perfFmtNum(q2A[m.key])}</td>
-      <td style="text-align:right;">${perfFmtNum(q3T[m.key])}</td><td style="text-align:right;">${perfFmtNum(q3A[m.key])}</td>
-      <td style="text-align:right;">${perfFmtNum(q4T[m.key])}</td><td style="text-align:right;">${perfFmtNum(q4A[m.key])}</td>
+      <td style="text-align:right;">${perfDisplay(q1A[m.key],m.fmt)}</td>
+      <td style="text-align:right;">${perfDisplay(q2T[m.key],m.fmt)}</td><td style="text-align:right;">${perfDisplay(q2A[m.key],m.fmt)}</td>
+      <td style="text-align:right;">${perfDisplay(q3T[m.key],m.fmt)}</td><td style="text-align:right;">${perfDisplay(q3A[m.key],m.fmt)}</td>
+      <td style="text-align:right;">${perfDisplay(q4T[m.key],m.fmt)}</td><td style="text-align:right;">${perfDisplay(q4A[m.key],m.fmt)}</td>
     </tr>`).join('');
     return`<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:bold;margin-bottom:4px;">${seg.label}</div>
     <table><thead><tr><th>Metric</th><th style="text-align:right;">Q1 Perf</th><th style="text-align:right;">Q2 Tgt</th><th style="text-align:right;">Q2 Perf</th><th style="text-align:right;">Q3 Tgt</th><th style="text-align:right;">Q3 Perf</th><th style="text-align:right;">Q4 Tgt</th><th style="text-align:right;">Q4 Perf</th></tr></thead><tbody>${rows}</tbody></table></div>`;
@@ -4684,7 +4710,8 @@ body{font-size:9.5px;color:#000;background:#fff;}
 .doc-title{text-align:center;font-size:13px;font-weight:bold;text-decoration:underline;margin:6px 0 12px;}
 table{width:100%;border-collapse:collapse;}
 th{background:#eeeeee;border:1px solid #000;padding:4px 5px;font-size:8px;text-transform:uppercase;}
-td{border:1px solid #000;padding:4px 5px;font-size:9px;}
+td{border:1px solid #000;padding:4px 5px;font-size:9px;font-family:'Consolas',monospace;}
+td:first-child{font-family:Verdana,sans-serif;}
 </style></head><body>
 <div class="header">
   <img class="logo" src="${LOGO_B64}" alt="Saatvik Logo">
@@ -4720,6 +4747,7 @@ function downloadPerformanceExcel(){
   });
   XLSX.writeFile(wb,'Performance_FY'+fy+'.xlsx');
 }
+
 
 
 // ===== INIT =====
