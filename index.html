@@ -158,6 +158,34 @@ tr:hover td{background:#fafaf9;}
 .section-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
 .mfg-badge{background:#E1F0EA;color:#0B5C48;}
 .trd-badge{background:#F6E9E2;color:#7A3820;}
+/* PLANT MAP */
+.pm-wrap{display:grid;grid-template-columns:minmax(0,1fr) 360px;height:calc(100vh - 49px);min-height:520px;}
+.pm-map{position:relative;overflow:hidden;background:#FBF9F4;border-right:1px solid var(--bdr);}
+#pm-stage{position:absolute;inset:0;}
+#pm-stage canvas{display:block;}
+#pm-labels{position:absolute;inset:0;pointer-events:none;}
+.pm-tag{position:absolute;transform:translate(-50%,-100%);pointer-events:auto;cursor:pointer;white-space:nowrap;background:#fff;border:1px solid var(--bdr2);border-radius:999px;padding:3px 8px 3px 6px;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,.1);display:flex;gap:5px;align-items:center;}
+.pm-tag:after{content:"";position:absolute;left:50%;bottom:-4px;width:7px;height:7px;background:inherit;border-right:1px solid var(--bdr2);border-bottom:1px solid var(--bdr2);transform:translateX(-50%) rotate(45deg);}
+.pm-dot{width:7px;height:7px;border-radius:50%;background:#9ca3af;flex-shrink:0;}
+.pm-tag.pm-bad{border-color:#dc2626;}
+.pm-tag.pm-bad .pm-dot{animation:pulse 1s infinite;}
+.pm-tag.pm-sel{background:var(--acc);color:#fff;border-color:var(--acc);}
+.pm-ctrls{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;gap:5px;}
+.pm-ctrls .btn{width:32px;height:32px;justify-content:center;padding:0;font-size:15px;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.pm-legend{position:absolute;left:12px;bottom:12px;display:flex;gap:12px;flex-wrap:wrap;background:rgba(255,255,255,.92);border:1px solid var(--bdr);border-radius:var(--rad);padding:6px 10px;font-size:10px;color:var(--txt2);}
+.pm-legend span{display:flex;align-items:center;gap:4px;}
+.pm-legend i{width:9px;height:9px;border-radius:50%;display:inline-block;}
+.pm-panel{background:#fff;overflow-y:auto;padding:14px;}
+.pm-eyebrow{font-size:10px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.6px;}
+.pm-h{font-size:16px;font-weight:800;margin:3px 0 2px;}
+.pm-sub{font-size:11px;color:var(--txt2);margin-bottom:10px;line-height:1.5;}
+.pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.pm-grid .mc{padding:9px 10px;}
+.pm-sec{font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--bdr);}
+.pm-row{display:grid;grid-template-columns:20px 1fr auto;gap:8px;align-items:center;padding:6px 4px;border-bottom:1px solid var(--bdr);cursor:pointer;font-size:12px;}
+.pm-row:hover{background:#E1F0EA;}
+.pm-n{width:18px;height:18px;border-radius:50%;background:#E1F0EA;color:var(--acc);display:grid;place-items:center;font-size:10px;font-weight:700;}
+@media (max-width:900px){.pm-wrap{grid-template-columns:1fr;height:auto;}.pm-map{height:62vh;border-right:0;border-bottom:1px solid var(--bdr);}}
 </style>
 </head>
 <body>
@@ -194,6 +222,7 @@ tr:hover td{background:#fafaf9;}
   <div class="nav-section">
     <div class="nav-label">Manufacturing</div>
     <div class="ni active" onclick="goTo('mfg-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+    <div class="ni" onclick="goTo('plant-map')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 7 12 12 2 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg>Plant Map</div>
     <div class="ni" onclick="goTo('production')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Production / MIS</div>
     <div class="ni" onclick="goTo('machine-breakup')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>Machine Breakup</div>
     <div class="ni" onclick="goTo('notifications')" id="ni-notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Notification<span id="notif-badge" style="display:none;margin-left:auto;background:#dc2626;color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;"></span></div>
@@ -290,6 +319,31 @@ tr:hover td{background:#fafaf9;}
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ========== PLANT MAP ========== -->
+<div id="page-plant-map" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">🏭 Manufacturing</span>Plant Map</div>
+    <div class="tb-right">
+      <button class="btn btn-green" onclick="pmToggleFlow(this)">Material flow</button>
+      <button class="btn" onclick="loadAll()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="pm-wrap">
+    <div class="pm-map">
+      <div id="pm-stage"><div class="loading"><div class="spin"></div>Loading 3D map...</div></div>
+      <div id="pm-labels"></div>
+      <div class="pm-ctrls">
+        <button class="btn" onclick="pmZoom(1.2)" title="Zoom in">+</button>
+        <button class="btn" onclick="pmZoom(1/1.2)" title="Zoom out">−</button>
+        <button class="btn" onclick="pmRotate()" title="Rotate">⟳</button>
+        <button class="btn" onclick="pmHome()" title="Reset view">⌂</button>
+      </div>
+      <div class="pm-legend"><span><i style="background:#1D9E75"></i>OK</span><span><i style="background:#d97706"></i>Watch / issue open</span><span><i style="background:#dc2626"></i>Critical</span></div>
+    </div>
+    <aside class="pm-panel" id="pm-panel"></aside>
   </div>
 </div>
 
@@ -1003,7 +1057,7 @@ Grey: 3600"></textarea></div></div>
   <div class="modal">
     <div class="modal-head"><span class="modal-title" id="bd-modal-t">Log Breakdown</span><button class="btn btn-sm" onclick="closeModal('bd-modal')">✕</button></div>
     <div class="modal-body">
-      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="b-date"></div><div class="fg"><label>Machine</label><select id="b-machine"><option>Washing</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dryer</option><option>Other</option></select></div></div>
+      <div class="frow"><div class="fg"><label>Date</label><input type="date" id="b-date"></div><div class="fg"><label>Machine</label><select id="b-machine"><option>Jumbo Cutter</option><option>Grinder</option><option>Washing</option><option>Dryer</option><option>Agglo 1</option><option>Agglo 2</option><option>Extruder</option><option>Dana Cutter</option><option>Other</option></select></div></div>
       <div class="frow"><div class="fg"><label>Shift</label><select id="b-shift"><option>Day</option><option>Night</option></select></div><div class="fg"><label>Downtime (hours)</label><input type="number" id="b-hours" step="0.5" placeholder="0"></div></div>
       <div class="frow"><div class="fg"><label>Reason</label><input type="text" id="b-reason" placeholder="Issue description"></div><div class="fg"><label>Action taken</label><input type="text" id="b-action" placeholder="What was done"></div></div>
       <div class="frow"><div class="fg"><label>Cost (₹)</label><input type="number" id="b-cost" placeholder="0"></div><div class="fg"><label>Status</label><select id="b-status"><option>Pending</option><option>In Progress</option><option>Resolved</option><option>Critical</option></select></div></div>
@@ -1344,7 +1398,7 @@ function goTo(id){
   // highlight nav
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   const allNi=document.querySelectorAll('.ni');
-  const pages=['mfg-dashboard','production','machine-breakup','notifications','inventory','breakdown','dispatch','__gatepass__','trd-dashboard','trd-register','trd-tools-dashboard','trd-tools-register','trd-electrodes-register','performance'];
+  const pages=['mfg-dashboard','plant-map','production','machine-breakup','notifications','inventory','breakdown','dispatch','__gatepass__','trd-dashboard','trd-register','trd-tools-dashboard','trd-tools-register','trd-electrodes-register','performance'];
   const idx=pages.indexOf(id);
   if(idx>=0&&allNi[idx])allNi[idx].classList.add('active');
   renderPage(id);
@@ -1352,7 +1406,7 @@ function goTo(id){
 
 function renderPage(id){
   const m={
-    'mfg-dashboard':renderMfgDashboard,'production':renderMIS,'inventory':renderInventory,
+    'mfg-dashboard':renderMfgDashboard,'plant-map':renderPlantMap,'production':renderMIS,'inventory':renderInventory,
     'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'breakdown':renderBreakdownPage,
     'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines,'machine-breakup':renderMachineBreakup,
     'trd-tools-dashboard':renderTrdToolsDashboard,'trd-tools-register':renderTrdToolsRegister,'trd-electrodes-register':renderTrdElectrodesRegister,
@@ -4538,6 +4592,379 @@ function downloadPerformanceExcel(){
   XLSX.writeFile(wb,'Performance_FY'+fy+'.xlsx');
 }
 
+
+
+// ===== PLANT MAP =====
+// 3D layout of the Bamunara plant (from RB's sketch, not to scale). Reads only data that is already
+// loaded by loadAll() — FG stock uses the exact same calculation + override as the Dashboard, and machine
+// status comes from the Breakdown Log + MIS running hours. No new tables, nothing written to Supabase.
+const PM_MACHINES={
+  cut1:  {name:'Jumbo Cutter',label:'Cutter 1',bd:['Jumbo Cutter','Cutter 1'],run:null,pos:[-3,17]},
+  cut2:  {name:'Dana Cutter',label:'Cutter 2',bd:['Dana Cutter','Cutter 2'],run:null,pos:[3,17]},
+  grind: {name:'Grinder',label:'Grinder',bd:['Grinder'],run:null,pos:[0,9]},
+  wash:  {name:'Washing Line',label:'Washing Line',bd:['Washing','Washing Line'],run:'washing',pos:[0,3]},
+  dry:   {name:'Dryer',label:'Dryer',bd:['Dryer'],run:null,pos:[4.5,-1]},
+  agglo1:{name:'Agglo 1',label:'Agglo 1',bd:['Agglo 1','Agglo'],run:'agglo',pos:[-31,-8]},
+  agglo2:{name:'Agglo 2',label:'Agglo 2',bd:['Agglo 2','Agglo'],run:'agglo',pos:[-25,-8]},
+  ext:   {name:'Extruder',label:'Extruder',bd:['Extruder'],run:'extruder',pos:[-21,7]}
+};
+const PM_ZONES={
+  rm:    {label:'Raw material',pos:[29,0],h:4},
+  flake: {label:'Flakes storage',pos:[-4,-9],h:3},
+  fg:    {label:'FG storage',pos:[-2,-18],h:4},
+  tank:  {label:'Water tank',pos:[0,-25.6],h:5.5},
+  entry: {label:'Entry',pos:[-18,24.1],h:4.8},
+  entry2:{label:'Entry 2',pos:[-35.5,-18.5],h:4.8}
+};
+const PM_FLOW=['rm','cut1','cut2','grind','wash','dry','flake','agglo1','agglo2','ext','fg'];
+let PM={ready:false,loading:false,sel:null};
+
+function pmEsc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function pmKg(n){return Number(Math.round(n||0)).toLocaleString('en-IN')+' Kg';}
+
+function pmLoadThree(){
+  if(window.THREE)return Promise.resolve();
+  return new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
+}
+
+// ---------- data ----------
+function pmFg(){
+  const m=currentMonthLabel();
+  const run=computeFgRunning();
+  const ov=fgOverrideFor(m);
+  const total=(ov&&ov.override_kg!=null)?Number(ov.override_kg):fgClosingAsOfMonth(m,run);
+  const colours=(ov&&ov.override_colours)?ov.override_colours:fgColourClosingAsOfMonth(m,run);
+  return{m,run,total,colours,overridden:!!(ov&&(ov.override_kg!=null||ov.override_colours))};
+}
+function pmMachineStatus(key){
+  const mc=PM_MACHINES[key];
+  const bds=DATA.bd.filter(r=>mc.bd.includes((r.machine||'').trim()));
+  const open=bds.filter(r=>['Pending','In Progress','Critical'].includes(r.status)).sort((a,b)=>new Date(b.breakdown_date)-new Date(a.breakdown_date));
+  const mis=filterByMonth(DATA.mis,'month_year',currentMonthLabel());
+  const month=bds.filter(r=>{const d=new Date(r.breakdown_date);return(MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear())===currentMonthLabel();});
+  const recent=bds.filter(r=>daysSince(r.breakdown_date)<30);
+  const dt=month.reduce((a,r)=>a+Number(r.downtime_hours||0),0);
+  const cost=month.reduce((a,r)=>a+Number(r.cost||0),0);
+  let run=null;
+  if(mc.run){
+    const rows=[...mis].sort((a,b)=>new Date(b.entry_date)-new Date(a.entry_date));
+    const logged=rows.filter(r=>Number(r[mc.run+'_run_day']||0)+Number(r[mc.run+'_run_night']||0)>0);
+    const last=rows[0];
+    run={
+      lastDate:last?last.entry_date:null,
+      lastDay:last?Number(last[mc.run+'_run_day']||0):0,
+      lastNight:last?Number(last[mc.run+'_run_night']||0):0,
+      avg:logged.length?logged.reduce((a,r)=>a+Number(r[mc.run+'_run_day']||0)+Number(r[mc.run+'_run_night']||0),0)/logged.length:0
+    };
+  }
+  let st;
+  if(open.some(r=>r.status==='Critical'))st={k:'red',txt:'Critical',col:'#dc2626',badge:'b-red'};
+  else if(open.length)st={k:'amber',txt:'Issue open',col:'#d97706',badge:'b-amber'};
+  else if(recent.length>=2||(run&&run.avg>0&&run.avg<14))st={k:'amber',txt:'Watch',col:'#d97706',badge:'b-amber'};
+  else st={k:'green',txt:'OK',col:'#1D9E75',badge:'b-green'};
+  return{mc,bds,open,month,recent,dt,cost,run,st};
+}
+
+// ---------- scene ----------
+function pmBuild(){
+  const wrap=document.getElementById('pm-stage');
+  const W=()=>wrap.clientWidth||800,H=()=>wrap.clientHeight||500;
+  const renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(W(),H());
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  wrap.innerHTML='';wrap.appendChild(renderer.domElement);
+  const scene=new THREE.Scene();scene.background=new THREE.Color('#FBF9F4');
+  const ELEV=Math.atan(1/Math.SQRT2);
+  const cam=new THREE.OrthographicCamera(-1,1,1,-1,-300,500);
+  const st={zoom:1,theta:Math.PI/4,thetaGoal:Math.PI/4,target:new THREE.Vector3(-4,0,0),goal:null};
+  function frame(){
+    const h=78/st.zoom,a=W()/H();
+    cam.left=-h*a/2;cam.right=h*a/2;cam.top=h/2;cam.bottom=-h/2;
+    const d=120;cam.position.set(st.target.x+d*Math.cos(ELEV)*Math.sin(st.theta),d*Math.sin(ELEV),st.target.z+d*Math.cos(ELEV)*Math.cos(st.theta));
+    cam.lookAt(st.target);cam.updateProjectionMatrix();cam.updateMatrixWorld();
+  }
+  scene.add(new THREE.HemisphereLight(0xffffff,0xb9c7c1,.78));
+  const sun=new THREE.DirectionalLight(0xffffff,.72);sun.position.set(-40,70,30);sun.castShadow=true;
+  sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-70,right:70,top:70,bottom:-70,near:1,far:220});scene.add(sun);
+  const MC={},mat=c=>MC[c]||(MC[c]=new THREE.MeshLambertMaterial({color:c}));
+  const pick=[];
+  const add=(m,zone)=>{m.castShadow=m.receiveShadow=true;scene.add(m);if(zone){m.userData.zone=zone;pick.push(m);}return m;};
+  const box=(w,h,d,c,x,y,z,zone)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y+h/2,z);return add(m,zone);};
+  const cyl=(r1,r2,h,c,x,y,z,zone,seg)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg||20),mat(c));m.position.set(x,y+h/2,z);return add(m,zone);};
+  const hcyl=(r,len,c,x,y,z,zone,axis)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,18),mat(c));if(axis==='x')m.rotation.z=Math.PI/2;else m.rotation.x=Math.PI/2;m.position.set(x,y,z);return add(m,zone);};
+  const cone=(r,h,c,x,y,z,zone)=>{const m=new THREE.Mesh(new THREE.ConeGeometry(r,h,4),mat(c));m.rotation.x=Math.PI;m.position.set(x,y,z);return add(m,zone);};
+  const TEAL=0x0B5C48,RUST=0xA34A2C,WALL=0xF1EFEA,STEEL=0x9AA7A3,DARK=0x4A5753,BLUE=0x3D86C6,GREEN=0x5FA77F;
+
+  // land, boundary, road, plants
+  const g0=new THREE.Mesh(new THREE.PlaneGeometry(400,400),mat(0xE4E0D6));g0.rotation.x=-Math.PI/2;g0.receiveShadow=true;scene.add(g0);
+  box(100,.15,60,0xEDEAE3,0,0,0);
+  [[0,-30,100.6,.5],[0,30,100.6,.5],[-50,0,.5,60.6],[50,0,.5,60.6]].forEach(([x,z,w,d])=>box(w,1.1,d,0xC0392B,x,0,z));
+  box(7,.18,59,0x5B6562,-45.5,0,0);
+  for(let z=-27;z<28;z+=5)box(.25,.2,2.4,0xF2F2EC,-45.5,0,z);
+  for(let z=-21;z<23;z+=3.6){cyl(.12,.16,1,0x7A5A3F,-38.6,0,z,null,6);const t=new THREE.Mesh(new THREE.IcosahedronGeometry(.9,0),mat(GREEN));t.position.set(-38.6,1.5,z);add(t);}
+  // shed
+  const SX0=-35.5,SX1=7.8,SZ0=-23.8,SZ1=24.1,SW=SX1-SX0,SD=SZ1-SZ0,SCX=(SX0+SX1)/2,SCZ=(SZ0+SZ1)/2,WH=1.6;
+  box(SW,.3,SD,0xD6D2C8,SCX,0,SCZ);
+  box(SW,WH,.35,WALL,SCX,0,SZ0);box(.35,WH,SD,WALL,SX1,0,SCZ);
+  box(.35,WH,(-20.5)-SZ0,WALL,SX0,0,(SZ0-20.5)/2);box(.35,WH,SZ1-(-16.5),WALL,SX0,0,(SZ1-16.5)/2);
+  box((-21)-SX0,WH,.35,WALL,(SX0-21)/2,0,SZ1);box(SX1-(-15),WH,.35,WALL,(SX1-15)/2,0,SZ1);
+  box(10,WH,.3,WALL,SX0+5,0,-12.6);box(22,WH,.3,WALL,SX1-11,0,-12.6);
+  for(let x=SX0;x<=SX1+.1;x+=SW/4)[SZ0,SZ1,-12.6].forEach(z=>box(.5,7,.5,DARK,x,0,z));
+  [[-20,SZ1,'entry'],[-16,SZ1,'entry']].forEach(([x,z,zn])=>box(.4,4,.4,RUST,x,0,z,zn));box(4.4,.4,.4,RUST,-18,4,SZ1,'entry');
+  [[SX0,-20.5],[SX0,-16.5]].forEach(([x,z])=>box(.4,4,.4,RUST,x,0,z,'entry2'));box(.4,.4,4.4,RUST,SX0,4,-18.5,'entry2');
+  box(6,.2,3,0xA8A29A,-18,0,25.8,'entry');box(4,.2,3,0xA8A29A,-39.5,0,-18.5,'entry2');
+  // water tank
+  [[-6.5,-25.2],[7,-25.2],[-6.5,-26.2],[7,-26.2]].forEach(([x,z])=>box(.35,2.2,.35,DARK,x,0,z,'tank'));
+  box(15,2.4,2.6,BLUE,.25,2.2,-25.6,'tank');box(15.4,.25,3,0x2D6EA5,.25,4.6,-25.6,'tank');
+  // raw material yard
+  box(38,.2,52,0xE4E0D6,29.5,0,0,'rm');
+  for(let i=0;i<9;i++)for(let j=0;j<10;j++){if((i*7+j*3)%11===0)continue;const L=1+((i+j)%3===0?1:0)+((i*j)%5===0?1:0);for(let k=0;k<L;k++)box(1.9,1.9,1.9,0xF7F7F2,14+i*3.4,.2+k*1.95,-22+j*4.8,'rm');}
+  // cutters
+  [[-3,'cut1'],[3,'cut2']].forEach(([x,id])=>{box(3.4,1.8,2.6,TEAL,x,.3,17,id);box(2.2,1,1.6,RUST,x,2.1,17,id);box(1,.3,3.6,STEEL,x,1,19.6,id);});
+  // grinder
+  box(4,2.2,3,TEAL,0,.3,9,'grind');cone(1.6,1.8,RUST,0,3.4,9,'grind');box(.8,.8,4.2,STEEL,0,1.6,12.2,'grind');
+  // washing line
+  box(12,1.4,2.6,BLUE,0,.3,3,'wash');box(12.4,.25,3,0x2D6EA5,0,1.7,3,'wash');[-4,0,4].forEach(x=>hcyl(.35,2.8,STEEL,x,2.2,3,'wash','z'));
+  // dryer
+  box(3,2.6,2.4,TEAL,-2.5,.3,-2.5,'dry');cyl(1.1,.4,3.4,STEEL,2.5,.3,-2.5,'dry');cyl(1.1,1.1,1,STEEL,2.5,3.7,-2.5,'dry');hcyl(.25,4,STEEL,0,3.2,-2.5,'dry','x');
+  // flakes storage
+  for(let i=0;i<4;i++)for(let j=0;j<2;j++)box(1.7,1.7,1.7,0xD9E6EC,-4.5+i*2.4,.3,-9+j*2.2,'flake');
+  // agglo 1 & 2
+  [[-31,'agglo1'],[-25,'agglo2']].forEach(([x,id])=>{cyl(1.6,1.6,2.8,STEEL,x,.3,-8,id);cyl(1.7,1.7,.3,DARK,x,3.1,-8,id);box(1.2,1,1.2,RUST,x,3.4,-8,id);box(3.6,.3,3.6,TEAL,x,.15,-8,id);});
+  // extruder
+  box(17,1,1.6,TEAL,-24.5,.3,7,'ext');hcyl(.55,12,STEEL,-24,1.95,7,'ext','x');cone(1.2,1.8,RUST,-30,3.4,7,'ext');
+  box(1.4,1.8,1.6,DARK,-17,.3,7,'ext');box(3,.6,1.2,BLUE,-14.6,.3,7,'ext');box(1.2,1.4,1.4,TEAL,-12.4,.3,7,'ext');
+  // FG storage pallets (recoloured from real FG colours in pmRefresh)
+  const fgBags=[];
+  for(let i=0;i<6;i++)for(let j=0;j<2;j++){box(2.2,.25,1.8,0xB98B5A,-10+i*3,.3,-20+j*3.6,'fg');for(let k=0;k<4;k++){const b=box(2,.34,1.6,0xEDE6D6,-10+i*3,.55+k*.36,-20+j*3.6,'fg');b.material=b.material.clone();fgBags.push(b);}}
+  // status rings under machines
+  const rings={};
+  const ringPos={cut1:[-3,17],cut2:[3,17],grind:[0,9],wash:[0,3],dry:[0,-2.5],agglo1:[-31,-8],agglo2:[-25,-8],ext:[-30,7]};
+  Object.entries(ringPos).forEach(([id,[x,z]])=>{const r=new THREE.Mesh(new THREE.RingGeometry(id==='wash'?6.6:2.4,id==='wash'?7.1:2.8,40),new THREE.MeshBasicMaterial({color:0x1D9E75,transparent:true,opacity:.75,side:THREE.DoubleSide}));r.rotation.x=-Math.PI/2;r.position.set(x,.34,z);if(id==='wash')r.scale.set(1,.45,1);scene.add(r);rings[id]=r;});
+  // material flow
+  const pts=[[22,17],[3,17],[0,12],[0,9],[0,5],[0,3],[0,-2.5],[0,-8],[-4,-8],[-25,-8],[-28,-5],[-30,7],[-12.4,7],[-12.4,-12.6],[-6,-16],[-2,-18]].map(([x,z])=>new THREE.Vector3(x,.6,z));
+  const curve=new THREE.CatmullRomCurve3(pts,false,'catmullrom',.1);
+  const flow=new THREE.Group();scene.add(flow);
+  flow.add(new THREE.Mesh(new THREE.TubeGeometry(curve,300,.14,6,false),new THREE.MeshBasicMaterial({color:RUST,transparent:true,opacity:.45})));
+  const dots=[];for(let i=0;i<22;i++){const d=new THREE.Mesh(new THREE.SphereGeometry(.34,10,8),new THREE.MeshBasicMaterial({color:RUST}));flow.add(d);dots.push(d);}
+
+  // labels
+  const lab=document.getElementById('pm-labels');lab.innerHTML='';
+  const tags={};
+  const mkTag=(id,text,pos,h)=>{const el=document.createElement('div');el.className='pm-tag';el.innerHTML='<span class="pm-dot"></span><span class="pm-t"></span>';el.querySelector('.pm-t').textContent=text;el.onclick=()=>pmSelect(id);lab.appendChild(el);tags[id]={el,pos,h};};
+  Object.entries(PM_MACHINES).forEach(([id,m])=>mkTag(id,m.label,m.pos,id==='agglo1'||id==='agglo2'?5.6:id==='dry'?6.5:4.6));
+  Object.entries(PM_ZONES).forEach(([id,z])=>mkTag(id,z.label,z.pos,z.h));
+  const v=new THREE.Vector3();
+  const place=(el,x,y,z)=>{v.set(x,y,z).project(cam);el.style.left=((v.x+1)/2*W())+'px';el.style.top=((1-v.y)/2*H())+'px';};
+
+  // interaction
+  const ptrs=new Map();let down=null,p0=0,z0=1;
+  const cv=renderer.domElement;cv.style.touchAction='none';cv.style.cursor='grab';
+  cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});down={moved:0};st.goal=null;if(ptrs.size===2){const[a,b]=[...ptrs.values()];p0=Math.hypot(a.x-b.x,a.y-b.y);z0=st.zoom;}});
+  cv.addEventListener('pointermove',e=>{
+    if(!ptrs.has(e.pointerId))return;const p=ptrs.get(e.pointerId);const dx=e.clientX-p.x,dy=e.clientY-p.y;ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(ptrs.size===2){const[a,b]=[...ptrs.values()];st.zoom=Math.min(4,Math.max(.6,z0*Math.hypot(a.x-b.x,a.y-b.y)/p0));frame();return;}
+    if(down)down.moved+=Math.abs(dx)+Math.abs(dy);
+    const wpp=(cam.top-cam.bottom)/H();
+    const r=new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld,0);r.y=0;r.normalize();
+    const f=new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld,1);f.y=0;f.normalize();
+    st.target.addScaledVector(r,-dx*wpp).addScaledVector(f,dy*wpp/Math.sin(ELEV));
+    st.target.x=Math.max(-55,Math.min(55,st.target.x));st.target.z=Math.max(-35,Math.min(35,st.target.z));frame();
+  });
+  const ray=new THREE.Raycaster(),mv=new THREE.Vector2();
+  cv.addEventListener('pointerup',e=>{ptrs.delete(e.pointerId);
+    if(down&&down.moved<6&&ptrs.size===0){const rc=cv.getBoundingClientRect();mv.set((e.clientX-rc.left)/rc.width*2-1,-(e.clientY-rc.top)/rc.height*2+1);
+      ray.setFromCamera(mv,cam);const hit=ray.intersectObjects(pick,false)[0];pmSelect(hit?hit.object.userData.zone:null);}
+    down=null;});
+  cv.addEventListener('pointercancel',e=>ptrs.delete(e.pointerId));
+  cv.addEventListener('wheel',e=>{e.preventDefault();st.zoom=Math.min(4,Math.max(.6,st.zoom*(e.deltaY<0?1.1:.9)));frame();},{passive:false});
+  window.addEventListener('resize',()=>{if(PM.ready){renderer.setSize(W(),H());frame();}});
+
+  const hl=[];
+  function highlight(id){
+    hl.forEach(([m,o])=>m.material=o);hl.length=0;
+    if(!id)return;
+    pick.filter(m=>m.userData.zone===id).forEach(m=>{const h=m.material.clone();h.emissive=new THREE.Color(0x0B5C48);h.emissiveIntensity=.35;hl.push([m,m.material]);m.material=h;});
+  }
+  const clock=new THREE.Clock();
+  function loop(){
+    if(!document.getElementById('page-plant-map').classList.contains('active')){PM.running=false;return;}
+    PM.running=true;
+    const t=clock.getElapsedTime();
+    if(Math.abs(st.thetaGoal-st.theta)>.001){st.theta+=(st.thetaGoal-st.theta)*.12;frame();}
+    if(st.goal){st.target.lerp(st.goal,.12);if(st.target.distanceTo(st.goal)<.05){st.target.copy(st.goal);st.goal=null;}frame();}
+    if(flow.visible)dots.forEach((d,i)=>{d.position.copy(curve.getPointAt(((i/dots.length)+t*.025)%1));d.position.y=.72;});
+    Object.entries(rings).forEach(([id,r])=>{const red=r.userData.k==='red';const s=1+(red?.18:.06)*Math.sin(t*(red?6:2));r.scale.x=s;r.scale.z=s;if(id!=='wash')r.scale.y=s;r.material.opacity=red?.5+.4*Math.abs(Math.sin(t*6)):.75;});
+    renderer.render(scene,cam);
+    Object.values(tags).forEach(g=>place(g.el,g.pos[0],g.h,g.pos[1]));
+    requestAnimationFrame(loop);
+  }
+  PM.api={renderer,frame,st,rings,tags,flow,fgBags,highlight,loop,resize:()=>{renderer.setSize(W(),H());frame();},HOME:new THREE.Vector3(-4,0,0)};
+  frame();
+}
+
+// ---------- refresh with live ERP data ----------
+function pmRefresh(){
+  if(!PM.ready)return;
+  const A=PM.api;
+  Object.keys(PM_MACHINES).forEach(id=>{
+    const s=pmMachineStatus(id);
+    const r=A.rings[id];if(r){r.material.color.set(s.st.col);r.userData.k=s.st.k;}
+    const t=A.tags[id];if(t){t.el.querySelector('.pm-dot').style.background=s.st.col;t.el.classList.toggle('pm-bad',s.st.k==='red');t.el.querySelector('.pm-t').textContent=PM_MACHINES[id].label+(s.st.k==='green'?'':' · '+s.st.txt);}
+  });
+  const fg=pmFg();
+  A.tags.fg.el.querySelector('.pm-t').textContent='FG · '+pmKg(fg.total);
+  A.tags.fg.el.querySelector('.pm-dot').style.background='#A34A2C';
+  // colour the FG bag stacks by the real colour split
+  const entries=Object.entries(fg.colours).filter(([,kg])=>kg>0).sort((a,b)=>b[1]-a[1]);
+  const tot=entries.reduce((a,[,kg])=>a+kg,0);
+  const N=A.fgBags.length;
+  A.fgBags.forEach((b,i)=>{
+    if(!tot){b.visible=false;return;}
+    b.visible=true;let acc=0,hex='#A8A29A';
+    for(const [c,kg] of entries){acc+=kg/tot;if((i+0.5)/N<=acc){hex=COLOUR_MAP[c.trim().toLowerCase()]||'#A8A29A';break;}}
+    b.material.color.set(hex);
+  });
+  pmPanel();
+}
+
+function pmSelect(id){
+  PM.sel=(PM.sel===id)?null:id;
+  if(PM.ready){
+    PM.api.highlight(PM.sel);
+    Object.entries(PM.api.tags).forEach(([k,t])=>t.el.classList.toggle('pm-sel',k===PM.sel));
+    const p=PM.sel?(PM_MACHINES[PM.sel]||PM_ZONES[PM.sel]).pos:null;
+    PM.api.st.goal=p?new THREE.Vector3(p[0],0,p[1]):null;
+  }
+  pmPanel();
+}
+
+// ---------- side panel ----------
+function pmPanel(){
+  const el=document.getElementById('pm-panel');if(!el)return;
+  const id=PM.sel;
+  if(!id){el.innerHTML=pmOverview();return;}
+  if(id==='fg'){el.innerHTML=pmFgPanel();return;}
+  if(PM_MACHINES[id]){el.innerHTML=pmMachinePanel(id);return;}
+  const z=PM_ZONES[id];
+  const notes={rm:'Jumbo bag yard. Raw material stock is not tracked in the ERP yet.',flake:'Buffer between Dryer and Agglo. Flakes stock is not tracked in the ERP yet.',tank:'Water supply for the Washing Line.',entry:'Main entry — bottom wall of the shed.',entry2:'Entry 2 — left wall, FG section.'};
+  el.innerHTML=`${pmBack()}<div class="pm-eyebrow">Site</div><div class="pm-h">${z.label}</div><div class="pm-sub">${notes[id]||''}</div>`;
+}
+function pmBack(){return`<button class="btn btn-sm" onclick="pmSelect(null)" style="margin-bottom:10px;">← Plant overview</button>`;}
+function pmOverview(){
+  const fg=pmFg();
+  const st=Object.keys(PM_MACHINES).map(id=>({id,...pmMachineStatus(id)}));
+  const issues=st.filter(s=>s.st.k!=='green');
+  const lastMis=[...DATA.mis].sort((a,b)=>new Date(b.entry_date)-new Date(a.entry_date))[0];
+  const flowList=PM_FLOW.map((id,i)=>{
+    const isM=!!PM_MACHINES[id];const s=isM?st.find(x=>x.id===id):null;
+    const name=isM?PM_MACHINES[id].label:PM_ZONES[id].label;
+    const right=isM?`<span class="badge ${s.st.badge}">${s.st.txt}</span>`:id==='fg'?`<span class="tnum" style="font-weight:600;">${pmKg(fg.total)}</span>`:'<span style="color:var(--txt3);font-size:10px;">not tracked</span>';
+    return`<div class="pm-row" onclick="pmSelect('${id}')"><span class="pm-n">${i+1}</span><span>${name}</span>${right}</div>`;}).join('');
+  return`<div class="pm-eyebrow">Bamunara plant</div><div class="pm-h">Plant overview</div><div class="pm-sub">Tap any machine or FG storage on the map.</div>
+  <div class="pm-grid">
+    <div class="mc" style="cursor:pointer;" onclick="pmSelect('fg')"><div class="lb">FG in hand</div><div class="vl tnum" style="font-size:17px;color:#7A3820;">${pmKg(fg.total)}</div><div class="sb">${fg.overridden?'Manually set':'Calculated'}</div></div>
+    <div class="mc"><div class="lb">Machines</div><div class="vl tnum ${issues.length?'amber':'green'}" style="font-size:17px;">${8-issues.length} / 8 OK</div><div class="sb">${issues.length?issues.length+' need attention':'All clear'}</div></div>
+    <div class="mc"><div class="lb">Last production</div><div class="vl tnum" style="font-size:17px;">${lastMis?pmKg(lastMis.total_production_kg):'—'}</div><div class="sb">${lastMis?fmtDate(lastMis.entry_date):'No entries'}</div></div>
+    <div class="mc"><div class="lb">Open breakdowns</div><div class="vl tnum ${DATA.bd.filter(r=>r.status!=='Resolved').length?'red':'green'}" style="font-size:17px;">${DATA.bd.filter(r=>r.status!=='Resolved').length}</div><div class="sb">Pending / in progress / critical</div></div>
+  </div>
+  <div class="pm-sec">Process line</div>${flowList}
+  <div style="font-size:10px;color:var(--txt3);margin-top:10px;line-height:1.5;">Machine status comes from the Breakdown Log (open issues) and MIS running hours. Layout is from your sketch, not to scale.</div>`;
+}
+function pmFgPanel(){
+  const fg=pmFg();
+  const cols=Object.entries(fg.colours).filter(([,kg])=>Number(kg)>0).sort((a,b)=>b[1]-a[1]);
+  const tot=cols.reduce((a,[,kg])=>a+Number(kg),0)||1;
+  // daily movement — last 7 days that had production or dispatch
+  const prodBy={};DATA.mis.forEach(r=>{prodBy[r.entry_date]=(prodBy[r.entry_date]||0)+Number(r.total_production_kg||0);});
+  const days=fg.run.allDates.slice(-7).reverse();
+  const moveRows=days.map(d=>`<tr><td>${fmtDate(d)}</td><td class="tnum" style="color:#15803d;">${prodBy[d]?'+'+Number(prodBy[d]).toLocaleString('en-IN'):'—'}</td><td class="tnum" style="color:#b91c1c;">${fg.run.dispByDate[d]?'−'+Number(fg.run.dispByDate[d]).toLocaleString('en-IN'):'—'}</td><td class="tnum" style="font-weight:600;">${Number(fg.run.stockByDate[d]||0).toLocaleString('en-IN')}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--txt2);">No movement yet</td></tr>';
+  // cover
+  const since=new Date();since.setDate(since.getDate()-30);const sinceStr=since.toISOString().split('T')[0];
+  const disp30=DATA.dispatches.filter(r=>r.dispatch_date>=sinceStr).reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  const prod30=DATA.mis.filter(r=>r.entry_date>=sinceStr).reduce((a,r)=>a+Number(r.total_production_kg||0),0);
+  const avgDisp=disp30/30;const cover=avgDisp>0?Math.round(fg.total/avgDisp):null;
+  // dispatches
+  const last=[...DATA.dispatches].sort((a,b)=>new Date(b.dispatch_date)-new Date(a.dispatch_date)).slice(0,6);
+  const dispRows=last.map(r=>{let c=r.colour||'';if(!c){const mm=(r.notes||'').match(/Colour:([^|]+)/);c=mm?mm[1].trim():'';}return`<tr><td>${fmtDate(r.dispatch_date)}</td><td>${pmEsc(r.customer||'—')}</td><td>${c?colourChip(c)+pmEsc(c):'—'}</td><td class="tnum">${Number(r.qty_kg||0).toLocaleString('en-IN')}</td></tr>`;}).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--txt2);">No dispatches</td></tr>';
+  const m=fg.m;
+  const monthProd=filterByMonth(DATA.mis,'month_year',m).reduce((a,r)=>a+Number(r.total_production_kg||0),0);
+  const monthDisp=DATA.dispatches.filter(r=>r.month_year===m).reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  return`${pmBack()}<div class="pm-eyebrow">Finished goods</div><div class="pm-h">FG storage</div>
+  <div class="pm-sub">${fg.overridden?'Manually set for '+m+' — edit or clear from the Dashboard ✏':'Anchor + production − dispatch (same as Dashboard)'}</div>
+  <div style="background:#F6E9E2;border:0.5px solid #E3C9B8;border-radius:var(--rad);padding:12px;margin-bottom:10px;">
+    <div style="font-size:10px;color:#7A3820;text-transform:uppercase;letter-spacing:.3px;">FG in hand</div>
+    <div class="tnum" style="font-size:24px;font-weight:700;color:#7A3820;">${pmKg(fg.total)}</div>
+  </div>
+  <div class="pm-grid">
+    <div class="mc"><div class="lb">Produced · ${m}</div><div class="vl tnum" style="font-size:15px;color:var(--acc);">${pmKg(monthProd)}</div></div>
+    <div class="mc"><div class="lb">Dispatched · ${m}</div><div class="vl tnum" style="font-size:15px;color:var(--acc2);">${pmKg(monthDisp)}</div></div>
+    <div class="mc"><div class="lb">Avg dispatch / day</div><div class="vl tnum" style="font-size:15px;">${pmKg(avgDisp)}</div><div class="sb">last 30 days</div></div>
+    <div class="mc"><div class="lb">Stock cover</div><div class="vl tnum ${cover!==null&&cover<5?'amber':''}" style="font-size:15px;">${cover!==null?cover+' days':'—'}</div><div class="sb">at current dispatch rate</div></div>
+  </div>
+  <div class="pm-sec">Colour-wise stock</div>
+  ${cols.length?cols.map(([c,kg])=>{const hex=COLOUR_MAP[c.trim().toLowerCase()]||'#A8A29A';const p=Math.round(kg/tot*100);return`<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span style="display:flex;align-items:center;">${colourChip(c)}${pmEsc(c)}</span><span class="tnum" style="font-weight:600;">${Number(kg).toLocaleString('en-IN')} Kg <span style="color:var(--txt2);font-weight:400;">${p}%</span></span></div><div style="height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${p}%;background:${hex};border:${hex==='#F5F3EC'||hex==='#E8E4D8'?'1px solid #ccc':'0'};border-radius:4px;"></div></div></div>`;}).join(''):'<div style="font-size:12px;color:var(--txt2);">No colour data</div>'}
+  <div class="pm-sec">Daily movement (Kg)</div>
+  <div class="tw excel-table"><table><thead><tr><th>Date</th><th class="tnum">In</th><th class="tnum">Out</th><th class="tnum">Closing</th></tr></thead><tbody>${moveRows}</tbody></table></div>
+  <div class="pm-sec">Last dispatches</div>
+  <div class="tw excel-table"><table><thead><tr><th>Date</th><th>Customer</th><th>Colour</th><th class="tnum">Kg</th></tr></thead><tbody>${dispRows}</tbody></table></div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;">
+    <button class="btn btn-sm" onclick="goTo('dispatch')">Open Dispatch</button>
+    <button class="btn btn-sm" onclick="goTo('mfg-dashboard')">Open Dashboard</button>
+  </div>
+  <div style="font-size:10px;color:var(--txt3);margin-top:8px;">Last 30 days: produced ${pmKg(prod30)}, dispatched ${pmKg(disp30)}.</div>`;
+}
+function pmMachinePanel(id){
+  const s=pmMachineStatus(id);const m=s.mc;
+  const sc={Pending:'b-amber','In Progress':'b-blue',Resolved:'b-green',Critical:'b-red'};
+  const lastBD=[...s.bds].sort((a,b)=>new Date(b.breakdown_date)-new Date(a.breakdown_date));
+  const rows=lastBD.slice(0,6).map(r=>`<tr><td>${fmtDate(r.breakdown_date)}</td><td>${pmEsc(r.reason||'—')}</td><td class="tnum">${Number(r.downtime_hours||0)}h</td><td><span class="badge ${sc[r.status]||'b-gray'}">${pmEsc(r.status)}</span></td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--txt2);">No breakdowns logged</td></tr>';
+  const openHtml=s.open.length?s.open.map(r=>`<div style="border:1px solid ${r.status==='Critical'?'#fecaca':'#fde68a'};background:${r.status==='Critical'?'#fef2f2':'#fffbeb'};border-radius:var(--rad);padding:8px 10px;margin-bottom:6px;font-size:12px;"><div style="display:flex;justify-content:space-between;gap:6px;"><b>${pmEsc(r.reason||'Issue')}</b><span class="badge ${sc[r.status]||'b-gray'}">${pmEsc(r.status)}</span></div><div style="color:var(--txt2);font-size:11px;margin-top:2px;">Since ${fmtDate(r.breakdown_date)} · ${daysSince(r.breakdown_date)} day(s) · ${pmEsc(r.action_taken||'no action noted')}</div></div>`).join(''):'';
+  const runHtml=s.run?`<div class="pm-sec">Running hours (MIS)</div>
+    <div class="pm-grid">
+      <div class="mc"><div class="lb">Last entry ${s.run.lastDate?'· '+fmtDate(s.run.lastDate):''}</div><div class="vl tnum" style="font-size:15px;">${s.run.lastDay.toFixed(1)}h / ${s.run.lastNight.toFixed(1)}h</div><div class="sb">day / night</div></div>
+      <div class="mc"><div class="lb">Avg this month</div><div class="vl tnum ${s.run.avg>=20?'green':s.run.avg>=14?'amber':'red'}" style="font-size:15px;">${s.run.avg.toFixed(1)}h/day</div><div class="sb">target 20h</div></div>
+    </div>${m.run==='agglo'?'<div style="font-size:10px;color:var(--txt3);margin-top:-4px;">MIS logs Agglo hours together for Agglo 1 & 2.</div>':''}`
+    :`<div style="font-size:11px;color:var(--txt2);margin-top:10px;">Running hours for this machine are not entered in MIS yet.</div>`;
+  return`${pmBack()}<div class="pm-eyebrow">${m.label}${m.label!==m.name?' · '+m.name:''}</div><div class="pm-h" style="display:flex;align-items:center;gap:8px;">${m.name} <span class="badge ${s.st.badge}">${s.st.txt}</span></div>
+  <div class="pm-sub">Status from the Breakdown Log${m.run?' and MIS running hours':''}.</div>
+  ${openHtml}
+  <div class="pm-grid">
+    <div class="mc"><div class="lb">Breakdowns · this month</div><div class="vl tnum" style="font-size:15px;">${s.month.length}</div></div>
+    <div class="mc"><div class="lb">Downtime · this month</div><div class="vl tnum red" style="font-size:15px;">${s.dt.toFixed(1)}h</div></div>
+    <div class="mc"><div class="lb">Repair spend · this month</div><div class="vl tnum" style="font-size:15px;">${fmtMoney(s.cost)}</div></div>
+    <div class="mc"><div class="lb">Last breakdown</div><div class="vl tnum" style="font-size:15px;">${lastBD[0]?daysSince(lastBD[0].breakdown_date)+'d ago':'—'}</div><div class="sb">${lastBD[0]?fmtDate(lastBD[0].breakdown_date):'none logged'}</div></div>
+  </div>
+  ${runHtml}
+  <div class="pm-sec">Breakdown history</div>
+  <div class="tw excel-table"><table><thead><tr><th>Date</th><th>Reason</th><th class="tnum">Down</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;">
+    <button class="btn btn-sm btn-green" onclick="pmLogBreakdown('${id}')">+ Log breakdown</button>
+    <button class="btn btn-sm" onclick="pmOpenMachine('${id}')">Components &amp; maintenance</button>
+  </div>`;
+}
+function pmLogBreakdown(id){
+  openModal('bd-modal',null);
+  const sel=document.getElementById('b-machine');const name=PM_MACHINES[id].bd[0];
+  if(sel){if(![...sel.options].some(o=>o.value===name)){const o=document.createElement('option');o.textContent=name;sel.insertBefore(o,sel.lastElementChild);}sel.value=name;}
+  const d=document.getElementById('b-date');if(d&&!d.value)d.value=new Date().toISOString().split('T')[0];
+}
+function pmOpenMachine(id){goTo('machines');setTimeout(()=>openMachineDetail(PM_MACHINES[id].name),50);}
+function pmZoom(f){if(!PM.ready)return;PM.api.st.zoom=Math.min(4,Math.max(.6,PM.api.st.zoom*f));PM.api.frame();}
+function pmRotate(){if(PM.ready)PM.api.st.thetaGoal+=Math.PI/2;}
+function pmHome(){if(!PM.ready)return;const s=PM.api.st;s.zoom=1;s.target.copy(PM.api.HOME);s.goal=null;s.theta=s.thetaGoal=Math.PI/4;PM.sel=null;PM.api.highlight(null);Object.values(PM.api.tags).forEach(t=>t.el.classList.remove('pm-sel'));PM.api.frame();pmPanel();}
+function pmToggleFlow(btn){if(!PM.ready)return;PM.api.flow.visible=!PM.api.flow.visible;btn.classList.toggle('btn-green',PM.api.flow.visible);}
+
+async function renderPlantMap(){
+  pmPanel();
+  if(!PM.ready){
+    if(PM.loading)return;PM.loading=true;
+    try{await pmLoadThree();}catch(e){document.getElementById('pm-stage').innerHTML='<div class="loading">Could not load the 3D map — check your connection and refresh.</div>';PM.loading=false;return;}
+    pmBuild();PM.ready=true;PM.loading=false;
+  }
+  PM.api.resize();pmRefresh();
+  if(!PM.running)PM.api.loop();
+}
 
 
 // ===== INIT =====
