@@ -186,6 +186,43 @@ tr:hover td{background:#fafaf9;}
 .pm-row:hover{background:#E1F0EA;}
 .pm-n{width:18px;height:18px;border-radius:50%;background:#E1F0EA;color:var(--acc);display:grid;place-items:center;font-size:10px;font-weight:700;}
 @media (max-width:900px){.pm-wrap{grid-template-columns:1fr;height:auto;}.pm-map{height:62vh;border-right:0;border-bottom:1px solid var(--bdr);}}
+
+/* SCRAP FLOW */
+.tf-wrap{display:grid;grid-template-columns:minmax(0,1fr) 360px;height:calc(100vh - 49px);min-height:520px;}
+.tf-scene-wrap{position:relative;overflow:auto;background:#FBF9F4;border-right:1px solid var(--bdr);}
+.tf-scene{position:relative;min-height:560px;padding:24px;}
+.tf-supplier{position:absolute;left:24px;width:260px;background:#fff;border:1px solid var(--bdr2);border-radius:var(--rad2);padding:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.05);cursor:pointer;transition:box-shadow .15s,border-color .15s;}
+.tf-supplier:hover{box-shadow:0 3px 12px rgba(0,0,0,.1);border-color:var(--acc);}
+.tf-supplier.tf-sel{border-color:var(--acc);box-shadow:0 0 0 2px #0B5C4830;}
+.tf-sup-head{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;margin-bottom:3px;}
+.tf-sup-sub{font-size:10px;color:var(--txt2);margin-bottom:7px;}
+.tf-truck-row{display:flex;gap:5px;flex-wrap:wrap;}
+.tf-mini-truck{cursor:pointer;flex-shrink:0;transition:transform .12s;}
+.tf-mini-truck:hover{transform:translateY(-2px);}
+.tf-customer{position:absolute;right:24px;width:150px;cursor:pointer;text-align:center;}
+.tf-silo-body{position:relative;width:110px;height:230px;margin:0 auto;border:2px solid var(--txt);border-radius:14px 14px 6px 6px;background:#fff;overflow:hidden;display:flex;flex-direction:column-reverse;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.tf-customer:hover .tf-silo-body,.tf-customer.tf-sel .tf-silo-body{box-shadow:0 0 0 2px #A34A2C40;border-color:var(--acc2);}
+.tf-silo-band{width:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.35);flex-shrink:0;}
+.tf-silo-head{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:58px solid transparent;border-right:58px solid transparent;border-bottom:14px solid var(--txt);}
+.tf-customer-name{font-size:12px;font-weight:800;margin-top:10px;}
+.tf-customer-sub{font-size:10px;color:var(--txt2);margin-top:2px;}
+.tf-risk-flag{display:inline-block;margin-top:5px;background:#FAECE7;color:#7A3820;border:1px solid #F0997B;border-radius:999px;padding:2px 9px;font-size:9px;font-weight:700;}
+.tf-flow-path{position:absolute;height:2px;background:repeating-linear-gradient(90deg,var(--bdr2) 0 6px,transparent 6px 11px);z-index:1;}
+.tf-flow-dot{position:absolute;width:6px;height:6px;border-radius:50%;top:-2px;animation:tfflow linear infinite;z-index:2;}
+@keyframes tfflow{from{left:0%;opacity:0;}5%{opacity:1;}95%{opacity:1;}to{left:100%;opacity:0;}}
+.tf-panel{background:#fff;overflow-y:auto;padding:14px;}
+.tf-eyebrow{font-size:10px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.6px;}
+.tf-h{font-size:16px;font-weight:800;margin:3px 0 2px;}
+.tf-sub{font-size:11px;color:var(--txt2);margin-bottom:10px;line-height:1.5;}
+.tf-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.tf-grid .mc{padding:9px 10px;}
+.tf-sec{font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--bdr);}
+.tf-row{display:grid;grid-template-columns:20px 1fr auto;gap:8px;align-items:center;padding:6px 4px;border-bottom:1px solid var(--bdr);cursor:pointer;font-size:12px;}
+.tf-row:hover{background:#F6E9E2;}
+.tf-n{width:18px;height:18px;border-radius:50%;background:#F6E9E2;color:var(--acc2);display:grid;place-items:center;font-size:10px;font-weight:700;}
+.tf-mat-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;margin-right:8px;}
+.tf-mat-chip i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+@media (max-width:900px){.tf-wrap{grid-template-columns:1fr;height:auto;}.tf-scene-wrap{height:62vh;border-right:0;border-bottom:1px solid var(--bdr);}}
 </style>
 </head>
 <body>
@@ -235,6 +272,7 @@ tr:hover td{background:#fafaf9;}
     <div class="nav-label">Scrap</div>
     <div class="ni" onclick="goTo('trd-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
     <div class="ni" onclick="goTo('trd-register')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Register</div>
+    <div class="ni" onclick="goTo('trd-flow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Flow</div>
   </div>
   <div class="nav-section">
     <div class="nav-label">Tools</div>
@@ -555,6 +593,22 @@ Grey: 3600"></textarea></div></div>
   </div>
 </div>
 
+<!-- ========== SCRAP FLOW ========== -->
+<div id="page-trd-flow" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge trd-badge">♻️</span>Scrap Flow</div>
+    <div class="tb-right">
+      <select class="month-selector" id="trd-flow-month" onchange="renderTrdFlow()"></select>
+      <button class="btn" onclick="loadAll()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="tf-wrap">
+    <div class="tf-scene-wrap">
+      <div class="tf-scene" id="tf-scene"></div>
+    </div>
+    <aside class="tf-panel" id="tf-panel"></aside>
+  </div>
+</div>
 
 <!-- ========== TOOLS DASHBOARD ========== -->
 <div id="page-trd-tools-dashboard" class="page">
@@ -615,7 +669,7 @@ Grey: 3600"></textarea></div></div>
       <div class="card-body" style="padding:0;"><div class="tw excel-table"><table><thead><tr><th>Supplier</th><th class="tnum">Orders</th><th class="tnum">Qty</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th></tr></thead><tbody id="tot-reg-supplier-tbody"></tbody></table></div></div>
     </div>
     <div class="card">
-      <div class="card-head"><div class="card-title">Tools — order register</div></div>
+      <div class="card-head"><div class="card-title">Tools — order register</div><div style="font-size:11px;color:var(--txt2);">Same register as always — just an icon per item so you can scan it faster</div></div>
       <div class="tw excel-table"><table>
         <thead><tr><th>Sl</th><th>Order date</th><th>Order no</th><th>Supplier</th><th>Customer</th><th>Item</th><th class="tnum">Qty</th><th>Remarks</th><th class="tnum">CP</th><th class="tnum">SP</th><th class="tnum">Cost value</th><th class="tnum">Sale value</th><th class="tnum">Profit</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody id="tot-reg-tbody"><tr><td colspan="15"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
@@ -1381,7 +1435,7 @@ function buildMonthsRange(){
 const MONTHS=buildMonthsRange();
 function populateMonthSelectors(){
   const cur=currentMonthLabel();
-  ['mfg-dash-month','mis-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','inv-report-month','mb-month','tot-dash-month','tot-reg-month','eot-reg-month','rs-month'].forEach(id=>{
+  ['mfg-dash-month','mis-month','dispatch-month','bd-month','trd-dash-month','trd-reg-month','trd-flow-month','inv-report-month','mb-month','tot-dash-month','tot-reg-month','eot-reg-month','rs-month'].forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
     el.innerHTML=MONTHS.map(m=>`<option value="${m}"${m===cur?'selected':''}>${m}</option>`).join('');
@@ -1398,7 +1452,7 @@ function goTo(id){
   // highlight nav
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   const allNi=document.querySelectorAll('.ni');
-  const pages=['mfg-dashboard','plant-map','production','machine-breakup','notifications','inventory','breakdown','dispatch','__gatepass__','trd-dashboard','trd-register','trd-tools-dashboard','trd-tools-register','trd-electrodes-register','performance'];
+  const pages=['mfg-dashboard','plant-map','production','machine-breakup','notifications','inventory','breakdown','dispatch','__gatepass__','trd-dashboard','trd-register','trd-flow','trd-tools-dashboard','trd-tools-register','trd-electrodes-register','performance'];
   const idx=pages.indexOf(id);
   if(idx>=0&&allNi[idx])allNi[idx].classList.add('active');
   renderPage(id);
@@ -1408,7 +1462,7 @@ function renderPage(id){
   const m={
     'mfg-dashboard':renderMfgDashboard,'plant-map':renderPlantMap,'production':renderMIS,'inventory':renderInventory,
     'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'breakdown':renderBreakdownPage,
-    'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'machines':renderMachines,'machine-breakup':renderMachineBreakup,
+    'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'trd-flow':renderTrdFlow,'machines':renderMachines,'machine-breakup':renderMachineBreakup,
     'trd-tools-dashboard':renderTrdToolsDashboard,'trd-tools-register':renderTrdToolsRegister,'trd-electrodes-register':renderTrdElectrodesRegister,
     'performance':renderPerformance,
     'notifications':renderNotifications
@@ -2573,6 +2627,21 @@ async function saveTrdOrder(){
 
 // Shared register renderer for both Tools and Electrodes — same layout, just a different item_type
 // and a different set of element-id prefixes so the two pages never collide.
+// Icon-by-keyword for Tools items — a scan aid on the existing register, nothing else changed:
+// same columns, same filters, same edit/delete. Electrodes is unaffected.
+const TOOL_ICONS=[
+  {regex:/insert/i,icon:'🔺'},
+  {regex:/drill/i,icon:'🪛'},
+  {regex:/holder/i,icon:'🔧'},
+  {regex:/blade|cutt/i,icon:'⚙️'},
+  {regex:/electrode|weld/i,icon:'🪚'},
+  {regex:/grind/i,icon:'🪨'},
+  {regex:/end\s*mill|mill/i,icon:'🛠️'},
+];
+function tfIconFor(name){
+  const hit=TOOL_ICONS.find(x=>x.regex.test(name||''));
+  return hit?hit.icon+' ':'🧰 ';
+}
 function renderTradeOrdersRegister(type,prefix){
   const m=getMonth(prefix+'-month');
   const byType=(DATA.trdOrders||[]).filter(r=>(r.item_type||'Tools')===type);
@@ -2595,7 +2664,7 @@ function renderTradeOrdersRegister(type,prefix){
       <td>${r.order_no||'—'}</td>
       <td>${r.supplier||'—'}</td>
       <td>${r.customer||'—'}</td>
-      <td>${r.item}</td>
+      <td>${type==='Tools'?tfIconFor(r.item):''}${r.item}</td>
       <td class="tnum">${Number(r.qty).toLocaleString('en-IN')}</td>
       <td style="color:var(--txt2);">${r.notes||'—'}</td>
       <td><span class="badge ${sc2[r.status]||'b-gray'}">${r.status}</span></td>
@@ -2624,7 +2693,7 @@ function renderTradeOrdersRegister(type,prefix){
     <td>${r.order_no||'—'}</td>
     <td>${r.supplier||'—'}</td>
     <td>${r.customer||'—'}</td>
-    <td>${r.item}</td>
+    <td>${type==='Tools'?tfIconFor(r.item):''}${r.item}</td>
     <td class="tnum">${Number(r.qty).toLocaleString('en-IN')}</td>
     <td style="color:var(--txt2);">${r.notes||'—'}</td>
     <td class="tnum">${Number(r.cp).toLocaleString('en-IN')}</td>
@@ -2973,6 +3042,242 @@ function renderTrdRegister(){
   }
 }
 
+// ===== SCRAP FLOW — supplier -> customer visualization over trading_purchases =====
+// Read-only view on top of the same DATA.trdPur used by the Trade Register — no new tables,
+// no writes of its own. Edit/Delete on a truck re-uses the existing Trade Register modal so
+// this stays a second lens on the same data, not a parallel copy of it.
+const TF_MAT_PALETTE=['#2C2C2A','#A34A2C','#6B4A2F','#8B8880','#0B5C48','#5B7FA6','#B08968','#6E7F8D'];
+let TF_MAT_COLORS={};
+function tfColorFor(material){
+  const key=material||'Unknown';
+  if(!TF_MAT_COLORS[key]){
+    const used=Object.keys(TF_MAT_COLORS).length;
+    TF_MAT_COLORS[key]=TF_MAT_PALETTE[used%TF_MAT_PALETTE.length];
+  }
+  return TF_MAT_COLORS[key];
+}
+function tfTruckSvg(col,w=46,h=22){
+  return`<svg width="${w}" height="${h}" viewBox="0 0 46 22" fill="none">
+    <rect x="1" y="7" width="27" height="11" rx="1.5" fill="${col}"/>
+    <path d="M28 10h8l6 5v3h-14z" fill="${col}" opacity=".85"/>
+    <rect x="1" y="3" width="10" height="5" rx="1" fill="${col}" opacity=".6"/>
+    <circle cx="9" cy="19" r="2.6" fill="#1C1B18"/><circle cx="9" cy="19" r="1.1" fill="#fff"/>
+    <circle cx="36" cy="19" r="2.6" fill="#1C1B18"/><circle cx="36" cy="19" r="1.1" fill="#fff"/>
+  </svg>`;
+}
+function tfIsOverdue(r){return!r.payment_received_date&&dueDate(r.purchase_date,r.payment_terms_days||15)<TODAY;}
+
+function renderTrdFlow(){
+  TF_MAT_COLORS={};
+  const m=getMonth('trd-flow-month');
+  const trades=filterByMonth(DATA.trdPur||[],'month_year',m);
+  const scene=document.getElementById('tf-scene');
+  if(!scene)return;
+  if(!trades.length){
+    scene.innerHTML=`<div class="loading" style="padding:60px 0;">No scrap trades in ${m} — pick another month or add a trade in the Register</div>`;
+    document.getElementById('tf-panel').innerHTML=tfOverviewHtml(trades);
+    return;
+  }
+
+  // Group by supplier (left) and by customer/party (right) — whatever names actually appear
+  // in the data, so this never assumes a fixed number of suppliers or a single named customer.
+  const bySupplier={};
+  trades.forEach(r=>{
+    const s=r.supplier||'Unknown supplier';
+    (bySupplier[s]=bySupplier[s]||[]).push(r);
+  });
+  const supplierNames=Object.keys(bySupplier).sort((a,b)=>bySupplier[b].reduce((x,r)=>x+Number(r.qty_kg||0),0)-bySupplier[a].reduce((x,r)=>x+Number(r.qty_kg||0),0));
+
+  const byCustomer={};
+  trades.forEach(r=>{
+    const c=r.party||'Unknown customer';
+    (byCustomer[c]=byCustomer[c]||[]).push(r);
+  });
+  const customerNames=Object.keys(byCustomer).sort((a,b)=>byCustomer[b].reduce((x,r)=>x+Number(r.qty_kg||0),0)-byCustomer[a].reduce((x,r)=>x+Number(r.qty_kg||0),0));
+
+  const totalQtyAll=trades.reduce((a,r)=>a+Number(r.qty_kg||0),0);
+
+  // --- layout ---
+  const supTop=20,supGap=20,supH=v=>86+Math.ceil(v.length/6)*20;
+  let y=supTop;
+  const supplierPos={};
+  supplierNames.forEach(s=>{supplierPos[s]=y;y+=supH(bySupplier[s])+supGap;});
+  const sceneH=Math.max(y+40,420);
+
+  const custTop=20,custGap=40;
+  let cy=custTop;
+  const customerPos={};
+  customerNames.forEach(c=>{customerPos[c]=cy;cy+=270+custGap;});
+  const sceneH2=Math.max(sceneH,cy+40);
+  scene.style.minHeight=sceneH2+'px';
+
+  let html='';
+  // flow paths — one per supplier x customer pair that actually traded, each a dashed line with
+  // moving dots colored by that pair's dominant material
+  supplierNames.forEach(s=>{
+    const rows=bySupplier[s];
+    const custsForSup={};
+    rows.forEach(r=>{const c=r.party||'Unknown customer';(custsForSup[c]=custsForSup[c]||[]).push(r);});
+    Object.keys(custsForSup).forEach(c=>{
+      const matQty={};
+      custsForSup[c].forEach(r=>{matQty[r.material||'Unknown']=(matQty[r.material||'Unknown']||0)+Number(r.qty_kg||0);});
+      const domMat=Object.entries(matQty).sort((a,b)=>b[1]-a[1])[0][0];
+      const col=tfColorFor(domMat);
+      const y0=supplierPos[s]+supH(rows)/2;
+      const y1=customerPos[c]+40;
+      const dots=Array.from({length:3},(_,i)=>`<div class="tf-flow-dot" style="background:${col};top:${y1-y0+2+ (i-1)*3}px;animation-duration:${3+i*0.6}s;animation-delay:${i*0.9}s;"></div>`).join('');
+      html+=`<div class="tf-flow-path" style="top:${y0}px;left:300px;width:calc(100% - 490px);">${dots}</div>`;
+    });
+  });
+
+  // supplier cards
+  supplierNames.forEach(s=>{
+    const rows=bySupplier[s];
+    const qty=rows.reduce((a,r)=>a+Number(r.qty_kg||0),0);
+    html+=`<div class="tf-supplier" id="tf-sup-${tfSlug(s)}" style="top:${supplierPos[s]}px;" onclick="tfSelectSupplier('${tfEsc(s)}')">
+      <div class="tf-sup-head">🚚 ${s}</div>
+      <div class="tf-sup-sub">${rows.length} truck${rows.length>1?'s':''} · ${qty.toLocaleString('en-IN')} Kg</div>
+      <div class="tf-truck-row">${rows.map(r=>`<span class="tf-mini-truck" title="${r.bill_no||''} · ${r.material||''}" onclick="event.stopPropagation();tfSelectTruck('${r.id}')">${tfTruckSvg(tfColorFor(r.material))}</span>`).join('')}</div>
+    </div>`;
+  });
+
+  // customer silos — materials stacked INSIDE, band height = share of that customer's total qty
+  customerNames.forEach(c=>{
+    const rows=byCustomer[c];
+    const qty=rows.reduce((a,r)=>a+Number(r.qty_kg||0),0);
+    const matQty={};
+    rows.forEach(r=>{matQty[r.material||'Unknown']=(matQty[r.material||'Unknown']||0)+Number(r.qty_kg||0);});
+    const bands=Object.entries(matQty).sort((a,b)=>b[1]-a[1]).map(([mat,q])=>
+      `<div class="tf-silo-band" style="height:${Math.max(6,Math.round(q/qty*100))}%;background:${tfColorFor(mat)};">${Math.round(q/qty*100)}%</div>`
+    ).join('');
+    const supplierCount=new Set(rows.map(r=>r.supplier||'Unknown supplier')).size;
+    const concentrationPct=totalQtyAll?Math.round(qty/totalQtyAll*100):0;
+    html+=`<div class="tf-customer" id="tf-cust-${tfSlug(c)}" style="top:${customerPos[c]}px;" onclick="tfSelectCustomer('${tfEsc(c)}')">
+      <div class="tf-silo-head"></div>
+      <div class="tf-silo-body">${bands}</div>
+      <div class="tf-customer-name">🏭 ${c}</div>
+      <div class="tf-customer-sub">${qty.toLocaleString('en-IN')} Kg from ${supplierCount} supplier${supplierCount>1?'s':''}</div>
+      ${supplierCount===1&&customerNames.length===1?`<span class="tf-risk-flag">${concentrationPct}% concentration</span>`:''}
+    </div>`;
+  });
+
+  scene.innerHTML=html;
+  document.getElementById('tf-panel').innerHTML=tfOverviewHtml(trades);
+}
+function tfSlug(s){return String(s).replace(/[^a-z0-9]/gi,'_').toLowerCase();}
+function tfEsc(s){return String(s).replace(/'/g,"\\'");}
+
+function tfOverviewHtml(trades){
+  const totalQty=trades.reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  const totalAmt=trades.reduce((a,r)=>a+Number(r.amount||0),0);
+  const outstanding=trades.filter(r=>!r.payment_received_date);
+  const outAmt=outstanding.reduce((a,r)=>a+Number(r.amount||0),0);
+  const custCount=new Set(trades.map(r=>r.party||'Unknown')).size;
+  return`<div class="tf-eyebrow">Scrap flow — this month</div>
+    <div class="tf-h">Supplier → Customer</div>
+    <div class="tf-sub">Click any truck for the full trade record. Click a supplier card or a customer silo for its summary. Nothing here is edited separately — it's the same Register data.</div>
+    <div class="tf-grid">
+      <div class="mc"><div class="lb">Trades</div><div class="vl tnum">${trades.length}</div></div>
+      <div class="mc"><div class="lb">Total qty</div><div class="vl tnum">${totalQty.toLocaleString('en-IN')} Kg</div></div>
+      <div class="mc"><div class="lb">Total value</div><div class="vl tnum blue">${fmtMoney(totalAmt)}</div></div>
+      <div class="mc"><div class="lb">Outstanding</div><div class="vl tnum red">${fmtMoney(outAmt)}</div></div>
+    </div>
+    <div class="tf-sec">Customers this month</div>
+    <div style="font-size:11px;color:var(--txt2);">${custCount} customer${custCount>1?'s':''} buying — ${custCount===1?'100% concentration in one buyer.':'spread across '+custCount+' buyers.'}</div>`;
+}
+
+function tfSelectSupplier(name){
+  document.querySelectorAll('.tf-supplier,.tf-customer').forEach(e=>e.classList.remove('tf-sel'));
+  const el=document.getElementById('tf-sup-'+tfSlug(name));if(el)el.classList.add('tf-sel');
+  const m=getMonth('trd-flow-month');
+  const rows=filterByMonth(DATA.trdPur||[],'month_year',m).filter(r=>(r.supplier||'Unknown supplier')===name);
+  const qty=rows.reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  const amt=rows.reduce((a,r)=>a+Number(r.amount||0),0);
+  const avgCp=rows.length?rows.reduce((a,r)=>a+Number(r.cost_price||0),0)/rows.length:0;
+  const profit=rows.reduce((a,r)=>a+Number(r.profit||(((r.sale_price||0)-(r.cost_price||0))*Number(r.qty_kg||0))),0);
+  const pending=rows.filter(r=>!r.payment_received_date).length;
+  document.getElementById('tf-panel').innerHTML=`
+    <div class="tf-eyebrow">Supplier</div>
+    <div class="tf-h">${name}</div>
+    <div class="tf-sub">All loads from this supplier this month.</div>
+    <div class="tf-grid">
+      <div class="mc"><div class="lb">Trucks</div><div class="vl tnum">${rows.length}</div></div>
+      <div class="mc"><div class="lb">Qty</div><div class="vl tnum">${qty.toLocaleString('en-IN')} Kg</div></div>
+      <div class="mc"><div class="lb">Value</div><div class="vl tnum blue">${fmtMoney(amt)}</div></div>
+      <div class="mc"><div class="lb">Avg CP</div><div class="vl tnum">${fmtMoney(avgCp)}</div></div>
+      <div class="mc"><div class="lb">Profit</div><div class="vl tnum ${profit>=0?'green':'red'}">${fmtMoney(profit)}</div></div>
+      <div class="mc"><div class="lb">Pending</div><div class="vl tnum amber">${pending}</div></div>
+    </div>
+    <div class="tf-sec">Trucks — click for full record</div>
+    ${rows.map((r,i)=>`<div class="tf-row" onclick="tfSelectTruck('${r.id}')"><div class="tf-n">${i+1}</div><div>${r.bill_no||'—'} · ${r.material||'—'} · ${Number(r.qty_kg||0).toLocaleString('en-IN')}Kg</div><div>${tfIsOverdue(r)?'<span class="badge b-red">Overdue</span>':r.payment_received_date?'<span class="badge b-green">Recd</span>':'<span class="badge b-amber">Pending</span>'}</div></div>`).join('')||'<div style="padding:10px;color:var(--txt2);font-size:12px;">No trucks</div>'}`;
+}
+
+function tfSelectCustomer(name){
+  document.querySelectorAll('.tf-supplier,.tf-customer').forEach(e=>e.classList.remove('tf-sel'));
+  const el=document.getElementById('tf-cust-'+tfSlug(name));if(el)el.classList.add('tf-sel');
+  const m=getMonth('trd-flow-month');
+  const allMonth=filterByMonth(DATA.trdPur||[],'month_year',m);
+  const rows=allMonth.filter(r=>(r.party||'Unknown customer')===name);
+  const qty=rows.reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  const amt=rows.reduce((a,r)=>a+Number(r.amount||0),0);
+  const outAmt=rows.filter(r=>!r.payment_received_date).reduce((a,r)=>a+Number(r.amount||0),0);
+  const profit=rows.reduce((a,r)=>a+Number(r.profit||(((r.sale_price||0)-(r.cost_price||0))*Number(r.qty_kg||0))),0);
+  const totalQtyAll=allMonth.reduce((a,r)=>a+Number(r.qty_kg||0),0);
+  const concentrationPct=totalQtyAll?Math.round(qty/totalQtyAll*100):0;
+  const matQty={};
+  rows.forEach(r=>{matQty[r.material||'Unknown']=(matQty[r.material||'Unknown']||0)+Number(r.qty_kg||0);});
+  const matRows=Object.entries(matQty).sort((a,b)=>b[1]-a[1]).map(([mat,q])=>
+    `<div class="tf-mat-chip"><i style="background:${tfColorFor(mat)};"></i>${mat} — ${Math.round(q/qty*100)}%</div>`
+  ).join('');
+  document.getElementById('tf-panel').innerHTML=`
+    <div class="tf-eyebrow">Customer</div>
+    <div class="tf-h">${name}</div>
+    <div class="tf-sub">Everything this customer bought this month, across all suppliers.</div>
+    <div class="tf-grid">
+      <div class="mc"><div class="lb">Qty bought</div><div class="vl tnum">${qty.toLocaleString('en-IN')} Kg</div></div>
+      <div class="mc"><div class="lb">Revenue</div><div class="vl tnum blue">${fmtMoney(amt)}</div></div>
+      <div class="mc"><div class="lb">Outstanding</div><div class="vl tnum red">${fmtMoney(outAmt)}</div></div>
+      <div class="mc"><div class="lb">Profit</div><div class="vl tnum ${profit>=0?'green':'red'}">${fmtMoney(profit)}</div></div>
+    </div>
+    <div class="tf-sec">Material mix</div>
+    <div style="margin-bottom:10px;">${matRows}</div>
+    ${concentrationPct>=70?`<div class="tf-risk-flag" style="display:block;">⚠ ${concentrationPct}% of this month's scrap volume is this one customer — a concentration risk if they slow down or stop paying.</div>`:''}
+    <div class="tf-sec">Trucks supplied</div>
+    ${rows.map((r,i)=>`<div class="tf-row" onclick="tfSelectTruck('${r.id}')"><div class="tf-n">${i+1}</div><div>${r.supplier||'—'} · ${r.material||'—'} · ${Number(r.qty_kg||0).toLocaleString('en-IN')}Kg</div><div>${tfIsOverdue(r)?'<span class="badge b-red">Overdue</span>':r.payment_received_date?'<span class="badge b-green">Recd</span>':'<span class="badge b-amber">Pending</span>'}</div></div>`).join('')}`;
+}
+
+function tfSelectTruck(id){
+  const r=(DATA.trdPur||[]).find(x=>String(x.id)===String(id));
+  if(!r){toast('Trade not found — try refreshing','err');return;}
+  const due=dueDate(r.purchase_date,r.payment_terms_days||15);
+  const received=!!r.payment_received_date;
+  const isOverdue=!received&&due<TODAY;
+  const margin=Number(r.margin||((r.sale_price||0)-(r.cost_price||0)));
+  const profit=Number(r.profit||(margin*Number(r.qty_kg||0)));
+  document.getElementById('tf-panel').innerHTML=`
+    <div class="tf-eyebrow">Truck load</div>
+    <div class="tf-h">${r.bill_no||'—'}</div>
+    <div class="tf-sub">Exact same record as the Trade Register — nothing simplified. Edit or delete it from here if you need to.</div>
+    <table class="reg" style="width:100%;font-size:12px;border-collapse:collapse;">
+      <tr><td style="color:var(--txt2);padding:4px 0;">Date</td><td style="text-align:right;font-weight:600;">${fmtDate(r.purchase_date)}</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">Material</td><td style="text-align:right;font-weight:600;">${r.material||'—'}</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">Qty</td><td style="text-align:right;font-weight:600;">${Number(r.qty_kg||0).toLocaleString('en-IN')} Kg</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">Amount</td><td style="text-align:right;font-weight:600;">${fmtMoney(r.amount)}</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">Due on</td><td style="text-align:right;font-weight:600;color:${isOverdue?'#dc2626':'inherit'};">${fmtDate(due.toISOString().split('T')[0])}</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">Received</td><td style="text-align:right;">${received?`<span class="badge b-green">${fmtDate(r.payment_received_date)}</span>`:`<span class="badge b-red">Pending</span>`}</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">Supplier</td><td style="text-align:right;font-weight:600;">${r.supplier||'—'}</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">Customer</td><td style="text-align:right;font-weight:600;">${r.party||'—'}</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">CP</td><td style="text-align:right;">${r.cost_price?fmtMoney(r.cost_price):'—'}</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">SP</td><td style="text-align:right;">${r.sale_price?fmtMoney(r.sale_price):'—'}</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">Margin</td><td style="text-align:right;color:${margin>=0?'#15803d':'#dc2626'};">${(r.cost_price||r.sale_price)?fmtMoney(margin):'—'}</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">Profit</td><td style="text-align:right;font-weight:700;color:${profit>=0?'#15803d':'#dc2626'};">${(r.cost_price||r.sale_price)?fmtMoney(profit):'—'}</td></tr>
+      <tr><td style="color:var(--txt2);padding:4px 0;">Remarks</td><td style="text-align:right;color:var(--txt2);">${r.notes||'—'}</td></tr>
+    </table>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="btn btn-sm" style="flex:1;" onclick="openTrdRegModal('${r.id}')">✏ Edit</button>
+      <button class="btn btn-sm btn-red" style="flex:1;" onclick="deleteRow('trading_purchases','${r.id}','trade');renderTrdFlow();">🗑 Delete</button>
+    </div>`;
+}
 
 // Small MoM delta badge — green up-arrow if better, red down-arrow if worse. 'lowerIsBetter' flips the color logic (e.g. outstanding, payment cycle).
 function momDelta(curr,prev,lowerIsBetter){
