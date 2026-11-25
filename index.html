@@ -257,6 +257,10 @@ tr:hover td{background:#fafaf9;}
   </div>
   <!-- MAIN NAV — grouped by segment -->
   <div class="nav-section">
+    <div class="nav-label">Management</div>
+    <div class="ni" onclick="goTo('activities')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Activities<span id="act-badge" style="display:none;margin-left:auto;background:#dc2626;color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;"></span></div>
+  </div>
+  <div class="nav-section">
     <div class="nav-label">Manufacturing</div>
     <div class="ni active" onclick="goTo('mfg-dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
     <div class="ni" onclick="goTo('plant-map')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 7 12 12 2 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg>Plant Map</div>
@@ -306,6 +310,32 @@ tr:hover td{background:#fafaf9;}
   </div>
 </div>
 <div class="main">
+
+<!-- ========== ACTIVITIES ========== -->
+<div id="page-activities" class="page">
+  <div class="topbar">
+    <div class="topbar-title"><span class="section-badge mfg-badge">📋 Management</span>Activities</div>
+    <div class="tb-right">
+      <button class="btn" onclick="loadActivities(true)">↻ Refresh</button>
+      <button class="btn btn-blue" onclick="openActModal(null,'task')">+ Add activity</button>
+    </div>
+  </div>
+  <div class="content">
+    <div id="act-setup"></div>
+    <div class="metrics g6" id="act-metrics"></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">SAATVIK ENTERPRISES — Activities</div><div style="font-size:11px;color:var(--txt2);">Soonest deadline first · red = overdue · amber = due within 3 days</div></div>
+      <div class="tw excel-table"><table>
+        <thead><tr><th>Sl</th><th>Activities</th><th>Deadline</th><th class="tnum">Days left</th><th>Concerned person</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="act-tbody"><tr><td colspan="7"><div class="loading"><div class="spin"></div>Loading...</div></td></tr></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Pending research topics</div><button class="btn btn-sm btn-blue" onclick="openActModal(null,'research')">+ Add topic</button></div>
+      <div class="card-body" id="act-research"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ========== MFG DASHBOARD ========== -->
 <div id="page-mfg-dashboard" class="page active">
@@ -1030,6 +1060,21 @@ Grey: 3600"></textarea></div></div>
 </div>
 
 <!-- Inventory Modal -->
+<div class="modal-bg" id="act-modal">
+  <div class="modal" style="width:460px;">
+    <div class="modal-head"><span class="modal-title" id="act-modal-t">Add activity</span><button class="btn btn-sm" onclick="closeActModal()">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="act-kind">
+      <div class="frow frow-1"><div class="fg"><label id="act-l-name">Activity</label><input type="text" id="act-name" placeholder="e.g. Energy meter order"></div></div>
+      <div id="act-task-fields">
+        <div class="frow"><div class="fg"><label>Deadline</label><input type="date" id="act-deadline"></div><div class="fg"><label>Concerned person</label><input type="text" id="act-person" list="act-person-list" placeholder="e.g. Ankur Bhaiya"><datalist id="act-person-list"></datalist></div></div>
+        <div class="frow frow-1"><div class="fg"><label>Status</label><input type="text" id="act-status" placeholder="e.g. Pending from Ankur Bhaiya"></div></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeActModal()">Cancel</button><button class="btn btn-green" onclick="saveActivity()">Save</button></div>
+  </div>
+</div>
+
 <div class="modal-bg" id="inv-modal">
   <div class="modal">
     <div class="modal-head"><span class="modal-title" id="inv-modal-t">Add Item</span><button class="btn btn-sm" onclick="closeModal('inv-modal')">✕</button></div>
@@ -1452,7 +1497,7 @@ function goTo(id){
   // highlight nav
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   const allNi=document.querySelectorAll('.ni');
-  const pages=['mfg-dashboard','plant-map','production','machine-breakup','notifications','inventory','breakdown','dispatch','__gatepass__','trd-dashboard','trd-register','trd-flow','trd-tools-dashboard','trd-tools-register','trd-electrodes-register','performance'];
+  const pages=['activities','mfg-dashboard','plant-map','production','machine-breakup','notifications','inventory','breakdown','dispatch','__gatepass__','trd-dashboard','trd-register','trd-flow','trd-tools-dashboard','trd-tools-register','trd-electrodes-register','performance'];
   const idx=pages.indexOf(id);
   if(idx>=0&&allNi[idx])allNi[idx].classList.add('active');
   renderPage(id);
@@ -1460,7 +1505,7 @@ function goTo(id){
 
 function renderPage(id){
   const m={
-    'mfg-dashboard':renderMfgDashboard,'plant-map':renderPlantMap,'production':renderMIS,'inventory':renderInventory,
+    'activities':renderActivities,'mfg-dashboard':renderMfgDashboard,'plant-map':renderPlantMap,'production':renderMIS,'inventory':renderInventory,
     'dispatch':renderDispatch,'dispatch-portal':()=>loadGatePasses(),'breakdown':renderBreakdownPage,
     'trd-dashboard':renderTrdDashboard,'trd-register':renderTrdRegister,'trd-flow':renderTrdFlow,'machines':renderMachines,'machine-breakup':renderMachineBreakup,
     'trd-tools-dashboard':renderTrdToolsDashboard,'trd-tools-register':renderTrdToolsRegister,'trd-electrodes-register':renderTrdElectrodesRegister,
@@ -3040,6 +3085,138 @@ function renderTrdRegister(){
       </tr>`;
     }
   }
+}
+
+
+// ===== ACTIVITIES — deadline tracker + pending research topics (own table: `activities`) =====
+let ACT=[];let ACT_EDIT=null;let ACT_READY=false;
+const actEsc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const ACT_SQL=`create table if not exists activities (
+  id uuid primary key default gen_random_uuid(),
+  kind text not null default 'task',
+  activity text not null,
+  deadline date,
+  person text,
+  status text,
+  done boolean not null default false,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+alter table activities disable row level security;
+
+insert into activities (kind,activity,deadline,person,status) values
+('task','ENERGY METER ORDER','2026-11-26','ROHIT/DEBU DA','PENDING FROM MY SIDE'),
+('task','LIST OF DEADLINES OF DATES','2026-12-01','ROHIT',''),
+('task','NEW MACHINE ORDER','2026-11-25','ROHIT','PENDING FROM MY SIDE'),
+('task','EPR CERTIFICATE','2026-12-10','DP SINGH',''),
+('task','TOOLS PENDING ORDER','2026-12-01','ANKUR BHAIYA','PENDING FROM ANKUR BHAIYA'),
+('task','TECHNICAL VISIT 2B 4 MM','2026-11-01','PIYUSH BHAIYA','PENDING FROM PIYUSH BHAIYA'),
+('task','HOSE PIPE JULY DLY CHALLAN','2026-11-01','PIYUSH BHAIYA','PENDING FROM PIYUSH BHAIYA'),
+('task','FACTORY LICENCE REMINDER','2026-12-01','JOSEPH JI',''),
+('research','MFI',null,null,null),('research','DYE FACE CUTTER',null,null,null),('research','MASTERBATCH',null,null,null),
+('research','LAB TESTING',null,null,null),('research','STUDY IES',null,null,null),('research','STUDY HEDING',null,null,null),
+('research','STUDY COPPER SBI RATE CHART',null,null,null),('research','BANKING AND TAXTATION',null,null,null),
+('research','SCRAP PRICES HOW TO LEARN',null,null,null);`;
+
+async function loadActivities(force){
+  const{data,error}=await sb.from('activities').select('*').order('created_at',{ascending:true});
+  if(error){ACT_READY=false;ACT=[];return false;}
+  ACT_READY=true;ACT=data||[];return true;
+}
+function actDaysLeft(r){
+  if(!r.deadline)return null;
+  const d=new Date(r.deadline);d.setHours(0,0,0,0);
+  const t=new Date();t.setHours(0,0,0,0);
+  return Math.round((d-t)/86400000);
+}
+async function renderActivities(){
+  await loadActivities();
+  const setup=document.getElementById('act-setup');
+  if(!ACT_READY){
+    setup.innerHTML=`<div class="card" style="border-color:#E3C9B8;"><div class="card-head" style="background:#F6E9E2;"><div class="card-title" style="color:#7A3820;">One-time setup needed</div></div><div class="card-body" style="font-size:12px;line-height:1.6;">The <b>activities</b> table doesn't exist in Supabase yet. Open Supabase → SQL Editor → New query, paste this, click Run — it also loads your current list. Then refresh this page.<br><textarea readonly onclick="this.select()" style="width:100%;height:170px;margin-top:8px;font-family:Consolas,monospace;font-size:11px;">${actEsc(ACT_SQL)}</textarea></div></div>`;
+    document.getElementById('act-metrics').innerHTML='';
+    document.getElementById('act-tbody').innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txt2);">Waiting for the one-time setup above</td></tr>';
+    document.getElementById('act-research').innerHTML='';
+    return;
+  }
+  setup.innerHTML='';
+  const tasks=ACT.filter(r=>r.kind!=='research');
+  const open=tasks.filter(r=>!r.done).sort((a,b)=>(a.deadline||'9999')<(b.deadline||'9999')?-1:1);
+  const done=tasks.filter(r=>r.done);
+  const overdue=open.filter(r=>{const d=actDaysLeft(r);return d!==null&&d<0;});
+  const soon=open.filter(r=>{const d=actDaysLeft(r);return d!==null&&d>=0&&d<=7;});
+  document.getElementById('act-metrics').innerHTML=`
+    <div class="mc"><div class="lb">Open</div><div class="vl tnum">${open.length}</div></div>
+    <div class="mc"><div class="lb">Overdue</div><div class="vl tnum red">${overdue.length}</div></div>
+    <div class="mc"><div class="lb">Due in 7 days</div><div class="vl tnum amber">${soon.length}</div></div>
+    <div class="mc"><div class="lb">Done</div><div class="vl tnum green">${done.length}</div></div>`;
+  const badge=document.getElementById('act-badge');
+  if(badge){badge.style.display=overdue.length?'inline-block':'none';badge.textContent=overdue.length;}
+  const people=[...new Set(tasks.map(r=>r.person).filter(Boolean))];
+  const dl=document.getElementById('act-person-list');if(dl)dl.innerHTML=people.map(p=>`<option value="${actEsc(p)}">`).join('');
+  let sl=1;
+  const rowHtml=r=>{
+    const d=actDaysLeft(r);
+    const bg=r.done?'':d===null?'':d<0?'background:#fef2f2;':d<=3?'background:#fffbeb;':'';
+    const col=d===null?'var(--txt2)':d<0?'#dc2626':d<=3?'#b45309':'var(--txt)';
+    const dtxt=r.done?'✓':d===null?'—':d<0?(-d)+'d overdue':d===0?'Today':d+'d';
+    return`<tr style="${bg}${r.done?'opacity:.55;':''}">
+      <td>${sl++}</td>
+      <td style="font-weight:600;${r.done?'text-decoration:line-through;':''}">${actEsc(r.activity)}</td>
+      <td style="white-space:nowrap;">${fmtDate(r.deadline)}</td>
+      <td class="tnum" style="font-weight:600;color:${col};">${dtxt}</td>
+      <td>${actEsc(r.person)||'—'}</td>
+      <td>${r.done?'<span class="badge b-green">Done</span>':(r.status?`<span class="badge b-amber">${actEsc(r.status)}</span>`:'<span style="color:var(--txt3);">—</span>')}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-sm" title="${r.done?'Reopen':'Mark done'}" onclick="actToggle('${r.id}')">${r.done?'↺':'✓'}</button>
+        <button class="btn btn-sm" onclick="openActModal('${r.id}','task')">✏</button>
+        <button class="btn btn-sm btn-red" onclick="actDelete('${r.id}')">🗑</button>
+      </td></tr>`;
+  };
+  document.getElementById('act-tbody').innerHTML=[...open,...done].map(rowHtml).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--txt2);">No activities — click "+ Add activity"</td></tr>';
+  const res=ACT.filter(r=>r.kind==='research');
+  document.getElementById('act-research').innerHTML=res.map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 2px;border-bottom:1px solid var(--bdr);${r.done?'opacity:.5;':''}">
+      <input type="checkbox" ${r.done?'checked':''} onchange="actToggle('${r.id}')">
+      <span style="flex:1;font-size:12px;font-weight:600;${r.done?'text-decoration:line-through;':''}">${actEsc(r.activity)}</span>
+      <button class="btn btn-sm" onclick="openActModal('${r.id}','research')">✏</button>
+      <button class="btn btn-sm btn-red" onclick="actDelete('${r.id}')">🗑</button></div>`).join('')||'<div style="color:var(--txt2);font-size:12px;">No research topics yet</div>';
+}
+function openActModal(id,kind){
+  ACT_EDIT=id;
+  const r=id?ACT.find(x=>String(x.id)===String(id)):null;
+  const k=r?r.kind:kind;
+  document.getElementById('act-kind').value=k;
+  document.getElementById('act-modal-t').textContent=(r?'Edit ':'Add ')+(k==='research'?'research topic':'activity');
+  document.getElementById('act-l-name').textContent=k==='research'?'Topic':'Activity';
+  document.getElementById('act-task-fields').style.display=k==='research'?'none':'block';
+  document.getElementById('act-name').value=r?r.activity:'';
+  document.getElementById('act-deadline').value=r&&r.deadline?r.deadline:'';
+  document.getElementById('act-person').value=r?(r.person||''):'';
+  document.getElementById('act-status').value=r?(r.status||''):'';
+  document.getElementById('act-modal').classList.add('open');
+}
+function closeActModal(){document.getElementById('act-modal').classList.remove('open');ACT_EDIT=null;}
+async function saveActivity(){
+  const g=id=>document.getElementById(id).value.trim();
+  const kind=g('act-kind');
+  if(!g('act-name')){toast('Name required','err');return;}
+  const row={kind,activity:g('act-name').toUpperCase(),updated_at:new Date().toISOString()};
+  if(kind!=='research'){row.deadline=g('act-deadline')||null;row.person=g('act-person').toUpperCase()||null;row.status=g('act-status').toUpperCase()||null;}
+  const{error}=ACT_EDIT?await sb.from('activities').update(row).eq('id',ACT_EDIT):await sb.from('activities').insert(row);
+  if(error){toast('Save failed — '+error.message,'err');return;}
+  closeActModal();toast('Saved ✓');renderActivities();
+}
+async function actToggle(id){
+  const r=ACT.find(x=>String(x.id)===String(id));if(!r)return;
+  const{error}=await sb.from('activities').update({done:!r.done,updated_at:new Date().toISOString()}).eq('id',id);
+  if(error){toast('Failed','err');return;}
+  renderActivities();
+}
+async function actDelete(id){
+  if(!confirm('Delete this item?'))return;
+  const{error}=await sb.from('activities').delete().eq('id',id);
+  if(error){toast('Delete failed','err');return;}
+  toast('Deleted');renderActivities();
 }
 
 // ===== SCRAP FLOW — supplier -> customer visualization over trading_purchases =====
